@@ -78,7 +78,8 @@ const rawText = n => n.children.map(c => c.text || '').join('\n');
 /* ---------------- attribute line  {a: b, c: d} -------------------- */
 function parseAttrs(line) {
   const o = {};
-  line.replace(/^\{|\}$/g, '').split(',').forEach(kv => {
+  /* split only on a comma that starts the next key, so a value may contain commas */
+  line.replace(/^\{|\}$/g, '').split(/,\s*(?=[a-zA-Z_][\w-]*\s*:)/).forEach(kv => {
     const i = kv.indexOf(':'); if (i < 0) return;
     o[kv.slice(0, i).trim()] = kv.slice(i + 1).trim();
   });
@@ -396,7 +397,7 @@ function build(file) {
 
   const menu = slides.map((s, i) => s.kind === 'section'
     ? '<div class="msec">' + esc(s.title) + '</div>'
-    : '<div class="mrow" data-i="' + i + '"><span class="mn">' + (i + 1) + '</span><span>' + esc(s.title) + '</span></div>'
+    : '<div class="mrow" data-i="' + i + '"><span class="mn">' + (i + 1) + '</span><span>' + mdInline(s.title) + '</span></div>'
   ).join('\n');
 
   const widgets = [...ctx.widgets];

@@ -67,6 +67,10 @@ Slide attributes:
 | `sub` | any text | a grey second line under the slide title |
 | `kicker` | any text | override the section's `short` chip |
 
+A value may contain commas — the parser splits only on a comma that begins the next `key:`.
+One thing to know when writing a widget: `.wlabel` is set in uppercase, which mangles Greek
+(ξ becomes Ξ). Spell such labels out in words rather than changing the stylesheet.
+
 ## 3. Inline
 
 | you write | you get | LaTeX original |
