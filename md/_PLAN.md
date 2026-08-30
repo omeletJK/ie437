@@ -28,8 +28,6 @@ carries an idea a static picture cannot.
 | 9 | Optimal Control | model axis resets, lineage B | 4 | 17 | 42 | **done** |
 | 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | ~32 | to build |
 | 11 | Model-Based RL | the two lineages rejoin | 3 | 15 | ~28 | to build |
-| 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | ~32 | to build |
-| 11 | Model-Based RL | the two lineages rejoin | 3 | 15 | ~28 | to build |
 | **12** | **Offline RL** *(new, and the finale)* | interaction removed | 4 | — *(spec, no tex)* | ~34 | to build |
 | ~~—~~ | ~~Dynamic Games~~ · ~~MARL~~ | — | — | 107 | — | **→ IE579** |
 | A | Probability Review | toolbox, no cube position | 2 | 12 | ~22 | to build |
@@ -165,28 +163,25 @@ the lineages teach each other.
 
 ### Part V — many decision makers
 
-**Ch 12 · Dynamic Games** — *the handoff: a second decision maker.*
-Acts: from optimum to equilibrium · equilibrium through optimal control · the dynamic game ·
-the gap.
+**Ch 12 · Offline Reinforcement Learning** — *the handoff: learned models, and the value and
+policy methods, with the right to interact withdrawn.* The course's finale, and the only chapter
+with no source deck: its act structure, thesis and equations are fixed in
+[`_source/ch12_spec.md`](_source/ch12_spec.md).
 
-- `best-response` — best-response dynamics in a 2×2 game: the path either spirals into the Nash
-  point or cycles forever. Optimum becomes equilibrium, visibly.
-- `coupled-lqr` — a two-player LQ game; each player's Riccati gain depends on the other's. Nash as
-  coupled optimal control.
-- `the-gap` — equilibrium characterised but not computable: show the coupled system and the point
-  at which solving it stops scaling. This is the question Ch 13 answers.
+Acts: what breaks (distributional shift) · constrain the policy · constrain the value ·
+the other two routes, and how you would know.
 
-**Ch 13 · Policy-Based MARL** — 91 source frames, **split into 13a and 13b.**
-13a: the handoff · what breaks first (the gradient itself) · CTDE established (2017–18) ·
-the critic learns to scale (2019–21).
-13b: the second shock and the theory that answers it (2022–24) · which equilibrium? (2024) ·
-finale — the principle returns.
+- `offline-divergence` — Lecture 8's Q-learning, unchanged, on a fixed dataset: the value climbs on
+  actions nobody took while the true return falls. The offline twin of Ch 5's `surrogate-exploit`.
+- a conservatism dial — CQL's α or IQL's τ turning the value into a lower bound, with the same
+  over-conservative far end that Ch 5's `conservative-coms` shows.
+- `stitching` — two mediocre trajectories in the data, and a policy that finds the better path
+  neither of them took. This is what separates offline RL from behaviour cloning.
+- off-policy evaluation — importance-sampling variance exploding with the horizon while a
+  doubly-robust estimator holds.
 
-- `nonstationarity` — one agent learning against another that is also learning; the target moving
-  under its feet. What breaks first.
-- `ctde` — what a centralised critic sees that a decentralised actor cannot.
-- `credit-assignment` — value decomposition on a toy team task: who actually earned the reward.
-- `equilibrium-selection` — the same game, different learning rules, different equilibria.
+*The multi-agent axis — dynamic games and MARL — moved to IE579 in spine v3. Lecture 0 names the
+axis and shows the far face of the cube as that course's territory; this one does not cross it.*
 
 ### Appendix
 
