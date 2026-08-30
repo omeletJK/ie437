@@ -238,6 +238,34 @@ Lecture 11 then *reunites* them: learn the model back, and let value and policy 
 :::
 :::
 
+### The same claim, in two grids
+{sub: pp. 57–58 of the source deck — where Lectures 7 to 10 come from}
+
+Zoom into the dynamic, single-agent cell and split it twice: by **action space** and by **time**. Handed a model, the four boxes are the classical theories.
+
+::: table center
+| model-based | finite action space | infinite action space |
+|---|---|---|
+| **discrete time** | discrete-time MDP · $P(s_{t+1}\mid s_t,a_t)$ | discrete-time dynamic system · $x_{t+1}=f(x_t,u_t)$ |
+| **continuous time** | continuous-time MDP · $P(s_{t+h}\mid s_t,a_t)$ | continuous-time dynamic system · $\dot x_t = f(x_t,u_t)$ |
+:::
+
+::: reveal
+Now delete the model and the same grid names the data-driven methods:
+
+::: table center
+| model-free | finite action space | infinite action space |
+|---|---|---|
+| **discrete time** | ==value-based reinforcement learning== | ==policy-based reinforcement learning== |
+:::
+:::
+
+::: reveal
+::: small
+The two-lineage claim is not an interpretation imposed on the course — it is this pair of grids. ==The left column becomes Lectures 7 and 8; the right column becomes Lectures 9 and 10.== Both chapters redraw this figure at their own opening, and the empty continuous-time row is where the HJB equation of Lecture 9 lives.
+:::
+:::
+
 ## The single spine
 {num: 05}
 
@@ -247,6 +275,49 @@ Read the whole course as a slow stripping-away of what you were handed.
 
 ::: widget given-ledger
 Walk the lectures and watch the ledger empty. The counter on the right is the argument of the previous act: it reads **1** for the whole static half, and **2** from Lecture 8 onward.
+:::
+
+### What the course is for — four systems
+{fill: top}
+
+::: lede
+Every method in this course was built against a real system. These four run through the lectures, and the numbers are the professor's own.
+:::
+
+| system | what is decided | method | result |
+|---|---|---|---|
+| **Wind farm** | where to place $N$ turbines, in a shared wake | graph network for power, then layout optimisation *(Lec 1, 5, 11)* | 1.5% MAPE prediction; total power 7.5 → 20.0 over the optimisation |
+| **Traffic signals** | the green split at every intersection | offline meta Bayesian optimisation *(Lec 4)* | waiting vehicles 408.5 → **395.5** in Hangzhou, 920.1 → **859.7** in Manhattan |
+| **Semiconductor furnace** | the heater work-set, every step | learned dynamics plus model-predictive control *(Lec 11)* | 2.03 °C average error at a 100-step horizon |
+| **Combinatorial design** | a chip placement, a route, a schedule | neural combinatorial optimisation | the search space is $>10^{90{,}000}$ states — beyond Go's $10^{360}$ |
+
+::: reveal
+::: small
+None of these is a benchmark. Each is a system where a wrong decision costs power, time or yield — which is why the course spends its first six lectures on *how to state the problem* before it spends any on how to learn one.
+:::
+:::
+
+### Extension toward practical RL
+{sub: p. 59 and p. 66 of the source — the professor's own roadmap}
+
+Textbook reinforcement learning assumes a simulator you may query without limit. Three extensions close the gap to a real plant, and this course takes all three.
+
+::: flow
+- **1 · Model-based RL** | learn the dynamics, then plan *(Lecture 11)*
+- **2 · Meta RL** | one policy across tasks whose dynamics and objectives change
+- !**3 · Offline RL** | learn from a log, with no interaction at all *(Lecture 12)*
+:::
+
+::: reveal
+::: block Why offline RL — in the source deck's own words
+"Industrial systems typically do not have simulators, and it can be prohibitive to learn a policy by directly interacting with the real system. ==Deriving a policy using previously collected data (offline data) is preferable.=="
+:::
+:::
+
+::: reveal
+::: small
+Meta RL is named here and left to the follow-on material; model-based and offline RL become Lectures 11 and 12. That is why this course ends where it does — not because the cube runs out, but because ==this is the axis a real deployment actually runs into.==
+:::
 :::
 
 ### The course, as a route through the map

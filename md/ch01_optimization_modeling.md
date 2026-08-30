@@ -112,6 +112,26 @@ Maximising $f$ is minimising $-f$; everything is phrased as minimisation without
 :::
 :::
 
+### Equivalent problems — four rewrites worth knowing
+{fill: top}
+
+::: lede
+The standard form is a shape, and most problems must be *put into* it. Four transformations do almost all of that work, and each leaves the optimal value unchanged.
+:::
+
+| rewrite | from | to |
+|---|---|---|
+| **equality constraints** | $f(\mathbf{A}_ix+\mathbf{b}_i)$ inside | $f(z_i)$ with $z_i=\mathbf{A}_ix+\mathbf{b}_i$ |
+| **slack variables** | $a_i^\top x \le b_i$ | $a_i^\top x + s_i = b_i,\; s\ge 0$ |
+| **epigraph form** | $\min_x f(x)$ | $\min_{x,t} t$ s.t. $f(x)-t\le 0$ |
+| **minimise out a variable** | $\min_{x_1,x_2} f(x_1,x_2)$ | $\min_{x_1}\hat f(x_1),\ \hat f=\inf_{x_2} f$ |
+
+::: reveal
+::: small
+The ==epigraph form== is the one to remember: every convex problem can be written with a *linear* objective, because the difficulty pushes into the single constraint $f(x)\le t$.
+:::
+:::
+
 ## Act 2 — convexity, the watershed
 {short: ACT 2, num: Act 2}
 
@@ -134,19 +154,19 @@ For a convex problem, ==any local minimum is a global minimum.==
 ::: reveal
 That single fact changes everything:
 
-- reliable, efficient solvers exist; initialisation and step size do not trap you in bad local optima;
+- a convex problem has a ==globally== optimal solution, not merely a locally optimal one;
+- reliable, efficient solvers exist;
+- the choice of solver and its internal settings — initialisation, step size, batch size — ==does not matter==;
 - global optimality is ==certifiable== — via KKT, in Act 3;
-- duality gives a computable lower bound and an optimality gap;
-- the problem decomposes well for distributed and large-scale solving.
-:::
-
-::: reveal
-::: small
-Non-convex problems enjoy none of these for free. Much of practical optimisation is the art of ==getting a convex problem== — or a sequence of them.
-:::
+- the dual problem gives a computable lower bound and an optimality gap;
+- distributed and decentralised methods are well studied.
 :::
 
 ### Convex sets — the segment test
+
+::: lede
+Non-convex problems enjoy none of those guarantees for free, so much of practical optimisation is the art of ==getting a convex problem== — or a sequence of them. And both halves of one are the same test.
+:::
 
 ::: widget convex-set
 A set is convex when the segment joining any two of its points stays inside it. A function is convex when the segment joining any two points of its graph stays *above* it — equivalently, when its epigraph is a convex set. ==Both halves of a convex problem are this one test.==
@@ -177,6 +197,83 @@ The progression matters because modelling is often a matter of *recognising* whi
 ::: reveal
 ::: small
 These same quadratic models reappear in Act 4 as the *local* approximation of hard problems — and, much later, as the trust-region subproblem inside TRPO (Lecture 10).
+:::
+:::
+
+### Three problems that are secretly linear programs
+{fill: top}
+
+::: cols c3
+::: col Diet {p}(Example 1.2)
+Buy quantities $x_j$ of $n$ foods as cheaply as possible; food $j$ costs $c_j$ and carries $a_{ij}$ of nutrient $i$, and the diet needs at least $b_i$ of each.
+
+$$\min_{x\in\R_+^{n}} c^\top x \quad \text{s.t.}\ \sum_j a_{ij}x_j \ge b_i$$
+:::
+::: col Piecewise-linear {p}(Example 1.3)
+A maximum of affine pieces is not linear, but its *epigraph* is:
+
+$$\min_x \max_i (a_i^\top x + b_i)$$
+
+$$=\ \min_{x,t} t \ \ \text{s.t.}\ a_i^\top x + b_i \le t$$
+
+The epigraph rewrite of Act 1, earning its keep.
+:::
+::: col Chebyshev centre {p}(Example 1.4)
+The centre of the largest ball inscribed in $\mathcal{P}=\{x: a_i^\top x\le b_i\}$. The ball fits iff $\sup_{\lVert u\rVert\le r} a_i^\top(x_c+u) \le b_i$, and that supremum is available in closed form:
+
+$$\max_{x_c,r} r \ \ \text{s.t.}\ a_i^\top x_c + r\lVert a_i\rVert_2 \le b_i$$
+:::
+:::
+
+::: reveal
+::: small
+None of the three looks linear when stated. ==Modelling is the act of finding the rewrite==, and it is where the expertise lives — the solver is a commodity.
+:::
+:::
+
+### Two that are quadratic, and one that is neither
+
+::: cols
+::: col Quadratic programs
+**Least squares with bounds.** $\min_x \lVert \mathbf{A}x-b\rVert_2^2$ subject to $l \le x \le u$ — a convex quadratic over a box.
+
+**A linear programme with random cost.** If $c$ has mean $\bar c$ and covariance $\Sigma$, then $c^\top x$ has mean $\bar c^\top x$ and variance $x^\top\Sigma x$, so
+
+$$\min_x\ \bar c^\top x + \hl{\gamma\, x^\top \Sigma x}$$
+
+trades expected cost against risk. ==$\gamma$ is the first risk parameter of the course== — and the first time uncertainty enters an objective rather than a constraint.
+:::
+::: col.accent Robust linear programming
+The parameters of a real problem are rarely known. With $g_i$ uncertain there are two honest formulations, and they are the two halves of Lecture 0's uncertainty split:
+
+**Deterministic (worst case).** The constraint must hold for *every* $g_i$ in an uncertainty set $\mathcal{E}_i$:
+$$g_i^\top x \le h_i \quad \forall g_i\in\mathcal{E}_i$$
+
+**Stochastic (chance constrained).** $g_i$ is random and the constraint need only hold with probability $\eta$:
+$$\mathbf{P}\big(g_i^\top x \le h_i\big) \ge \eta$$
+:::
+:::
+
+::: reveal
+::: small
+Both keep the problem convex for the usual choices of $\mathcal{E}_i$ and $\eta$ — which is the point. ==Robustness is bought inside the convex world, not outside it.== Lecture 2 will take the second reading much further, and Lecture 5 will meet the first again when a surrogate has to be trusted only where the data supports it.
+:::
+:::
+
+### Convexity, imposed on a *learned* model
+{sub: pp. 20–24 of the source — where this lecture reaches into Part IV}
+
+The classes above assume someone hands you $f$. Modern practice does the opposite: it learns $f$ from data and then wants to optimise over it — and a neural network is not convex in its input, so the resulting problem has none of the guarantees of this act.
+
+::: reveal
+- **Input Convex Neural Networks (ICNN)** — constrain the weights so the network's *output is a convex function of its input*, while remaining a free function of its parameters. Fit the model however you like; the control problem it induces is then convex. {p}(Amos, Xu & Kolter, 2017)
+- **Optimisation as a layer** — OptNet and differentiable convex layers put an $\argmin$ *inside* a network and differentiate through it, using the ==derivative of the KKT system== of Act 3. {p}(Amos & Kolter, 2017; Agrawal et al., 2019)
+- **Implicit deep learning** — a layer defined by a condition its output must satisfy rather than by a formula. Optimisation ($z^{*}=\argmin_z f_\theta(x,z)$), fixed points ($z^{*}=f_\theta(x,z^{*})$) and neural ODEs are the same construction, trained through the implicit function theorem: $\dfrac{\partial \mathcal{L}}{\partial\theta} = \dfrac{\partial z^{*}}{\partial\theta}\dfrac{\partial\mathcal{L}}{\partial z^{*}}$.
+:::
+
+::: reveal
+::: small
+This is the seam between Lecture 1 and Part IV. ==Convexity is not only a property you find; it is one you can impose== — and Lecture 11 will impose it on a learned dynamics model so that a planner can differentiate through the control problem, in the professor's own bilevel design work.
 :::
 :::
 
@@ -273,19 +370,50 @@ Step it and watch the ratio test do the work: an accepted step earns more trust,
 :::
 
 ### Case study — wind-farm layout optimisation
+{sub: the problem this lecture was built around}
 
-::: lede
-Place $N$ turbines to maximise power, subject to minimum inter-turbine spacing and boundary constraints — a non-convex problem, because the spacing constraints are non-convex.
+::: cols
+::: col Why the problem is hard
+A wind farm loses efficiency as it grows: the largest, the London Array, draws 630 MW from 175 turbines, and each turbine sits in the ==wake== of those upwind of it. Power at turbine $i$ therefore depends on where *every other* turbine is.
+
+The wake deficit is the Park model,
+$$\delta u(d,r)=2\alpha\Big(\tfrac{R_0}{R_0+\kappa d}\Big)^{2}\exp\!\Big(-\big(\tfrac{r}{R_0+\kappa d}\big)^{2}\Big)$$
+in the down-stream distance $d$ and the radial distance $r$.
 :::
+::: col.accent What is actually optimised
+Wind direction and speed are random — direction from the site's own rose, speed Weibull within each direction bin — so the objective is an **expectation** over their joint mass function:
 
-::: flow
-- linearise spacing | + quadratic model
-- !solve a convex QP | inside the trust region $\rho$
-- improved? | grow or shrink $\rho$
+$$\max_{l}\ \E\Big[\textstyle\sum_{i=1}^{N} P_i(l;U,\theta^{W})\Big] \approx \sum_{k}\sum_{j}\sum_{i} P_i(l;U_j,\theta^{W}_k)\Pr(U_j,\theta^{W}_k)$$
+
+$$\text{s.t.}\quad \lVert l_i - l_j\rVert_2 \ge 5D,\qquad \underline{c}\le \mathbf{C}l \le \bar c$$
+:::
 :::
 
 ::: reveal
-Each iteration is a convex QP, solved reliably; the trust region keeps the linearised constraints close to the true ones. The non-convex layout problem is conquered by ==a staircase of convex problems== — the practical face of Act 2's lesson: *get a convex problem, even if you have to keep making new ones*.
+::: small
+The objective is a smooth expectation, but ==the spacing constraint is not convex== — a minimum distance excludes a *ball*, and the complement of a ball is the wrong side of everything this lecture has built.
+:::
+:::
+
+### The staircase, in the professor's own algorithm
+
+At iterate $l^{(k)}$: take the analytic gradient $\nabla f(l^{(k)})$ and an approximate Hessian $B^{(k)}$, **linearise** each spacing constraint about the current layout, and add a trust region.
+
+$$\max_{l}\ \tilde f(l) = f(l^{k}) + \nabla f(l^{k})^\top(l-l^{k}) + \tfrac12 (l-l^{k})^\top B^{(k)}(l-l^{k})$$
+
+$$\text{s.t.}\ \big(l^{(k)}_i-l^{(k)}_j\big)^\top (l_i-l_j) > 4D\,\big\lVert l^{(k)}_i-l^{(k)}_j\big\rVert_2, \qquad l \in T^{(k)}=\{l: \lVert l-l^{k}\rVert < \rho^{(k)}\}$$
+
+::: reveal
+::: block Algorithm 1 — layout optimisation by successive convex programming
+Solve the convex subproblem for $\tilde l$, then judge it by the ratio
+$\dfrac{f(l^{(k)}) - f(\tilde l)}{f(l^{(k)}) - \tilde f(\tilde l)} \ge a$ — **accept and grow** $\rho^{(k+1)}=\beta^{\text{succ}}\rho^{(k)}$, otherwise **reject and shrink** $\rho^{(k+1)}=\beta^{\text{fail}}\rho^{(k)}$. Repeat until $\lVert l^{(k)}-l^{(k-1)}\rVert<\epsilon$.
+:::
+:::
+
+::: reveal
+::: small
+That ratio test is exactly what the widget two slides ago was running. ==The toy on that slide is this algorithm.== Run on a real farm it lifts power efficiency from about $0.69$ to $0.76$ and flattens the efficiency-versus-direction curve, so the farm is not only better on average but steadier. The non-convex layout problem is conquered by ==a staircase of convex problems== — Act 2's lesson, made operational: *get a convex problem, even if you have to keep making new ones*.
+:::
 :::
 
 ## Closing
