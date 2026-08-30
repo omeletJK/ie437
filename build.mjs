@@ -339,7 +339,8 @@ function build(file) {
 
   const ctx = { fm, widgets: new Set(), frag: 0, slideAttrs: {} };
   const N = slides.length;
-  const chapLabel = 'Lecture ' + fm.ch + ' · ' + fm.title;
+  const label = fm.label || ('Lecture ' + fm.ch);      // an appendix is not a lecture
+  const chapLabel = label + ' · ' + fm.title;
 
   const html = slides.map((s, i) => {
     ctx.frag = 0; ctx.slideAttrs = s.attrs;
@@ -359,7 +360,7 @@ function build(file) {
 
     if (layout === 'title') {
       return '<section class="slide dark" data-layout="title" data-i="' + i + '">\n' +
-        '  <div class="tmeta">' + esc(fm.course || 'IE437 · Data-Driven Decision Making and Control') + ' &mdash; Lecture ' + fm.ch + '</div>\n' +
+        '  <div class="tmeta">' + esc(fm.course || 'IE437 · Data-Driven Decision Making and Control') + ' &mdash; ' + label + '</div>\n' +
         '  <h1 class="head rise">' + mdInline(fm.title) + '</h1>\n' +
         (fm.subtitle ? '  <div class="tsub rise" style="--d:1">' + mdInline(fm.subtitle) + '</div>\n' : '') +
         '  <div class="trule rise" style="--d:2"></div>\n' +
@@ -386,7 +387,7 @@ function build(file) {
     if (kickN && kick.toUpperCase() === kickN.toUpperCase()) kick = '';   // no "CLOSING CLOSING"
     return '<section class="slide' + (dark ? ' dark' : '') + '" data-layout="' + esc(layout) + '" data-i="' + i + '">\n' +
       '  <div class="kicker"><span class="tick"></span>' + (kickN ? '<span class="kn">' + esc(kickN) + '</span>' : '') +
-      '<span>' + esc(kick) + '</span><span class="kx">Lecture ' + fm.ch + '</span></div>\n' +
+      '<span>' + esc(kick) + '</span><span class="kx">' + label + '</span></div>\n' +
       '  <h1 class="head rise">' + mdInline(s.title) +
       (s.attrs.sub ? '<span class="sub">' + mdInline(s.attrs.sub) + '</span>' : '') + '</h1>\n' + stripHtml +
       '  <div class="fill ' + esc(rhythm) + '">\n' + bodyHtml + '\n  </div>\n' +
@@ -422,7 +423,7 @@ function build(file) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IE437 · Lecture ${fm.ch} — ${esc(fm.title)}</title>
+<title>IE437 · ${label} — ${esc(fm.title)}</title>
 ${head}
 <style>.mhl{color:var(--accent)}.dark .mhl{color:var(--accent-d)}.mdim{color:var(--ink3)}.dark .mdim{color:var(--wink3)}</style>
 </head>
@@ -442,7 +443,7 @@ ${html}
 </div>
 
 <div id="menu">
-  <h2>IE437 &middot; Lecture ${fm.ch} &mdash; ${esc(fm.title)}</h2>
+  <h2>IE437 &middot; ${label} &mdash; ${esc(fm.title)}</h2>
 ${menu}
 </div>
 

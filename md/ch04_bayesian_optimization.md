@@ -213,7 +213,7 @@ The joint is a fat ellipse. The same observation $f_1=-0.313$ leaves $p(f_5\mid 
 :::
 
 ::: reveal
-And the mechanism is a single fact of linear algebra, the one Chapter 2's appendix called Property 4:
+And the mechanism is a single fact of linear algebra, the one the probability appendix calls Property 4:
 
 $$\begin{bmatrix}Y_1\\Y_2\end{bmatrix}\sim\mathcal N\!\left(\begin{bmatrix}\mu_1\\\mu_2\end{bmatrix},\begin{bmatrix}\Sigma_{11}&\Sigma_{12}\\\Sigma_{21}&\Sigma_{22}\end{bmatrix}\right) \;\Longrightarrow\; Y_2\mid Y_1=y \;\sim\; \mathcal N\big(\mu_2+\Sigma_{21}\Sigma_{11}^{-1}(y-\mu_1),\; \Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\big)$$
 :::

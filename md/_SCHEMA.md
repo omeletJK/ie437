@@ -103,7 +103,9 @@ Blocks open with `::: name [argument]` and close with a bare `:::`. They nest.
 ::: tracker           the three-axis cube tracker, drawn from the front matter
 ::: lineage [cell]    the 2x2 lineage grid; cell defaults to `lineage_here`
 ::: flow  lbl1|lbl2   boxes joined by arrows; children are a list, `Title | subtitle`
-                      prefix an item with `!` to emphasise, `!!` to mark it a hazard
+                      prefix an item with `!` to emphasise, `!!` to mark it a hazard.
+                      The arrow labels are drawn by CSS `content: attr()`, so they are
+                      plain text — markdown and maths in them will not render.
 ::: widget id {json}  mount an interactive widget; the child text becomes its caption
 ```
 
