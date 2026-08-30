@@ -26,11 +26,11 @@ carries an idea a static picture cannot.
 | 7 | MDP & Dynamic Programming | **static → dynamic** | 4 | 20 | 46 | **done** |
 | 8 | Value-Based RL | **model → data** (*r* and *P*) | 4 | 30 | 41 | **done** |
 | 9 | Optimal Control | model axis resets, lineage B | 4 | 17 | 42 | **done** |
-| 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | ~32 | to build |
-| 11 | Model-Based RL | the two lineages rejoin | 3 | 15 | ~28 | to build |
+| 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | 44 | **done** |
+| 11 | Model-Based RL | the two lineages rejoin | 4 | 15 | 53 | **done** |
 | **12** | **Offline RL** *(new, and the finale)* | interaction removed | 4 | — *(spec, no tex)* | ~34 | to build |
 | ~~—~~ | ~~Dynamic Games~~ · ~~MARL~~ | — | — | 107 | — | **→ IE579** |
-| A | Probability Review | toolbox, no cube position | 2 | 12 | ~22 | to build |
+| A | Probability Review | toolbox, no cube position | 3+1 | 12 | 30 | **done** |
 
 Thirteen files after the v3 revision: **Ch 0–12 plus the probability appendix**, with the whole
 multi-agent axis moved to IE579. Ten are finished — 390 slides and 42 widgets. Remaining:

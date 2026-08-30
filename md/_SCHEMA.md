@@ -172,6 +172,9 @@ Currently available:
 | Ch 7 | `value-propagation` · `dp-schedules` · `discount-dial` · `contraction-rate` |
 | Ch 8 | `mc-vs-td` · `gpi-explore` · `cliff-walk` · `deadly-triad` |
 | Ch 9 | `control-grid` · `dt-to-hjb` · `lqr-riccati` · `pontryagin` |
+| Ch 10 | `policy-gradient` · `baseline-variance` · `continuous-argmax` · `ppo-clip` |
+| Ch 11 | `model-use-ladder` · `rollout-drift` · `task-vs-prediction` · `dyna-imagination` |
+| Appendix | `gaussian-four` · `mc-estimator` · `variance-split` (and Ch 2's `ci-vs-cr`, reused) |
 
 Several of these are **redrawings of figures in the original PDF decks** (`lecture_slides/`) rather
 than new inventions — the three-axis cube, the AI/decision-making pipelines, the modelling and
