@@ -161,12 +161,12 @@
     $$('[data-widget]', sl).forEach(function (host) {
       if (host.getAttribute('data-mounted')) return;
       var id = host.getAttribute('data-widget'), f = REG[id];
-      host.setAttribute('data-mounted', '1');
-      if (!f) {
+      if (!f) {                       /* leave it unmounted so a later visit can retry */
         host.innerHTML = '<div class="wcap" style="padding:26px">widget <code>' + id +
           '</code> is not registered — add <code>deck/widgets/' + id + '.js</code></div>';
         return;
       }
+      host.setAttribute('data-mounted', '1');
       var opts = {};
       try { opts = JSON.parse(host.getAttribute('data-opts') || '{}'); } catch (e) { }
       var inst = f(host, opts) || {};
@@ -277,8 +277,12 @@
   /* ---------- start ------------------------------------------------ */
   function fromHash() { var n = parseInt((location.hash || '').slice(1), 10); return isFinite(n) ? n - 1 : 0; }
   window.addEventListener('hashchange', function () { var i = fromHash(); if (i !== cur) go(i, 'fwd'); });
-  fit();
-  go(fromHash(), 'fwd');
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(balanceAll);
-  if (reduced) LIVE.forEach(function (w) { if (w.finish) w.finish(); });
+  function boot() {
+    fit();
+    go(fromHash(), 'fwd');
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(balanceAll);
+    if (reduced) LIVE.forEach(function (w) { if (w.finish) w.finish(); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
 })();
