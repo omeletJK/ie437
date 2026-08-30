@@ -89,7 +89,12 @@ IE437.widget('course-cube', function (host, opts) {
   function draw() {
     while (sv.firstChild) sv.removeChild(sv.firstChild);
     var s = STEPS[step];
-    var badge = {}; s.badges.forEach(function (b, n) { badge[b.join(',')] = n + 1; });
+    /* two stops can share a cell — Lecture 12 sits where Lecture 8 already is */
+    var badge = {};
+    s.badges.forEach(function (b, n) {
+      var k = b.join(',');
+      badge[k] = badge[k] ? badge[k] + '·' + (n + 1) : String(n + 1);
+    });
 
     /* the two decision-making planes, running past the cube as in the source */
     [[0, 'rgba(37,99,235,.07)', BLUE, 'Model based Decision Making'],
@@ -147,10 +152,12 @@ IE437.widget('course-cube', function (host, opts) {
         'font-size': 10, 'letter-spacing': 1, 'font-family': 'IBM Plex Mono, monospace',
         fill: on ? BLUE : INK, 'fill-opacity': on ? 1 : .38, text: v.lec.toUpperCase() }, sv);
       if (on) {
-        E('circle', { cx: p[0], cy: p[1], r: 11, fill: INK }, sv);
-        E('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': 11.5,
+        var lab = String(badge[k]), wide = lab.length > 1;
+        if (wide) E('rect', { x: p[0] - 19, y: p[1] - 11, width: 38, height: 22, rx: 11, fill: INK }, sv);
+        else E('circle', { cx: p[0], cy: p[1], r: 11, fill: INK }, sv);
+        E('text', { x: p[0], y: p[1] + 4, 'text-anchor': 'middle', 'font-size': wide ? 10.5 : 11.5,
           'font-weight': 700, fill: '#FBFBF9', 'font-family': 'IBM Plex Mono, monospace',
-          text: String(badge[k]) }, sv);
+          text: lab }, sv);
       }
     });
 
@@ -169,5 +176,6 @@ IE437.widget('course-cube', function (host, opts) {
   };
 
   draw();
-  return { finish: function () { stop(); go(4); }, leave: stop };
+  /* Lecture 0 wants the doubling; Lecture 12 wants the face it never crosses */
+  return { finish: function () { stop(); go(opts && opts.step != null ? opts.step : 4); }, leave: stop };
 });

@@ -174,7 +174,11 @@ Currently available:
 | Ch 9 | `control-grid` · `dt-to-hjb` · `lqr-riccati` · `pontryagin` |
 | Ch 10 | `policy-gradient` · `baseline-variance` · `continuous-argmax` · `ppo-clip` |
 | Ch 11 | `model-use-ladder` · `rollout-drift` · `task-vs-prediction` · `dyna-imagination` |
+| Ch 12 | `offline-divergence` · `offline-stitch` · `conservative-cql` · `ope-variance` (and Ch 8's `deadly-triad` and Ch 0's `course-cube`, reused) |
 | Appendix | `gaussian-four` · `mc-estimator` · `variance-split` (and Ch 2's `ci-vs-cr`, reused) |
+
+A widget mounted by more than one chapter takes an option saying which state its `finish()` should
+freeze for the PDF — `course-cube` takes `{"step": n}`, `given-ledger` takes `{"lecture": n}`.
 
 Several of these are **redrawings of figures in the original PDF decks** (`lecture_slides/`) rather
 than new inventions — the three-axis cube, the AI/decision-making pipelines, the modelling and

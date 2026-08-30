@@ -116,6 +116,11 @@ data does not support, and then let the policy maximise freely.
   min_Q  α ( E_{s~D, a~μ}[Q(s,a)] − E_{(s,a)~D}[Q(s,a)] )  +  ½ E[(Q − 𝔅Q̂)²]
   ```
   which yields a **lower bound** on the true value of the learned policy. {p}(Kumar et al., 2020)
+  Two cautions, both found while building the chapter. The bound is on `E_{a~π}[Q̂]`, **not**
+  pointwise on `Q̂` — individual entries can still sit above the truth. And when `μ = softmax(Q)` is
+  written bare it is a soft *average*, not a soft *max*: CQL(H)'s logsumexp only behaves as a max
+  because deep-RL Q-values are large relative to `log|A|`, so a small temperature is needed on a
+  toy action grid.
   This is COMs with `x` replaced by `(s,a)` — draw the correspondence explicitly.
 - **IQL** — never query an out-of-distribution action at all. Fit `V` by expectile regression toward
   `Q` on in-data actions, and use `V(s')` in the target:
@@ -140,10 +145,16 @@ value is exploited, too much and the policy will not leave the data. Say so.
   *generate, don't search*, arriving in the dynamic world exactly as the spine's value ↔ policy
   rhyme predicts.
 - **Off-policy evaluation — the practitioner's first question.** You have a policy and you cannot
-  deploy it to find out whether it is good. Importance sampling and its per-decision form; the
-  variance that grows with horizon; doubly-robust estimators; fitted Q evaluation. This act should
-  say plainly that in an industrial setting OPE is asked *before* the choice of algorithm, and that
-  the course has not addressed it until now.
+  deploy it to find out whether it is good. Importance sampling and its per-decision form, and the
+  variance that grows with the horizon. This act should say plainly that in an industrial setting
+  OPE is asked *before* the choice of algorithm, and that the course has not addressed it until now.
+
+  > **Correction to an earlier draft of this spec.** It claimed that importance sampling's variance
+  > explodes with the horizon *while a doubly-robust estimator holds up*. That is false. DR's
+  > variance is also `O(q^H)` — merely scaled by the Bellman residual, so on a log axis its curve
+  > runs parallel to IS, not flat. The estimators that stay usable at long horizons are **weighted
+  > IS and fitted Q evaluation, and both are biased**. That is the better lesson and the one the
+  > chapter teaches: at long horizons you choose which way to be wrong, you do not escape.
 
 ## The closing — this is the finale
 

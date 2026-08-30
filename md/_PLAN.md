@@ -28,14 +28,12 @@ carries an idea a static picture cannot.
 | 9 | Optimal Control | model axis resets, lineage B | 4 | 17 | 42 | **done** |
 | 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | 44 | **done** |
 | 11 | Model-Based RL | the two lineages rejoin | 4 | 15 | 53 | **done** |
-| **12** | **Offline RL** *(new, and the finale)* | interaction removed | 4 | — *(spec, no tex)* | ~34 | to build |
+| **12** | **Offline RL** *(new, and the finale)* | interaction removed | 4 | — *(spec, no tex)* | 39 | **done** |
 | ~~—~~ | ~~Dynamic Games~~ · ~~MARL~~ | — | — | 107 | — | **→ IE579** |
 | A | Probability Review | toolbox, no cube position | 3+1 | 12 | 30 | **done** |
 
 Thirteen files after the v3 revision: **Ch 0–12 plus the probability appendix**, with the whole
-multi-agent axis moved to IE579. Ten are finished — 390 slides and 42 widgets. Remaining:
-**Ch 10**, **Ch 11**, **Ch 12 Offline RL** (no tex; see `md/_source/ch12_spec.md`) and the
-**appendix**.
+multi-agent axis moved to IE579. **All are built** — 556 slides and 57 widget mounts.
 
 **Sources, and what each one settles.** The spine fixes the narrative — cube position, crossings,
 handoff chain. The `tex` fixes the act structure, the central thesis and the equations. The

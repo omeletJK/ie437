@@ -7,7 +7,7 @@ course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST — Industrial & Systems Engineering
 inherits: —
-handoff: the simplest corner of the cube (Lecture 1)
+handoff: the three-axis cube, and the route through it (Lecture 1)
 ---
 
 ### Data-Driven Decision Making and Control

@@ -92,5 +92,10 @@ IE437.widget('given-ledger', function (host, opts) {
   host.querySelector('[data-sl]').oninput = function (e) { i = +e.target.value; draw(); };
 
   draw();
-  return { finish: function () { i = 7; draw(); } };   // Lecture 8 — the count has doubled
+  /* default: Lecture 8, where the count of unknowns has doubled */
+  return { finish: function () {
+    var want = opts && opts.lecture != null ? opts.lecture : 8;
+    var k = LECS.findIndex(function (L) { return L.n === want; });
+    i = k >= 0 ? k : 7; draw();
+  } };
 });
