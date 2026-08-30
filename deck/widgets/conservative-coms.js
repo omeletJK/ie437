@@ -151,8 +151,10 @@ IE437.widget('conservative-coms', function (host, opts) {
     E('circle', { cx: PX(xs), cy: PY(ftrue(xs)), r: 5, fill: 'none', stroke: INK, 'stroke-width': 2 }, s1);
     E('line', { x1: PX(xs), y1: PY(ev(W, xs)), x2: PX(xs), y2: PY(ftrue(xs)),
       stroke: a > 0 ? GREEN : RED, 'stroke-width': 2 }, s1);
-    E('text', { x: CW - Rr, y: PY(ev(W0, X1)) - 7, 'text-anchor': 'end', 'font-size': 9, fill: BLUE,
-      'fill-opacity': .55, 'font-weight': 700, text: 'α = 0' }, s1);
+    E('text', { x: PX(8.6), y: PY(ev(W0, 8.6)) - 8, 'text-anchor': 'middle', 'font-size': 10, fill: BLUE,
+      'fill-opacity': .6, 'font-weight': 700, text: 'α = 0' }, s1);
+    if (a > 0) E('text', { x: PX(8.6), y: PY(ev(W, 8.6)) - 9, 'text-anchor': 'middle', 'font-size': 10,
+      fill: GREEN, 'font-weight': 700, text: 'conservative fθ' }, s1);
     E('text', { x: CW / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9.5, 'font-style': 'italic',
       fill: INK, 'fill-opacity': .45, text: 'x' }, s1);
 
@@ -169,7 +171,7 @@ IE437.widget('conservative-coms', function (host, opts) {
     });
     E('line', { x1: l2, x2: TW - r2, y1: QY(ftrue(x0)), y2: QY(ftrue(x0)), stroke: INK,
       'stroke-opacity': .3, 'stroke-dasharray': '3 4' }, s2);
-    E('text', { x: TW - r2, y: QY(ftrue(x0)) - 5, 'text-anchor': 'end', 'font-size': 8.5, fill: INK,
+    E('text', { x: l2 + 5, y: QY(ftrue(x0)) + 14, 'font-size': 9, fill: INK,
       'fill-opacity': .5, 'font-family': 'IBM Plex Mono, monospace', text: 'best design in D' }, s2);
     function trace(pp, col, w, dash, op) {
       var pts = [];
@@ -179,16 +181,16 @@ IE437.widget('conservative-coms', function (host, opts) {
     }
     trace(PATH0, RED, 2.2);
     if (a > 0) trace(path, GREEN, 2.4);
-    E('text', { x: QX(TMAX) - 3, y: QY(Math.max(Y2[0], ftrue(PATH0[TMAX]))) - 7, 'text-anchor': 'end',
-      'font-size': 9, fill: RED, 'font-weight': 700, text: 'naive' }, s2);
-    if (a > 0) E('text', { x: QX(TMAX) - 3, y: QY(ftrue(path[TMAX])) - 8, 'text-anchor': 'end',
-      'font-size': 9, fill: GREEN, 'font-weight': 700, text: 'conservative' }, s2);
+    E('text', { x: QX(TMAX) - 3, y: QY(Math.max(Y2[0], ftrue(PATH0[TMAX]))) - 9, 'text-anchor': 'end',
+      'font-size': 10, fill: RED, 'font-weight': 700, text: 'naive ascent' }, s2);
+    if (a > 0) E('text', { x: QX(TMAX) - 3, y: QY(ftrue(path[TMAX])) - 10, 'text-anchor': 'end',
+      'font-size': 10, fill: GREEN, 'font-weight': 700, text: 'conservative' }, s2);
     E('text', { x: (l2 + TW - r2) / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9,
       'font-family': 'IBM Plex Mono, monospace', fill: INK, 'fill-opacity': .45, text: 'ascent step' }, s2);
 
     /* ---------- readout ---------- */
     var gap = ev(W, xs) - ftrue(xs), vs = ftrue(xs) - ftrue(x0);
-    host.querySelector('[data-a]').textContent = a.toFixed(2);
+    host.querySelector('[data-a]').textContent = 'α = ' + a.toFixed(2);
     host.querySelector('[data-num]').innerHTML =
       'x* = <b>' + xs.toFixed(2) + '</b><br>' +
       'surrogate says <b>' + ev(W, xs).toFixed(2) + '</b><br>' +

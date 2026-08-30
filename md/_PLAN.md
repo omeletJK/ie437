@@ -19,9 +19,9 @@ carries an idea a static picture cannot.
 | 0 | Introduction | *the map itself* | 4 | 11 | 23 | **done** |
 | 1 | Optimization Problem Modeling | origin corner | 5 | 16 | 29 | **done** |
 | 2 | Bayesian Statistics | **model → data** (on *f*) | 5 | 15 | 38 | **done** |
-| 3 | Bayesian Network | same cell, deeper | 3 | 14 | ~27 | to build |
-| 4 | Bayesian Optimization | same cell, now acting | 3 | 16 | ~30 | to build |
-| 5 | Surrogate Design Optimization | same cell, offline | 3 | 15 | ~28 | to build |
+| 3 | Bayesian Network | same cell, deeper | 4 | 14 | 46 | **done** |
+| 4 | Bayesian Optimization | same cell, now acting | 4 | 16 | 37 | **done** |
+| 5 | Surrogate Design Optimization | same cell, offline | 4 | 15 | 40 | **done** |
 | 6 | Generative Design Optimization | same cell, inverted | 3 | 15 | ~28 | to build |
 | 7 | MDP & Dynamic Programming | **static → dynamic** | 4 | 20 | ~33 | to build |
 | 8 | Value-Based RL | **model → data** (*r* and *P*) | 4 | 30 | 41 | **done** |
@@ -33,8 +33,8 @@ carries an idea a static picture cannot.
 | ~~—~~ | ~~Policy-Based MARL~~ | — | — | 91 | — | **→ IE579** |
 | A | Probability Review | toolbox, no cube position | 2 | 12 | ~22 | to build |
 
-About **380 slides and 40 widgets** across 15 files after the Option A revision. Four are finished
-(Ch 0, 1, 2, 8).
+About **380 slides and 40 widgets** across 15 files after the Option A revision. Seven are finished
+(Ch 0, 1, 2, 3, 4, 5, 8) — 254 slides and 30 widgets.
 
 **Sources, and what each one settles.** The spine fixes the narrative — cube position, crossings,
 handoff chain. The `tex` fixes the act structure, the central thesis and the equations. The
@@ -97,7 +97,7 @@ Acts: the naive approach · why it fails · conservative objective models · oth
   optimiser walks straight into the region where the surrogate is confidently wrong. The chapter's
   whole argument in one picture.
 - `conservative-model` — add a pessimism term and watch the optimiser stay where the data is.
-- `ensemble-disagreement` — several surrogates; their disagreement as the out-of-distribution alarm.
+- `ensemble-alarm` — several surrogates; their disagreement as the out-of-distribution alarm.
 
 **Ch 6 · Generative Design Optimization** — *the handoff: the same problem, inverted.*
 Acts: inverting the function · generative models · the VAE · conditioning toward good designs.

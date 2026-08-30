@@ -42,7 +42,7 @@ Lecture 4 built a posterior over an unknown $f$ and then *acted* — chose a poi
 
 ::: reveal
 ::: small
-Same cell of the cube — static, data-driven, single agent — and the same goal as Lecture 1, $\argmax_x f(x)$. What has been taken away is not the model but ==the right to check==.
+Lecture 4 leaves us $\argmax_x f(x)$ with a GP — and this lecture ==removes the oracle==. Same cell of the cube: static, data-driven, single agent, and the same goal as Lecture 1. What has been taken away is not the model but the right to check.
 :::
 :::
 
@@ -210,7 +210,6 @@ The two want different cures. Problem 1 is about the *values* the surrogate repo
 :::
 
 ### The two pictures
-{fill: top}
 
 ::: widget two-failures
 Left, the dataset does not determine $f$ off the data: ==every one of those dashed continuations fits $D$ equally well==, and the fitted surrogate is whichever one the architecture happens to prefer. Right, the valid inputs are a small disc inside a large space; ascent starting inside it leaves almost immediately, and the returned designs are not molecules at all.
@@ -235,24 +234,33 @@ The optimiser is not a user of the surrogate. It is ==an adversarial attack on i
 :::
 
 ### Watch it happen
-{fill: top}
 
 ::: widget surrogate-exploit {"seed":17}
 The surrogate fits the fifteen data points to an RMSE of $0.058$ and then, off the data, keeps climbing. Ascent from the best design in $D$ improves the true value for about five steps — and then spends the next thirty walking downhill in reality while the surrogate reports steady progress. ==The returned design scores $-0.14$ where the surrogate promised $4.31$== , and is worse than the design we already had.
 :::
 
 ### The cure is not a better optimiser
-{fill: center}
 
-::: reveal
-::: small
-Notice what a *better* optimiser would do. A stronger, more thorough search finds a higher point of $f_\theta$ — which, on this surface, means a point still further from the data and still more badly overestimated. Optimisation strength is on the ==wrong side== of the problem.
+::: lede
+Two repairs suggest themselves before the right one, and both fail for the same reason: they treat the search as the problem.
+:::
+
+::: cols
+::: col.red Search harder
+A stronger, more thorough optimiser finds a *higher* point of $f_\theta$ — which on this surface means a point still further from the data, and still more badly overestimated.
+
+Optimisation strength is on the ==wrong side== of the problem.
+:::
+::: col.red Search less
+Constrain the search to stay near $D$ and the answer is capped at the best design already in the dataset.
+
+Safe and pointless: ==beating $D$ was the entire task.==
 :::
 :::
 
 ::: reveal
 ::: keypoint
-The cure is a ==more honest surrogate== — one whose maximum is somewhere the evidence can actually support.
+Neither the optimiser nor its leash. The cure is a ==more honest surrogate== — one whose maximum sits where the evidence can support it.
 :::
 :::
 
@@ -303,10 +311,9 @@ Structurally this is ordinary supervised regression plus one adversarial term. N
 :::
 
 ### Turning the dial
-{fill: top}
 
 ::: widget conservative-coms {"seed":17}
-The same dataset, the same optimiser, the same fifteen points — only the training loss differs. At $\alpha = 0$ the search runs to the boundary and returns a design worth $-0.14$. By $\alpha = 0.3$ it stops at the true optimum. Watch the readout: past $\alpha \approx 0.15$ the surrogate's prediction at $x^*$ falls *below* the truth. ==It has become a lower bound== — and then, at $\alpha = 1.3$, so conservative that it will not leave the data at all.
+The same dataset, the same optimiser, the same fifteen points — only the training loss differs. At $\alpha = 0$ the search runs to the boundary and returns a design worth $-0.14$. By $\alpha = 0.3$ it halts at $6.20$, all but exactly the true optimum at $6.04$. Watch the readout: past $\alpha \approx 0.15$ the surrogate's prediction at $x^*$ falls *below* the truth. ==It has become a lower bound== — and then, at $\alpha = 1.3$, so conservative that it will not leave the data at all.
 :::
 
 ### Why it works — a learned lower bound
@@ -420,7 +427,6 @@ Far from the data, *every* candidate label can be accommodated almost perfectly 
 :::
 
 ### But surely an ensemble would have caught it?
-{fill: top}
 
 ::: widget ensemble-alarm {"seed":17}
 Ten surrogates, each fitted to a bootstrap resample of the same fifteen points. Out of distribution their spread does widen — by about six times. Their actual error grows ==thirty-seven times==. At the design their own averaged optimiser returns, the truth sits eighteen standard deviations outside the band they agree on. The alarm fires; it is simply far too quiet, because the members share an architecture and so extrapolate wrongly *together*.
@@ -532,7 +538,7 @@ Read the second one twice. A generative model supplies the coordinates; a conser
 :::
 
 ::: reveal
-We solved offline design one way: build a *forward* surrogate of $f$, then *search* it — carefully, conservatively, so that the search cannot exploit our ignorance.
+What this lecture hands on is ==a forward model then a search, and the warning that the optimiser is an adversary==: build a *forward* surrogate of $f$, then *search* it — carefully, conservatively, so that the search cannot exploit our ignorance.
 :::
 
 ::: reveal
@@ -597,9 +603,8 @@ for i = 1 … steps:
 :::
 ::: col.accent Algorithm 2 — finding $x^*$
 ```
-x̃ = argmax_{(x,y)∈D} y      ← the best
-                              design we
-                              already have
+x̃ = argmax_{(x,y)∈D} y   ← the best
+                           design we own
 for t = 0 … T−1:
   x_{t+1} = x_t + η ∇_x f_θ*(x_t)
 
@@ -625,7 +630,7 @@ $$L(\theta) = \underbrace{\tfrac12\E_{(x,y)\sim D}\big[(f_\theta(x)-y)^2\big]}_{
 
 $$f_\theta^{k+1}(x'') := \max\Big\{\, f_\theta^{k+1}(x) - \hat L\lVert x''-x\rVert_2,\;\; \tilde f_\theta^{k+1}(x'') - \eta\alpha\,\E_{x\sim\bar D, x'\sim\mu}\big[G_f^k(x'',x')\big] + \eta\alpha\,\E_{x\sim\bar D, x'\sim\bar D}\big[G_f^k(x'',x')\big]\Big\}$$
 
-where $\tilde f_\theta^{k+1}$ is the iterate that *would* have resulted without conservative training. Hence for $\alpha$ large enough the asymptotic model lower-bounds the truth on whatever the optimiser reaches: $\E[f_\theta(x_T)] \le \E[f(x_T)]$. The hyperparameter $\alpha$ tunes how conservative — and, per Act 3, is better replaced by the budget $\tau$.
+where $\tilde f_\theta^{k+1}$ is the iterate that *would* have resulted without conservative training. For $\alpha$ large enough the asymptotic model therefore lower-bounds the truth on whatever the optimiser reaches: $\E[f_\theta(x_T)] \le \E[f(x_T)]$.
 
 ### Backup 4 — NEMO, made tractable
 {fill: top}

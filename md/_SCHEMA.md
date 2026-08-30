@@ -162,6 +162,10 @@ Currently available:
 |---|---|
 | Ch 0 | `ai-vs-decision` · `modeling-loop` · `course-cube` (3-D map, walked) · `given-ledger` |
 | Ch 1 | `formulation-balance` · `convex-set` · `convex-watershed` · `kkt-point` (draggable) · `trust-region` |
+| Ch 2 | `bayes-anatomy` · `bayes-update` · `ci-vs-cr` · `bayes-regression` · `ridge-lasso-prior` |
+| Ch 3 | `factor-count` · `d-separation` · `inference-cost` · `influence-diagram` |
+| Ch 4 | `gp-posterior` · `acquisition-zoo` · `bo-run` · `explore-regret` |
+| Ch 5 | `two-failures` · `surrogate-exploit` · `conservative-coms` · `ensemble-alarm` |
 | Ch 8 | `mc-vs-td` · `gpi-explore` · `cliff-walk` · `deadly-triad` |
 
 Several of these are **redrawings of figures in the original PDF decks** (`lecture_slides/`) rather

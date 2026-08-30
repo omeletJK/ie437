@@ -148,15 +148,15 @@ IE437.widget('ensemble-alarm', function (host, opts) {
       var tt = [];
       for (k = 0; k <= 300; k++) { x = X0 + (X1 - X0) * k / 300; tt.push(PX(x).toFixed(1) + ' ' + PY(ftrue(x)).toFixed(1)); }
       E('path', { d: 'M' + tt.join('L'), fill: 'none', stroke: INK, 'stroke-width': 2.3, 'stroke-opacity': .8 }, s1);
-      E('text', { x: CW - Rr, y: PY(ftrue(9.0)) + 15, 'text-anchor': 'end', 'font-size': 10, fill: INK,
-        'fill-opacity': .7, 'font-weight': 700, text: 'true f' }, s1);
+      E('text', { x: PX(8.9), y: PY(ftrue(8.9)) - 12, 'text-anchor': 'end', 'font-size': 10.5, fill: INK,
+        'fill-opacity': .75, 'font-weight': 700, text: 'true f' }, s1);
     }
     D.forEach(function (d) { E('circle', { cx: PX(d.x), cy: PY(d.y), r: 2.9, fill: INK }, s1); });
     E('line', { x1: PX(xs), y1: T, x2: PX(xs), y2: CH - B, stroke: RED, 'stroke-opacity': .35, 'stroke-dasharray': '2 3' }, s1);
     E('circle', { cx: PX(xs), cy: PY(st.m), r: 4.5, fill: RED }, s1);
     if (reveal) E('circle', { cx: PX(xs), cy: PY(ftrue(xs)), r: 4.5, fill: 'none', stroke: INK, 'stroke-width': 2 }, s1);
-    E('text', { x: PX(X1) - 4, y: PY(st.m) - 9, 'text-anchor': 'end', 'font-size': 9, fill: BLUE,
-      'font-weight': 700, text: 'mean ± 2σ' }, s1);
+    E('text', { x: PX(7.4), y: PY(stat(7.4, K).m + 2 * stat(7.4, K).sd) - 10, 'text-anchor': 'middle',
+      'font-size': 10.5, fill: BLUE, 'font-weight': 700, text: 'ensemble mean ± 2σ' }, s1);
     E('text', { x: CW / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9.5, 'font-style': 'italic',
       fill: INK, 'fill-opacity': .45, text: 'x' }, s1);
 
@@ -173,8 +173,8 @@ IE437.widget('ensemble-alarm', function (host, opts) {
         'fill-opacity': .45, 'font-family': 'IBM Plex Mono, monospace', text: v + 'σ' }, s2);
     });
     E('line', { x1: l2, x2: TW - r2, y1: QY(2), y2: QY(2), stroke: INK, 'stroke-opacity': .35, 'stroke-dasharray': '3 4' }, s2);
-    E('text', { x: TW - r2, y: QY(2) - 5, 'text-anchor': 'end', 'font-size': 8.5, fill: INK, 'fill-opacity': .5,
-      'font-family': 'IBM Plex Mono, monospace', text: 'the band should hold it' }, s2);
+    E('text', { x: TW - r2, y: QY(2) - 7, 'text-anchor': 'end', 'font-size': 9, fill: INK, 'fill-opacity': .5,
+      'font-family': 'IBM Plex Mono, monospace', text: 'a calibrated band sits here' }, s2);
     var rr = [];
     for (k = 0; k <= 220; k++) {
       x = X0 + (X1 - X0) * k / 220; var s3 = stat(x, K);
