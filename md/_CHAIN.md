@@ -20,8 +20,7 @@ words.
 | 9 | dynamic decision making's second parent — control theory, alongside Lecture 7's OR | the feedback law γ(x), u = Kx |
 | 10 | optimal control, with the dynamics f still given (Lecture 9) | the trust-region machinery |
 | 11 | both lineages, each with the model thrown away (Lectures 8 and 10) | a learned model plus planning, and bilevel design |
-| 12 | learned models (Lecture 11) and the value and policy methods of Lectures 8 and 10 | conservative values and policies, and off-policy evaluation |
-| 13 | optimal control (Lecture 9), and decision making from a fixed dataset (Lecture 12) | equilibrium characterised but not computable — which is where **IE579** begins |
+| 12 | learned models (Lecture 11) and the value and policy methods of Lectures 8 and 10 | **the course's last move** — conservative values and policies, off-policy evaluation, and the one axis left uncrossed, which is where **IE579** begins |
 
 ## Two structural rhymes that must survive
 
@@ -40,6 +39,10 @@ it with conservative Q-learning. Lecture 12 should say so out loud and quote Lec
 ## Where the crossing tracker goes
 
 Chapters that **cross an axis** get the tracker with an arrow and a "crossing" frame: 2 (model),
-7 (stages), 8 and 10 (model, and now two unknowns), 13 (agents).
+7 (stages), 8 and 10 (model, and now two unknowns). The agents axis is never crossed in this course.
 Chapters that **deepen inside a cell** get the tracker with no arrow: 1, 3, 4, 5, 6, 9, 11, 12.
 The appendix has no position on the cube and takes no tracker.
+
+**Lecture 12 closes the course.** It is the finale, so its closing does two jobs rather than one:
+it states the chapter's own result, and it stands the whole course back up — the cube toured, the
+two lineages joined, and the single axis deliberately left uncrossed, named as IE579's.

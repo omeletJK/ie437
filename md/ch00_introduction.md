@@ -85,7 +85,7 @@ Any decision problem sits somewhere along three independent axes. The course is 
 We traverse the cube in a deliberate order:
 
 ::: keypoint
-**static → dynamic**,  **model-based → data-driven**,  **single → multi-agent**.
+**static → dynamic**,  **model-based → data-driven**,  and then **interactive → offline**.
 :::
 :::
 
@@ -159,7 +159,7 @@ When other agents — also optimising, also learning — share the world, the ve
 
 ::: reveal
 ::: small
-This is the final move of the course (Lecture 12 dynamic games, Lecture 13 policy-based MARL), and the gateway to the follow-on course on game theory and multi-agent RL.
+This course stops before that axis. Crossing it is the subject of the follow-on course, ==IE579 Game Theory and Multi-Agent Reinforcement Learning== — and the cube above shows exactly which face it takes over. Naming the axis here is what makes the boundary of this course legible.
 :::
 :::
 
@@ -255,7 +255,7 @@ Walk the lectures and watch the ledger empty. The counter on the right is the ar
 - **Part II — the uncertain world.** Ch 2 Bayesian statistics (belief as a distribution) → Ch 3 Bayesian networks (structured belief, plus decisions) → Ch 4 Bayesian optimisation (act on an unknown function).
 - **Part III — design from data alone.** Ch 5–6 data-driven design optimisation: surrogate (forward) and generative (inverse).
 - **Part IV — the world that unfolds.** Ch 7 MDP & DP → Ch 8 value-based RL  ‖  Ch 9 optimal control → Ch 10 policy-based RL → Ch 11 model-based RL.
-- **Part V — many decision makers.** Ch 12 dynamic games → Ch 13 policy-based MARL.
+- **Part V — when you cannot even try.** Ch 12 offline RL: the same dynamic, data-driven cell, with the right to interact withdrawn.
 
 ::: reveal
 ::: small

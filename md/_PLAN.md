@@ -28,15 +28,16 @@ carries an idea a static picture cannot.
 | 9 | Optimal Control | model axis resets, lineage B | 4 | 17 | 42 | **done** |
 | 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | ~32 | to build |
 | 11 | Model-Based RL | the two lineages rejoin | 3 | 15 | ~28 | to build |
-| **12** | **Offline RL** *(new)* | interaction removed | 4 | — *(no tex)* | ~32 | to write |
-| **13** | Dynamic Games | **single → multi** | 3 | 16 | ~29 | to build |
-| ~~—~~ | ~~Policy-Based MARL~~ | — | — | 91 | — | **→ IE579** |
+| 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | ~32 | to build |
+| 11 | Model-Based RL | the two lineages rejoin | 3 | 15 | ~28 | to build |
+| **12** | **Offline RL** *(new, and the finale)* | interaction removed | 4 | — *(spec, no tex)* | ~34 | to build |
+| ~~—~~ | ~~Dynamic Games~~ · ~~MARL~~ | — | — | 107 | — | **→ IE579** |
 | A | Probability Review | toolbox, no cube position | 2 | 12 | ~22 | to build |
 
-About **380 slides and 40 widgets** across 15 files after the Option A revision. Ten are finished
-(Ch 0–9 except the unwritten Ch 12) — 392 slides and 42 widgets. Remaining: **Ch 10**, **Ch 11**,
-**Ch 12 Offline RL** (no tex — must be written from scratch), **Ch 13 Dynamic Games**, and the
-**probability appendix**.
+Thirteen files after the v3 revision: **Ch 0–12 plus the probability appendix**, with the whole
+multi-agent axis moved to IE579. Ten are finished — 390 slides and 42 widgets. Remaining:
+**Ch 10**, **Ch 11**, **Ch 12 Offline RL** (no tex; see `md/_source/ch12_spec.md`) and the
+**appendix**.
 
 **Sources, and what each one settles.** The spine fixes the narrative — cube position, crossings,
 handoff chain. The `tex` fixes the act structure, the central thesis and the equations. The

@@ -28,8 +28,7 @@ IE437.widget('given-ledger', function (host, opts) {
     { n: 9, t: 'Optimal control', s: { f: 'n', q: 'n', r: 'g', P: 'g', a: 'g' } },
     { n: 10, t: 'Policy-based RL', s: { f: 'n', q: 'n', r: 's', P: 's', a: 'g' } },
     { n: 11, t: 'Model-based RL', s: { f: 'n', q: 'n', r: 's', P: 'l', a: 'g' } },
-    { n: 12, t: 'Dynamic games', s: { f: 'n', q: 'n', r: 'g', P: 'g', a: 's' } },
-    { n: 13, t: 'Policy-based MARL', s: { f: 'n', q: 'n', r: 's', P: 's', a: 's' } }
+    { n: 12, t: 'Offline RL', s: { f: 'n', q: 's', r: 's', P: 's', a: 'g' } }
   ];
   var LABEL = {
     g: ['handed to us', INK, .85], u: ['uncertain — carry a belief', AMBER, 1],

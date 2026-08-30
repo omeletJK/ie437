@@ -28,9 +28,9 @@ IE437.widget('course-cube', function (host, opts) {
     { i: 0, j: 1, k: 0, lec: 'Lec 2–6', name: ['Model-free', 'Optimization'], at: 'left' },
     { i: 1, j: 1, k: 0, lec: 'Lec 8 · 10 · 11', name: ['Reinforcement Learning'], at: 'above' },
     { i: 0, j: 0, k: 1, lec: '', name: ['Static Game'], at: 'right', muted: 1 },
-    { i: 1, j: 0, k: 1, lec: 'Lec 12', name: ['Markov Game', 'Stochastic Game', 'Differential Game'], at: 'right' },
+    { i: 1, j: 0, k: 1, lec: 'IE579', name: ['Markov Game', 'Stochastic Game', 'Differential Game'], at: 'right', muted: 1 },
     { i: 0, j: 1, k: 1, lec: '', name: ['Learning in', 'Repeated Games'], at: 'above', muted: 1 },
-    { i: 1, j: 1, k: 1, lec: 'Lec 13', name: ['Multi-agent', 'Reinforcement Learning'], at: 'above-r' }
+    { i: 1, j: 1, k: 1, lec: 'IE579', name: ['Multi-agent', 'Reinforcement Learning'], at: 'above-r', muted: 1 }
   ];
   var vkey = function (v) { return v.i + ',' + v.j + ',' + v.k; };
 
@@ -41,7 +41,8 @@ IE437.widget('course-cube', function (host, opts) {
     { badges: [[0, 0, 0], [0, 1, 0]], axis: 'Y', from: [0, 0, 0], cap: '<b>②  Model-free optimization.</b> Up the <b>data-driven</b> axis: the objective <i>f</i> becomes unknown. <b>One</b> unknown to learn. <i>Lectures 2–6.</i>' },
     { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0]], axis: 'X', from: [0, 0, 0], cap: '<b>③  MDP and optimal control.</b> Along <b>multi stages</b>: decisions unfold in time, and the model is handed back. <i>Lectures 7 and 9.</i>' },
     { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]], axis: 'Y', from: [1, 0, 0], cap: '<b>④  Reinforcement learning.</b> The data-driven axis again — but now <b>two</b> unknowns, reward <i>r</i> and transition <i>P</i>. The count doubles. <i>Lectures 8, 10, 11.</i>' },
-    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0], [1, 0, 1], [1, 1, 1]], axis: 'Z', from: [1, 0, 0], cap: '<b>⑤⑥  Games, then multi-agent RL.</b> Across <b>multi agents</b>: the optimum becomes an <b>equilibrium</b>. <i>Lectures 12 and 13.</i>' }
+    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0], [1, 1, 0]], axis: null, cap: '<b>⑤  And then the interaction goes too.</b> Same cell, but the right to try is withdrawn: only a fixed log of someone else&rsquo;s decisions. <i>Lecture 12 — offline RL.</i>' },
+    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]], axis: 'Z', from: [1, 1, 0], dash: 1, cap: '<b>The far face is not ours.</b> Cross <b>multi agents</b> and the optimum becomes an <b>equilibrium</b> — the subject of <b>IE579</b>, Game Theory and Multi-Agent RL. This course stops at the near face.' }
   ];
   var step = 0, timer = null;
 

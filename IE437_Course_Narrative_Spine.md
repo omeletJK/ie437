@@ -1,5 +1,14 @@
 # IE437 — 강의 전체 서사 설계 문서
-### Data-Driven Decision Making and Control · 재저작 기준 문서 (Narrative Spine v2)
+### Data-Driven Decision Making and Control · 재저작 기준 문서 (Narrative Spine v3)
+
+> **v3 개정 — 다중 에이전트 축 전체를 IE579로 이관.**
+> v2는 Ch 12 Dynamic Games를 남겨 네 번째 전이(single→multi)를 건너게 했으나, IE437은 이제
+> **근접면(단일 에이전트)에서 끝난다.** Ch 13 Dynamic Games는 제거하고, **Ch 12 Offline RL이
+> 강의의 종결장**이 된다. 다중 에이전트 축은 0장에서 *이름을 붙이고 경계를 표시할 뿐* 건너지 않는다 —
+> 큐브의 원거리면이 IE579의 것임을 보여주는 것이 이 강의의 범위를 읽히게 만든다.
+>
+> 최종 구성: **0–12장 + 부록**, 13개 파일. 네 번째 전이 대신 **interactive → offline**이
+> 마지막 움직임이 된다.
 
 > **v2 개정 (Option A) — 다중에이전트 축소, Offline RL 신설.**
 > 근거: 원본 `0.Introduction.pdf` p.13–16이 같은 큐브 위에 **IE437은 단일에이전트 앞면**(①Optimization →
@@ -11,9 +20,8 @@
 > | 새 번호 | 장 | 비고 |
 > |---|---|---|
 > | 11 | Model-Based RL | 유지 |
-> | **12** | **Offline Reinforcement Learning** | **신설** · tex 소스 없음, 신규 집필 |
-> | **13** | **Dynamic Games & Equilibria** | 구 Ch 12 → 최종장. "방정식은 있으나 해가 없다 → IE579"로 종결 |
-> | — | ~~Policy-Based MARL~~ | IE579로 이관 (Ch 13 말미 horizon 1–2장만 잔류) |
+> | **12** | **Offline Reinforcement Learning** | **신설 · 최종장** · tex 소스 없음, 신규 집필 |
+> | — | ~~Dynamic Games~~ · ~~Policy-Based MARL~~ | **전부 IE579로 이관** |
 >
 > 총량 322 → 약 250 frames. 다중에이전트 비중 33% → 6%.
 > 큐브의 네 번째 전이(single→multi)는 Ch 13 하나로 그대로 건넌다.
@@ -209,8 +217,7 @@ Ch 7이 OR로 동적 의사결정을 풀었듯, 이제 *control theory*가 같�
 | 10 | Policy-Based RL | 최적제어 (동역학 f) | 동역학 빼앗으면? | trust-region 기계 (→ MARL) | B | ✅ |
 | 11 | Model-Based RL | 두 계보 | 모델을 학습해 되찾으면? | 학습모델+계획, bilevel 설계 | A+B | ✅ |
 | **12** | **Offline RL** | 학습모델(11), value·policy(8·10) | **상호작용을 빼앗으면?** | 보수적 가치·정책, OPE | A+B | ⬜ 신설 |
-| **13** | **Dynamic Games** | optimal control(9), offline(12) | 결정자가 둘 이상이면? | equilibrium 특성화(coupled HJB) → **IE579** | B' | ✅ tex 있음 |
-| ~~—~~ | ~~Policy-Based MARL~~ | — | — | **IE579로 이관** | B' | 이관 |
+| ~~—~~ | ~~Dynamic Games~~ · ~~MARL~~ | — | — | **전부 IE579로 이관** | B' | 이관 |
 | 0 | Introduction | (전체) | 이 모든 게 어떻게 한 지도에? | 큐브 + 두 계보 지도 | — | ✅ |
 | A | Probability Review | — | 도구 상자 | — | — | ✅ |
 
