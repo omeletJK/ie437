@@ -472,12 +472,27 @@ ${scripts}
 
 /* ---------------- the launcher page ------------------------------- */
 function writeIndex(chapters) {
-  const rows = chapters.sort((a, b) => a.ch - b.ch).map(c =>
-    `<a class="row" href="${esc(c.file)}">
-       <span class="n">${c.ch < 10 ? '0' + c.ch : c.ch}</span>
-       <span class="t"><b>${esc(c.title)}</b><i>${esc(c.subtitle || '')}</i></span>
+  const rows = chapters.sort((a, b) => a.ch - b.ch).map(c => {
+    const pdf = 'pdf/' + c.file.replace(/\.html$/, '.pdf');
+    const hasPdf = fs.existsSync(path.join(OUT, pdf));
+    /* what the student sees in their downloads folder */
+    const saveAs = 'IE437-' + (c.ch === 99 ? 'Appendix' : (c.ch < 10 ? '0' + c.ch : c.ch)) +
+      '-' + String(c.title).replace(/[^\w]+/g, '-').replace(/^-|-$/g, '') + '.pdf';
+    return `<div class="row">
+       <a class="open" href="${esc(c.file)}">
+         <span class="n">${c.ch === 99 ? 'A' : (c.ch < 10 ? '0' + c.ch : c.ch)}</span>
+         <span class="t"><b>${esc(c.title)}</b><i>${esc(c.subtitle || '')}</i></span>
+       </a>
        <span class="m">${c.n} slides</span>
-     </a>`).join('\n');
+       ${hasPdf
+         ? `<a class="dl" href="${esc(pdf)}" download="${esc(saveAs)}" title="Download ${esc(saveAs)}">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v8m0 0L4.8 5.8M8 9l3.2-3.2"
+                stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"
+                stroke-linejoin="round"/><path d="M2.5 11.5v2h11v-2" stroke="currentColor"
+                stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>PDF</a>`
+         : `<span class="dl off" title="Run node pdf.mjs to generate">PDF</span>`}
+     </div>`;
+  }).join('\n');
   const doc = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -493,15 +508,23 @@ h1{font:700 34px/1.2 'Inter',sans-serif;letter-spacing:-.9px;margin-bottom:8px}
 .eyebrow{display:flex;align-items:center;gap:12px;font:500 10.5px/1 'IBM Plex Mono',monospace;
   letter-spacing:.2em;text-transform:uppercase;color:rgba(242,243,245,.42);margin-bottom:22px}
 .eyebrow::before{content:"";width:22px;height:3px;background:#64748B}
-.row{display:grid;grid-template-columns:52px 1fr auto;gap:20px;align-items:baseline;
-  padding:20px 14px;border-top:1px solid rgba(242,243,245,.12);text-decoration:none;color:inherit;
-  transition:background .15s ease}
+.row{display:flex;align-items:center;gap:18px;padding:4px 14px;
+  border-top:1px solid rgba(242,243,245,.12)}
 .row:last-child{border-bottom:1px solid rgba(242,243,245,.12)}
 .row:hover{background:rgba(242,243,245,.055)}
+.open{display:grid;grid-template-columns:52px 1fr;gap:20px;align-items:baseline;flex:1;min-width:0;
+  padding:16px 0;text-decoration:none;color:inherit}
 .n{font:500 12px/1 'IBM Plex Mono',monospace;color:rgba(242,243,245,.34);letter-spacing:.08em}
 .t b{display:block;font-weight:600;font-size:18px;letter-spacing:-.3px}
 .t i{display:block;font-style:normal;color:rgba(242,243,245,.46);font-size:13.5px;margin-top:3px}
 .m{font:500 10.5px/1 'IBM Plex Mono',monospace;color:rgba(242,243,245,.3);letter-spacing:.1em;white-space:nowrap}
+.dl{display:inline-flex;align-items:center;gap:7px;flex:none;text-decoration:none;
+  font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;
+  color:rgba(242,243,245,.62);border:1px solid rgba(242,243,245,.22);border-radius:3px;
+  padding:9px 13px;transition:all .15s ease}
+.dl svg{width:14px;height:14px;flex:none}
+.dl:hover{color:#0A0B0D;background:#F2F3F5;border-color:#F2F3F5}
+.dl.off{opacity:.25;border-style:dashed;cursor:default}
 .foot{margin-top:38px;font:400 12.5px/1.7 'Inter',sans-serif;color:rgba(242,243,245,.34)}
 .foot code{font:500 12px/1 'IBM Plex Mono',monospace;background:rgba(242,243,245,.09);padding:2px 6px;border-radius:2px}
 </style></head><body><div class="wrap">
@@ -509,8 +532,9 @@ h1{font:700 34px/1.2 'Inter',sans-serif;letter-spacing:-.9px;margin-bottom:8px}
 <h1>Data-Driven Decision Making and Control</h1>
 <div class="sub">Interactive lecture notes. Each chapter is a single self-contained file — open, present, or hand it on by itself.</div>
 ${rows}
-<div class="foot">In a deck: <code>&rarr;</code> next reveal &middot; <code>&larr;</code> back &middot;
-<code>M</code> slide index &middot; <code>P</code> save as PDF &middot; <code>F</code> fullscreen &middot; <code>?</code> keys.</div>
+<div class="foot">Click a title to present it, or <b>PDF</b> to download that chapter as slides.<br>
+In a deck: <code>&rarr;</code> next reveal &middot; <code>&larr;</code> back &middot;
+<code>M</code> slide index &middot; <code>P</code> print &middot; <code>F</code> fullscreen &middot; <code>?</code> keys.</div>
 </div></body></html>
 `;
   fs.writeFileSync(path.join(OUT, 'index.html'), doc);

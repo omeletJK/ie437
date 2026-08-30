@@ -18,8 +18,10 @@ deck/        the shared engine, reused by every chapter
   widgets/       interactive simulators, one file per widget
 build.mjs    md  -> html
 pdf.mjs      html -> pdf   (headless Chromium, 1280x720 pages)
-html/        generated — one SELF-CONTAINED file per chapter, plus index.html
-pdf/         generated — one PDF per chapter
+html/        generated — THE FOLDER YOU PUBLISH
+  index.html     the chapter launcher, with a PDF download button per chapter
+  chNN_*.html    one self-contained deck per chapter
+  pdf/           one PDF per chapter, linked from the launcher
 ```
 
 ## Use
@@ -29,12 +31,20 @@ npm install --workspaces=false     # once
 node build.mjs ch08                # rebuild one chapter (ch00, ch01, ch08 exist)
 node build.mjs --all               # rebuild everything, and html/index.html
 node build.mjs --all --linked      # dev build: reference deck/ instead of inlining
-node pdf.mjs  --all                # export the PDFs
-open html/index.html               # pick a chapter, or open a chapter file directly
+node pdf.mjs  --all                # export the PDFs into html/pdf/
+open html/index.html               # pick a chapter, or download its PDF
 ```
 
 In the deck: `→`/space next reveal, `←` back, `↑ ↓` skip a slide, `M` index, `P` save as PDF,
 `F` fullscreen, `?` key help.
+
+## Giving it to students
+
+Publish the whole `html/` folder — anywhere that serves static files. It contains the launcher, the
+fourteen decks and the PDFs, and nothing outside it is needed. On the launcher each chapter has a
+**PDF** button that saves that chapter's slides; served over http the file arrives named
+`IE437-08-Value-Based-Reinforcement-Learning.pdf`, and opened straight off a disk it keeps its raw
+filename instead, because browsers ignore a download name on `file://` URLs.
 
 ## One file per chapter
 

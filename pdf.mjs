@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* ============================================================
-   IE437 · pdf.mjs  —  html/*.html  →  pdf/*.pdf   (1280x720 pages)
+   IE437 · pdf.mjs  —  html/*.html  →  html/pdf/*.pdf   (1280x720 pages)
    Headless Chromium renders exactly what the browser's
    "Print -> Save as PDF" would produce, with every reveal opened
    and every widget frozen in its finished state.
@@ -15,7 +15,7 @@ import { chromium } from 'playwright';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const HTML = path.join(ROOT, 'html');
-const OUT = path.join(ROOT, 'pdf');
+const OUT = path.join(ROOT, 'html', 'pdf');   // html/ is the folder you publish
 
 const args = process.argv.slice(2);
 let files = fs.readdirSync(HTML).filter(f => f.endsWith('.html') && f !== 'index.html');

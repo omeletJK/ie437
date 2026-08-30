@@ -5,7 +5,7 @@ them by hand is pointless because the next build overwrites them. To change a le
 its `.md` here and run `node build.mjs chNN`.
 
 ```
-md/chNN_name.md  ──build.mjs──▶  html/chNN_name.html  ──pdf.mjs──▶  pdf/chNN_name.pdf
+md/chNN_name.md  ──build.mjs──▶  html/chNN_name.html  ──pdf.mjs──▶  html/pdf/chNN_name.pdf
                                         └── or press P in the browser
 ```
 
@@ -222,7 +222,7 @@ So a slide fills its canvas evenly without any per-slide tuning. Supporting this
 node build.mjs ch08              # one chapter
 node build.mjs --all            # every chapter, plus the html/index.html launcher
 node build.mjs --all --linked   # dev build: reference deck/ rather than inlining it
-node pdf.mjs  ch08              # html -> pdf (1280x720 pages, all reveals opened)
+node pdf.mjs  ch08              # html -> html/pdf (1280x720 pages, all reveals opened)
 ```
 
 Each chapter builds to **one self-contained file**: deck.css, deck.js, the widgets it uses,
