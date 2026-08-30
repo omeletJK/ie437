@@ -1,0 +1,414 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+%======================================================
+% Theme (matches Lectures 7/8/10/12)
+%======================================================
+\usetheme[progressbar=frametitle, sectionpage=progressbar, subsectionpage=progressbar, numbering=fraction, block=fill]{metropolis}
+
+\definecolor{mLightBrown}{HTML}{4D4D4D}
+\definecolor{mMediumBrown}{HTML}{2C2C2A}
+\definecolor{mDarkBrown}{HTML}{1A1A19}
+\definecolor{mDarkTeal}{HTML}{0F6E56}
+\definecolor{mDarkRed}{HTML}{B03A2E}
+\setbeamercolor{normal text}{fg=mDarkBrown}
+\setbeamercolor{alerted text}{fg=mDarkTeal}
+\setbeamercolor{frametitle}{bg=mDarkBrown}
+\setbeamercolor{progress bar}{fg=mDarkTeal, bg=mDarkTeal!20}
+
+\definecolor{mPaleBg}{HTML}{F4F3EE}
+\setbeamercolor{block title}{bg=mDarkBrown!10, fg=mDarkBrown}
+\setbeamercolor{block body}{bg=mPaleBg, fg=mDarkBrown}
+\newcommand{\hl}[1]{\textcolor{mDarkTeal}{#1}}
+
+%======================================================
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{cancel}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,shapes.geometric,decorations.pathmorphing}
+
+%======================================================
+\newcommand{\paper}[1]{\textcolor{mLightBrown}{\small\textit{(#1)}}}
+
+% --- the recurring four-question strip ---------------
+\newcommand{\qcur}{0}
+\newcommand{\qnode}[4]{%
+\ifnum#4=\qcur
+ \node[draw=mDarkTeal, fill=mDarkTeal!12, thick, rounded corners=1pt, minimum width=3.0cm, minimum height=0.52cm, font=\tiny\bfseries, text=mDarkBrown] (#2) at (#1,0) {#3};%
+\else
+ \node[draw=mLightBrown!45, rounded corners=1pt, minimum width=3.0cm, minimum height=0.52cm, font=\tiny, text=mLightBrown] (#2) at (#1,0) {#3};%
+\fi}
+\newcommand{\qstrip}[1]{\renewcommand{\qcur}{#1}%
+\begin{center}\begin{tikzpicture}
+\qnode{0}{q1}{Q1 Same problem?}{1}
+\qnode{3.7}{q2}{Q2 HJB?}{2}
+\qnode{7.4}{q3}{Q3 LQR?}{3}
+\qnode{11.1}{q4}{Q4 Two views?}{4}
+\draw[-{Stealth}, mLightBrown!60] (q1.east) -- (q2.west);
+\draw[-{Stealth}, mLightBrown!60] (q2.east) -- (q3.west);
+\draw[-{Stealth}, mLightBrown!60] (q3.east) -- (q4.west);
+\end{tikzpicture}\end{center}}
+
+%======================================================
+\title{Optimal Control \& Planning}
+\subtitle{The control-theoretic origin of sequential decision-making}
+\author{Jinkyoo Park}
+\institute{KAIST}
+\date{\textit{Lecture 9 --- The same dynamic problem, solved by the second tradition}}
+
+%======================================================
+\begin{document}
+%======================================================
+
+\maketitle
+
+%==========================================================
+\section{The handoff --- the second parent}
+%==========================================================
+
+\begin{frame}{Where we are --- the other column of the map}
+\vspace{2pt}
+\begin{center}\footnotesize
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{r|c|c}
+ & \textbf{OR / Dynamic Programming} & \textbf{Control Theory} \\
+\hline
+\textbf{Model-based (origin)}  & MDP \& DP \scriptsize(Lec.\ 7) & \cellcolor{mDarkTeal!20}\textbf{Optimal Control} \scriptsize(\alert{Lec.\ 9})\\
+\hline
+\textbf{Data-driven (extension)} & Value-Based RL \scriptsize(Lec.\ 8) & Policy-Based RL \scriptsize(Lec.\ 10)\\
+\end{tabular}
+\end{center}
+\smallskip
+
+Sequential decision-making has \alert{two parents}. Lecture 7 gave the first: operations research, dynamic programming, the Bellman equation over discrete states. This lecture introduces the second: \alert{control theory}.
+\smallskip
+
+\pause
+This is \emph{not} a continuation of value-based RL. It is an independent root. It solves the \alert{same dynamic decision problem} as Lecture 7 --- but in the language of differential equations, continuous state and control, and feedback laws. Lecture 10 will then do to this lecture exactly what Lecture 8 did to Lecture 7: \alert{delete the model and learn from data}.
+\end{frame}
+
+\begin{frame}{Same problem, different dialect}
+The fixed point of this lecture, in one line:
+\begin{center}\large
+\alert{Control theory and dynamic programming are two dialects for one dynamic optimum.}
+\end{center}
+\medskip
+
+\pause
+Where Lecture 7 had a stochastic transition over discrete states, control theory studies a (typically continuous, often deterministic) system driven by a control:
+\[
+\dot x(t) = f\big(x(t), u(t)\big) \quad\text{or}\quad x_{t+1} = f(x_t, u_t), \qquad \text{minimize } \int g\,dt + q(x_T).
+\]
+\medskip
+
+\pause
+The goal is identical to Lecture 7's: a \alert{feedback law} $u = \gamma(t,x)$ --- the best control at every state and time. The differences are of \emph{tradition}, not of \emph{substance}:
+\begin{itemize}\setlength\itemsep{1pt}
+\item discrete $\to$ \textbf{continuous} state and action;
+\item probabilistic transition $T$ $\to$ \textbf{differential} dynamics $f$;
+\item sum $\to$ \textbf{integral}; $\max$-backup $\to$ a \textbf{PDE} (the HJB equation).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The translation table --- Lecture 7 in continuous time}
+Every object of dynamic programming has a control-theoretic twin.
+\medskip
+\begin{center}\scriptsize\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{l|l|l}
+\textbf{Lecture 7 (OR / DP)} & \textbf{Lecture 9 (Control)} & \textbf{The shift} \\
+\hline
+transition $T(s,a,s')$ & dynamics $\dot x = f(x,u)$ & probabilistic $\to$ differential \\
+value $V(s)$, $Q(s,a)$ & cost-to-go $V(t,x)$ & state $\to$ state-and-time \\
+policy $\pi(s)$ & feedback law $u=\gamma(t,x)$, $u=Kx$ & a rule, now continuous \\
+Bellman optimality (sum, $\max$) & HJB equation (PDE, $\min$) & discrete backup $\to$ PDE \\
+value iteration / policy iteration & Riccati / Pontryagin & solver, not sampler \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+Read it as one claim: \alert{HJB is the Bellman optimality equation made infinitesimal.} Lecture 7's intuition transfers wholesale; only the calculus changes. Keep the last column in mind --- it is the seam where, in Lecture 10, samples will replace the solver.
+\end{frame}
+
+\begin{frame}{The roadmap --- four questions}
+One question per Act. This strip returns at every transition.
+\qstrip{0}
+\medskip
+\begin{itemize}\setlength\itemsep{3pt}
+\item \textbf{Q1 --- Is this really the same problem?} Discrete-time optimal control \emph{is} Lecture 7's DP, deterministic and continuous-valued.
+\item \textbf{Q2 --- What is Bellman in continuous time?} The \alert{Hamilton--Jacobi--Bellman} PDE --- powerful, and usually unsolvable. \paper{Bellman}
+\item \textbf{Q3 --- When \emph{can} we solve it?} The one closed form: \alert{LQR} and the Riccati equation. \paper{Kalman, 1960}
+\item \textbf{Q4 --- Is there another way in?} \alert{Pontryagin's minimum principle} --- the trajectory view. \paper{Pontryagin, 1956}
+\end{itemize}
+\end{frame}
+
+%==========================================================
+\section{Act 1 --- it is the same problem}
+%==========================================================
+
+\begin{frame}{Discrete-time optimal control --- DP, deterministic}
+\qstrip{1}
+\medskip
+Choose a control sequence to minimize an accumulated cost subject to deterministic dynamics:
+\[
+L(u) = \sum_{k=0}^{K-1} g_k(x_k,u_k) + g_K(x_K), \qquad x_{k+1} = f_k(x_k,u_k), \quad u_k = \gamma_k(x_k).
+\]
+\medskip
+
+\pause
+Define the cost-to-go $V(k,x)$. The \alert{principle of optimality} --- identical to Lecture 7's --- gives the recursion:
+\[
+V(k,x) = \min_{u_k}\Big\{\, g_k(x,u_k) + V\big(k{+}1,\, f_k(x,u_k)\big)\,\Big\}.
+\]
+\medskip
+
+\pause
+This is Lecture 7's Bellman backup with two cosmetic changes: the expectation $\sum_{s'}T[\cdots]$ collapses to a single deterministic successor $f_k(x,u_k)$, and states/controls are continuous. \alert{The logic is unchanged} --- solve backward in time, optimal sub-plans compose into an optimal plan. The two traditions agree here exactly; they diverge only when we pass to continuous time.
+\end{frame}
+
+%==========================================================
+\section{Act 2 --- Bellman made infinitesimal: HJB}
+%==========================================================
+
+\begin{frame}{The continuous-time problem --- and the HJB equation}
+\qstrip{2}
+\medskip
+Now time is continuous:
+\[
+L(u) = \int_0^T g\big(t,x(t),u(t)\big)\,dt + q\big(T,x(T)\big), \qquad \dot x = f(t,x,u),\; x(0)=x_0.
+\]
+Let $V(t,x)$ be the cost-to-go. Applying the principle of optimality over an infinitesimal step yields the \alert{Hamilton--Jacobi--Bellman} equation:
+\[
+-\,\partial_t V(t,x) = \min_{u\in U}\Big\{\, \partial_x V(t,x)\, f(t,x,u) + g(t,x,u)\,\Big\}, \qquad V(T,x)=q(T,x).
+\]
+\medskip
+
+\pause
+The optimal feedback reads off pointwise:
+\[
+u^*(t) = \arg\min_{u\in U}\Big\{\, \partial_x V(t,x)\, f(t,x,u) + g(t,x,u)\,\Big\}.
+\]
+\begin{center}\large
+This is the Bellman optimality equation --- now a nonlinear PDE for $V$.
+\end{center}
+\end{frame}
+
+\begin{frame}{HJB --- sufficient, global, and (usually) unsolvable}
+\begin{itemize}\setlength\itemsep{2pt}
+\item \textbf{Sufficient \& global.} A smooth $V$ solving HJB over the whole state space \emph{certifies} optimality and yields feedback $\gamma(t,x)$ --- the best action at every $(t,x)$, credible from any state.
+\item \textbf{Extends to stochastic} control with barely a change (an extra second-derivative term).
+\end{itemize}
+\medskip
+
+\pause
+But the cost is severe:
+\begin{center}\large
+\alert{HJB is a nonlinear PDE over the entire state space.}
+\end{center}
+It needs the model $f,g$, assumes $V$ is differentiable, and does not survive high dimensions --- the value field over $x$ is exponentially large (the same curse Lecture 7's table faced, now continuous).
+\medskip
+
+\pause
+So HJB is the \emph{characterization}, rarely the \emph{computation}. It is exactly solvable in essentially one case --- the case every control engineer knows cold.
+\end{frame}
+
+%==========================================================
+\section{Act 3 --- the one closed form: LQR}
+%==========================================================
+
+\begin{frame}{LQR --- linear dynamics, quadratic cost}
+\qstrip{3}
+\medskip
+The harmonic oscillator of control:
+\[
+\dot x = Ax + Bu, \qquad J = \int_0^T \big(x^\top Q x + u^\top R u\big)\,dt + x_T^\top Q_f x_T.
+\]
+\textbf{Ansatz} $V(t,x) = x^\top P_t\, x$. Substitute into HJB; the inner minimization is now a simple quadratic in $u$:
+\[
+u^*(t) = \underbrace{-R^{-1}B^\top P_t}_{\textstyle =\,-K_t}\, x(t), \qquad
+-\dot P_t = A^\top P_t + P_t A - P_t B R^{-1} B^\top P_t + Q.
+\]
+\medskip
+
+\pause
+The last is the \alert{Riccati differential equation}. Infinite horizon $\Rightarrow$ $P$ constant, solving the algebraic Riccati equation; the controller becomes a fixed gain:
+\begin{center}\large
+\alert{the optimal controller is a matrix: $u^* = -Kx$.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Why LQR is the cornerstone}
+LQR is not just \emph{a} solvable case --- it is the workhorse the rest of control (and much of RL) leans on.
+\medskip
+\begin{itemize}\setlength\itemsep{2pt}
+\item \textbf{Linear feedback, globally optimal} --- no iteration, no approximation, for the LQ problem.
+\item \textbf{The local model of everything.} Any smooth nonlinear problem, linearized about a trajectory with a quadratic cost approximation, becomes LQR --- this is \alert{iLQR / DDP}, the backbone of trajectory optimization and model-based planning.
+\item \textbf{The target the data-driven world reaches for.} In Lecture 10, DDPG's learned actor $\mu_\theta(s)$ plays the role of this gain $K$ --- when $A,B$ are \emph{unknown}.
+\end{itemize}
+\medskip
+
+\pause
+\begin{center}\large
+Hold $u = Kx$ in view: it is the closed-form answer that \alert{policy gradient learns to approximate blind.}
+\end{center}
+\end{frame}
+
+%==========================================================
+\section{Act 4 --- the other view: Pontryagin}
+%==========================================================
+
+\begin{frame}{Pontryagin's minimum principle --- follow one trajectory}
+\qstrip{4}
+\medskip
+HJB is the \emph{dynamic-programming} (Eulerian) view: carry a value field over all states. There is a second, \emph{Lagrangian} view: enforce the dynamics as a constraint along a single optimal trajectory.
+\medskip
+
+Form the \alert{Hamiltonian} with a costate (Lagrange multiplier) $\lambda(t)$:
+\[
+H(t,x,u,\lambda) = g(t,x,u) + \lambda^\top f(t,x,u).
+\]
+\pause
+Along the optimum, necessary conditions hold:
+\[
+\dot x^* = \partial_\lambda H = f, \qquad
+\dot\lambda^* = -\,\partial_x H, \qquad
+\lambda(T) = \partial_x q\big(T,x^*(T)\big), \qquad
+u^* = \arg\min_{u\in U} H(t,x^*,u,\lambda^*).
+\]
+\medskip
+
+\pause
+Dynamic optimization is reduced to a \alert{static} minimization of $H$ at each instant --- the same ``freeze time, optimize pointwise'' move that recurs throughout the course. The costate $\lambda$ is the trajectory-space shadow of $\partial_x V$.
+\end{frame}
+
+\begin{frame}{HJB vs.\ Pontryagin --- two solvers, one optimum}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|l|l}
+ & \textbf{HJB (dynamic programming)} & \textbf{Pontryagin (minimum principle)} \\
+\hline
+View & Eulerian: a value \emph{field} $V(t,x)$ & Lagrangian: one \emph{trajectory} $x^*(t)$ \\
+Logic & \alert{sufficient}, over all $(t,x)$ & \alert{necessary}, along the optimum \\
+Output & feedback law $\gamma(t,x)$ & open-loop $u^*(t)$ (a costate ODE) \\
+Math & nonlinear \alert{PDE} & two-point boundary-value \alert{ODE} \\
+Stochastic & extends naturally & does not, in general \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+Feedback ($\gamma(t,x)$) beats an open-loop plan ($u^*(t)$): it stays valid from \emph{any} state you actually reach, not just the one you predicted. That preference --- a \emph{rule}, not a fragile pre-printed plan --- is the same one Lecture 7 expressed, and the one reinforcement learning will inherit.
+\medskip
+\pause
+{\footnotesize\textcolor{mLightBrown}{Pontryagin's machinery --- Lagrangian, costate, trajectory optimization --- returns in Lecture 10 (REINFORCE's trajectory view) and Lecture 11 (guided policy search imitating an iLQR teacher).}}
+\end{frame}
+
+%==========================================================
+\section{Closing}
+%==========================================================
+
+\begin{frame}{Where we are --- both parents on the table}
+\vspace{2pt}
+\begin{center}\footnotesize
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{r|c|c}
+ & \textbf{OR / Dynamic Programming} & \textbf{Control Theory} \\
+\hline
+\textbf{Model-based} & MDP \& DP \;{\scriptsize Lec.\ 7 \checkmark} & \cellcolor{mDarkTeal!15}\textbf{Optimal Control} \;{\scriptsize Lec.\ 9 \checkmark}\\
+\hline
+\textbf{Data-driven} & Value-Based RL \;{\scriptsize Lec.\ 8 \checkmark} & Policy-Based RL \;{\scriptsize Lec.\ 10 $\to$}\\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+The two model-based origins are now both on the table --- and they are \alert{the same dynamic optimum in two dialects}. We have HJB (the characterization), LQR (the one closed form), and Pontryagin (the trajectory view). Each is exact. \alert{Each needed the model $f$.}
+\medskip
+\begin{center}\large
+Delete $f$ --- and this column becomes \alert{policy-based RL} (Lecture 10).
+\end{center}
+\end{frame}
+
+\begin{frame}{Closing --- the one sentence}
+\vfill
+\begin{center}\large
+Lecture 7 solved the dynamic optimum with the tools of operations research.\\[8pt]
+Lecture 9 solved \alert{the same optimum} with the tools of control ---\\[4pt]
+a value field (HJB), a closed form (LQR),\\[4pt]
+and a trajectory law (Pontryagin).
+\end{center}
+\vfill
+\pause
+\footnotesize
+Two traditions, one destination: a feedback rule $u=\gamma(t,x)$ that is best from wherever the system lands. Both leaned entirely on knowing the dynamics. Lecture 10 takes the dynamics away --- and learns the same controller from data.
+\end{frame}
+
+\begin{frame}[standout]
+Questions?
+\end{frame}
+
+%==========================================================
+\appendix
+%==========================================================
+
+\begin{frame}{Backup 1 --- the HJB equation, derived in one step}
+\footnotesize
+Start from Bellman's optimality principle over a short interval $\delta$:
+\[
+V(t,x) = \min_{u\in U}\Big\{\, g(t,x,u)\,\delta + V\big(t+\delta,\, x + f(t,x,u)\,\delta\big)\,\Big\}.
+\]
+Taylor-expand the second term:
+\[
+V\big(t+\delta, x + f\delta\big) = V(t,x) + \partial_t V(t,x)\,\delta + \partial_x V(t,x)\, f(t,x,u)\,\delta + o(\delta).
+\]
+Substitute, cancel $V(t,x)$, divide by $\delta$, let $\delta\to0$:
+\[
+0 = \min_{u\in U}\Big\{ g(t,x,u) + \partial_t V + \partial_x V\, f(t,x,u)\Big\}
+\;\Rightarrow\;
+-\partial_t V = \min_{u} \big\{\partial_x V\, f + g\big\}. \qquad\blacksquare
+\]
+\medskip
+The minimizing $u$ at each $(t,x)$ is the optimal feedback --- a static pointwise minimization embedded in a PDE for $V$. Compare Lecture 7, Backup 1: the same derivation with $\delta\to0$ instead of a one-step sum.
+\end{frame}
+
+\begin{frame}{Backup 2 --- LQR: the Riccati derivation}
+\footnotesize
+System $\dot x = Ax+Bu$, cost density $g = x^\top Q x + u^\top R u$. Guess $V(t,x)=x^\top P_t x$, so $\partial_x V = 2P_t x$, $\partial_t V = x^\top \dot P_t x$. HJB:
+\[
+-x^\top \dot P_t x = \min_u\Big\{\, 2 x^\top P_t (Ax + Bu) + x^\top Q x + u^\top R u \,\Big\}.
+\]
+\textbf{Minimize over $u$:} $2B^\top P_t x + 2R u = 0 \Rightarrow u^* = -R^{-1}B^\top P_t\, x$.
+\medskip
+
+Substitute back; matching $x^\top(\cdot)x$ for all $x$ yields the \alert{Riccati differential equation}
+\[
+-\dot P_t = A^\top P_t + P_t A - P_t B R^{-1} B^\top P_t + Q.
+\]
+Infinite horizon: $\dot P\to0$, giving the \alert{algebraic Riccati equation} $A^\top P + PA - PBR^{-1}B^\top P + Q = 0$, unique PSD solution $\Rightarrow$ constant gain $K = R^{-1}B^\top P$, $u^* = -Kx$.
+\medskip
+\textbf{Discrete-time analogue:} $K = (R + B^\top P B)^{-1} B^\top P A$, with $P$ the fixed point of the discrete Riccati recursion --- the form a learned critic implicitly targets in Lecture 10.
+\end{frame}
+
+\begin{frame}{Backup 3 --- Euler--Lagrange to Pontryagin}
+\footnotesize
+Adjoin the dynamics to the cost with a costate $\lambda(t)$, forming the Hamiltonian $H = g + \lambda^\top f$:
+\[
+\bar J = \int_0^T \big[ H(t,x,u,\lambda) - \lambda^\top \dot x \big]\,dt + q(x(T)).
+\]
+Perturb the optimal control $u^* \to u^* + \epsilon\, p(t)$, require $\tfrac{d\bar J}{d\epsilon}\big|_{0}=0$ for all admissible $p$. Integrating by parts and collecting terms gives the necessary conditions:
+\[
+\dot x^* = \partial_\lambda H = f, \qquad
+\dot\lambda^* = -\partial_x H, \qquad
+\lambda(T) = \partial_x q, \qquad
+\partial_u H = 0.
+\]
+\textbf{Euler--Lagrange $\to$ minimum principle.} Euler--Lagrange assumes $u$ is interior and the stationarity $\partial_u H = 0$ holds. Pontryagin generalizes to a constrained set $u\in U$: stationarity is replaced by the global condition $u^* = \arg\min_{u\in U} H$, which remains valid at the boundary of $U$ (bang-bang controls, saturation).
+\medskip
+\textbf{Why we keep it.} The minimum principle is the standard way to \emph{state} equilibrium (necessary) conditions for dynamic games --- which is exactly how it is used in Lectures 11--12.
+\end{frame}
+
+\end{document}

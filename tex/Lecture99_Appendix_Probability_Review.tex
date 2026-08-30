@@ -1,0 +1,282 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+\usetheme[progressbar=frametitle, sectionpage=progressbar, subsectionpage=progressbar, numbering=fraction, block=fill]{metropolis}
+
+\definecolor{mLightBrown}{HTML}{4D4D4D}
+\definecolor{mMediumBrown}{HTML}{2C2C2A}
+\definecolor{mDarkBrown}{HTML}{1A1A19}
+\definecolor{mDarkTeal}{HTML}{0F6E56}
+\definecolor{mDarkRed}{HTML}{B03A2E}
+\setbeamercolor{normal text}{fg=mDarkBrown}
+\setbeamercolor{alerted text}{fg=mDarkTeal}
+\setbeamercolor{frametitle}{bg=mDarkBrown}
+\setbeamercolor{progress bar}{fg=mDarkTeal, bg=mDarkTeal!20}
+\definecolor{mPaleBg}{HTML}{F4F3EE}
+\setbeamercolor{block title}{bg=mDarkBrown!10, fg=mDarkBrown}
+\setbeamercolor{block body}{bg=mPaleBg, fg=mDarkBrown}
+\newcommand{\hl}[1]{\textcolor{mDarkTeal}{#1}}
+
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{cancel}\usepackage{bm}\usepackage{booktabs}\usepackage{array}
+\usepackage{xcolor}\usepackage{colortbl}\usepackage{multirow}\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,shapes.geometric,decorations.pathmorphing}
+
+\newcommand{\paper}[1]{\textcolor{mLightBrown}{\small\textit{(#1)}}}
+\newcommand{\usedin}[1]{\hfill{\footnotesize\textcolor{mDarkTeal}{$\hookrightarrow$ used in #1}}}
+
+\title{Probability Review}
+\subtitle{The toolbox beneath the course --- and where each tool is used}
+\author{Jinkyoo Park}
+\institute{KAIST}
+\date{\textit{Appendix --- supplementary material}}
+
+\begin{document}
+
+\maketitle
+
+%==========================================================
+\section{Orientation}
+%==========================================================
+
+\begin{frame}{Why an appendix --- the few facts everything rested on}
+Every method this term leaned on a small set of probability facts. This appendix collects them in one place, and --- more usefully --- \alert{points to where each was used}.
+\medskip
+
+\pause
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|l}
+\textbf{Tool} & \textbf{Where it carried the weight} \\
+\hline
+expectation \& its laws & returns/values (Ch 7--11), baselines (Ch 10) \\
+Bayes' rule & belief updating (Ch 2--4) \\
+the multivariate Gaussian & \alert{Gaussian processes} (Ch 4), LQR noise (Ch 9) \\
+Monte Carlo estimation & sample-based RL (Ch 8, 10) \\
+KL divergence \& entropy & VAEs (Ch 6), trust regions (Ch 10), QRE (Ch 13) \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+\begin{center}\large
+\alert{Statistics infers the causes that generated the observed data:} model $\theta \to$ data $y$.
+\end{center}
+The recurring picture: a model with parameters $\theta$ produces data $y$; inference runs the arrow backward.
+\end{frame}
+
+%==========================================================
+\section{Expectation and its laws}
+%==========================================================
+
+\begin{frame}{Random variables --- mean, variance, and a function's mean}
+For a random variable $U$ with density $p$, and any $g:\mathbb{R}\to\mathbb{R}$:
+\[
+\mathbb{E}[U] = \int u\,p(u)\,du, \qquad
+\mathbb{E}[g(U)] = \int g(u)\,p(u)\,du, \qquad
+\mathrm{var}(U) = \mathbb{E}\big[(U-\mathbb{E}[U])^2\big] = \mathbb{E}[U^2]-\mathbb{E}[U]^2.
+\]
+\medskip
+
+\pause
+\textbf{Linearity} is the property used most often: $\mathbb{E}[aU+bV] = a\,\mathbb{E}[U]+b\,\mathbb{E}[V]$, regardless of dependence. \usedin{every return, every value function}
+\medskip
+
+\pause
+Almost every objective in the course is an expectation: the return $\mathbb{E}_\pi[\sum_t\gamma^t r_t]$ (Ch 7--11), the acquisition $\mathbb{E}[\max(0, f-f^{\max})]$ (Ch 4), the ELBO $\mathbb{E}_{q}[\log p(x\mid z)]$ (Ch 6), the policy objective $\mathbb{E}_\tau[R(\tau)]$ (Ch 10). Manipulating expectations \emph{is} the technical core of the course.
+\end{frame}
+
+\begin{frame}{The two laws that recur --- total expectation and total variance}
+For random variables $U, V$:
+\[
+\mathbb{E}[U] = \mathbb{E}_V\big[\,\mathbb{E}[U\mid V]\,\big]
+\qquad\text{(total expectation)}
+\]
+\[
+\mathrm{var}(U) = \underbrace{\mathbb{E}_V\big[\mathrm{var}(U\mid V)\big]}_{\text{within-condition}} + \underbrace{\mathrm{var}\big(\mathbb{E}[U\mid V]\big)}_{\text{between-condition}}
+\qquad\text{(total variance)}
+\]
+\medskip
+
+\pause
+\textbf{Law of total expectation.} Average the conditional averages. This is the engine of the \alert{Bellman equation}: the value of a state is the expected reward plus the expected value of the next state --- $\mathbb{E}[\text{return}] = \mathbb{E}_{s'}[\mathbb{E}[\text{return}\mid s']]$. \usedin{Ch 7--11}
+\medskip
+
+\pause
+\textbf{Law of total variance.} Total uncertainty splits into ``noise within each condition'' plus ``spread across conditions.'' This is the lens behind \alert{baselines and advantage} (Ch 10): subtracting $\mathbb{E}[U\mid V]$ removes the explained part, shrinking variance without touching the mean. \usedin{variance reduction, Ch 10}
+\end{frame}
+
+%==========================================================
+\section{Bayes and the two views}
+%==========================================================
+
+\begin{frame}{Bayes' rule --- and two ways to read uncertainty}
+\[
+p(\theta\mid \text{data}) = \frac{p(\text{data}\mid\theta)\,p(\theta)}{p(\text{data})} \propto p(\text{data}\mid\theta)\,p(\theta).
+\]
+\usedin{Ch 2, 3, 4}
+\medskip
+
+\pause
+The same data supports two readings of ``uncertainty'':
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|l}
+\textbf{Frequentist} & \textbf{Bayesian} \\
+\hline
+$\theta$ fixed, data random & data fixed, $\theta$ random \\
+variability \emph{in the data} given $\theta$ & variability \emph{in $\theta$} given the data \\
+confidence interval: $\theta\in\mathrm{CI}$ or not & credible region: $\Pr(\theta\in\mathrm{CR})=0.95$ \\
+``95\% of repeated intervals cover $\theta$'' & ``95\% chance $\theta$ is in this region'' \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+The distinction is not pedantry: it is exactly the MLE-vs-MAP / point-vs-distribution choice of Lecture 2, and the reason a Gaussian process reports a credible \emph{band}, not a confidence \emph{statement}.
+\end{frame}
+
+%==========================================================
+\section{The multivariate Gaussian --- the workhorse}
+%==========================================================
+
+\begin{frame}{The multivariate normal --- definition}
+The single most-used distribution in the course. A random vector $Y=(Y_1,\dots,Y_k)$ is jointly Gaussian if
+\[
+p(y) = \mathcal{N}(y\mid \mu, \Sigma) = \frac{1}{\sqrt{(2\pi)^k|\Sigma|}}\exp\!\Big(-\tfrac12 (y-\mu)^\top \Sigma^{-1}(y-\mu)\Big),
+\]
+with mean vector $\mathbb{E}[Y]=\mu$ and covariance $\mathrm{var}(Y)=\Sigma\succeq0$, $\Sigma_{ij}=\mathrm{cov}(Y_i,Y_j)$.
+\medskip
+
+\pause
+\begin{center}\large
+Four properties make it the backbone of \alert{Gaussian-process regression} (Ch 4).
+\end{center}
+\medskip
+Each property below is a one-line fact with an outsized payoff. Together they are why GP inference is closed-form, and why so much of the course can carry uncertainty analytically rather than by sampling.
+\end{frame}
+
+\begin{frame}{Properties 1 \& 2 --- independence and linearity}
+\textbf{Property 1 --- uncorrelated $\Rightarrow$ independent (for Gaussians).}
+Setting $\Sigma_{ij}=0$ for $i\ne j$ makes $\Sigma$ (and $\Sigma^{-1}$) diagonal, so the joint density factors into marginals:
+\[
+\Sigma \text{ diagonal} \;\Rightarrow\; p(y) = \prod_i \mathcal{N}(y_i\mid \mu_i, \sigma_{ii}).
+\]
+For general random variables, uncorrelated does \emph{not} imply independent --- the Gaussian is special. \usedin{i.i.d.\ noise models}
+\medskip
+
+\pause
+\textbf{Property 2 --- a linear transform of a Gaussian is Gaussian.}
+For a full-rank $A$,
+\[
+Z = AY \;\sim\; \mathcal{N}\big(A\mu,\; A\Sigma A^\top\big).
+\]
+(Both moments follow from linearity: $\mathbb{E}[AY]=A\mu$, $\mathrm{cov}(AY)=A\Sigma A^\top$.) \usedin{Kalman/LQR, reparameterization (Ch 6)}
+\end{frame}
+
+\begin{frame}{Properties 3 \& 4 --- marginals and conditionals stay Gaussian}
+\textbf{Property 3 --- marginals are Gaussian.} Any sub-vector of a Gaussian is Gaussian; just read off the matching blocks of $\mu, \Sigma$ (a special case of Property 2 with a selector matrix).
+\medskip
+
+\pause
+\textbf{Property 4 --- conditionals are Gaussian.} The property that makes GP regression work. For
+\[
+Z = \begin{bmatrix} Y_1\\ Y_2\end{bmatrix} \sim \mathcal{N}\!\left(\begin{bmatrix}\mu_1\\\mu_2\end{bmatrix}, \begin{bmatrix}\Sigma_{11}&\Sigma_{12}\\\Sigma_{21}&\Sigma_{22}\end{bmatrix}\right),
+\]
+the conditional is
+\[
+Y_2 \mid Y_1 = y \;\sim\; \mathcal{N}\big(\underbrace{\mu_2 + \Sigma_{21}\Sigma_{11}^{-1}(y-\mu_1)}_{\text{posterior mean}},\; \underbrace{\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}}_{\text{posterior covariance}}\big).
+\]
+\medskip
+\pause
+\begin{center}\large
+This \emph{is} GP regression: condition the joint Gaussian over function values on the observed ones.
+\end{center}
+\usedin{Ch 4 --- the GP posterior mean and variance are exactly this formula}
+\end{frame}
+
+%==========================================================
+\section{Sampling and divergences}
+%==========================================================
+
+\begin{frame}{Monte Carlo --- when the integral is intractable}
+When an expectation has no closed form, \alert{estimate it by sampling}:
+\[
+\mathbb{E}_{x\sim p}[g(x)] \;\approx\; \frac1N\sum_{i=1}^N g(x_i), \qquad x_i \sim p,
+\]
+unbiased by construction, with error shrinking as $1/\sqrt{N}$ (law of large numbers / CLT).
+\medskip
+
+\pause
+This is the quiet foundation of \emph{model-free} reinforcement learning: when we cannot compute $\mathbb{E}$ over unknown dynamics, we average over sampled trajectories instead. REINFORCE, TD targets, advantage estimates --- all are Monte-Carlo (or bootstrapped) estimates of expectations we cannot evaluate. \usedin{Ch 8, 10 --- the entire data-driven half}
+\medskip
+
+\pause
+{\footnotesize\textcolor{mLightBrown}{The variance of these estimators is exactly what baselines (Ch 10) and conjugacy/closed forms (Ch 2, 4) work to reduce or avoid.}}
+\end{frame}
+
+\begin{frame}{KL divergence and entropy --- comparing distributions}
+\textbf{KL divergence} measures how far one distribution is from another:
+\[
+\mathrm{KL}(p\,\|\,q) = \mathbb{E}_{x\sim p}\Big[\log\tfrac{p(x)}{q(x)}\Big] \ge 0, \quad =0 \iff p=q.
+\]
+(Not symmetric; not a metric --- but the natural ``information cost'' of using $q$ for $p$.)
+\medskip
+
+\pause
+Three appearances, three roles:
+\begin{itemize}\setlength\itemsep{1pt}
+\item \textbf{VAE (Ch 6):} the ELBO's KL term pulls the encoder toward the prior --- keeping the latent space samplable.
+\item \textbf{Trust regions (Ch 10):} TRPO/PPO bound the KL between successive policies --- the largest safe step.
+\item \textbf{Generative training (Ch 6):} minimizing KL $\Rightarrow$ maximum likelihood; minimizing JS $\Rightarrow$ GAN.
+\end{itemize}
+\medskip
+
+\pause
+\textbf{Entropy} $H(p) = -\mathbb{E}_p[\log p(x)]$ measures spread; maximizing it keeps a policy exploratory --- the seed of maximum-entropy RL (SAC) and the quantal-response equilibrium (Ch 13). \usedin{Ch 6, 10, 13}
+\end{frame}
+
+%==========================================================
+\section{Closing}
+%==========================================================
+
+\begin{frame}{The toolbox map --- one glance}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{l|l}
+\textbf{Probability tool} & \textbf{Lectures that depend on it} \\
+\hline
+expectation, linearity & all of Part IV (returns, values) \\
+total expectation & the Bellman equation (Ch 7--11) \\
+total variance & baselines, advantage (Ch 10) \\
+Bayes' rule & Ch 2, 3, 4 \\
+conjugacy & Ch 2 \\
+multivariate Gaussian (Prop.\ 4) & \alert{Ch 4 (Gaussian processes)} \\
+Gaussian linear transform & Ch 9 (LQR noise), Ch 6 (reparam.) \\
+Monte Carlo estimation & Ch 8, 10 (model-free RL) \\
+KL / entropy & Ch 6 (VAE), Ch 10 (TRPO), Ch 13 (QRE) \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+\begin{center}\large
+A handful of facts about \alert{expectation, Bayes, and the Gaussian} --- carrying an entire course.
+\end{center}
+\end{frame}
+
+\begin{frame}{Closing --- the one sentence}
+\vfill
+\begin{center}\large
+The whole course manipulates two objects:\\[8pt]
+an \alert{expectation} (what we believe will happen on average)\\[4pt]
+and a \alert{Gaussian} (the one uncertainty we can carry in closed form) ---\\[4pt]
+everything else is how to update them, estimate them, or bound the gap between them.
+\end{center}
+\vfill
+\pause
+\footnotesize
+Keep this appendix beside the main lectures: whenever a derivation moves quickly through a probability step, the justification is one of the few facts collected here.
+\end{frame}
+
+\begin{frame}[standout]
+End of appendix.
+\end{frame}
+
+\end{document}

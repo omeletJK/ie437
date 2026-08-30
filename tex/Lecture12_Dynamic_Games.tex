@@ -1,0 +1,358 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+\usetheme[progressbar=frametitle, sectionpage=progressbar, subsectionpage=progressbar, numbering=fraction, block=fill]{metropolis}
+
+\definecolor{mLightBrown}{HTML}{4D4D4D}
+\definecolor{mMediumBrown}{HTML}{2C2C2A}
+\definecolor{mDarkBrown}{HTML}{1A1A19}
+\definecolor{mDarkTeal}{HTML}{0F6E56}
+\definecolor{mDarkRed}{HTML}{B03A2E}
+\setbeamercolor{normal text}{fg=mDarkBrown}
+\setbeamercolor{alerted text}{fg=mDarkTeal}
+\setbeamercolor{frametitle}{bg=mDarkBrown}
+\setbeamercolor{progress bar}{fg=mDarkTeal, bg=mDarkTeal!20}
+\definecolor{mPaleBg}{HTML}{F4F3EE}
+\setbeamercolor{block title}{bg=mDarkBrown!10, fg=mDarkBrown}
+\setbeamercolor{block body}{bg=mPaleBg, fg=mDarkBrown}
+\newcommand{\hl}[1]{\textcolor{mDarkTeal}{#1}}
+
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{cancel}\usepackage{bm}\usepackage{booktabs}\usepackage{array}
+\usepackage{xcolor}\usepackage{colortbl}\usepackage{multirow}\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,shapes.geometric,decorations.pathmorphing}
+
+\newcommand{\paper}[1]{\textcolor{mLightBrown}{\small\textit{(#1)}}}
+
+\newcommand{\qcur}{0}
+\newcommand{\qnode}[4]{%
+\ifnum#4=\qcur
+ \node[draw=mDarkTeal, fill=mDarkTeal!12, thick, rounded corners=1pt, minimum width=3.0cm, minimum height=0.52cm, font=\tiny\bfseries, text=mDarkBrown] (#2) at (#1,0) {#3};%
+\else
+ \node[draw=mLightBrown!45, rounded corners=1pt, minimum width=3.0cm, minimum height=0.52cm, font=\tiny, text=mLightBrown] (#2) at (#1,0) {#3};%
+\fi}
+\newcommand{\qstrip}[1]{\renewcommand{\qcur}{#1}%
+\begin{center}\begin{tikzpicture}
+\qnode{0}{q1}{Q1 Why equilibrium?}{1}
+\qnode{3.7}{q2}{Q2 Nash?}{2}
+\qnode{7.4}{q3}{Q3 Dynamic?}{3}
+\qnode{11.1}{q4}{Q4 Compute?}{4}
+\draw[-{Stealth}, mLightBrown!60] (q1.east) -- (q2.west);
+\draw[-{Stealth}, mLightBrown!60] (q2.east) -- (q3.west);
+\draw[-{Stealth}, mLightBrown!60] (q3.east) -- (q4.west);
+\end{tikzpicture}\end{center}}
+
+\title{Dynamic Games \& Equilibria}
+\subtitle{When ``optimal'' becomes ``equilibrium'' --- optimal control with many players}
+\author{Jinkyoo Park}
+\institute{KAIST}
+\date{\textit{Lecture 12 --- The model-based origin of multi-agent decision-making}}
+
+\begin{document}
+
+\maketitle
+
+%==========================================================
+\section{The handoff --- a second decision maker}
+%==========================================================
+
+\begin{frame}{Where we are --- the last axis}
+\vspace{2pt}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{r|c|c}
+ & \textbf{Single agent} & \textbf{Multi agent} \\
+\hline
+\textbf{Static}  & optimization \scriptsize(Lec.\ 1) & static game \\
+\hline
+\textbf{Dynamic} & RL / control \scriptsize(Lec.\ 7--11) & \cellcolor{mDarkTeal!20}\textbf{dynamic game} \scriptsize(\alert{Lec.\ 12} $\to$ 13)\\
+\end{tabular}
+\end{center}
+\smallskip
+
+Every lecture so far --- optimization, Bayesian inference, design, MDPs, control, RL --- assumed \alert{one decision maker} pursuing \alert{one objective}. We now cross the final axis: \alert{single $\to$ multi-agent}.
+\smallskip
+
+\pause
+And we cross it the same way we crossed ``static $\to$ dynamic'': \alert{model-based first}. This lecture is the multi-agent \emph{parallel of Lecture 9} --- the model-based, control-theoretic foundation. Just as optimal control (Lec.\ 9) was made data-driven into policy RL (Lec.\ 10), this dynamic-game theory will be made data-driven into multi-agent RL (Lec.\ 13).
+\end{frame}
+
+\begin{frame}{The thesis --- ``optimal'' dissolves; ``equilibrium'' replaces it}
+The fixed point of this lecture, in one line:
+\begin{center}\large
+\alert{With many self-interested agents there is no single ``optimal'' --- only an equilibrium, and optimal control is the tool that characterizes it.}
+\end{center}
+\medskip
+
+\pause
+The trouble is immediate. Each agent $i$ has its own cost $L^i$ depending on \emph{everyone's} actions $u^1,\dots,u^N$. Agent $i$ cannot minimize $L^i$ alone --- its best move depends on what the others do, whose best moves depend on what $i$ does. The objectives are \alert{coupled}; ``minimize'' is no longer well-posed.
+\medskip
+
+\pause
+\begin{center}\large
+The solution concept must shift: from an \alert{optimum} (best in isolation) to an \alert{equilibrium} (no one gains by deviating alone).
+\end{center}
+\medskip
+And remarkably, the tool that pins down such an equilibrium is the one we already built: \alert{optimal control}. An equilibrium is a profile at which \emph{each agent is optimal-controlling against the others}.
+\end{frame}
+
+\begin{frame}{The roadmap --- four questions}
+\qstrip{0}
+\medskip
+\begin{itemize}\setlength\itemsep{3pt}
+\item \textbf{Q1 --- Why can't we just optimize?} Coupled objectives; the need for an \alert{equilibrium}.
+\item \textbf{Q2 --- What is the equilibrium?} \alert{Nash} (and its kin) --- and its tie to optimal control.
+\item \textbf{Q3 --- What changes over time?} \alert{Dynamic games} --- coupled HJB, feedback Nash. \paper{Ba\c{s}ar \& Olsder}
+\item \textbf{Q4 --- Can we solve it?} The \alert{gap} --- characterized, rarely computable --- that Lecture 13 will close.
+\end{itemize}
+\end{frame}
+
+%==========================================================
+\section{Act 1 --- from optimum to equilibrium}
+%==========================================================
+
+\begin{frame}{Coupled objectives --- the static game}
+\qstrip{1}
+\medskip
+$N$ agents; agent $i$ chooses $u^i$ and bears cost $L^i(u^1,\dots,u^N)$. In \emph{normal form}, everyone moves at once.
+\medskip
+
+There is no joint ``minimum'': lowering $L^1$ may raise $L^2$. Instead we ask for stability against unilateral change. A profile $(u^{1*},\dots,u^{N*})$ is a \alert{Nash equilibrium} if, for every agent $i$,
+\[
+L^i(u^{1*},\dots,u^{i*},\dots,u^{N*}) \;\le\; L^i(u^{1*},\dots,u^{i},\dots,u^{N*}) \quad \forall u^i.
+\]
+\medskip
+
+\pause
+\begin{center}\large
+\alert{No agent can improve its own cost by changing only its own action.}
+\end{center}
+\medskip
+Each line of the definition fixes everyone else at their equilibrium choice and says agent $i$ is already best-responding. Equilibrium is a \alert{mutual best response} --- a fixed point of the ``everyone reacts to everyone'' map.
+\end{frame}
+
+\begin{frame}{A menu of equilibrium concepts}
+``Equilibrium'' is not one thing --- the modeler chooses which, by the structure of the game:
+\medskip
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|l}
+\textbf{Concept} & \textbf{When} \\
+\hline
+\textbf{Nash} & general non-cooperative; mutual best response \\
+\textbf{Zero-sum (minimax)} & one's gain is another's loss (saddle point) \\
+\textbf{Stackelberg} & a leader commits first, followers respond \\
+\textbf{Correlated} & a shared signal coordinates the agents \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+The game \emph{type} --- cooperative, competitive, mixed --- enters entirely through the per-agent costs $L^i$. The \emph{concept} is a modeling choice, exactly as picking an objective was in Lecture 1.
+\medskip
+
+\pause
+{\footnotesize\textcolor{mLightBrown}{Hold this menu in view: in Lecture 13 the modeler still \emph{chooses} the concept, but a learning algorithm \emph{converges to} it --- the choice's meaning shifts from ``solve by hand'' to ``provably reach.''}}
+\end{frame}
+
+%==========================================================
+\section{Act 2 --- equilibrium through optimal control}
+%==========================================================
+
+\begin{frame}{The key bridge --- a Nash equilibrium is coupled optimal control}
+\qstrip{2}
+\medskip
+\begin{block}{Optimal control is a one-player game}
+\centering
+An optimal control problem is exactly a dynamic game with \alert{one player and one criterion}.
+\end{block}
+\medskip
+
+\pause
+Run that backward. At a Nash equilibrium, \alert{freeze every other agent} at its equilibrium strategy. Then agent $i$ faces a problem with a single objective $L^i$ and the others' actions baked into its environment --- \alert{an optimal control problem}.
+\medskip
+
+\pause
+\begin{center}\large
+A Nash equilibrium is a profile where \alert{every agent is simultaneously solving its own optimal control problem} against the others.
+\end{center}
+\medskip
+\pause
+So the tools of Lecture 9 --- HJB, the minimum principle, Riccati --- are exactly the tools to \emph{state} and \emph{verify} equilibrium. To check a profile is Nash, we check each agent's optimal-control conditions hold with the others fixed. \alert{This is why we learned optimal control.}
+\end{frame}
+
+%==========================================================
+\section{Act 3 --- the dynamic game}
+%==========================================================
+
+\begin{frame}{Dynamic games --- coupling through a shared state}
+\qstrip{3}
+\medskip
+Now let the agents share a dynamical system and act over time --- a \alert{differential game} (continuous) or \alert{Markov / stochastic game} (discrete):
+\[
+\dot x = f(x, u^1,\dots,u^N), \qquad J^i = \int_0^T g^i(x, u^1,\dots,u^N)\,dt + q^i(x_T).
+\]
+\medskip
+
+\pause
+\textbf{Information structure matters now} --- what each agent knows when it acts:
+\begin{itemize}\setlength\itemsep{1pt}
+\item \textbf{open-loop:} commit to $u^i(t)$ up front, knowing only $x_0$;
+\item \textbf{feedback:} react to the current state, $u^i = \gamma^i(t, x)$.
+\end{itemize}
+\medskip
+
+\pause
+\begin{center}\large
+Unlike single-agent control, \alert{open-loop and feedback Nash equilibria differ} ---
+\end{center}
+because what others can \emph{observe and react to} changes what is a best response. Feedback Nash, like Lecture 9's feedback law, is the credible one: \alert{subgame-perfect}, valid from any state actually reached.
+\end{frame}
+
+\begin{frame}{Coupled HJB --- Bellman, once per player}
+Apply Lecture 9's dynamic programming to \emph{each} agent, with the others' feedback strategies substituted into the dynamics and cost. We get $N$ \alert{coupled HJB equations}:
+\[
+-\partial_t V^i = \min_{u^i}\Big\{ \partial_x V^i\, f(x, u^i, \gamma^{-i}(t,x)) + g^i(x, u^i, \gamma^{-i}(t,x)) \Big\}, \quad i = 1,\dots,N,
+\]
+with $\gamma^{-i}$ the others' equilibrium strategies. The minimizer gives agent $i$'s feedback $\gamma^i(t,x)$.
+\medskip
+
+\pause
+\begin{center}\large
+$N$ Bellman equations, each minimizing over its \alert{own} slot, all \alert{coupled} through the shared $\gamma^{-i}$.
+\end{center}
+\medskip
+
+\pause
+A feedback Nash equilibrium is a \emph{joint solution} of this coupled system. (The minimum principle gives the parallel necessary conditions --- $N$ coupled Hamiltonians, one costate per agent --- the standard way to \emph{state} dynamic-game equilibria.)
+\end{frame}
+
+\begin{frame}{The solvable case --- linear-quadratic games and coupled Riccati}
+As in Lecture 9, the one clean closed form is linear-quadratic. Linear shared dynamics, quadratic per-agent costs $\Rightarrow$ each $V^i = x^\top P^i x$, and the coupled HJB collapses to \alert{coupled Riccati equations}:
+\[
+u^{i*} = -(R^{ii})^{-1} (B^i)^\top P^i\, x = -K^i x, \qquad \{P^i\}_{i=1}^N \text{ solve } N \text{ coupled Riccati equations}.
+\]
+\medskip
+
+\pause
+Each agent's gain $K^i$ depends on \emph{all} the others' $P^j$ --- the Riccati equations are \alert{intertwined}, not separate. Solve them jointly and you have the feedback Nash equilibrium in closed form: each agent a linear controller, mutually best-responding.
+\medskip
+
+\pause
+\begin{center}\large
+This ``coupled Riccati'' is the multi-agent echo of Lecture 9's single Riccati ---
+\end{center}
+and the exact target Lecture 13 will reach \emph{without} the model, by learning. (The subtitle of the next lecture: \emph{from coupled Riccati to provable equilibrium learning}.)
+\end{frame}
+
+%==========================================================
+\section{Act 4 --- the gap}
+%==========================================================
+
+\begin{frame}{The wall --- the equations exist, the solutions don't}
+\qstrip{4}
+\medskip
+We can \emph{characterize} dynamic-game equilibria. We usually cannot \emph{compute} them. Three walls --- the same three that motivated RL, now harder:
+\medskip
+\begin{itemize}\setlength\itemsep{2pt}
+\item \textbf{The model.} Coupled HJB needs $f$ and every $g^i$. Real multi-agent systems rarely hand them over.
+\item \textbf{The closed form.} Outside linear-quadratic, the coupled equations are \alert{circular} --- each agent's solution depends on the others' unsolved solutions. No general formula.
+\item \textbf{The dimension.} Even numerically, $N$ coupled value fields over a shared $x$ do not survive high dimensions.
+\end{itemize}
+\medskip
+
+\pause
+\begin{center}\large
+\alert{The equilibrium conditions exist. The equilibria don't --- not computably.}
+\end{center}
+\medskip
+\pause
+That gap is the entire reason for the next lecture. Replace ``solve the coupled equations'' with \alert{``learn from data''} --- and ask what the learned equilibrium can \emph{guarantee}.
+\end{frame}
+
+%==========================================================
+\section{Closing}
+%==========================================================
+
+\begin{frame}{Where we are --- the multi-agent origin established}
+\vspace{2pt}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{r|c|c}
+ & \textbf{Single agent} & \textbf{Multi agent} \\
+\hline
+\textbf{Model-based} & Optimal Control \;{\scriptsize Lec.\ 9 \checkmark} & \cellcolor{mDarkTeal!15}\textbf{Dynamic Games} \;{\scriptsize Lec.\ 12 \checkmark}\\
+\hline
+\textbf{Data-driven} & Policy-Based RL \;{\scriptsize Lec.\ 10 \checkmark} & Policy-Based MARL \;{\scriptsize Lec.\ 13 $\to$}\\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+The multi-agent axis now mirrors the single-agent one. ``Optimal'' became ``equilibrium''; optimal control became the tool to characterize it; and --- exactly as in Lecture 9 --- the characterization is exact but needs the model and rarely computes.
+\medskip
+\begin{center}\large
+Delete the model, learn the equilibrium --- and we arrive at \alert{multi-agent RL} (Lecture 13).
+\end{center}
+\end{frame}
+
+\begin{frame}{Closing --- the one sentence}
+\vfill
+\begin{center}\large
+When a second decision maker enters,\\[6pt]
+``best'' loses its meaning and ``equilibrium'' takes its place ---\\[4pt]
+and the tool that pins the equilibrium down\\[4pt]
+is the optimal control we already knew,\\[4pt]
+now written once per player, and coupled.
+\end{center}
+\vfill
+\pause
+\footnotesize
+This is the model-based parent of multi-agent learning, the exact counterpart of Lecture 9. Its coupled equations say what a standoff must satisfy --- but not how to reach one. Lecture 13 reaches it from data, and asks what can be \emph{guaranteed}.
+\end{frame}
+
+\begin{frame}[standout]
+Questions?
+\end{frame}
+
+%==========================================================
+\appendix
+%==========================================================
+
+\begin{frame}{Backup 1 --- Nash, formally, and best-response}
+\footnotesize
+\textbf{Nash equilibrium.} A profile $(u^{1*},\dots,u^{N*})$ such that for every agent $i$,
+\[
+L^i(u^{i*}, u^{-i*}) \le L^i(u^{i}, u^{-i*}) \quad \forall u^i, \qquad u^{-i} := (u^j)_{j\ne i}.
+\]
+\textbf{Best-response map.} Define $\mathrm{BR}^i(u^{-i}) = \arg\min_{u^i} L^i(u^i, u^{-i})$. A Nash equilibrium is a \emph{fixed point} of the joint best-response: $u^{i*} \in \mathrm{BR}^i(u^{-i*})$ for all $i$. This is why existence proofs use fixed-point theorems (Brouwer / Kakutani), and why algorithms that iterate best responses are the natural way to seek equilibria --- a pattern that returns, guarded, as the sequential-update schemes of Lecture 13.
+\medskip
+\textbf{Mixed strategies.} When no pure-strategy equilibrium exists (e.g.\ matching pennies), agents randomize; a Nash equilibrium in \emph{mixed} strategies always exists for finite games (Nash's theorem). This is why a single deterministic policy can be exploitable --- a point Lecture 13 must confront.
+\end{frame}
+
+\begin{frame}{Backup 2 --- why optimal control verifies Nash}
+\footnotesize
+\textbf{Claim.} Verifying a strategy profile is a Nash equilibrium reduces to $N$ optimal-control problems.
+\medskip
+\textbf{Argument.} Fix all agents $j\ne i$ at $\gamma^{j*}$. Substitute into the shared dynamics and into $g^i$:
+\[
+\dot x = f(x, u^i, \gamma^{-i*}(t,x)) =: \tilde f^i(x, u^i), \qquad \tilde g^i(x, u^i) := g^i(x, u^i, \gamma^{-i*}(t,x)).
+\]
+Agent $i$ now faces a \emph{single-agent} optimal control problem $\min_{u^i}\int \tilde g^i\,dt + q^i$ s.t.\ $\dot x = \tilde f^i$. The profile is Nash iff, for \emph{every} $i$, $\gamma^{i*}$ solves this problem --- i.e.\ satisfies agent $i$'s HJB (sufficient) or minimum principle (necessary). Hence equilibrium analysis \emph{is} optimal control, applied $N$ times with a consistency (fixed-point) requirement linking them. The coupling is precisely that each agent's ``environment'' contains the others' equilibrium strategies.
+\end{frame}
+
+\begin{frame}{Backup 3 --- open-loop vs.\ feedback Nash}
+\footnotesize
+A subtlety with no single-agent analogue: the \emph{information structure} changes the equilibrium.
+\medskip
+\begin{center}\scriptsize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|l|l}
+ & \textbf{Open-loop Nash} & \textbf{Feedback Nash} \\
+\hline
+strategy & $u^i(t)$, a function of time & $\gamma^i(t,x)$, a function of state \\
+information & $x_0$ only & current $x$ \\
+tool & coupled minimum principle (ODEs) & coupled HJB (PDEs) \\
+credibility & not subgame-perfect & \alert{subgame-perfect}, time-consistent \\
+\end{tabular}
+\end{center}
+\medskip
+\textbf{Why they differ.} In single-agent control, open-loop and feedback give the \emph{same} optimal cost (the optimum is the optimum). In a game they generally do \emph{not}: a feedback strategy lets an agent \emph{threaten to react} to deviations, changing what its rivals find optimal. The ability to condition on state is strategic leverage. \textbf{Preference.} Feedback Nash is the credible target --- valid from any state actually reached --- the same reason Lecture 9 preferred feedback laws to open-loop plans, now with strategic teeth.
+\end{frame}
+
+\end{document}

@@ -1,0 +1,283 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+%======================================================
+% Theme (matches all lectures)
+%======================================================
+\usetheme[progressbar=frametitle, sectionpage=progressbar, subsectionpage=progressbar, numbering=fraction, block=fill]{metropolis}
+
+\definecolor{mLightBrown}{HTML}{4D4D4D}
+\definecolor{mMediumBrown}{HTML}{2C2C2A}
+\definecolor{mDarkBrown}{HTML}{1A1A19}
+\definecolor{mDarkTeal}{HTML}{0F6E56}
+\definecolor{mDarkRed}{HTML}{B03A2E}
+\setbeamercolor{normal text}{fg=mDarkBrown}
+\setbeamercolor{alerted text}{fg=mDarkTeal}
+\setbeamercolor{frametitle}{bg=mDarkBrown}
+\setbeamercolor{progress bar}{fg=mDarkTeal, bg=mDarkTeal!20}
+
+\definecolor{mPaleBg}{HTML}{F4F3EE}
+\setbeamercolor{block title}{bg=mDarkBrown!10, fg=mDarkBrown}
+\setbeamercolor{block body}{bg=mPaleBg, fg=mDarkBrown}
+\newcommand{\hl}[1]{\textcolor{mDarkTeal}{#1}}
+
+%======================================================
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{cancel}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,shapes.geometric,decorations.pathmorphing}
+
+%======================================================
+\newcommand{\paper}[1]{\textcolor{mLightBrown}{\small\textit{(#1)}}}
+
+%======================================================
+\title{Data-Driven Decision Making and Control}
+\subtitle{Deciding well under uncertainty --- one question, three axes}
+\author{Jinkyoo Park}
+\institute{KAIST --- Industrial \& Systems Engineering}
+\date{\textit{Lecture 0 --- The map: how every chapter fits one story}}
+
+%======================================================
+\begin{document}
+%======================================================
+
+\maketitle
+
+%==========================================================
+\section{The one question}
+%==========================================================
+
+\begin{frame}{What this course is about --- in one sentence}
+\begin{center}\large
+\alert{How do we make good decisions under uncertainty?}
+\end{center}
+\medskip
+
+\pause
+That is the entire course. Every lecture is this question, asked again with one more thing made harder --- the model uncertain, the dynamics unknown, the world shared with rivals.
+\medskip
+
+\pause
+\textbf{Decision-making vs.\ AI --- a useful contrast.}
+\begin{itemize}\setlength\itemsep{2pt}
+\item \textbf{AI} takes complex, high-dimensional data and performs a well-structured task: prediction, classification, clustering.
+\item \textbf{Decision-making} formalizes a problem --- objective, variables, constraints --- and derives the \emph{optimal action}: a design, a plan, a control.
+\end{itemize}
+\medskip
+\pause
+This course lives at their intersection --- \alert{decision-centric AI}: use data and learning to make high-dimensional decisions that classical optimization alone could not reach.
+\end{frame}
+
+\begin{frame}{Two kinds of uncertainty --- name them once}
+Everything we model is uncertain in one of two ways. The distinction recurs all term.
+\medskip
+\begin{itemize}\setlength\itemsep{4pt}
+\item \textbf{Aleatoric} (statistical) uncertainty --- the world is genuinely stochastic. Repeating the experiment gives different outcomes. No amount of data removes it; we can only \emph{characterize} it (a distribution).
+\item \textbf{Epistemic} (systematic) uncertainty --- we simply \emph{don't know} the model: its parameters, its state, its dynamics. Data \alert{reduces} it.
+\end{itemize}
+\medskip
+
+\pause
+\begin{center}\large
+The whole course is a campaign against \alert{epistemic} uncertainty ---
+\end{center}
+learning the parameter (Ch 2), the structure (Ch 3), the function (Ch 4), the design map (Ch 5--6), the dynamics (Ch 8--11) --- while \emph{respecting} the aleatoric uncertainty that no data can erase.
+\end{frame}
+
+%==========================================================
+\section{The three axes}
+%==========================================================
+
+\begin{frame}{The map --- three axes of every decision problem}
+Any decision problem sits somewhere along three independent axes. The course is a tour of this cube.
+\medskip
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|c|c}
+\textbf{Axis} & \textbf{one end} & \textbf{other end} \\
+\hline
+\textbf{Stages} & static (single decision) & dynamic (a sequence) \\
+\textbf{Model} & model-based (handed to us) & data-driven (learned) \\
+\textbf{Decision makers} & single agent (optimization) & many agents (game) \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+We traverse the cube in a deliberate order:
+\begin{center}\large
+\textbf{static $\to$ dynamic}, \quad \textbf{model-based $\to$ data-driven}, \quad \textbf{single $\to$ multi-agent}.
+\end{center}
+\medskip
+\pause
+Each move is one bundle of lectures. None of the machinery is arbitrary --- it is whatever that move requires.
+\end{frame}
+
+\begin{frame}{Axis 1 --- static becomes dynamic}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{r|c|c}
+ & \textbf{Single agent} & \textbf{Multi agent} \\
+\hline
+\textbf{Static}  & \cellcolor{mDarkTeal!12}\textbf{optimization} & static game \\
+\hline
+\textbf{Dynamic} & \cellcolor{mDarkTeal!12}\textbf{dynamic optimization / control} & dynamic game \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+\textbf{Static} (one decision): you choose $x$ once; the world does not move. This is classical optimization --- Lecture 1 --- and its uncertain, data-driven cousins (Lectures 2--6).
+\medskip
+
+\pause
+\textbf{Dynamic} (a sequence): each decision reshapes the state the next one faces. This is the realm of MDPs, optimal control, and reinforcement learning --- Lectures 7--11.
+\medskip
+\pause
+\begin{center}\large
+The single optimization splits into time --- and the value function is born.
+\end{center}
+\end{frame}
+
+\begin{frame}{Axis 2 --- model-based becomes data-driven}
+The deepest axis, and the course's namesake. Two ways to know the world you decide in:
+\medskip
+\begin{itemize}\setlength\itemsep{3pt}
+\item \textbf{Model-based:} the objective, constraints, transition, dynamics are \emph{given}. You compute the optimum (Lectures 1, 7, 9).
+\item \textbf{Data-driven:} you have only \emph{data}. You must learn enough of the world to act --- a belief (Ch 2--4), a surrogate (Ch 5--6), a value or policy (Ch 8, 10, 11).
+\end{itemize}
+\medskip
+
+\pause
+\begin{block}{The move that defines the course}
+\centering
+Take a model-based method, \alert{delete the model}, and replace it with data. \\
+Optimization $\to$ Bayesian/learned optimization. \;DP $\to$ value-based RL. \;Optimal control $\to$ policy-based RL.
+\end{block}
+\medskip
+\pause
+Almost every lecture pair in this course is one instance of this single move.
+\end{frame}
+
+\begin{frame}{Axis 3 --- one decision maker becomes many}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{r|c|c}
+ & \textbf{Optimization} & \textbf{Game} \\
+\hline
+\textbf{single objective}  & one optimum $x^*$ & --- \\
+\hline
+\textbf{coupled objectives} & --- & \cellcolor{mDarkTeal!12}equilibrium (Nash, \dots) \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+When other agents --- also optimizing, also learning --- share the world, the very notion of ``optimal'' changes. There is no single best action independent of what others do. The solution concept shifts from an \alert{optimum} to an \alert{equilibrium}.
+\medskip
+
+\pause
+This is the final move of the course (Lecture 12, policy-based MARL), and the gateway to the follow-on course on game theory and multi-agent RL.
+\end{frame}
+
+%==========================================================
+\section{The two lineages}
+%==========================================================
+
+\begin{frame}{Inside the dynamic cell --- two scientific parents}
+The dynamic, single-agent decision problem has \alert{two distinct intellectual origins} --- and this course teaches both, then their data-driven children.
+\medskip
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{r|c|c}
+ & \textbf{OR / Dynamic Programming} & \textbf{Control Theory} \\
+\hline
+\textbf{Model-based (origin)} & MDP \& DP \scriptsize(Lec.\ 7) & Optimal Control \scriptsize(Lec.\ 9)\\
+\hline
+\textbf{Data-driven (extension)} & Value-Based RL \scriptsize(Lec.\ 8) & Policy-Based RL \scriptsize(Lec.\ 10)\\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+\begin{center}\large
+\alert{Value-based and policy-based RL are not two methods --- they are two heritages.}
+\end{center}
+\begin{itemize}\setlength\itemsep{1pt}
+\item Value-based RL is \emph{dynamic programming with the model deleted} (discrete, value-centric --- Bellman's OR).
+\item Policy-based RL is \emph{optimal control with the dynamics deleted} (continuous, control-law-centric --- Pontryagin/Kalman's control theory).
+\end{itemize}
+\pause
+Lecture 11 then \emph{reunites} them: learn the model back, and let value and policy methods teach each other.
+\end{frame}
+
+%==========================================================
+\section{The single spine}
+%==========================================================
+
+\begin{frame}{The spine --- each chapter removes one given}
+Read the whole course as a slow stripping-away of what you were handed.
+\medskip
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{r|l|l}
+\textbf{Ch} & \textbf{what you have} & \textbf{what is taken away} \\
+\hline
+1 & a clean objective $f$, certain & --- (the starting point) \\
+2--3 & $f$ with uncertain parameters / structure & certainty of the model \\
+4 & $f$ unknown but you may query it & the closed-form objective \\
+5--6 & only a fixed dataset of $(x,f(x))$ & the ability to query \\
+7, 9 & a dynamic model, given & the static, single-shot world \\
+8, 10 & only samples of the dynamics & the model itself \\
+11 & a \emph{learned} model & (it is given back, imperfectly) \\
+12 & a world shared with rival learners & the single decision maker \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+\begin{center}\large
+Every new tool in this course is \alert{whatever it takes to cope with the next thing removed.}
+\end{center}
+\end{frame}
+
+\begin{frame}{The course, as a route through the map}
+\textbf{Part I --- the given world.} \;Ch 1: classical optimization, the atom of every later method.
+\medskip
+
+\textbf{Part II --- the uncertain world.} \;Ch 2 Bayesian statistics (belief as distribution) $\to$ Ch 3 Bayesian networks (structured belief, $+$ decisions) $\to$ Ch 4 Bayesian optimization (act on an unknown function).
+\medskip
+
+\textbf{Part III --- design from data alone.} \;Ch 5--6 data-driven design optimization (surrogate / generative).
+\medskip
+
+\textbf{Part IV --- the world that unfolds.} \;Ch 7 MDP \& DP $\to$ Ch 8 value-based RL \;$\|$\; Ch 9 optimal control $\to$ Ch 10 policy-based RL $\to$ Ch 11 model-based RL.
+\medskip
+
+\textbf{Part V --- many decision makers.} \;Ch 12 policy-based MARL.
+\medskip
+
+\pause
+{\footnotesize\textcolor{mLightBrown}{Appendix: a probability review, the toolbox underneath it all.}}
+\end{frame}
+
+\begin{frame}{Closing --- one story, told in chapters}
+\vfill
+\begin{center}\large
+One question --- decide well under uncertainty ---\\[6pt]
+asked along three axes,\\[4pt]
+answered by two scientific lineages,\\[4pt]
+and unfolded by removing, one at a time,\\[4pt]
+everything you were given.
+\end{center}
+\vfill
+\pause
+\footnotesize
+Keep the three-axis map in mind: at the start of every lecture we will mark exactly where we stand on it, and which assumption we are about to give up.
+\end{frame}
+
+\begin{frame}[standout]
+Let us begin --- Lecture 1.
+\end{frame}
+
+\end{document}

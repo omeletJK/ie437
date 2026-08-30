@@ -1,0 +1,356 @@
+\documentclass[10pt, aspectratio=169]{beamer}
+
+\usetheme[progressbar=frametitle, sectionpage=progressbar, subsectionpage=progressbar, numbering=fraction, block=fill]{metropolis}
+
+\definecolor{mLightBrown}{HTML}{4D4D4D}
+\definecolor{mMediumBrown}{HTML}{2C2C2A}
+\definecolor{mDarkBrown}{HTML}{1A1A19}
+\definecolor{mDarkTeal}{HTML}{0F6E56}
+\definecolor{mDarkRed}{HTML}{B03A2E}
+\setbeamercolor{normal text}{fg=mDarkBrown}
+\setbeamercolor{alerted text}{fg=mDarkTeal}
+\setbeamercolor{frametitle}{bg=mDarkBrown}
+\setbeamercolor{progress bar}{fg=mDarkTeal, bg=mDarkTeal!20}
+\definecolor{mPaleBg}{HTML}{F4F3EE}
+\setbeamercolor{block title}{bg=mDarkBrown!10, fg=mDarkBrown}
+\setbeamercolor{block body}{bg=mPaleBg, fg=mDarkBrown}
+\newcommand{\hl}[1]{\textcolor{mDarkTeal}{#1}}
+
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{cancel}\usepackage{bm}\usepackage{booktabs}\usepackage{array}
+\usepackage{xcolor}\usepackage{colortbl}\usepackage{multirow}\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,shapes.geometric,decorations.pathmorphing}
+
+\newcommand{\paper}[1]{\textcolor{mLightBrown}{\small\textit{(#1)}}}
+
+\newcommand{\qcur}{0}
+\newcommand{\qnode}[4]{%
+\ifnum#4=\qcur
+ \node[draw=mDarkTeal, fill=mDarkTeal!12, thick, rounded corners=1pt, minimum width=3.0cm, minimum height=0.52cm, font=\tiny\bfseries, text=mDarkBrown] (#2) at (#1,0) {#3};%
+\else
+ \node[draw=mLightBrown!45, rounded corners=1pt, minimum width=3.0cm, minimum height=0.52cm, font=\tiny, text=mLightBrown] (#2) at (#1,0) {#3};%
+\fi}
+\newcommand{\qstrip}[1]{\renewcommand{\qcur}{#1}%
+\begin{center}\begin{tikzpicture}
+\qnode{0}{q1}{Q1 Why a model?}{1}
+\qnode{3.7}{q2}{Q2 Plan?}{2}
+\qnode{7.4}{q3}{Q3 Differentiable?}{3}
+\qnode{11.1}{q4}{Q4 Reunite?}{4}
+\draw[-{Stealth}, mLightBrown!60] (q1.east) -- (q2.west);
+\draw[-{Stealth}, mLightBrown!60] (q2.east) -- (q3.west);
+\draw[-{Stealth}, mLightBrown!60] (q3.east) -- (q4.west);
+\end{tikzpicture}\end{center}}
+
+\title{Model-Based Reinforcement Learning}
+\subtitle{Put the model back --- learned --- and let the two lineages reunite}
+\author{Jinkyoo Park}
+\institute{KAIST}
+\date{\textit{Lecture 11 --- Where dynamic programming and optimal control teach each other}}
+
+\begin{document}
+
+\maketitle
+
+%==========================================================
+\section{The handoff --- the model returns}
+%==========================================================
+
+\begin{frame}{Where we are --- both lineages threw the model away}
+\vspace{2pt}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{r|c|c}
+ & \textbf{OR / Dynamic Programming} & \textbf{Control Theory} \\
+\hline
+\textbf{Model-based} & MDP \& DP \scriptsize(Lec.\ 7) & Optimal Control \scriptsize(Lec.\ 9)\\
+\hline
+\textbf{Data-driven} & Value-Based RL \scriptsize(Lec.\ 8) & Policy-Based RL \scriptsize(Lec.\ 10)\\
+\hline
+\multicolumn{3}{c}{\cellcolor{mDarkTeal!15}\textbf{Model-Based RL} \scriptsize(\alert{Lec.\ 11}) --- learn the model, reunite the four}\\
+\end{tabular}
+\end{center}
+\smallskip
+
+Lectures 8 and 10 deleted their models to learn from data --- and paid for it in \alert{sample inefficiency}: model-free RL can need millions of interactions, because each transition is used once and thrown away.
+\smallskip
+
+\pause
+\begin{center}\large
+\alert{So put the model back --- but \emph{learned}.}
+\end{center}
+A learned dynamics model $f_\theta$ can be replayed indefinitely; on top of it we can run \emph{planning} (DP, Lecture 7) and \emph{control} (optimal control, Lecture 9). The two model-based origins return, now standing on data.
+\end{frame}
+
+\begin{frame}{The thesis --- learn the dynamics, then the two parents return}
+The fixed point of this lecture, in one line:
+\begin{center}\large
+\alert{Learn the dynamics from data, and the model-based machinery of both lineages comes back to work on top of it.}
+\end{center}
+\medskip
+
+\pause
+This is the course's reunion. Four chapters have circled one problem:
+\begin{itemize}\setlength\itemsep{1pt}
+\item DP (Ch 7) and optimal control (Ch 9) \emph{had} a model and computed;
+\item value-based (Ch 8) and policy-based RL (Ch 10) \emph{lacked} one and sampled.
+\end{itemize}
+Model-based RL \alert{learns} $f_\theta$ and lets them collaborate: plan with the model, control with the model, and --- most strikingly --- have an optimal-control \emph{teacher} train a policy \emph{student}.
+\medskip
+
+\pause
+The price is \alert{model bias}: errors in $f_\theta$ compound through planning. Managing that trade --- sample efficiency vs.\ model error --- is the engineering of the lecture.
+\end{frame}
+
+\begin{frame}{The roadmap --- four questions}
+\qstrip{0}
+\medskip
+\begin{itemize}\setlength\itemsep{3pt}
+\item \textbf{Q1 --- Why bring a model back at all?} Sample efficiency --- and the spectrum it opens.
+\item \textbf{Q2 --- How do we use a learned model?} \alert{Planning} / MPC over $f_\theta$ --- optimal control on learned dynamics.
+\item \textbf{Q3 --- Can the planner itself be trained?} \alert{Differentiable MPC} --- backprop through the optimizer.
+\item \textbf{Q4 --- How do the lineages reunite?} \alert{Guided policy search} --- control teaches a policy.
+\end{itemize}
+\end{frame}
+
+%==========================================================
+\section{Act 1 --- the spectrum of model use}
+%==========================================================
+
+\begin{frame}{A spectrum, not a binary --- how much to lean on the model}
+\qstrip{1}
+\medskip
+``Model-based'' is a dial, from learning a policy directly to baking the dynamics into the architecture:
+\medskip
+\begin{center}\scriptsize\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{l|c|c|c}
+ & \textbf{Model-free RL} & \textbf{Model-based RL} & \textbf{Differentiable MPC} \\
+\hline
+explicit model? & no & yes & yes \\
+trained object & policy $\pi(\cdot)$ & model $f(\cdot)$ & model $f(\cdot)$ (and cost) \\
+loss & task loss & model-prediction loss & \alert{task loss} \\
+execution & policy & planning & planning \\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+Reading left to right: more of the world's structure is made explicit, buying \alert{sample efficiency} and generalization. Reading right to left: less to get wrong, dodging \alert{model bias}.
+\medskip
+
+\pause
+\begin{center}\large
+The deep tension: a learned model is reusable but \emph{wrong}; a model-free policy is honest but \emph{hungry}.
+\end{center}
+The methods below place themselves along this dial --- and the rightmost, differentiable MPC, even trains the model on the \emph{task} loss rather than a prediction loss, so the model is wrong in whatever way helps the task least.
+\end{frame}
+
+%==========================================================
+\section{Act 2 --- planning with a learned model}
+%==========================================================
+
+\begin{frame}{Planning over a learned model --- MPC}
+\qstrip{2}
+\medskip
+With a learned model $f_\theta$, control becomes \alert{Model Predictive Control}: at each step, optimize a short horizon of actions, execute the first, re-plan.
+\[
+\tau^*_{1:T} = \mathrm{MPC}(x_{\text{init}}; C, f_\theta) = \arg\min_{x_{1:T}, u_{1:T}} \sum_{t=1}^T C_t(x_t, u_t)
+\quad\text{s.t.}\quad x_{t+1} = f_\theta(x_t, u_t),\; x_1 = x_{\text{init}}.
+\]
+\medskip
+
+\pause
+This is \alert{Lecture 9's optimal control, run on a learned model} instead of a known one. The model is fit, usually, by minimizing prediction error $L(x_{t+1}, f_\theta(x_t,u_t))$ --- \emph{task-independent, data-dependent}.
+\medskip
+
+\pause
+\begin{center}\large
+The learned $f_\theta$ is a \alert{simulator}: plan in imagination, act in reality.
+\end{center}
+\medskip
+This is exactly how the wind-farm / furnace controllers of Lecture 1 are deployed online: a learned predictive model inside an MPC solver, re-optimized every step. But fitting the model to \emph{prediction} error has a flaw --- it spends accuracy where the task may not need it.
+\end{frame}
+
+%==========================================================
+\section{Act 3 --- differentiable control}
+%==========================================================
+
+\begin{frame}{Differentiable MPC --- train the planner on the task}
+\qstrip{3}
+\medskip
+\textbf{The idea.} Treat the planner $\mathrm{MPC}(\cdot)$ as a \alert{policy class} and train its model (and cost) \emph{end-to-end on the task loss}, not on prediction error:
+\[
+\mathcal{L}(\theta) = \mathbb{E}_x\big\|\,u_{1:T}(x;\theta) - u_{1:T}(x;\hat\theta)\,\big\|^2 \quad(\text{e.g.\ imitate an expert controller } \hat\theta).
+\]
+\medskip
+
+\pause
+\textbf{The obstacle.} Is the $\arg\min$ inside MPC differentiable? For a (convex) QP / LQR subproblem --- \alert{yes}. State the KKT conditions of the planning problem and differentiate \emph{them}:
+\[
+\text{Lagrangian } L(\tau,\lambda) \;\Rightarrow\; \text{differentiate KKT} \;\Rightarrow\; \frac{\partial \tau^*}{\partial \theta}.
+\]
+\medskip
+
+\pause
+\begin{center}\large
+We backprop \alert{through} an optimizer --- the trick foreshadowed in Lecture 1's KKT backup.
+\end{center}
+For nonlinear dynamics/cost, iterate iLQR to a fixed point, then linearize and differentiate the resulting LQR (cheaper than unrolling iLQR). \paper{Amos et al., 2018; OptNet}
+\end{frame}
+
+\begin{frame}{Why differentiable control matters --- and when}
+\begin{itemize}\setlength\itemsep{2pt}
+\item \textbf{Imitation learning.} When the goal is to match an expert policy $\hat\pi$ --- not just minimize a known cost --- a differentiable controller lets you fit $\theta$ so $\pi_\theta(s)\approx\hat\pi(s)$, inheriting the structure (stability, constraint-handling) of a controller while learning from demonstrations.
+\item \textbf{Structure as inductive bias.} The dynamics constraint $x_{t+1}=f_\theta(x_t,u_t)$ is baked into the architecture --- so far less data is needed than a generic policy network, and extrapolation improves.
+\item \textbf{Task-aligned models.} Training on the task loss yields a model that is accurate \emph{where the task needs it}, sidestepping the ``prediction-accurate but control-useless'' failure of Act 2.
+\end{itemize}
+\medskip
+
+\pause
+\begin{center}\large
+The controller becomes a \alert{differentiable layer} --- optimal control, with learnable parts.
+\end{center}
+\medskip
+\pause
+{\footnotesize\textcolor{mLightBrown}{This is the most literal fusion of the two lineages: a control-theory object (MPC/LQR) trained by the gradient-based learning of the data-driven side.}}
+\end{frame}
+
+%==========================================================
+\section{Act 4 --- the lineages teach each other}
+%==========================================================
+
+\begin{frame}{Guided Policy Search --- control as a teacher}
+\qstrip{4}
+\medskip
+The clearest reunion: let an \alert{optimal-control teacher} generate good trajectories, and train a \alert{neural policy student} to imitate them. \paper{Levine \& Koltun; Levine et al.}
+\medskip
+
+Solve a constrained problem --- optimize trajectories \emph{and} fit a policy, tied together:
+\[
+\min_{\theta,\, p(\tau)}\ \mathbb{E}_{p(\tau)}[\text{cost}] \quad \text{s.t.}\quad p(u_t\mid x_t) = \pi_\theta(u_t\mid x_t),
+\]
+solved by alternation (dual gradient descent on the coupling):
+\begin{enumerate}\setlength\itemsep{1pt}
+\item \textbf{trajectory optimization} --- improve $p(\tau)$ with iLQR (the optimal-control teacher, using local linear-Gaussian dynamics);
+\item \textbf{supervised policy fit} --- train $\pi_\theta$ to match the teacher's trajectories;
+\item \textbf{dual update} --- adjust multipliers so policy and trajectories agree.
+\end{enumerate}
+\medskip
+
+\pause
+\begin{center}\large
+\alert{Optimal control (Lecture 9) supplies the answers; a policy (Lecture 10) learns to reproduce them.}
+\end{center}
+\end{frame}
+
+\begin{frame}{The reunion, and an old friend returns}
+GPS turns policy learning into \emph{supervised} learning against an optimal-control oracle --- so a complex policy can be trained with far fewer samples than model-free search, exploiting the local linear-Gaussian structure the controller provides.
+\medskip
+
+\pause
+\begin{block}{The whole of Part IV, in one mechanism}
+\centering
+DP / optimal control (model-based) $\xrightarrow{\text{teaches}}$ value / policy (data-driven), \\
+on top of a \alert{learned} dynamics model. The four chapters become one system.
+\end{block}
+\medskip
+
+\pause
+\textbf{And design optimization returns.} Many real problems are \alert{bilevel}: an upper-level \emph{design} (turbine layout, furnace geometry) wrapping lower-level \emph{control} problems --- exactly the wind-farm / furnace structure of Lectures 1 and 5. Differentiable control closes the loop: differentiate the optimal control through to the design, and optimize both together.
+\[
+\min_{p}\ \sum_t \mathcal{L}(x_{t+1}, u_t^*; p) \quad\text{s.t.}\quad u^*_{0:T-1} = \arg\min_{u}\textstyle\sum_t \mathcal{L}(x_{t+1},u_t;p),\ x_{t+1}=f(x_t,u_t;p).
+\]
+\end{frame}
+
+%==========================================================
+\section{Closing}
+%==========================================================
+
+\begin{frame}{Where we are --- Part IV complete}
+\vspace{2pt}
+\begin{center}\footnotesize\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{r|c|c}
+ & \textbf{OR / Dynamic Programming} & \textbf{Control Theory} \\
+\hline
+\textbf{Model-based} & MDP \& DP \;{\scriptsize Lec.\ 7 \checkmark} & Optimal Control \;{\scriptsize Lec.\ 9 \checkmark}\\
+\hline
+\textbf{Data-driven} & Value-Based RL \;{\scriptsize Lec.\ 8 \checkmark} & Policy-Based RL \;{\scriptsize Lec.\ 10 \checkmark}\\
+\hline
+\multicolumn{3}{c}{\cellcolor{mDarkTeal!15}\textbf{Model-Based RL} \;{\scriptsize Lec.\ 11 \checkmark} --- the four, reunited on a learned model}\\
+\end{tabular}
+\end{center}
+\medskip
+
+\pause
+The single-agent story is complete. We can decide statically (Ch 1--6) and dynamically (Ch 7--11); with a model and without; by searching values and by producing policies; and now by \alert{learning the model} so all of it can collaborate.
+\medskip
+
+\pause
+One assumption has held since Lecture 1: \alert{a single decision maker}. Drop it --- let other agents, also learning, share the world --- and ``optimal'' must become ``equilibrium.''
+\begin{center}\large
+That is the final move: Lecture 12, multi-agent RL.
+\end{center}
+\end{frame}
+
+\begin{frame}{Closing --- the one sentence}
+\vfill
+\begin{center}\large
+Model-free RL learned to act by forgetting the model.\\[8pt]
+Model-based RL \alert{learns the model back} ---\\[4pt]
+to plan with it, to control through it,\\[4pt]
+and to let dynamic programming and optimal control,\\[4pt]
+the course's two parents, finally teach each other.
+\end{center}
+\vfill
+\pause
+\footnotesize
+The arc of Part IV: a model given (7, 9), a model deleted (8, 10), a model learned and shared (11). What remains is to give up the last luxury --- being the only one who decides.
+\end{frame}
+
+\begin{frame}[standout]
+Questions?
+\end{frame}
+
+%==========================================================
+\appendix
+%==========================================================
+
+\begin{frame}{Backup 1 --- differentiating the LQR / QP argmin}
+\footnotesize
+For a (convex) QP planning subproblem $\;\min_z \tfrac12 z^\top Q z + q^\top z\ \text{s.t.}\ Az = b$, the optimum is characterized by its KKT system:
+\[
+Q z^* + q + A^\top \nu^* = 0, \qquad A z^* - b = 0.
+\]
+Rather than differentiate $z^*$ directly, take \emph{differentials} of the KKT conditions:
+\[
+\begin{bmatrix} Q & A^\top \\ A & 0 \end{bmatrix}\begin{bmatrix} dz \\ d\nu \end{bmatrix} = -\begin{bmatrix} dQ\,z^* + dq + dA^\top \nu^* \\ dA\,z^* - db \end{bmatrix}.
+\]
+Solving this linear system yields $\partial z^*/\partial(\cdot)$ for every problem parameter --- so the planner is a differentiable layer. \textbf{LQR specialization.} The finite-horizon LQR optimum is exactly the solution of such a KKT system (with $\tau=(x,u)$); its backward pass has the same cost as one Riccati sweep, far cheaper than unrolling the solver. \paper{OptNet; differentiable MPC}
+\end{frame}
+
+\begin{frame}{Backup 2 --- guided policy search, the constrained program}
+\footnotesize
+\textbf{Objective.} Minimize trajectory cost while forcing the trajectory distribution to agree with the policy:
+\[
+\min_{\theta,\,p(\tau)} \ \mathbb{E}_{p(\tau)}\Big[\textstyle\sum_t c(x_t,u_t)\Big] \quad\text{s.t.}\quad p(u_t\mid x_t) = \pi_\theta(u_t\mid x_t)\ \forall t.
+\]
+\textbf{Lagrangian \& alternation.} Form $\mathcal{L}_{\text{GPS}}(\theta, p, \lambda)$ and minimize by turns:
+\begin{enumerate}\setlength\itemsep{1pt}
+\item \textbf{w.r.t.\ $p(\tau)$} --- trajectory optimization (iLQR under local linear-Gaussian dynamics); the LQR structure makes the local optimal controller $p(u_t\mid x_t)$ fall out automatically;
+\item \textbf{w.r.t.\ $\theta$} --- supervised regression: minimize the weighted KL between $\pi_\theta$ and the trajectory controllers;
+\item \textbf{dual variables $\lambda$} --- updated (or scheduled) by dual gradient descent to enforce agreement.
+\end{enumerate}
+\medskip
+\textbf{Why it is sample-efficient.} Time-varying linear-Gaussian dynamics are a strong, reasonable local assumption for physical systems, so each trajectory is optimized with far fewer samples than general model-free search --- the gain from injecting control-theoretic structure.
+\end{frame}
+
+\begin{frame}{Backup 3 --- the sample-efficiency vs.\ model-bias trade}
+\footnotesize
+Why model-based RL is powerful \emph{and} dangerous, made precise.
+\medskip
+\textbf{The gain.} A learned model can be queried without environment interaction, so one real transition informs the value/policy at \emph{many} imagined states (planning, Dyna-style rollouts). Empirically this can cut the required real samples by orders of magnitude --- decisive when interaction is costly (robots, processes, patients).
+\medskip
+\textbf{The hazard.} Planning trusts $f_\theta$. Where $f_\theta$ is wrong, the planner optimizes a fiction --- and errors \alert{compound} over a horizon (each step's error feeds the next). This is the dynamic cousin of Lecture 5's overestimation trap: an optimizer exploiting a model's blind spots.
+\medskip
+\textbf{Mitigations.} Short planning horizons; model ensembles / uncertainty (plan pessimistically where the model disagrees with itself); training the model on the \emph{task} loss (differentiable MPC) so it is accurate where it matters; and re-planning often (MPC) so errors are corrected by fresh state. The through-line of the course: \alert{respect the model's uncertainty, or it will be weaponized against you.}
+\end{frame}
+
+\end{document}
