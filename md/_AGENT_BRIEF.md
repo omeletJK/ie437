@@ -41,6 +41,10 @@ instead of making it — those files are shared and edits to them collide.
   line. It shows the density, the voice, how a PDF's worked example becomes a slide, and how the
   four acts carry a question strip. Match it.
 
+Chapters 0–5 and 8 are already built. If your chapter sits next to one of them in the chain, read
+that neighbour's markdown too and make the join actually work — the sentence you hand off in must
+be the sentence the next chapter says it received.
+
 Also skim `deck/widgets/bayes-update.js` and `deck/widgets/ridge-lasso-prior.js` — they show the
 widget conventions in practice.
 
@@ -75,6 +79,12 @@ outside the browser), and a font-loading bug rendered every equation in the wron
 throwing no error at all. If your widget asserts that something diverges, or that a coefficient hits
 exactly zero, or that one estimator beats another — compute it in `node` first and confirm the
 numbers. Say in your report what you verified and how.
+
+## Scratch files
+
+Several agents work in this repo at once. Put every temporary script, screenshot or note in your
+own directory — `/tmp/ie437-chNN/` for your chapter number — and never in a shared scratch path. In
+the last wave two agents collided over a temp script and one lost work.
 
 ## Build and check
 
