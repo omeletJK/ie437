@@ -10,14 +10,18 @@
    two disconnected pieces, and the *average* of that answer set is
    a design that sits in the valley between them.
 
-   Verified in node before shipping (grid 601x601, |f - y| < 0.004):
+   Verified in node before shipping (96-ray polar trace, arc-length
+   centroid of the level curve — the natural average of the answer set,
+   and independent of how the curve is sampled):
      peak A f = 2.752 at (2.3, 6.9)      peak B f = 2.500 at (7.4, 3.0)
-     level set y = 1.60  centroid (5.19, 4.69)  f(centroid) = 0.904
-     level set y = 2.00  centroid (5.01, 4.83)  f(centroid) = 0.837
-   so at a target of 2.00 the two branches are each worth exactly
-   2.00 and their mean is worth 0.84 — which is what a deterministic
-   inverse map trained by least squares returns.  The widget re-derives
-   these on load by polar tracing; nothing is hard-coded.
+     y* = 1.20  centroid (4.93, 4.89)  f = 0.819
+     y* = 1.60  centroid (4.89, 4.92)  f = 0.812
+     y* = 2.00  centroid (4.78, 5.00)  f = 0.806      <- the shipped default
+     y* = 2.30  centroid (4.53, 5.20)  f = 0.848
+   so at a target of 2.00 every point of the answer set is worth exactly
+   2.00 and the set's own midpoint is worth 0.81 — which is what a
+   deterministic inverse map trained by least squares returns. Nothing
+   is hard-coded; the widget retraces the level set on every click.
    ============================================================ */
 IE437.widget('forward-inverse', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', RED = '#D64545', SLATE = '#64748B';
@@ -107,7 +111,7 @@ IE437.widget('forward-inverse', function (host, opts) {
     '<div data-num style="font:400 12.5px/1.65 var(--sans);color:var(--ink2);text-align:center"></div>' +
     '</div>';
 
-  var W = 322, H = 268, PAD = 14;
+  var W = 322, H = 246, PAD = 13;
   var A = IE437.svg(W, H), B = IE437.svg(W, H);
   host.querySelector('[data-a]').appendChild(A);
   host.querySelector('[data-b]').appendChild(B);
@@ -193,12 +197,12 @@ IE437.widget('forward-inverse', function (host, opts) {
 
     host.querySelector('[data-val]').textContent = 'y* = ' + y.toFixed(2);
     host.querySelector('[data-num]').innerHTML =
-      'Ask for <b>y* = ' + y.toFixed(2) + '</b> and the answer is a <b>curve in two pieces</b>, every point of it ' +
-      'worth exactly ' + y.toFixed(2) + ' &mdash; <span style="color:' + BLUE + '">' + (nA + nB) +
-      ' designs in the dataset sit on it</span> (' + nA + ' near A, ' + nB + ' near B). &nbsp;' +
-      '<span style="color:' + RED + '">The midpoint of that answer set is a design worth ' +
-      '<b>' + F(C.x, C.y).toFixed(2) + '</b></span> &mdash; which is what a deterministic inverse map returns. ' +
-      '<span style="color:var(--ink4)">Best design in D: ' + DMAX.toFixed(2) + '.</span>';
+      'Every point of that curve is worth exactly ' + y.toFixed(2) + ', and ' +
+      '<span style="color:' + BLUE + '">' + (nA + nB) + ' designs in D sit on it</span> (' +
+      nA + ' near A, ' + nB + ' near B). &nbsp;' +
+      '<span style="color:' + RED + '">Its midpoint is a design worth <b>' + F(C.x, C.y).toFixed(2) +
+      '</b></span> &mdash; what a deterministic inverse map returns. ' +
+      '<span style="color:var(--ink4)">Best in D: ' + DMAX.toFixed(2) + '.</span>';
   }
 
   host.querySelector('[data-up]').onclick = function () { ti = Math.min(TARGETS.length - 1, ti + 1); drawB(); };

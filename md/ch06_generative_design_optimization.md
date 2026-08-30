@@ -55,7 +55,7 @@ $$\text{find}\quad x^* = \argmax_x f(x) \qquad\text{with \hl{only} a fixed datas
 ::: reveal
 ::: cols
 ::: col 1 · Surrogate-based — *Lecture 5*
-Approximate $f(x)$ from the collected data; choose the query that ==maximises the surrogate==.
+Approximate $f(x)$ from the collected data; choose the query that maximises the surrogate.
 
 A **forward** model, and a **search**.
 :::
@@ -110,7 +110,7 @@ Lecture 5 fights to stay on the valid manifold. Lecture 6 ==never leaves it==, b
 ::: qstrip 0
 :::
 
-- **Q1 — What does inverting the function mean?** Learn $p(x\mid y)$; train it by matching a ==divergence==.
+- **Q1 — What does inverting the function mean?** Learn $p(x\mid y)$; train it by matching a divergence.
 - **Q2 — How do we model valid designs at all?** ==Generative models== — a prior $p(x)$ whose support is the manifold.
 - **Q3 — One concrete model, worked through.** The ==VAE==: encoder, decoder, and a latent space you can sample.
 - **Q4 — How do we steer toward *good* designs?** ==Conditioning== — CbAS, and Model Inversion Networks.
@@ -149,16 +149,18 @@ That surviving difficulty is exactly what Acts 2 and 3 are for: the inverse map'
 
 ### One $y$, many $x$ — so the inverse cannot be a function
 
-The forward map is single-valued: one design, one score. Run it backwards and it is ==not a function at all==. A given performance is achieved by a whole set of designs, often in several disconnected clusters.
-
-::: widget forward-inverse {"seed":7}
-Two hundred and twenty designs in a two-dimensional design space, scored by a landscape with two peaks. Read left to right and it is a function. Read right to left — pick a target score on the dial — and the answer is ==a curve, in two disconnected pieces==. The hollow marker is the *average* of that answer set: at a target of $2.00$ the two branches are each worth $2.00$ and their mean is a design worth ==$0.84$==, sitting in the valley between them. A deterministic inverse map, trained by least squares, returns exactly that point.
-:::
+The forward map is single-valued: one design, one score. Run it backwards and it is ==not a function at all== — a given performance is achieved by a whole set of designs, often in several disconnected clusters.
 
 ::: reveal
 ::: keypoint
-So the inverse map must be ==stochastic==: $f^{-1}_\theta:\mathcal{Y}\times\mathcal{Z}\to\mathcal{X}$, with $z\sim p_0(z)$ supplying the choice among the many valid answers.
+So the inverse map must be **stochastic**: $f^{-1}_\theta:\mathcal{Y}\times\mathcal{Z}\to\mathcal{X}$, with $z\sim p_0(z)$ supplying the choice among the many valid answers.
 :::
+:::
+
+### The answer set, and the point in the middle of it
+
+::: widget forward-inverse {"seed":7}
+Read left to right and it is a function; read right to left and the answer is ==a curve in two disconnected pieces==. The red mark is that set's midpoint: every point of the curve is worth $2.00$, and their average is worth ==$0.81$==, stranded in the valley between the branches — which is exactly what a least-squares inverse map returns.
 :::
 
 ### Training the inverse — pick a divergence, and a familiar objective appears
@@ -345,10 +347,6 @@ The reparameterisation moves the randomness off the parameters and onto $\epsilo
 
 $$\mathcal{L} = \underbrace{\E_{q_\phi(z\mid x)}\big[\log p_\theta(x\mid z)\big]}_{\text{\hl{reconstruction}}} \;-\; \beta\,\underbrace{\mathrm{KL}\big(q_\phi(z\mid x)\,\|\,p(z)\big)}_{\text{\hl{stay near the prior}}}$$
 
-::: widget latent-beta {"seed":5}
-An exactly solvable VAE — a linear-Gaussian decoder, whose $\beta$-optimal encoder has a closed form — so every number below is computed, not fitted. Turn the dial. Left is the latent plane: each dot is a design's code $\mu_\phi(x)$, each halo its blur $\sigma_\phi(x)$, and the ring is the prior. ==The spread of the codes and the blur of each code are two variances that sum to exactly $1.000$ when $\beta=1$, and at no other value.== At $\beta=0.05$ they sum to $1.565$ and the codes spill outside the prior; at $\beta=20$ the codes have collapsed to a dot of spread $0.11$ and the blur has swallowed everything. Right is what the decoder emits.
-:::
-
 ::: reveal
 ::: cols
 ::: col.red $\beta$ too small — the code cheats
@@ -364,6 +362,12 @@ The KL term wins outright: $\mu_\phi(x)\to 0$ for every design and $\sigma_\phi\
 ::: keypoint
 The KL term is what makes the latent space ==samplable==: a smooth, prior-shaped code from which new valid designs can actually be drawn.
 :::
+:::
+
+### Turning the dial
+
+::: widget latent-beta {"seed":5}
+An exactly solvable VAE, so every number is computed rather than fitted. Each dot is a design's code, each halo its blur, and the ring is the prior. ==Spread and blur are two variances that sum to exactly $1.000$ at $\beta=1$ and at no other value== — $1.565$ at $\beta=0.05$, where the codes spill outside the prior, and $0.930$ at $\beta=20$, where they have collapsed to a dot.
 :::
 
 ### Condition the encoder and the decoder, and the inverse map is built
@@ -387,7 +391,7 @@ So the inverse map of Act 1 is not a new architecture at all. It is a conditiona
 
 ### Diffusion — a VAE whose encoder was never trained
 
-::: flow  q(z₁|x) | q(z₂|z₁) | | q(z_T|z_{T−1})
+::: flow  add noise | add noise | add noise
 - $x$ | the design
 - $z_1$ | a little noise added
 - $z_2$ | more
@@ -427,7 +431,7 @@ The error is weighted by $p(x)$, so it is ==largely ignored wherever the data is
 
 ::: reveal
 ::: small
-This is Lecture 5's thesis, in a different half of the subject: ==a learned object is unconstrained where there is no evidence==. The cure is even the mirror image of conservatism — where Lecture 5 pushed the model *down* off-distribution, score-based models perturb the data with noise at several scales to ==push the data outwards== until the empty region is populated, then anneal the noise away.
+This is Lecture 5's thesis, in a different half of the subject: ==a learned object is unconstrained where there is no evidence==. The cure is even the mirror image of conservatism — where Lecture 5 pushed the model *down* off-distribution, score-based models perturb the data with noise at several scales to push the data outwards until the empty region is populated, then anneal the noise away.
 :::
 :::
 
@@ -489,10 +493,6 @@ Read the right-hand side as ==weighted maximum likelihood==: draw designs from t
 
 The estimator above is unbiased and useless. In a design problem, satisfying $S$ is ==exceedingly rare==, so $P(S\mid x)$ is vanishingly small for almost every $x$ drawn from the prior; the Monte-Carlo average is then dominated by a handful of samples and needs an arbitrarily large number of draws to be accurate.
 
-::: widget cbas-ladder {"seed":31}
-Two hundred designs, a fitted oracle, and a target set $S=\{y\ge y_\text{target}\}$. Ask for it in one shot — sample the prior, weight by $P(S\mid x)$ — and at $y_\text{target}=2.65$ only ==$70$ of $4{,}000$ draws== carry any weight at all; at $3.00$, eight of them do. Now run the ladder: relax the bar to the $85$th percentile of the *current* model's own predictions, refit, tighten, repeat. The worst round still keeps $27\%$ of its samples, the model walks from $\mathcal{N}(3.04,1.12^2)$ out to $\mathcal{N}(5.88,0.54^2)$, and the design at its mean is worth $2.647$ against the best design in the dataset's $2.523$.
-:::
-
 ::: reveal
 ::: block The two conditions the ladder must satisfy
 - **(A)** $\E_{r^{(t)}}\big[P(S^{(t)}\mid x)\big]$ is ==non-vanishing== — the current proposal can actually produce samples that meet the current bar;
@@ -504,6 +504,12 @@ Two hundred designs, a fitted oracle, and a target set $S=\{y\ge y_\text{target}
 ::: small
 The proposal is the previous iterate, $r^{(t)}=q(x\mid\phi^{(t-1)})$, so the importance weight is $p(x\mid\theta^{(0)})/q(x\mid\phi^{(t)})$ and the estimator stays low-variance throughout. ==A hard conditional query, replaced by a sequence of easy ones.==
 :::
+:::
+
+### One shot, then the ladder
+
+::: widget cbas-ladder {"seed":31}
+Ask for the target in one shot — sample the prior, weight by $P(S\mid x)$ — and at $y_\text{target}=2.65$ only ==$70$ of $4{,}000$ draws== carry any weight; at $3.00$, eight do. Now run the ladder, relaxing the bar to the $85$th percentile of the model's own predictions and tightening. ==The worst round still keeps $27\%$== and the design it returns is worth $2.647$, against the dataset's best of $2.523$.
 :::
 
 ### MINs — train the inverse map, and choose the $y$ you ask for
@@ -526,7 +532,7 @@ $$\tilde y^*,\tilde z^* = \argmax_{y,z}\ f_\theta\big(f^{-1}_\theta(y,z)\big)$$
 
 $$\text{s.t.}\quad \big\|y - f_\theta(f^{-1}_\theta(y,z))\big\|^2 \le \epsilon_1,\qquad p(z)\ge\epsilon_2$$
 
-The first constraint demands ==self-consistency==; the second keeps $z$ in the region the decoder understands. Together: *extrapolate as far as possible while staying on the data manifold*.
+The first constraint demands **self-consistency**; the second keeps $z$ in the region the decoder understands. Together: *extrapolate as far as possible while staying on the data manifold*.
 :::
 :::
 
@@ -539,7 +545,7 @@ Note the shape. A budget $\epsilon_1$ on how far the query may drift from what t
 ### How far past the data can you ask?
 
 ::: widget condition-shift {"seed":11}
-The same two hundred designs, and the same oracle, now driven by the bar $\gamma$ alone. Raise it and the design distribution ==shifts== toward the good region: at $\gamma=2.00$ the samples average a true value of $2.13$; at $\gamma=2.65$ they average ==$2.550$==, above the best design in the dataset at $2.523$. Raise it further and they ==thin out and then decay==: $2.537$ at $\gamma=2.80$, $2.427$ at $3.00$, $2.163$ at $3.80$ — while the effective sample count falls from $3{,}750$ to $1.5$. The grey marker is Lecture 5's answer on this identical problem: gradient ascent on the same oracle runs to the boundary and returns a design the oracle rates $4.18$ and the world rates ==$-0.14$==.
+The same two hundred designs, and the same oracle, now driven by the bar $\gamma$ alone. Raise it and the design distribution shifts toward the good region: at $\gamma=2.00$ the samples average a true value of $2.13$; at $\gamma=2.65$ they average $2.550$, above the best design in the dataset at $2.523$. Raise it further and they ==thin out and then decay==: $2.537$ at $\gamma=2.80$, $2.427$ at $3.00$, $2.163$ at $3.80$ — while the effective sample count falls from $3{,}750$ to $1.5$. The grey marker is Lecture 5's answer on this identical problem: gradient ascent on the same oracle runs to the boundary and returns a design the oracle rates $4.18$ and the world rates ==$-0.14$==.
 :::
 
 ::: reveal
@@ -554,10 +560,10 @@ The prior is the leash. The oracle is just as wrong out there as it was in Lectu
 ::: table center
 | task | dimension | dataset avg | dataset best | forward map | **MIN** |
 |---|---|---|---|---|---|
-| MNIST, thickest recognisable "3" | 1,024 | 149.0 | 265.0 | ==*Invalid*== | **276.3** |
-| MNIST, variant (b) | 1,024 | 149.0 | 163.0 | ==*Invalid*== | **234.3** |
-| Faces, youngest ($\ge 15$) | 12,288 | 38.7 | $-15.0$ | ==*Invalid*== | **$-12.2$** |
-| Faces, youngest ($\ge 25$) | 12,288 | 41.5 | $-25.0$ | ==*Invalid*== | **$-23.9$** |
+| MNIST, thickest recognisable "3" | 1,024 | 149.0 | 265.0 | *Invalid* | **276.3** |
+| MNIST, variant (b) | 1,024 | 149.0 | 163.0 | *Invalid* | **234.3** |
+| Faces, youngest ($\ge 15$) | 12,288 | 38.7 | $-15.0$ | *Invalid* | **$-12.2$** |
+| Faces, youngest ($\ge 25$) | 12,288 | 41.5 | $-25.0$ | *Invalid* | **$-23.9$** |
 | HopperController reward | 3,843 | 442.9 | 1915.5 | 93.1 | **1960.1** |
 | Pendulum reward | 1,537 | 14.7 | 344.5 | 3.4 | **1000.0** |
 :::
@@ -575,7 +581,7 @@ The inverse map is one-to-many; a unimodal model averages the modes. So make it 
 
 $$\epsilon_\theta(x,t,y) = (1+\gamma)\,\epsilon_{\text{cond}}(x,t,y) - \gamma\,\epsilon_{\text{uncond}}(x,t)$$
 
-On a three-mode test problem the reverse trajectory splits and recovers ==all three==. Best mean rank on Design-Bench: $2.8$, against COMs' $3.7$ and gradient ascent's $3.5$.
+On a three-mode test problem the reverse trajectory splits and recovers **all three**. Best mean rank on Design-Bench: $2.8$, against COMs' $3.7$ and gradient ascent's $3.5$.
 :::
 ::: col.accent BootGen — and the failure returns {p}(Kim, Berto, Ahn & Park, NeurIPS 2023)
 Generative modelling *"sometimes gives us bad results — lack of generalisability on high-scoring regions."* The stated reason: ==exploiting a single trained model may be dangerous, and fall into out-of-distribution.==
@@ -622,7 +628,7 @@ Which is why a practitioner uses both, and why the field's best current methods 
 ::: table center
 |   | **Surrogate *(Lec 5 ✓)*** | **Generative *(Lec 6 ✓)*** |
 |---|---|---|
-| direction | forward $f_\theta(x)$ | ==inverse $p(x\mid y)$== |
+| direction | forward $f_\theta(x)$ | inverse $p(x\mid y)$ |
 | the decision | ==search== for the maximum | ==sample== a design |
 | the valid manifold | guarded, by conservatism | enforced, by construction |
 | the risk | off-manifold hallucination | limited to the data's good region |
@@ -705,6 +711,9 @@ $$\mathcal{L}_{\theta,\phi}(x) = \E_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)] - 
 | Normalising flow | exact maximum likelihood | invertible, same dimension | exact density; architectural constraints |
 | Diffusion | denoising score matching | fixed noise schedule | high quality; slow sampling |
 :::
+
+### Backup 2b — diffusion as a hierarchical VAE
+{fill: top}
 
 **Forward and reverse.** $q(x_{1:T}\mid x_0)=\prod_{t=1}^T q(x_t\mid x_{t-1})$ and $p_\theta(x_{0:T}) = p(x_T)\prod_{t=1}^T p_\theta(x_{t-1}\mid x_t)$, and the same ELBO argument gives
 

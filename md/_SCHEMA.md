@@ -166,7 +166,10 @@ Currently available:
 | Ch 3 | `factor-count` · `d-separation` · `inference-cost` · `influence-diagram` |
 | Ch 4 | `gp-posterior` · `acquisition-zoo` · `bo-run` · `explore-regret` |
 | Ch 5 | `two-failures` · `surrogate-exploit` · `conservative-coms` · `ensemble-alarm` |
+| Ch 6 | `forward-inverse` · `latent-beta` · `cbas-ladder` · `condition-shift` |
+| Ch 7 | `value-propagation` · `dp-schedules` · `discount-dial` · `contraction-rate` |
 | Ch 8 | `mc-vs-td` · `gpi-explore` · `cliff-walk` · `deadly-triad` |
+| Ch 9 | `control-grid` · `dt-to-hjb` · `lqr-riccati` · `pontryagin` |
 
 Several of these are **redrawings of figures in the original PDF decks** (`lecture_slides/`) rather
 than new inventions — the three-axis cube, the AI/decision-making pipelines, the modelling and

@@ -152,8 +152,6 @@ IE437.widget('condition-shift', function (host, opts) {
       'font-weight': 700, text: 'Lecture 5 lands here' }, sv);
     E('text', { x: cx(XA) - 6, y: cy(fhat(XA)) + 7, 'text-anchor': 'end', 'font-size': 9.5, fill: INK,
       'fill-opacity': .55, text: 'oracle ' + fhat(XA).toFixed(2) + ', truth ' + ftrue(XA).toFixed(2) }, sv);
-    E('text', { x: CW - PR - 3, y: cy(ftrue(3.0)) - 8, 'text-anchor': 'end', 'font-size': 10, fill: INK,
-      'fill-opacity': .0, text: '' }, sv);
 
     /* ---- lower panel: the prior and the conditional ---- */
     var BT = CH - 20, BB = SPLIT + 12, HB = BT - BB;

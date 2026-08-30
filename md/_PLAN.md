@@ -22,10 +22,10 @@ carries an idea a static picture cannot.
 | 3 | Bayesian Network | same cell, deeper | 4 | 14 | 46 | **done** |
 | 4 | Bayesian Optimization | same cell, now acting | 4 | 16 | 37 | **done** |
 | 5 | Surrogate Design Optimization | same cell, offline | 4 | 15 | 40 | **done** |
-| 6 | Generative Design Optimization | same cell, inverted | 3 | 15 | ~28 | to build |
-| 7 | MDP & Dynamic Programming | **static → dynamic** | 4 | 20 | ~33 | to build |
+| 6 | Generative Design Optimization | same cell, inverted | 4 | 15 | 48 | **done** |
+| 7 | MDP & Dynamic Programming | **static → dynamic** | 4 | 20 | 46 | **done** |
 | 8 | Value-Based RL | **model → data** (*r* and *P*) | 4 | 30 | 41 | **done** |
-| 9 | Optimal Control | model axis resets, lineage B | 3 | 17 | ~30 | to build |
+| 9 | Optimal Control | model axis resets, lineage B | 4 | 17 | 42 | **done** |
 | 10 | Policy-Based RL | **model → data** (lineage B) | 4 | 19 | ~32 | to build |
 | 11 | Model-Based RL | the two lineages rejoin | 3 | 15 | ~28 | to build |
 | **12** | **Offline RL** *(new)* | interaction removed | 4 | — *(no tex)* | ~32 | to write |
@@ -33,8 +33,10 @@ carries an idea a static picture cannot.
 | ~~—~~ | ~~Policy-Based MARL~~ | — | — | 91 | — | **→ IE579** |
 | A | Probability Review | toolbox, no cube position | 2 | 12 | ~22 | to build |
 
-About **380 slides and 40 widgets** across 15 files after the Option A revision. Seven are finished
-(Ch 0, 1, 2, 3, 4, 5, 8) — 254 slides and 30 widgets.
+About **380 slides and 40 widgets** across 15 files after the Option A revision. Ten are finished
+(Ch 0–9 except the unwritten Ch 12) — 392 slides and 42 widgets. Remaining: **Ch 10**, **Ch 11**,
+**Ch 12 Offline RL** (no tex — must be written from scratch), **Ch 13 Dynamic Games**, and the
+**probability appendix**.
 
 **Sources, and what each one settles.** The spine fixes the narrative — cube position, crossings,
 handoff chain. The `tex` fixes the act structure, the central thesis and the equations. The
