@@ -88,7 +88,7 @@ IE437.widget('gpi-explore', function (host, opts) {
     '<button class="wb" data-r1>+1 ep</button>' +
     '<button class="wb" data-auto data-r50>+50</button>' +
     '<button class="wb" data-r200>+200</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="gap:12px">' +
     '<div style="display:flex;gap:26px;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:5px">' +
@@ -161,11 +161,11 @@ IE437.widget('gpi-explore', function (host, opts) {
   host.querySelector('[data-r1]').onclick = function () { run(1); };
   host.querySelector('[data-r50]').onclick = function () { run(50); };
   host.querySelector('[data-r200]').onclick = function () { run(200); };
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
   host.querySelector('[data-ec]').onclick = function () {
     eps2 = eps2 === 0.1 ? 0.2 : eps2 === 0.2 ? 0.3 : 0.1; reset();
   };
 
   reset();
-  return { finish: function () { if (ep < 400) run(400 - ep); } };
+  return { reset: __reset, finish: function () { if (ep < 400) run(400 - ep); } };
 });

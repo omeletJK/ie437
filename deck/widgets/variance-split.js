@@ -69,7 +69,7 @@ IE437.widget('variance-split', function (host, opts) {
     '<button class="wb" data-pd>&minus;</button><button class="wb" data-pu>+</button>' +
     '<span class="wlabel" style="margin-left:6px">observations n</span><span class="wnum" data-n></span>' +
     '<button class="wb" data-nd>&minus;</button><button class="wb" data-nu>+</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">prior, and every posterior it could become</div><div data-c1></div></div>' +
@@ -223,8 +223,8 @@ IE437.widget('variance-split', function (host, opts) {
   host.querySelector('[data-nd]').onclick = function () { ni = Math.max(0, ni - 1); draw(); };
   host.querySelector('[data-pu]').onclick = function () { pi = Math.min(PRIORS.length - 1, pi + 1); draw(); };
   host.querySelector('[data-pd]').onclick = function () { pi = Math.max(0, pi - 1); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { pi = 1; ni = 3; draw(); };
+  var __reset = function () { pi = 1; ni = 3; draw(); };
 
   draw();
-  return { finish: function () { pi = 1; ni = 3; draw(); } };
+  return { reset: __reset, finish: function () { pi = 1; ni = 3; draw(); } };
 });

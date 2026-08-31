@@ -94,7 +94,7 @@ IE437.widget('mc-estimator', function (host, opts) {
     '<button class="wb" data-td>&minus;</button><button class="wb" data-tu>+</button>' +
     '<button class="wb" data-good>aim at the event</button>' +
     '<button class="wb" data-bad>aim the wrong way</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:15px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">drag the proposal</div><div data-c1></div></div>' +
@@ -296,8 +296,8 @@ IE437.widget('mc-estimator', function (host, opts) {
   host.querySelector('[data-td]').onclick = function () { ti = Math.max(0, ti - 1); draw(); };
   host.querySelector('[data-good]').onclick = function () { m = TS[ti]; draw(); };
   host.querySelector('[data-bad]').onclick = function () { m = -1; draw(); };
-  host.querySelector('[data-rs]').onclick = function () { ti = 2; m = 3; draw(); };
+  var __reset = function () { ti = 2; m = 3; draw(); };
 
   draw();
-  return { finish: function () { ti = 2; m = 3; draw(); } };
+  return { reset: __reset, finish: function () { ti = 2; m = 3; draw(); } };
 });

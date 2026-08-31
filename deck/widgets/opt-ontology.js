@@ -109,8 +109,9 @@ IE437.widget('opt-ontology', function (host, opts) {
   F.forEach(function (f, k) {
     host.querySelector('[data-f="' + f.k + '"]').onclick = function () { i = k; draw(); };
   });
-  host.querySelector('[data-rs]').onclick = function () { i = -1; draw(); };
+  var __reset = function () { i = -1; draw(); };
+  host.querySelector('[data-rs]').onclick = __reset;   // the "all" facet
 
   draw();
-  return { finish: function () { i = opts && opts.facet != null ? opts.facet : -1; draw(); } };
+  return { reset: __reset, finish: function () { i = opts && opts.facet != null ? opts.facet : -1; draw(); } };
 });

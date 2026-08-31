@@ -40,10 +40,8 @@ IE437.widget('given-ledger', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">What you were handed &mdash; and when it is taken away</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-prev>&lsaquo;</button>' +
     '<span class="wnum" data-l style="min-width:210px;display:inline-block;text-align:center"></span>' +
-    '<button class="wb" data-next>&rsaquo;</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="gap:12px">' +
     '<input type="range" min="0" max="' + (LECS.length - 1) + '" value="0" data-sl ' +
     'style="width:100%;accent-color:#16181D">' +
@@ -86,16 +84,19 @@ IE437.widget('given-ledger', function (host, opts) {
       '">' + unknown + '</span>';
   }
 
-  host.querySelector('[data-prev]').onclick = function () { i = Math.max(0, i - 1); draw(); };
-  host.querySelector('[data-next]').onclick = function () { i = Math.min(LECS.length - 1, i + 1); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { i = 0; draw(); };
-  host.querySelector('[data-sl]').oninput = function (e) { i = +e.target.value; draw(); };
+  var slider = host.querySelector('[data-sl]');
+  slider.oninput = function (e) { i = +e.target.value; draw(); };
 
   draw();
   /* default: Lecture 8, where the count of unknowns has doubled */
-  return { finish: function () {
-    var want = opts && opts.lecture != null ? opts.lecture : 8;
-    var k = LECS.findIndex(function (L) { return L.n === want; });
-    i = k >= 0 ? k : 7; draw();
-  } };
+  return {
+    /* the arrow key walks the ledger; the track drags to any lecture directly */
+    steps: LECS.length - 1,
+    step: function (k) { i = k; slider.value = k; draw(); },
+    finish: function () {
+      var want = opts && opts.lecture != null ? opts.lecture : 8;
+      var k = LECS.findIndex(function (L) { return L.n === want; });
+      i = k >= 0 ? k : 7; slider.value = i; draw();
+    }
+  };
 });

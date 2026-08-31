@@ -23,7 +23,7 @@ IE437.widget('bayes-update', function (host, opts) {
     '<button class="wb" data-t1>+1 toss</button>' +
     '<button class="wb" data-t10>+10</button>' +
     '<button class="wb" data-t50>+50</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div data-c></div>' +
     '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px">' +
@@ -110,9 +110,9 @@ IE437.widget('bayes-update', function (host, opts) {
   host.querySelector('[data-t1]').onclick = function () { toss(1); };
   host.querySelector('[data-t10]').onclick = function () { toss(10); };
   host.querySelector('[data-t50]').onclick = function () { toss(50); };
-  host.querySelector('[data-rs]').onclick = function () { n = 0; y = 0; rand = IE437.rng(opts.seed || 39); draw(); };
+  var __reset = function () { n = 0; y = 0; rand = IE437.rng(opts.seed || 39); draw(); };
   host.querySelector('[data-prior]').onclick = function () { pi = (pi + 1) % PRIORS.length; draw(); };
 
   draw();
-  return { finish: function () { if (n < 50) toss(50 - n); } };
+  return { reset: __reset, finish: function () { if (n < 50) toss(50 - n); } };
 });

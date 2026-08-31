@@ -24,9 +24,7 @@ IE437.widget('ai-vs-decision', function (host, opts) {
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">Two pipelines, and what joins them</span><span class="wspacer"></span>' +
-    '<button class="wb" data-prev>&lsaquo; back</button>' +
-    '<button class="wb" data-next>next &rsaquo;</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="align-items:center;gap:6px">' +
     '<div data-c></div><div class="wcap" data-cap style="min-height:20px;max-width:800px"></div></div>';
 
@@ -99,10 +97,13 @@ IE437.widget('ai-vs-decision', function (host, opts) {
     host.querySelector('[data-cap]').innerHTML = caps[step];
   }
 
-  host.querySelector('[data-next]').onclick = function () { step = Math.min(2, step + 1); draw(); };
-  host.querySelector('[data-prev]').onclick = function () { step = Math.max(0, step - 1); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { step = 0; draw(); };
+
 
   draw();
-  return { finish: function () { step = 2; draw(); } };
+  /* driven by the deck's arrow key — see showStep() in deck.js */
+  return {
+    steps: 2,
+    step: function (i) { step = i; draw(); },
+    finish: function () { step = 2; draw(); }
+  };
 });

@@ -249,14 +249,33 @@
   }
 
   /* ---------- navigation ------------------------------------------- */
+  /* A stepped widget is part of the slide's reveal sequence, not a thing with
+     its own toolbar: a widget declaring {steps: n, step: fn} extends the
+     slide by n presses, and the same arrow key that opens a bullet walks the
+     diagram. That is why those widgets carry no back/next/reset buttons —
+     there is nothing for them to do that the deck's own keys do not. */
+  function wsteps(sl) {
+    var n = 0;
+    LIVE.forEach(function (w) {
+      if (w.__host && sl.contains(w.__host) && w.steps > 0) n = Math.max(n, w.steps);
+    });
+    return n;
+  }
+  function stepsOn(i) { return FRAGS[i].length + wsteps(slides[i]); }
+
   function showStep(sl, k, animate) {
-    var groups = FRAGS[cur];
+    var groups = FRAGS[cur], F = groups.length;
     groups.forEach(function (g, i) {
       g.forEach(function (f) {
         if (!animate) f.style.transition = 'none';
         f.classList.toggle('on', i < k);
         if (!animate) requestAnimationFrame(function () { f.style.transition = ''; });
       });
+    });
+    LIVE.forEach(function (w) {
+      if (!w.__host || !sl.contains(w.__host) || !w.step) return;
+      var i = Math.max(0, Math.min(w.steps || 0, k - F));
+      try { w.step(i); } catch (e) { }
     });
   }
 
@@ -289,15 +308,23 @@
     i = Math.max(0, Math.min(N - 1, i));
     var prev = cur;
     slides[prev].classList.remove('active');
-    cur = i; step = (dir === 'back') ? FRAGS[cur].length : 0;
+    cur = i; step = 0;
     var sl = slides[cur];
     mountWidgets(sl);
     mountQuizzes(sl);
     sl.classList.add('active');
     balance(sl);
+    /* widgets mount above, so their step count is only known now */
+    if (dir === 'back') step = stepsOn(cur);
     showStep(sl, step, false);
     LIVE.forEach(function (w) {
-      if (w.__host && sl.contains(w.__host)) { if (w.enter) w.enter(); }
+      if (w.__host && sl.contains(w.__host)) {
+        /* Arriving is the reset gesture. A widget you dragged or ran comes back
+           clean when you step off the slide and step on again (up-arrow then
+           down-arrow), which is why none of them carries a reset button. */
+        if (w.reset) { try { w.reset(); } catch (e) { } }
+        if (w.enter) w.enter();
+      }
       else if (w.leave) w.leave();
     });
     autoplay(sl);
@@ -310,7 +337,7 @@
   }
 
   function next() {
-    if (step < FRAGS[cur].length) { step++; showStep(slides[cur], step, true); }
+    if (step < stepsOn(cur)) { step++; showStep(slides[cur], step, true); }
     else if (cur < N - 1) go(cur + 1, 'fwd');
   }
   function prev() {

@@ -211,7 +211,7 @@ IE437.widget('offline-divergence', function (host, opts) {
     '<label class="wtog" data-rs2><i></i><span>max only over actions in D</span></label>' +
     '<span class="wlabel">sweep</span><span class="wnum" data-t></span>' +
     '<button class="wb" data-back>&larr;</button><button class="wb" data-fw>&rarr;</button>' +
-    '<button class="wb" data-auto data-run>run 50</button><button class="wb" data-rs>reset</button></div>' +
+    '<button class="wb" data-auto data-run>run 50</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:14px;align-items:flex-start;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">what Q says about each action at s = 0</div><div data-c1></div></div>' +
@@ -365,10 +365,10 @@ IE437.widget('offline-divergence', function (host, opts) {
   host.querySelector('[data-fw]').onclick = function () { sweep = Math.min(ITER, sweep + 1); draw(); };
   host.querySelector('[data-back]').onclick = function () { sweep = Math.max(1, sweep - 1); draw(); };
   host.querySelector('[data-run]').onclick = function () { sweep = ITER; draw(); };
-  host.querySelector('[data-rs]').onclick = function () {
+  var __reset = function () {
     sweep = 1; restrict = false; host.querySelector('[data-rs2]').classList.remove('on'); draw();
   };
 
   sweep = 1; draw();
-  return { finish: function () { sweep = ITER; restrict = false; draw(); } };
+  return { reset: __reset, finish: function () { sweep = ITER; restrict = false; draw(); } };
 });

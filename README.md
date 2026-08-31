@@ -49,10 +49,11 @@ open html/index.html               # the landing page
 In the deck: `→`/space next reveal, `←` back, `↑ ↓` skip a slide, `M` index, `P` save as PDF,
 `F` fullscreen, `?` key help.
 
-Widgets **start themselves** when you reach their slide — nothing has to be pressed for a
-simulator to run — and parameters are dragged on a slider rather than clicked up one notch at a
-time. Each Act closes with a one-question check; answering it marks the answer and opens the
-reason, and the PDF prints every quiz as an answer key.
+Widgets carry no navigation buttons: the same `→` that opens a bullet walks a diagram through its
+steps, `↓` then `↑` puts a widget back to its starting state, and a simulator **starts itself** when
+you reach its slide. Parameters are dragged on a slider rather than clicked up one notch at a time.
+Each Act closes with a one-question check; answering it marks the answer and opens the reason, and
+the PDF prints every quiz as an answer key.
 
 ## The deck and its PDF are one deliverable
 

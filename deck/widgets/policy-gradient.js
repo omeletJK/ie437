@@ -101,7 +101,7 @@ IE437.widget('policy-gradient', function (host, opts) {
     '<button class="wb" data-batch>batch size</button>' +
     '<button class="wb" data-one>one update</button>' +
     '<button class="wb" data-auto data-run>run 100</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div data-c></div>' +
     '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">' +
@@ -175,9 +175,9 @@ IE437.widget('policy-gradient', function (host, opts) {
   }
   host.querySelector('[data-one]').onclick = function () { update(); };
   host.querySelector('[data-run]').onclick = function () { for (var i = 0; i < 100; i++) update(); };
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
   host.querySelector('[data-batch]').onclick = function () { ni = (ni + 1) % NS.length; reset(); };
 
   reset();
-  return { finish: function () { if (n === 0) for (var i = 0; i < 100; i++) update(); } };
+  return { reset: __reset, finish: function () { if (n === 0) for (var i = 0; i < 100; i++) update(); } };
 });

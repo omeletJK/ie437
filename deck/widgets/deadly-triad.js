@@ -16,7 +16,7 @@ IE437.widget('deadly-triad', function (host, opts) {
     '<div class="wbar"><span class="wt">Two states, zero rewards, true value = 0 &mdash; what could go wrong</span>' +
     '<span class="wspacer"></span>' +
     '<button class="wb" data-auto data-run>run 4000 updates</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px">' +
     '<div style="flex:.85;display:flex;flex-direction:column;gap:9px;justify-content:center;min-width:0">' +
     '<label class="wtog on" data-t="fa"><i></i><span>function approximation<br>' +
@@ -102,8 +102,8 @@ IE437.widget('deadly-triad', function (host, opts) {
     };
   });
   host.querySelector('[data-run]').onclick = run;
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
 
   reset();
-  return { finish: function () { if (n < TOTAL) run(); } };
+  return { reset: __reset, finish: function () { if (n < TOTAL) run(); } };
 });

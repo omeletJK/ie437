@@ -66,7 +66,7 @@ IE437.widget('dt-to-hjb', function (host, opts) {
     '<span class="wspacer"></span>' +
     '<span class="wlabel">step</span><span class="wnum" data-dt style="min-width:74px;display:inline-block;text-align:right"></span>' +
     '<span data-sl></span>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">' +
     '<div class="wlabel">cost-to-go coefficient P(t) &mdash; exact HJB vs the discrete backup</div>' +
@@ -164,8 +164,8 @@ IE437.widget('dt-to-hjb', function (host, opts) {
     bare: true, min: 0, max: RUNS.length - 1, step: 1, value: li,
     on: function (v) { li = v; draw(); }
   });
-  host.querySelector('[data-rs]').onclick = function () { li = 0; dial.set(0, false); draw(); };
+  var __reset = function () { li = 0; dial.set(0, false); draw(); };
 
   draw();
-  return { finish: function () { li = RUNS.length - 1; draw(); } };
+  return { reset: __reset, finish: function () { li = RUNS.length - 1; draw(); } };
 });

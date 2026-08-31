@@ -102,7 +102,7 @@ IE437.widget('baseline-variance', function (host, opts) {
     '<span class="wlabel">update</span><span class="wnum" data-n></span>' +
     '<button class="wb" data-one>one update</button>' +
     '<button class="wb" data-auto data-run>run 100</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody">' +
     '<div style="display:flex;gap:18px;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">' +
@@ -192,8 +192,8 @@ IE437.widget('baseline-variance', function (host, opts) {
   function reset() { runs = [mkRun(false), mkRun(true)]; n = 0; draw(); }
   host.querySelector('[data-one]').onclick = function () { step(); };
   host.querySelector('[data-run]').onclick = function () { for (var i = 0; i < STEPS; i++) step(); };
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
 
   reset();
-  return { finish: function () { if (n === 0) for (var i = 0; i < STEPS; i++) step(); } };
+  return { reset: __reset, finish: function () { if (n === 0) for (var i = 0; i < STEPS; i++) step(); } };
 });

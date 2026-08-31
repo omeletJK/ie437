@@ -226,11 +226,19 @@ var dial = IE437.slider(host.querySelector('[data-sl]'), {
 });          // -> {get, set(v, fire), input, el};  a reset button calls dial.set(...)
 ```
 
-**Autoplay.** A widget that sits dead until someone finds its toolbar is a widget most of a class
-never sees work, so arriving at a slide starts it. Mark the control that carries the widget to the
-state worth seeing with `data-auto` and the engine clicks it ~400 ms after the slide lands, or
-return an `auto()` method to do something else. The buttons stay — they are now for running it
-*again*, not for the first time. Printing and reduced-motion are exempt: `finish()` covers those.
+**No toolbar navigation.** A widget carries no `back`, `next` or `reset` button — the deck's own
+keys do all three, so a widget bar holds only the controls that are about *its* subject: a slider,
+a toggle, a run button. Three engine hooks replace what the buttons did:
+
+| you return | the engine does |
+|---|---|
+| `steps: n` and `step(i)` | `→` walks the widget after the slide's reveals are spent; `←` walks back. The widget becomes part of the reveal sequence rather than a thing with its own pager. |
+| `reset()` | called every time the slide is entered, so stepping off and back on (`↓` then `↑`) is the reset gesture. |
+| `data-auto` on a control, or `auto()` | clicked ~400 ms after the slide lands, so a simulator is already running by the time it is discussed. |
+
+A stepped widget may set its starting point from its mount options — `course-cube` takes
+`{"step": 5}`, which is where Lecture 12 picks the walk up — and `steps` then counts only the
+presses that remain. Printing and reduced-motion skip autoplay; `finish()` covers those.
 
 Rules that keep the PDF honest:
 

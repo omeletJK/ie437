@@ -119,7 +119,7 @@ IE437.widget('cbas-ladder', function (host, opts) {
     '<button class="wb" data-one>one shot</button>' +
     '<button class="wb" data-step>step</button>' +
     '<button class="wb" data-auto data-run>run the ladder</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:flex-start;padding:11px 16px 9px">' +
     '<div data-c></div><div data-t style="flex:1;min-width:0"></div></div>';
 
@@ -223,9 +223,9 @@ IE437.widget('cbas-ladder', function (host, opts) {
   host.querySelector('[data-step]').onclick = function () { r = Math.min(ROUNDS, r + 1); draw(); };
   host.querySelector('[data-run]').onclick = function () { r = ROUNDS; draw(); };
   host.querySelector('[data-one]').onclick = function () { showOne = !showOne; draw(); };
-  host.querySelector('[data-rs]').onclick = function () { r = 0; showOne = false; draw(); };
+  var __reset = function () { r = 0; showOne = false; draw(); };
   host.querySelector('[data-tg]').onclick = function () { ti = (ti + 1) % TARGETS.length; r = 0; draw(); };
 
   draw();
-  return { finish: function () { ti = 0; r = ROUNDS; showOne = true; draw(); } };
+  return { reset: __reset, finish: function () { ti = 0; r = ROUNDS; showOne = true; draw(); } };
 });

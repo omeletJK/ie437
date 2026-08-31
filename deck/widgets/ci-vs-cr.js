@@ -15,7 +15,7 @@ IE437.widget('ci-vs-cr', function (host, opts) {
     '<div class="wbar"><span class="wt">Both say 95% &mdash; and they are different claims</span>' +
     '<span class="wspacer"></span>' +
     '<button class="wb" data-auto data-run>run ' + REPS + ' experiments</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0">' +
     '<div class="wlabel" style="color:' + GREEN + '">frequentist &mdash; variability in the data</div>' +
@@ -110,7 +110,7 @@ IE437.widget('ci-vs-cr', function (host, opts) {
   }
 
   host.querySelector('[data-run]').onclick = run;
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
   reset();
-  return { finish: function () { if (!runs.length) run(); } };
+  return { reset: __reset, finish: function () { if (!runs.length) run(); } };
 });

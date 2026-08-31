@@ -44,7 +44,7 @@ IE437.widget('gaussian-four', function (host, opts) {
     '<button class="wb" data-sd>&minus;</button><button class="wb" data-su>+</button>' +
     '<button class="wb" data-p1>Ch 4 &middot; neighbours</button>' +
     '<button class="wb" data-p2>Ch 4 &middot; four apart</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">the joint &mdash; drag the cross, or drag the line</div><div data-c1></div></div>' +
@@ -309,11 +309,11 @@ IE437.widget('gaussian-four', function (host, opts) {
   host.querySelector('[data-p2]').onclick = function () {
     S.m1 = 0; S.m2 = 0; S.s1 = 1; S.s2 = 1; S.rho = 0.573; S.c = -0.313; draw();
   };
-  host.querySelector('[data-rs]').onclick = function () {
+  var __reset = function () {
     for (var k in D0) S[k] = D0[k];
     draw();
   };
 
   draw();
-  return { finish: function () { S.m1 = 0; S.m2 = 0; S.s1 = 1; S.s2 = 1; S.rho = 0.966; S.c = -0.313; draw(); } };
+  return { reset: __reset, finish: function () { S.m1 = 0; S.m2 = 0; S.s1 = 1; S.s2 = 1; S.rho = 0.966; S.c = -0.313; draw(); } };
 });

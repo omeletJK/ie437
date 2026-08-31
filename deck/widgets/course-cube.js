@@ -49,10 +49,7 @@ IE437.widget('course-cube', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">The cube &mdash; every lecture, one map</span><span class="wspacer"></span>' +
     '<span class="wlabel">step</span><span class="wnum" data-n></span>' +
-    '<button class="wb" data-prev>&lsaquo; back</button>' +
-    '<button class="wb" data-next>next &rsaquo;</button>' +
-    '<button class="wb" data-tour>tour</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="align-items:center;gap:6px">' +
     '<div data-c></div><div class="wcap" data-cap style="min-height:30px;max-width:900px"></div></div>';
 
@@ -167,15 +164,17 @@ IE437.widget('course-cube', function (host, opts) {
 
   function go(n) { step = Math.max(0, Math.min(STEPS.length - 1, n)); draw(); }
   function stop() { if (timer) { clearInterval(timer); timer = null; } }
-  host.querySelector('[data-prev]').onclick = function () { stop(); go(step - 1); };
-  host.querySelector('[data-next]').onclick = function () { stop(); go(step + 1); };
-  host.querySelector('[data-rs]').onclick = function () { stop(); go(0); };
-  host.querySelector('[data-tour]').onclick = function () {
-    stop(); go(0);
-    timer = setInterval(function () { if (step >= STEPS.length - 1) { stop(); return; } go(step + 1); }, 1900);
-  };
 
-  draw();
-  /* Lecture 0 wants the doubling; Lecture 12 wants the face it never crosses */
-  return { finish: function () { stop(); go(opts && opts.step != null ? opts.step : 4); }, leave: stop };
+  /* `step:` in the mount options is where this chapter's walk begins — Lecture 0
+     starts at the empty cube and tours the whole route; Lecture 12 opens already
+     at ⑤ and has only the face it never crosses left to show. */
+  var BASE = opts && opts.step != null ? opts.step : 0;
+  go(BASE);
+  return {
+    /* driven by the deck's arrow key — see showStep() in deck.js */
+    steps: STEPS.length - 1 - BASE,
+    step: function (i) { stop(); go(BASE + i); },
+    finish: function () { stop(); go(STEPS.length - 1); },
+    leave: stop
+  };
 });

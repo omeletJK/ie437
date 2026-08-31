@@ -24,7 +24,7 @@ IE437.widget('trust-region', function (host, opts) {
     '<button class="wb" data-start>new start</button>' +
     '<button class="wb" data-step>one step</button>' +
     '<button class="wb" data-auto data-run>run 15</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div data-c></div>' +
     '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:11px">' +
@@ -124,9 +124,9 @@ IE437.widget('trust-region', function (host, opts) {
 
   host.querySelector('[data-step]').onclick = function () { step(); };
   host.querySelector('[data-run]').onclick = function () { for (var i = 0; i < 15; i++) step(); };
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
   host.querySelector('[data-start]').onclick = function () { si = (si + 1) % STARTS.length; reset(); };
 
   reset();
-  return { finish: function () { if (k === 0) for (var i = 0; i < 15; i++) step(); } };
+  return { reset: __reset, finish: function () { if (k === 0) for (var i = 0; i < 15; i++) step(); } };
 });

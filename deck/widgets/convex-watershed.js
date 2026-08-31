@@ -27,7 +27,7 @@ IE437.widget('convex-watershed', function (host, opts) {
     '<span class="wspacer"></span>' +
     '<label class="wtog on" data-cx><i></i><span>convex objective</span></label>' +
     '<button class="wb" data-auto data-run>descend</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="align-items:center;gap:6px">' +
     '<div data-c></div>' +
     '<div class="wcap" data-v style="font:600 13px/1.4 var(--mono);letter-spacing:.03em"></div></div>';
@@ -86,13 +86,13 @@ IE437.widget('convex-watershed', function (host, opts) {
   host.querySelector('[data-run]').onclick = function () {
     finals = starts.map(descend); ran = true; draw();
   };
-  host.querySelector('[data-rs]').onclick = function () { ran = false; draw(); };
+  var __reset = function () { ran = false; draw(); };
   host.querySelector('[data-cx]').onclick = function () {
     convex = !convex; this.classList.toggle('on', convex); ran = false; draw();
   };
 
   draw();
-  return {
+  return { reset: __reset,
     finish: function () { finals = starts.map(descend); ran = true; draw(); }
   };
 });

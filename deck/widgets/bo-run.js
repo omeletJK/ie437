@@ -84,7 +84,7 @@ IE437.widget('bo-run', function (host, opts) {
     '<div class="wbar"><span class="wt">Bayesian optimisation, ten queries</span><span class="wspacer"></span>' +
     '<span class="wlabel">queries</span><span class="wnum" data-n></span>' +
     '<button class="wb" data-s1>next query</button><button class="wb" data-auto data-s5>&times;5</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;gap:4px"><div data-c1></div><div data-c2></div></div>' +
     '<div style="width:236px;display:flex;flex-direction:column;gap:9px">' +
@@ -188,8 +188,8 @@ IE437.widget('bo-run', function (host, opts) {
 
   host.querySelector('[data-s1]').onclick = function () { step(); draw(); };
   host.querySelector('[data-s5]').onclick = function () { for (var i = 0; i < 5; i++) step(); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { reset(); draw(); };
+  var __reset = function () { reset(); draw(); };
 
   reset(); draw();
-  return { finish: function () { reset(); while (X.length < MAXN) step(); draw(); } };
+  return { reset: __reset, finish: function () { reset(); while (X.length < MAXN) step(); draw(); } };
 });

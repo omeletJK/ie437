@@ -54,7 +54,7 @@ IE437.widget('discount-dial', function (host, opts) {
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">The same MDP, two different answers</span><span class="wspacer"></span>' +
-    '<span data-sl></span><button class="wb" data-rs>reset</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0">' +
     '<div class="wlabel">optimal value, and the optimal move out of each cell</div>' +
@@ -145,10 +145,10 @@ IE437.widget('discount-dial', function (host, opts) {
     fmt: function (i) { return 'γ = ' + GAMMAS[i].toFixed(2); },
     on: function (i) { gi = i; draw(); }
   });
-  host.querySelector('[data-rs]').onclick = function () { dial.set(4); };
+  var __reset = function () { dial.set(4); };
   /* keep the dial stops clear of the exact thresholds 10^(-1/3)=0.4642 and 10^(-1/5)=0.6310,
      so no frame of this widget ever sits on a knife-edge tie. */
 
   draw();
-  return { finish: function () { gi = 8; draw(); } };   /* 0.85 — the patient answer, for the printed page */
+  return { reset: __reset, finish: function () { gi = 8; draw(); } };   /* 0.85 — the patient answer, for the printed page */
 });

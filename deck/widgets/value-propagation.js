@@ -83,7 +83,7 @@ IE437.widget('value-propagation', function (host, opts) {
     '<label class="wtog" data-mx><i></i><span>max backup (value iteration)</span></label>' +
     '<span class="wlabel">sweep</span><span class="wnum" data-k></span>' +
     '<button class="wb" data-s1>+1</button><button class="wb" data-auto data-s5>+5</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:22px;align-items:center;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:5px">' +
     '<div class="wlabel" data-t1></div><div data-g1></div></div>' +
@@ -170,8 +170,8 @@ IE437.widget('value-propagation', function (host, opts) {
   tog.onclick = function () { useMax = !useMax; syncTog(); reset(); };
   host.querySelector('[data-s1]').onclick = function () { step(1); };
   host.querySelector('[data-s5]').onclick = function () { step(5); };
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
 
   syncTog(); reset();
-  return { finish: function () { if (k < 3) step(3 - k); } };
+  return { reset: __reset, finish: function () { if (k < 3) step(3 - k); } };
 });

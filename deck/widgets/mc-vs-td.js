@@ -22,7 +22,7 @@ IE437.widget('mc-vs-td', function (host, opts) {
     '<button class="wb" data-r1>+1 ep</button>' +
     '<button class="wb" data-r10>+10</button>' +
     '<button class="wb" data-r100>+100</button>' +
-    '<button class="wb" data-rs>reset</button>' +
+    '' +
     '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;min-width:0">' +
@@ -110,11 +110,11 @@ IE437.widget('mc-vs-td', function (host, opts) {
   host.querySelector('[data-r1]').onclick = function () { run(1); };
   host.querySelector('[data-r10]').onclick = function () { run(10); };
   host.querySelector('[data-r100]').onclick = function () { run(100); };
-  host.querySelector('[data-rs]').onclick = reset;
+  var __reset = reset;
   host.querySelector('[data-al]').onclick = function () {
     alpha = alpha === 0.05 ? 0.1 : alpha === 0.1 ? 0.2 : 0.05; reset();
   };
 
   reset();
-  return { finish: function () { if (ep < 100) run(100 - ep); } };
+  return { reset: __reset, finish: function () { if (ep < 100) run(100 - ep); } };
 });

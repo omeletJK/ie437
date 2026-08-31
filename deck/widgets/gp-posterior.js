@@ -70,7 +70,7 @@ IE437.widget('gp-posterior', function (host, opts) {
     '<div class="wbar"><span class="wt">One kernel, one knob</span><span class="wspacer"></span>' +
     '<span class="wlabel">length scale</span><span class="wnum" data-l></span>' +
     '<span data-sl></span>' +
-    '<button class="wb" data-best>best &lambda;</button><button class="wb" data-rs>reset</button></div>' +
+    '<button class="wb" data-best>best &lambda;</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">the posterior &mdash; click to add an observation</div><div data-c1></div></div>' +
@@ -222,7 +222,7 @@ IE437.widget('gp-posterior', function (host, opts) {
     bare: true, min: 0, max: LAMS.length - 1, step: 1, value: li,
     on: function (v) { li = v; draw(); }
   });
-  host.querySelector('[data-rs]').onclick = function () {
+  var __reset = function () {
     X = X0.slice(); Y = X0.map(TRUE); li = 7; dial.set(7, false); draw();
   };
   host.querySelector('[data-best]').onclick = function () {
@@ -232,5 +232,5 @@ IE437.widget('gp-posterior', function (host, opts) {
   };
 
   draw();
-  return { finish: function () { X = X0.slice(); Y = X0.map(TRUE); li = 7; draw(); } };
+  return { reset: __reset, finish: function () { X = X0.slice(); Y = X0.map(TRUE); li = 7; draw(); } };
 });

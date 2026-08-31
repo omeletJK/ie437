@@ -56,7 +56,7 @@ IE437.widget('kkt-point', function (host, opts) {
     '<div class="wbar"><span class="wt">Drag the point &mdash; is any feasible direction downhill?</span>' +
     '<span class="wspacer"></span>' +
     '<button class="wb" data-snap>snap to optimum</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:22px;align-items:center;justify-content:center">' +
     '<div data-c></div>' +
     '<div style="flex:1;max-width:430px;display:flex;flex-direction:column;gap:12px">' +
@@ -155,8 +155,8 @@ IE437.widget('kkt-point', function (host, opts) {
   sv.addEventListener('pointermove', function (e) { if (dragging) locate(e); });
   sv.addEventListener('pointerup', function () { dragging = false; });
   host.querySelector('[data-snap]').onclick = function () { pt = OPT.slice(); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { pt = [4.2, 3.0]; draw(); };
+  var __reset = function () { pt = [4.2, 3.0]; draw(); };
 
   draw();
-  return { finish: function () { pt = OPT.slice(); draw(); } };
+  return { reset: __reset, finish: function () { pt = OPT.slice(); draw(); } };
 });
