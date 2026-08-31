@@ -171,6 +171,7 @@ code{font:500 .92em/1.5 var(--mono);background:rgba(22,24,29,.06);
 .cols{display:grid;gap:30px;align-items:start;min-height:0}
 .cols.c2{grid-template-columns:1fr 1fr}
 .cols.c3{grid-template-columns:1fr 1fr 1fr}
+.cols.c4{grid-template-columns:repeat(4,1fr);gap:18px}
 .cols.wide-l{grid-template-columns:1.5fr 1fr}
 .cols.wide-r{grid-template-columns:1fr 1.5fr}
 .col{display:flex;flex-direction:column;gap:11px;min-width:0}
@@ -297,6 +298,20 @@ td.off{color:var(--red);font-weight:600}
 .widget > .wbody{padding:13px 15px;flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
 .wcap{font:400 12.5px/1.5 var(--sans);color:var(--ink3);text-align:center}
 .dark .wcap{color:var(--wink3)}
+
+/* ---- figures and clips lifted from the source deck ---------------
+   The source slides are photographs of ink on paper as far as this
+   design is concerned: they sit on white, hairlined, never cropped. */
+.fig{margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:9px;
+  min-width:0;max-width:100%}
+.fig img,.fig video{display:block;width:100%;height:auto;border-radius:2px;background:#fff;
+  box-shadow:0 0 0 1px var(--line),0 1px 3px rgba(22,24,29,.055)}
+.fig figcaption{font:400 12.5px/1.5 var(--sans);color:var(--ink3);text-align:center;max-width:64ch}
+.fig figcaption strong{color:var(--ink2);font-weight:600}
+.dark .fig figcaption{color:var(--wink3)}
+.dark .fig img,.dark .fig video{box-shadow:0 0 0 1px rgba(255,255,255,.16)}
+.cols .fig{width:100%}
+.fig.plain img,.fig.plain video{box-shadow:none;background:none}
 
 button.wb{font:600 11px/1 var(--mono);letter-spacing:.05em;padding:8px 13px;border-radius:2px;
   border:1px solid var(--line);background:var(--paper);color:var(--ink2);cursor:pointer;transition:all .15s ease}

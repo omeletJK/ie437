@@ -3,6 +3,10 @@ ch: 8
 title: Value-Based Reinforcement Learning
 subtitle: Learning to act when the model is gone
 tagline: From the Bellman equation you can *solve* to the one you can only *sample*
+blurb: >-
+  Delete the model from Lecture 7 and the Bellman equation can no longer be solved, only sampled.
+  Monte Carlo and temporal-difference learning, Q-learning, the cost of exploring, and the deadly
+  triad that explains why adding function approximation makes the whole thing fragile.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

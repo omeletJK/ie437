@@ -3,6 +3,10 @@ ch: 12
 title: Offline Reinforcement Learning
 subtitle: You cannot try. Learn from what was already done.
 tagline: The last thing taken away is the right to act at all
+blurb: >-
+  The last thing taken away is the right to act. Learn a policy from a fixed log with no
+  exploration at all, where any action outside the data is a guess the Q-function cannot check —
+  the same failure Lecture 5 met, answered the same way, with conservatism.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST
@@ -509,7 +513,7 @@ And what this lecture hands on is ==the course's last move== — conservative va
 ### The tour, complete — and the face we did not visit
 
 ::: widget course-cube {"step":5}
-The same cube Lecture 0 drew: ① the origin · ② the model axis on $f$ · ③ the stages axis · ④ the model axis again on $r$ and $P$ — and ⑤, in that same cell, ==the interaction withdrawn==. Step once more and no badge lights: the dashed arrow across **multi agents** is the crossing this course never makes.
+The same cube Lecture 0 drew: ① the origin · ② the model axis on $f$ · ③ the stages axis · ④ it again on $r$ and $P$ — and ⑤, in that cell, ==the interaction withdrawn==. Step once more and no badge lights: **multi agents** is the crossing this course never makes.
 :::
 
 ### Every algorithm in Part IV assumed it could try something.

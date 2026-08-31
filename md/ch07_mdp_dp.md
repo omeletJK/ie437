@@ -3,6 +3,10 @@ ch: 7
 title: Markov Decision Processes & Dynamic Programming
 subtitle: A good plan stays good from wherever you land
 tagline: The deepest crossing — from choosing once, to choosing at every state your choices create
+blurb: >-
+  The deepest crossing in the course: from choosing once to choosing at every state your own
+  choices create. The Bellman equation says what a good plan is, and value and policy iteration
+  solve it exactly — so long as somebody hands you the model.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

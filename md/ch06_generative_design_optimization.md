@@ -3,6 +3,10 @@ ch: 6
 title: Data-Driven Design Optimization — Generative-Based
 subtitle: Don't search the design — produce it
 tagline: Offline, part 2 of 2 — model the inverse, then sample
+blurb: >-
+  The same problem, inverted. Rather than searching a learned forward model, learn the inverse and
+  sample designs directly: latent spaces, the VAE, and conditioning toward a target performance —
+  along with what happens when the condition asks for something the data never contained.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

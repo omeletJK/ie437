@@ -6,8 +6,10 @@
   "description": "IE437 — Data-Driven Decision Making and Control · interactive HTML lecture decks",
   "scripts": {
     "build": "node build.mjs --all",
+    "build:fast": "node build.mjs --all --no-pdf",
+    "site": "node site.mjs",
     "pdf": "node pdf.mjs --all",
-    "serve": "node serve.mjs"
+    "pdf:force": "node pdf.mjs --all --force"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

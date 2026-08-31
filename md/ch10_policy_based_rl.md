@@ -3,6 +3,10 @@ ch: 10
 title: Policy-Based Reinforcement Learning
 subtitle: Optimal control with the dynamics replaced by data
 tagline: Lecture 9 *solved* for the feedback law. This lecture *learns* the same law.
+blurb: >-
+  Lecture 9 with the dynamics replaced by data. Optimise the policy directly by gradient ascent,
+  cut the variance with a baseline, and keep every update inside a trust region — the machinery
+  that PPO is built from.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

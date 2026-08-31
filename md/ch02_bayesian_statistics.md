@@ -3,6 +3,10 @@ ch: 2
 title: Fundamentals on Bayesian Statistics
 subtitle: Don't pick a number — carry a belief
 tagline: The first crossing — from a world handed to us to a world inferred from data
+blurb: >-
+  The first thing taken away is certainty about the objective. Instead of committing to one
+  number, carry a distribution and let data update it — and watch regularization stop being a
+  trick and become a prior.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

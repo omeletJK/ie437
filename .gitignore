@@ -1,3 +1,18 @@
 node_modules/
 .DS_Store
-html/          # generated: the folder you publish, PDFs included
+
+# Generated: the folder you publish, PDFs included.
+# NB: a trailing comment on a pattern line becomes part of the pattern and
+# silently ignores nothing — which is how html/ came to be committed once.
+html/
+
+# Authoring sources, kept locally. None is needed to build the site.
+# the original lecture PDFs (54 MB)
+lecture_slides/
+# the source PowerPoint the ch00 figures were lifted from
+pptx/
+# the company deck the field clips came from
+Omelet_IR_5min.html
+
+# throwaway QA scripts
+_*.mjs

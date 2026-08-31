@@ -1,0 +1,66 @@
+# Publish html/ to GitHub Pages.
+#
+# The site is built here rather than committed: md/ is the source of truth, so
+# a push that changes a lecture — or just posts a notice in
+# md/_ANNOUNCEMENTS.md — is all it takes to redeploy.
+name: Publish lecture site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'md/**'
+      - 'deck/**'
+      - 'assets/**'
+      - 'build.mjs'
+      - 'site.mjs'
+      - 'pdf.mjs'
+      - 'package*.json'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# one deploy at a time; a newer push supersedes a queued one but never
+# cancels a deploy already in flight
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      # build.mjs exports the PDFs itself, so Chromium has to be here first
+      - run: npx playwright install --with-deps chromium
+
+      # md/ -> html/ decks -> html/pdf/ PDFs -> html/index.html launcher,
+      # in that order, from the one command
+      - run: node build.mjs --all
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

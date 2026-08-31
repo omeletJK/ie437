@@ -3,6 +3,11 @@ ch: 4
 title: Bayesian Optimization
 subtitle: Put the belief to work — act to learn, and to win
 tagline: The first policy in the course — a rule that turns a belief into an action
+blurb: >-
+  Now the belief acts. A Gaussian process carries uncertainty about an expensive unknown function,
+  and an acquisition function turns that uncertainty into the next experiment worth running. This
+  is the first policy in the course, and the exploration–exploitation dilemma it raises comes back
+  in every chapter after it.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

@@ -3,6 +3,11 @@ ch: 3
 title: Bayesian Networks
 subtitle: A belief about many things is a graph
 tagline: Structure tames the joint — and once a decision hangs off the graph, every later lecture is already in the room
+blurb: >-
+  A belief about many variables at once, drawn as a graph. Factorization is what makes an
+  intractable joint tractable, d-separation says what the graph implies about independence, and
+  adding decision and utility nodes turns it into an influence diagram — a one-stage MDP, and the
+  seed of the entire second half of the course.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

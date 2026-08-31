@@ -3,6 +3,11 @@ ch: 1
 title: Optimization Problem Modeling
 subtitle: Before you can learn a decision, you must be able to state one
 tagline: The atom every later method is built from
+blurb: >-
+  How to state a decision problem so that it can be solved at all: variables, objective,
+  constraints, and the standard form everything later is written in. Convexity is the watershed —
+  on one side a local optimum is global, on the other it is not — and the KKT conditions are how
+  you certify an answer rather than merely find one.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import katex from 'katex';
 import { marked } from 'marked';
+import { writeSite } from './site.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const MD = path.join(ROOT, 'md');
@@ -166,6 +167,24 @@ function renderNode(n, ctx) {
         (cap ? '<div class="wcap">' + mdInline(cap) + '</div>' : '');
     }
 
+    case 'figure': {
+      const [nm, w] = n.arg.split('|').map(x => x.trim());
+      const cap = rawText(n).trim();
+      return '<figure class="fig ' + cls + '"' + (w ? ' style="max-width:' + w + 'px"' : '') + '>' +
+        '<img src="' + assetURI(nm, ctx) + '" alt="' + esc(stripMd(cap).slice(0, 140)) + '">' +
+        (cap ? '<figcaption>' + mdInline(cap) + '</figcaption>' : '') + '</figure>';
+    }
+
+    case 'video': {
+      const [nm, w] = n.arg.split('|').map(x => x.trim());
+      const cap = rawText(n).trim();
+      /* poster carries the PDF: Chromium prints the poster frame, not the video */
+      return '<figure class="fig vid ' + cls + '"' + (w ? ' style="max-width:' + w + 'px"' : '') + '>' +
+        '<video src="' + assetURI(nm + '.mp4', ctx) + '" poster="' + assetURI(nm + '.jpg', ctx) + '" ' +
+        'muted loop playsinline autoplay preload="auto"></video>' +
+        (cap ? '<figcaption>' + mdInline(cap) + '</figcaption>' : '') + '</figure>';
+    }
+
     case 'flow': {
       const items = rawText(n).split('\n').map(l => l.replace(/^\s*[-*]\s+/, '').trim()).filter(Boolean);
       const lbls = (n.arg || '').split('|').map(s => s.trim());
@@ -266,6 +285,34 @@ function blockCount(root) {
    stylesheet, the engine, its widgets, KaTeX and the display faces are
    all inlined. Build with --linked instead to reference deck/ during
    development, when editing deck.css should not need a rebuild.      */
+const MIME = {
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.gif': 'image/gif',
+  '.webp': 'image/webp', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.webm': 'video/webm'
+};
+const _assets = new Map();
+const stripMd = t => t.replace(/[*_=`\[\]]|\$[^$]*\$/g, '').replace(/\s+/g, ' ').trim();
+
+/* assets/chNN/<name>  —  inlined as a data URI so the chapter stays one file.
+   A name with a slash is taken as a path under assets/ instead. */
+function assetURI(name, ctx) {
+  const dir = 'ch' + String(ctx.fm.ch).padStart(2, '0');
+  let rel = name.includes('/') ? name : dir + '/' + name;
+  let file = path.join(ROOT, 'assets', rel);
+  if (!path.extname(file)) {
+    const hit = ['.jpg', '.png', '.svg', '.webp', '.gif'].map(e => file + e).find(f => fs.existsSync(f));
+    if (!hit) throw new Error('asset not found: assets/' + rel + ' (tried .jpg .png .svg .webp .gif)');
+    file = hit; rel = path.relative(path.join(ROOT, 'assets'), file);
+  }
+  if (!fs.existsSync(file)) throw new Error('asset not found: assets/' + rel);
+  const ext = path.extname(file).toLowerCase();
+  if (!MIME[ext]) throw new Error('unsupported asset type ' + ext + ' (assets/' + rel + ')');
+  if (LINKED) return '../assets/' + rel.split(path.sep).join('/');
+  if (_assets.has(file)) return _assets.get(file);
+  const uri = 'data:' + MIME[ext] + ';base64,' + fs.readFileSync(file).toString('base64');
+  _assets.set(file, uri);
+  return uri;
+}
+
 const dataURI = f => 'data:font/woff2;base64,' + fs.readFileSync(f).toString('base64');
 let _katex = null, _faces = null, _engine = null;
 
@@ -465,89 +512,25 @@ ${scripts}
 `;
   const out = path.join(OUT, path.basename(file).replace(/\.md$/, '.html'));
   fs.mkdirSync(OUT, { recursive: true });
-  fs.writeFileSync(out, doc);
-  return { out, n: N, widgets: [...ctx.widgets], ch: fm.ch, title: fm.title,
+  /* Rewriting a byte-identical file would still move its mtime, which would
+     make its PDF look stale and re-export all fourteen on every build — and
+     would show fourteen phantom changes in git. Write only what changed. */
+  const changed = !fs.existsSync(out) || fs.readFileSync(out, 'utf8') !== doc;
+  if (changed) fs.writeFileSync(out, doc);
+  return { out, changed, n: N, widgets: [...ctx.widgets], ch: fm.ch, title: fm.title,
            subtitle: fm.subtitle, file: path.basename(out) };
-}
-
-/* ---------------- the launcher page ------------------------------- */
-function writeIndex(chapters) {
-  const rows = chapters.sort((a, b) => a.ch - b.ch).map(c => {
-    const pdf = 'pdf/' + c.file.replace(/\.html$/, '.pdf');
-    const hasPdf = fs.existsSync(path.join(OUT, pdf));
-    /* what the student sees in their downloads folder */
-    const saveAs = 'IE437-' + (c.ch === 99 ? 'Appendix' : (c.ch < 10 ? '0' + c.ch : c.ch)) +
-      '-' + String(c.title).replace(/[^\w]+/g, '-').replace(/^-|-$/g, '') + '.pdf';
-    return `<div class="row">
-       <a class="open" href="${esc(c.file)}">
-         <span class="n">${c.ch === 99 ? 'A' : (c.ch < 10 ? '0' + c.ch : c.ch)}</span>
-         <span class="t"><b>${esc(c.title)}</b><i>${esc(c.subtitle || '')}</i></span>
-       </a>
-       <span class="m">${c.n} slides</span>
-       ${hasPdf
-         ? `<a class="dl" href="${esc(pdf)}" download="${esc(saveAs)}" title="Download ${esc(saveAs)}">
-              <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v8m0 0L4.8 5.8M8 9l3.2-3.2"
-                stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"
-                stroke-linejoin="round"/><path d="M2.5 11.5v2h11v-2" stroke="currentColor"
-                stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>PDF</a>`
-         : `<span class="dl off" title="Run node pdf.mjs to generate">PDF</span>`}
-     </div>`;
-  }).join('\n');
-  const doc = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IE437 — lecture notes</title>
-<style>${faceCSS()}</style>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0A0B0D;color:#F2F3F5;min-height:100vh;padding:76px 40px;
-  font:400 15px/1.6 'Inter','Helvetica Neue',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{max-width:860px;margin:0 auto}
-h1{font:700 34px/1.2 'Inter',sans-serif;letter-spacing:-.9px;margin-bottom:8px}
-.sub{color:rgba(242,243,245,.44);font-size:15px;margin-bottom:44px}
-.eyebrow{display:flex;align-items:center;gap:12px;font:500 10.5px/1 'IBM Plex Mono',monospace;
-  letter-spacing:.2em;text-transform:uppercase;color:rgba(242,243,245,.42);margin-bottom:22px}
-.eyebrow::before{content:"";width:22px;height:3px;background:#64748B}
-.row{display:flex;align-items:center;gap:18px;padding:4px 14px;
-  border-top:1px solid rgba(242,243,245,.12)}
-.row:last-child{border-bottom:1px solid rgba(242,243,245,.12)}
-.row:hover{background:rgba(242,243,245,.055)}
-.open{display:grid;grid-template-columns:52px 1fr;gap:20px;align-items:baseline;flex:1;min-width:0;
-  padding:16px 0;text-decoration:none;color:inherit}
-.n{font:500 12px/1 'IBM Plex Mono',monospace;color:rgba(242,243,245,.34);letter-spacing:.08em}
-.t b{display:block;font-weight:600;font-size:18px;letter-spacing:-.3px}
-.t i{display:block;font-style:normal;color:rgba(242,243,245,.46);font-size:13.5px;margin-top:3px}
-.m{font:500 10.5px/1 'IBM Plex Mono',monospace;color:rgba(242,243,245,.3);letter-spacing:.1em;white-space:nowrap}
-.dl{display:inline-flex;align-items:center;gap:7px;flex:none;text-decoration:none;
-  font:600 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;
-  color:rgba(242,243,245,.62);border:1px solid rgba(242,243,245,.22);border-radius:3px;
-  padding:9px 13px;transition:all .15s ease}
-.dl svg{width:14px;height:14px;flex:none}
-.dl:hover{color:#0A0B0D;background:#F2F3F5;border-color:#F2F3F5}
-.dl.off{opacity:.25;border-style:dashed;cursor:default}
-.foot{margin-top:38px;font:400 12.5px/1.7 'Inter',sans-serif;color:rgba(242,243,245,.34)}
-.foot code{font:500 12px/1 'IBM Plex Mono',monospace;background:rgba(242,243,245,.09);padding:2px 6px;border-radius:2px}
-</style></head><body><div class="wrap">
-<div class="eyebrow">IE437 · KAIST · Jinkyoo Park</div>
-<h1>Data-Driven Decision Making and Control</h1>
-<div class="sub">Interactive lecture notes. Each chapter is a single self-contained file — open, present, or hand it on by itself.</div>
-${rows}
-<div class="foot">Click a title to present it, or <b>PDF</b> to download that chapter as slides.<br>
-In a deck: <code>&rarr;</code> next reveal &middot; <code>&larr;</code> back &middot;
-<code>M</code> slide index &middot; <code>P</code> print &middot; <code>F</code> fullscreen &middot; <code>?</code> keys.</div>
-</div></body></html>
-`;
-  fs.writeFileSync(path.join(OUT, 'index.html'), doc);
 }
 
 /* ---------------- cli --------------------------------------------- */
 const args = process.argv.slice(2);
 const LINKED = args.includes('--linked');
+const NOPDF = args.includes('--no-pdf');
 let files;
-if (args.includes('--all') || args.length === 0) {
+if (args.includes('--all') || args.every(a => a.startsWith('--'))) {
   files = fs.readdirSync(MD).filter(f => f.endsWith('.md') && !f.startsWith('_')).sort();
 } else {
-  files = fs.readdirSync(MD).filter(f => f.endsWith('.md') && args.some(a => a !== '--linked' && f.startsWith(a)));
+  files = fs.readdirSync(MD).filter(f => f.endsWith('.md') &&
+    args.some(a => !a.startsWith('--') && f.startsWith(a)));
 }
 if (!files.length) { console.error('no matching md/ files'); process.exit(1); }
 const made = [];
@@ -563,7 +546,28 @@ for (const f of files) {
     }
   } catch (e) { console.error('FAIL ' + f + ': ' + e.message); process.exitCode = 1; }
 }
-if (made.length > 1) {
-  writeIndex(made);
-  console.log('OK  index.html  ->  html/index.html   ' + made.length + ' chapters');
+/* A deck and its PDF are one deliverable — the launcher offers both — so a
+   rebuilt chapter must never leave a student downloading yesterday's slides.
+   pdf.mjs skips whatever is already current, so this costs nothing on a
+   no-op build; pass --no-pdf while iterating on prose and the launcher will
+   say which chapters are then out of date. */
+if (!NOPDF && made.length) {
+  try {
+    const { writePDFs } = await import('./pdf.mjs');
+    await writePDFs(made.map(r => path.basename(r.out)), { log: true });
+  } catch (e) {
+    console.error('    ! PDF export failed: ' + e.message);
+    console.error('      (install Chromium with `npx playwright install chromium`,' +
+      ' or build with --no-pdf)');
+    process.exitCode = 1;
+  }
+}
+
+/* the landing page lists every chapter in md/, not merely the ones just
+   rebuilt, and it reports each chapter's PDF, so it is rewritten after every
+   build. To refresh it alone — after posting a notice — run `node site.mjs`. */
+{
+  const r = writeSite();
+  console.log('OK  index.html  ->  html/index.html   ' + r.chapters + ' chapters, ' +
+    r.slides + ' slides, ' + r.notices + ' notices, ' + r.pdfs + ' current PDFs');
 }

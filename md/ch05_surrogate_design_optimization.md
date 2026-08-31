@@ -3,6 +3,10 @@ ch: 5
 title: Data-Driven Design Optimization — Surrogate-Based
 subtitle: A surrogate you optimise against will be exploited where it is wrong
 tagline: Offline, part 1 of 2 — approximate the function, then search it
+blurb: >-
+  The oracle is gone: a fixed dataset, and no way to test a new design. Fit a surrogate, optimise
+  against it, and the optimiser walks straight into the region where the surrogate is confidently
+  wrong. That failure — and the conservative models that answer it — is the whole chapter.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

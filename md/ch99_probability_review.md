@@ -4,6 +4,10 @@ label: Appendix
 title: Probability Review
 subtitle: The toolbox beneath the course — and where each tool was used
 tagline: A handful of facts about *expectation*, *Bayes* and the *Gaussian*, carrying an entire course
+blurb: >-
+  The toolbox the course leans on: expectation and its linearity, variance and the bias–variance
+  split, Bayes' rule, and the Gaussian. Each one is shown at the point where a lecture actually
+  leaned on it.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST
@@ -248,18 +252,37 @@ Each is a one-line fact. Together they are why so much of the course can carry u
 :::
 :::
 
-### Properties 1 and 2 — independence and linearity
+### Property 1 — for Gaussians, uncorrelated means independent
 
-::: block Property 1 — for Gaussians, uncorrelated means independent
 Setting $\Sigma_{ij}=0$ for $i\ne j$ makes $\Sigma$ and $\Sigma^{-1}$ diagonal, so the joint density factors:
+
 $$\Sigma \text{ diagonal} \;\Longrightarrow\; p(y)=\prod_i \mathcal N(y_i\mid\mu_i,\sigma_{ii})$$
-For general random variables this is false — take $X\sim\mathcal N(0,1)$ and $Y=X^2$, for which $\mathrm{cov}(X,Y)=\E[X^3]=0$ while $Y$ is a *function* of $X$. ==The Gaussian is special.== *↪ every i.i.d. noise model in the course.*
+
+::: reveal
+For general random variables this is false. Take $X\sim\mathcal N(0,1)$ and $Y=X^2$: then $\mathrm{cov}(X,Y)=\E[X^3]=0$, and yet $Y$ is a *function* of $X$ — as dependent as two variables can be.
 :::
 
 ::: reveal
-::: block Property 2 — a linear map of a Gaussian is Gaussian
+::: keypoint
+Zero correlation is a statement about ==second moments only.== ==The Gaussian is special== because it has nothing else.
+:::
+:::
+
+::: reveal
+::: small
+*↪ every i.i.d. noise model in the course leans on this — it is what lets a diagonal $\Sigma$ stand in for genuine independence.*
+:::
+:::
+
+### Property 2 — a linear map of a Gaussian is Gaussian
+
 $$Z = AY \;\sim\; \mathcal N\big(A\mu,\; A\Sigma A^\top\big)$$
-Both moments are just linearity: $\E[AY]=A\mu$ and $\mathrm{cov}(AY)=A\Sigma A^\top$. *↪ the reparameterisation trick $z=\mu_\phi+\epsilon\sigma_\phi$ (Ch 6), and linear-Gaussian dynamics $x_{t+1}=Ax_t+Bu_t+w_t$ (Ch 9).*
+
+Both moments are just linearity: $\E[AY]=A\mu$ and $\mathrm{cov}(AY)=A\Sigma A^\top$. No integral is needed, and ==the family is closed under the operation== — which is the property that makes Gaussians tractable everywhere they appear.
+
+::: reveal
+::: small
+*↪ the reparameterisation trick $z=\mu_\phi+\epsilon\sigma_\phi$ (Ch 6), and linear-Gaussian dynamics $x_{t+1}=Ax_t+Bu_t+w_t$ (Ch 9) — in both, a Gaussian is pushed through a linear map and must come out Gaussian for the method to close.*
 :::
 :::
 

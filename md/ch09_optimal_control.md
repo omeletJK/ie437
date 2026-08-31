@@ -3,6 +3,10 @@ ch: 9
 title: Optimal Control & Planning
 subtitle: The control-theoretic origin of sequential decision making
 tagline: Lecture 7 solved the dynamic optimum with operations research. *This is the other tradition.*
+blurb: >-
+  Sequential decision making's other parent. Control theory arrives where dynamic programming did
+  by a different road — the HJB equation, LQR and its Riccati equation, Pontryagin's maximum
+  principle — and hands back a feedback law instead of a table of values.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

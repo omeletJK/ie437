@@ -3,6 +3,10 @@ ch: 11
 title: Model-Based Reinforcement Learning
 subtitle: Put the model back — learned — and let the two lineages reunite
 tagline: A model given (7, 9), a model deleted (8, 10), a model *learned* — and shared
+blurb: >-
+  Put the model back, but learn it. A learned model can be planned with, imagined through, or
+  differentiated for design — and wherever it is wrong, rollouts drift away from reality. This is
+  where the two lineages of the course rejoin.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST

@@ -107,7 +107,43 @@ Blocks open with `::: name [argument]` and close with a bare `:::`. They nest.
                       The arrow labels are drawn by CSS `content: attr()`, so they are
                       plain text — markdown and maths in them will not render.
 ::: widget id {json}  mount an interactive widget; the child text becomes its caption
+::: figure name [| width]   a picture from assets/chNN/; child text is the caption
+::: video  name [| width]   a clip from assets/chNN/name.mp4 with assets/chNN/name.jpg as poster
 ```
+
+### Figures and clips
+
+Pictures live in `assets/chNN/` and are **inlined as data URIs**, so a chapter stays one shareable
+file. Name them without the extension; `.jpg` `.png` `.svg` `.webp` `.gif` are tried in that order.
+A name containing a slash is taken as a path under `assets/` instead, which is how two chapters
+share one picture.
+
+```markdown
+::: figure windfarm-graph | 900
+Nodes are turbines; edges carry the ==wake distance==. The caption takes markdown and maths.
+:::
+```
+
+`width` is the figure's `max-width` in pixels. The content area is **1152 x 528** px on a slide with
+a title and a subtitle, so a 2.09-aspect source page fits at about 900. There is no automatic
+shrink-to-fit: set the width, then check with `_qa.mjs`, which reports any slide whose content
+comes within 6px of the footer.
+
+A clip is the same, plus a poster frame that carries the PDF — Chromium prints the poster, never a
+video. Both files must exist: `assets/chNN/robot-mapf.mp4` and `assets/chNN/robot-mapf.jpg`.
+
+```markdown
+::: video robot-mapf | 300
+Agents in blue, tasks in red.
+:::
+```
+
+Clips are muted, looped and autoplaying, so keep them short and silent — they are figures that move,
+not media. Re-encode anything large before it goes in `assets/`; the whole of Chapter 0's three
+clips comes to 126 KB.
+
+Add `.plain` (`::: figure.plain name`) to drop the hairline and white ground, for a picture that
+already has its own frame.
 
 ### Worked example
 
