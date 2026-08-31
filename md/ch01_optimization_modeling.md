@@ -137,6 +137,17 @@ The ==epigraph form== is the one to remember: every convex problem can be writte
 :::
 :::
 
+### Check — putting it in the standard form
+{q: 1}
+
+::: quiz A plant requirement reads *"output must be at least 100 units."* Written into the standard form $\min f$ s.t. $g(x) \le 0$, the constraint becomes:
+- =$100 - x \le 0$
+- $x \ge 100$, left as it is — the form allows either direction
+- $x - 100 \le 0$
+- It is an equality constraint, so it becomes $h(x) = x - 100 = 0$
+The standard form admits **one** inequality direction, so every "at least" is flipped by negating both sides. It is bookkeeping, but it is the bookkeeping that lets a single solver read every problem in the course — and getting the sign backwards silently optimises the opposite plant.
+:::
+
 ## Act 2 — convexity, the watershed
 {short: ACT 2, num: Act 2}
 
@@ -282,6 +293,17 @@ This is the seam between Lecture 1 and Part IV. ==Convexity is not only a proper
 :::
 :::
 
+### Check — why convexity is the watershed
+{q: 2}
+
+::: quiz What does convexity actually buy you?
+- A closed-form solution always exists
+- =Every local minimum is automatically a global minimum
+- The problem can be solved in a fixed number of steps
+- The feasible set is guaranteed to be non-empty
+Convexity does not make a problem easy to *write down* or guarantee a formula. It makes a **local** search sufficient: having found a point with no downhill direction, you are done, and no amount of further searching elsewhere can beat it. That is why the line between convex and non-convex is the one that matters.
+:::
+
 ## Act 3 — certifying optimality
 {short: ACT 3, num: Act 3}
 
@@ -335,6 +357,17 @@ The last identity, ==complementary slackness==, says each constraint is either a
 ::: small
 Differentiating the KKT system is exactly how one back-propagates through an optimisation layer — the trick behind differentiable LQR and MPC in Lecture 11.
 :::
+:::
+
+### Check — the price of a slack constraint
+{q: 3}
+
+::: quiz At the optimum, an inequality constraint turns out to be *slack* — it is satisfied strictly, not at its boundary. What do the KKT conditions say about its multiplier $\lambda$?
+- $\lambda > 0$, and it measures how far the constraint is from binding
+- $\lambda$ is undetermined by the KKT conditions
+- =$\lambda = 0$
+- $\lambda < 0$, since the constraint pushes the optimum outward
+Complementary slackness is $\lambda \cdot g(x^\*) = 0$: either the constraint binds or its price is zero. A constraint that does not constrain you **costs you nothing** — relax it and the optimum does not move. The multiplier is a shadow price, and slack goods are free.
 :::
 
 ## Act 4 — when the problem is not convex
@@ -419,6 +452,17 @@ $\dfrac{f(l^{(k)}) - f(\tilde l)}{f(l^{(k)}) - \tilde f(\tilde l)} \ge a$ — **
 ::: small
 That ratio test is exactly what the widget two slides ago was running. ==The toy on that slide is this algorithm.== Run on a real farm it lifts power efficiency from about $0.69$ to $0.76$ and flattens the efficiency-versus-direction curve, so the farm is not only better on average but steadier. The non-convex layout problem is conquered by ==a staircase of convex problems== — Act 2's lesson, made operational: *get a convex problem, even if you have to keep making new ones*.
 :::
+:::
+
+### Check — what a trust region is for
+{q: 4}
+
+::: quiz Why does a trust-region method bound the size of its step?
+- To keep the iterate inside the feasible set
+- To guarantee the objective decreases monotonically
+- To make each iteration cheaper to compute
+- =Because the local model is only a good approximation nearby, so the step must stay where the model can be believed
+The method builds a simple model — usually quadratic — of a complicated $f$ around the current point. That model is **only trustworthy in a neighbourhood**, so the step is capped at a radius that is grown or shrunk according to how well the model just predicted reality. This same machinery returns in Lecture 10, holding a policy update near the policy that generated its data.
 :::
 
 ## Closing

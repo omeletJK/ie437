@@ -154,6 +154,16 @@ One identity, three readings: *how much did I learn*, *what can I never learn*, 
 :::
 :::
 
+### Check — the tower property
+
+::: quiz The law of total expectation says $\mathbb{E}[X] = \mathbb{E}\big[\mathbb{E}[X \mid Y]\big]$. Where does this course lean on it hardest?
+- =In every Bellman equation — conditioning on the next state and averaging over it is exactly this identity
+- In proving that the sample mean is unbiased
+- In deriving the Gaussian density
+- In the definition of conditional independence
+Writing $V(s) = \mathbb{E}[r + \gamma V(s')]$ is the tower property with the conditioning done on the next state. Every backup in Lectures 7 to 12 is one application of it, and the reason a one-step update can stand in for an infinite sum of future rewards is that this identity says it may.
+:::
+
 ## Bayes and the two views
 {short: BAYES}
 
@@ -225,6 +235,16 @@ Parameter uncertainty $\tau_1^2$ (Ch 2), the GP band away from data (Ch 4), ense
 ::: small
 Lecture 0 named the pair on the slide *Two kinds of uncertainty — name them once*; Chapter 2's Act 4 ended by writing them as the two terms of $\sigma_Y^2+\tau_1^2$. That is the law of total variance again — the *within* part is aleatoric, the *between* part epistemic — which is why this appendix keeps circling the same identity.
 :::
+:::
+
+### Check — the estimator's wall
+
+::: quiz A Monte Carlo estimate from $n$ samples has standard error $\sigma/\sqrt{n}$. To halve the error, you must:
+- Double the number of samples
+- =Quadruple the number of samples
+- Halve $\sigma$; $n$ has no effect on the error
+- Increase $n$ by a factor of $\sqrt{2}$
+The $\sqrt{n}$ is a wall, not a slope: each additional digit of accuracy costs a hundredfold more samples. This single fact is why variance reduction is worth so much effort — baselines in Lecture 10, control variates, doubly-robust estimators in Lecture 12. Shrinking $\sigma$ buys what growing $n$ can only buy at enormous cost.
 :::
 
 ## The multivariate Gaussian — the workhorse
@@ -340,6 +360,16 @@ Chapter 4 quantified this at two correlations from its own kernel. At $\mathrm{c
 :::
 :::
 
+### Check — the property everything rests on
+
+::: quiz Which property of the multivariate Gaussian is used most often in this course?
+- That it maximises entropy for a given mean and covariance
+- That the sum of independent Gaussians is Gaussian
+- =That conditioning on part of the vector leaves a Gaussian, with a closed form for its mean and covariance
+- That it is the limit distribution of the central limit theorem
+Gaussian conditioning **is** the Gaussian process posterior, and the GP posterior is Lecture 4's entire engine and Lecture 5's surrogate. Marginals stay Gaussian, conditionals stay Gaussian, and linear maps of Gaussians stay Gaussian — which together are why so much of this course has closed-form answers instead of sampling loops.
+:::
+
 ## Sampling and divergences
 {short: SAMPLING}
 
@@ -408,6 +438,16 @@ Not symmetric, and not a metric — but the natural *information cost* of using 
 ::: small
 **Entropy** $H(p)=-\E_p[\log p(x)]$ measures spread rather than distance. Maximising it keeps a policy exploratory — the seed of maximum-entropy RL — and it is the term that turns a hard argmax into a soft, probabilistic best response.
 :::
+:::
+
+### Check — which divergence, and why it is asymmetric
+
+::: quiz The KL divergence $\mathrm{KL}(q \Vert p)$ is not symmetric. In variational inference, minimising it over $q$ produces what behaviour?
+- $q$ spreads out to cover every mode of $p$
+- The asymmetry has no practical consequence for the fitted $q$
+- $q$ matches the mean and variance of $p$ exactly
+- =$q$ is penalised heavily for putting mass where $p$ has none, so it tends to fit a single mode and under-cover
+The integrand carries $q \log(q/p)$: wherever $q$ is large and $p$ is near zero the penalty explodes, but where $p$ is large and $q$ near zero it costs almost nothing. So this direction is **mode-seeking** — it would rather explain part of the distribution well than all of it badly. That is the tendency behind a VAE's blurry, over-averaged samples in Lecture 6.
 :::
 
 ## Closing

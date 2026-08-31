@@ -237,7 +237,7 @@ Those three words are the whole distance from Lecture 1. We do not want a policy
 :::
 
 ::: reveal
-A policy may be deterministic, $a^*=\pi^*(s)$, or stochastic, $p(a\mid s)=\pi^*(s,a)$. For a finite MDP with known $T$ and $R$ ==a deterministic optimal policy always exists==, so we take $\pi$ deterministic throughout. Stochastic policies return in Lecture 8, where randomness buys exploration, and in Lecture 13, where it buys unpredictability against an opponent.
+A policy may be deterministic, $a^*=\pi^*(s)$, or stochastic, $p(a\mid s)=\pi^*(s,a)$. For a finite MDP with known $T$ and $R$ ==a deterministic optimal policy always exists==, so we take $\pi$ deterministic throughout. Stochastic policies return in Lecture 8, where randomness buys exploration, and again in ==IE579==, where against an opponent it buys unpredictability.
 :::
 
 ### The value of a state, and the value of an action
@@ -272,6 +272,17 @@ This is exactly what the greedy rule lacked. A value scores a state by ==the ent
 
 ::: widget discount-dial {"gamma":0.5}
 A corridor with a small prize one step to the left of START and a large prize six steps to the right. Turn $\gamma$ and watch the arrows flip ==one cell at a time, from the far end inwards==. The frontier is not a matter of taste — each cell has its own threshold, and they are exact: START switches at $\gamma=10^{-1/5}\approx0.631$, where $\gamma^5\cdot10$ overtakes $1$; its neighbour at $10^{-1/3}\approx0.464$; and the three cells nearest the large prize never point left at all. ==Same MDP, same optimality principle, opposite answer.==
+:::
+
+### Check — why the state has to be Markov
+{q: 1}
+
+::: quiz The Markov property says the future depends on the past only through the current state. Why does the whole apparatus need it?
+- =Because it lets the value of a state be written without reference to how you got there — which is what makes a recursion over states possible at all
+- To make the transition probabilities easier to estimate from data
+- To guarantee the reward is bounded
+- To ensure the optimal policy is deterministic
+Without it, the value of "here" would depend on the whole history, and there would be nothing finite to iterate over. The Markov property is what collapses an exponential tree of histories into a graph of states, and everything after it — the Bellman equation, dynamic programming, every algorithm in Lectures 8 to 12 — is built on that collapse. Choosing the state representation *is* choosing whether the assumption holds.
 :::
 
 ## Act 2 — the Bellman equation
@@ -379,6 +390,17 @@ $$\pi^*(s) = \argmax_a\, Q^*(s,a) = \argmax_a \sum_{s'} T(s,a,s')\big[R(s,a,s') 
 ::: small
 The source deck's gloss: *any* greedy policy with respect to $V^*$ is optimal, ==because $V^*$ already accounts for the reward consequences of all possible future behaviour.== Greed was never the enemy. Greed applied to the *immediate reward* fails; greed applied to ==the right quantity== is exactly optimal. Act 1's question is now answered: we were not too greedy, we were greedy about the wrong number.
 :::
+:::
+
+### Check — expectation and maximum, in that order
+{q: 2}
+
+::: quiz The Bellman optimality equation contains both a $\max$ over actions and an expectation over next states. Why can the two not be swapped?
+- They can be — the order is a matter of convention
+- =Because you must commit to an action *before* seeing which next state occurs; maximising inside the expectation would let the agent choose after the fact
+- Swapping them is valid only for deterministic environments, which is the usual case
+- Because the expectation is over an infinite set and the maximum over a finite one
+Moving the $\max$ inside the expectation gives $\mathbb{E}[\max\ldots]$, which values the ability to pick an action **after** the dice are thrown. That quantity is an upper bound and it describes a clairvoyant, not an agent. The gap between the two is the value of information, and keeping them in the right order is what makes the equation describe a decision made under genuine uncertainty.
 :::
 
 ## Act 3 — solving it with the model
@@ -568,6 +590,17 @@ Keep that boxed line in view for the rest of the course. Lecture 8's Q-learning 
 One MDP, one stopping rule, both algorithms — and a dial for the number of evaluation sweeps per improvement. At $m=\infty$ the schedule *is* policy iteration; drive $m$ down and it slides continuously toward value iteration. Policy iteration reaches $\pi^*$ in ==9 improvements== but spends ==16,124 backups== getting there; value iteration needs ==17 sweeps== and only ==1,972==. Same $V^*$, same $\pi^*$, an eightfold difference in work — and the cheapest schedule, at $m=2$, is ==neither endpoint.==
 :::
 
+### Check — what value iteration is really doing
+{q: 3}
+
+::: quiz Value iteration converges from *any* starting $V_0$. What guarantees that?
+- The objective is convex in $V$
+- The state space is finite
+- =The Bellman operator is a $\gamma$-contraction in the sup-norm, so each sweep shrinks the distance to the unique fixed point by a factor $\gamma$
+- The rewards are bounded, so $V$ cannot diverge
+The Banach fixed-point theorem does the whole job. Each application of the operator brings any two value functions closer by at least $\gamma$, which forces both a **unique** fixed point and convergence to it from anywhere. The error after $k$ sweeps decays like $\gamma^k$ — which is also why a $\gamma$ near 1 is not free, and why Lecture 8 has to worry when the operator is no longer a contraction.
+:::
+
 ## Act 4 — why it works
 {short: ACT 4, num: Act 4}
 
@@ -661,6 +694,17 @@ The machine is complete and provably correct. Every part of it borrows something
 ::: small
 Three debts, and the next lecture defaults on all three. Notice they are not independent: the first two are the same debt — ==the model== — appearing once in evaluation and once in improvement. The third is why the last act of Lecture 8 exists at all.
 :::
+:::
+
+### Check — what is still being assumed
+{q: 4}
+
+::: quiz Value iteration and policy iteration both solve the MDP exactly. What do they need that the next lecture will not have?
+- A finite horizon
+- A deterministic policy
+- A discount factor strictly less than 1
+- =The model — the transition probabilities $P$ and the reward function $R$, needed to compute the expectation
+Every backup in this lecture evaluates $\sum_{s'} P(s' \mid s,a)[\ldots]$, which you can only write down if you own $P$ and $R$. Lecture 8 deletes them and keeps everything else, so the question becomes: how do you take an expectation you cannot compute? The answer — sample it — is the whole of reinforcement learning.
 :::
 
 ## Closing

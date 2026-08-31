@@ -235,6 +235,17 @@ It is ==unbiased== — the estimator's mean *is* the gradient. And it is Monte C
 $x_{t+1}=x_t+u_t$ with cost $\sum(x^2+u^2)$ — Lecture 9's problem, scalar. The policy is $u=-kx+\sigma\varepsilon$ and the only parameter is the gain $k$. REINFORCE never sees $A$ or $B$; it only samples. The grey bowl $J(k)$ and the dashed line ==$k^\star = 0.618$, the Riccati gain==, are drawn for *us*, not for the agent — and that is where the gain walks to. Read the two numbers on the right: the estimate scatters *around* the true gradient, never away from it, and its spread falls like $1/\sqrt{N}$. Then set the batch to 8 and watch the gain stop settling — ==that residual wander is Act 2's subject.==
 :::
 
+### Check — why differentiate the policy at all
+{q: 1}
+
+::: quiz Value-based RL picks actions by $\argmax_a Q(s,a)$. Why does that break down in continuous control?
+- =Because the $\argmax$ is itself an optimisation over a continuous space, solved afresh at every single step
+- Because $Q$ cannot be represented for continuous actions
+- Because the Bellman equation does not hold in continuous action spaces
+- Because rewards become unbounded
+A table lookup over four actions is free; a maximisation over a continuous vector is an inner optimisation problem, and it recurs at every timestep of every episode. Policy-based methods sidestep it by **storing the answer**: a parameterised $\pi_\theta(s)$ that outputs the action directly. That is the same forward/inverse move as Lectures 5 and 6, now in a sequential setting.
+:::
+
 ## Act 2 — taming variance with a critic
 {short: ACT 2, num: Act 2}
 
@@ -338,6 +349,17 @@ That $\hat A$ is a ==TD error== — Lecture 8's engine, running inside a policy 
 ::: keypoint
 GAE is ==TD($\lambda$) for the advantage== — Lecture 8's bias–variance dial, moved from the value to the thing that trains the policy.
 :::
+:::
+
+### Check — what a baseline does
+{q: 2}
+
+::: quiz REINFORCE's gradient estimate is unbiased but very noisy. Subtracting a state-dependent baseline $b(s)$ from the return:
+- Reduces variance but introduces bias, which must be corrected later
+- =Leaves the estimate unbiased while reducing its variance, because the baseline does not depend on the action
+- Reduces bias but leaves variance unchanged
+- Has no effect on either — it only rescales the learning rate
+The score-function identity gives $\mathbb{E}[\nabla \log \pi \cdot b(s)] = 0$ for any $b$ that does not depend on the action, so subtracting it is **free**. Choosing $b(s) = V(s)$ turns the return into the advantage — "was this action better than average here?" — which is the signal you actually wanted, and is what makes the actor–critic architecture worth its second network.
 :::
 
 ## Act 3 — continuous control: DDPG
@@ -470,6 +492,17 @@ Lecture 9 closed by asking you to hold $u=-Kx$ in view as "the closed form that 
 :::
 :::
 
+### Check — the deterministic gradient
+{q: 3}
+
+::: quiz DDPG trains a critic $Q(s,a)$ and a deterministic actor $\mu(s)$. How does the actor get its gradient?
+- By finite differences on the environment
+- By sampling actions and weighting them by their returns, as in REINFORCE
+- =By backpropagating through the critic: $\nabla_\theta Q(s, \mu_\theta(s))$ — the critic is differentiable, so the actor climbs it
+- By solving the $\argmax$ exactly at each step and regressing onto the result
+The critic is a differentiable surrogate for "how good is this action here", so the actor can be moved uphill on it by the chain rule — no sampling, no score function. Notice what has just been re-created: an optimiser climbing a **learned model of the objective**, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
+:::
+
 ## Act 4 — stepping without falling
 {short: ACT 4, num: Act 4}
 
@@ -537,6 +570,17 @@ With shared actor–critic parameters the practical objective adds two terms —
 
 ::: widget ppo-clip {"eps":0.2}
 The clipped objective as a function of the ratio, for a good action ($\hat A>0$) and a bad one ($\hat A<0$). Read the slopes: for $\hat A>0$ the gradient is ==exactly zero above $1+\epsilon$== — no reward for making a good action still likelier. For $\hat A<0$ it is zero *below* $1-\epsilon$ but ==stays alive above $1+\epsilon$==: an action already too probable and known to be bad keeps being pushed down. The clip only removes the incentive that would take you out of the region.
+:::
+
+### Check — why the step size is bounded
+{q: 4}
+
+::: quiz PPO clips the policy ratio so the new policy cannot move far from the old one. What goes wrong without that?
+- The gradient estimate becomes biased
+- The value function stops converging
+- The policy becomes deterministic too quickly
+- =The data was collected under the old policy, so a large step moves into a region the batch says nothing about — and the estimate of the improvement stops being valid
+On-policy data is only evidence about policies near the one that gathered it. A large update leaves that neighbourhood, and the objective being maximised is then a surrogate evaluated well outside its region of validity — Lecture 1's trust region, arrived at from a completely different direction, and the same adversarial-optimiser problem as Lecture 5.
 :::
 
 ## Closing

@@ -212,6 +212,17 @@ Read that chain backwards and it is the definition of $p(x\mid y)$: a prior over
 :::
 :::
 
+### Check — reading the function backwards
+{q: 1}
+
+::: quiz Lecture 5 learned $\hat{f}: x \mapsto y$ and searched it. This lecture learns the inverse direction instead. What makes that harder than it sounds?
+- =The map is many-to-one, so the "inverse" is not a function but a *distribution* over designs achieving a target
+- The inverse is more expensive to evaluate
+- The inverse cannot be represented by a neural network
+- The training data would have to be collected in reverse
+Many different designs can score the same $y$. A model trained to regress $x$ from $y$ under a squared loss will return the **average** of those designs — which is very often not a valid design at all, and can be far worse than any of the ones it averaged. That is precisely why the answer has to be a generative model that samples, rather than a regressor that predicts.
+:::
+
 ## Act 2 — generative models
 {short: ACT 2, num: Act 2}
 
@@ -289,6 +300,17 @@ Note what this buys before any optimisation happens. A design expressed in laten
 ::: small
 Any of the four can serve as the prior $p(x)$ in a generative design pipeline, and the papers in Act 4 use different ones. We take the **VAE** as the worked example because it makes the latent variable — and therefore the inversion — most explicit, and because the other three are best understood as departures from it.
 :::
+:::
+
+### Check — what a generative model buys
+{q: 2}
+
+::: quiz Why does sampling from a learned distribution over designs help where searching a surrogate did not?
+- Sampling is computationally cheaper than optimisation
+- =Because the model is trained to put mass on designs that look like real ones, the samples stay on the data manifold instead of running off it
+- Generative models cannot extrapolate, so they are safe by construction
+- Because the generated designs are guaranteed to beat everything in the dataset
+The surrogate pipeline failed by leaving the data behind. A generative model carries the constraint "this must look like a real design" **inside** it — off-manifold points simply have low probability, so they are rarely produced. The safety is not free, though: the same pull toward the data is what makes it reluctant to propose anything genuinely new.
 :::
 
 ## Act 3 — the VAE
@@ -437,6 +459,17 @@ The error is weighted by $p(x)$, so it is ==largely ignored wherever the data is
 ::: small
 This is Lecture 5's thesis, in a different half of the subject: ==a learned object is unconstrained where there is no evidence==. The cure is even the mirror image of conservatism — where Lecture 5 pushed the model *down* off-distribution, score-based models perturb the data with noise at several scales to push the data outwards until the empty region is populated, then anneal the noise away.
 :::
+:::
+
+### Check — turning the KL weight
+{q: 3}
+
+::: quiz In a $\beta$-VAE, you raise $\beta$, the weight on the KL term. What do you get?
+- Sharper reconstructions and a more structured latent space
+- Sharper reconstructions at the cost of latent structure
+- =A latent space closer to the prior and easier to sample from, at the cost of blurrier reconstructions
+- No change in either — $\beta$ only affects training speed
+The KL term pulls the posterior over latents toward the prior; the reconstruction term pulls it apart so that codes stay distinguishable. Raising $\beta$ wins the first fight and loses the second: sampling the prior gives valid-looking designs, but detail is lost. It is the same trade as Lecture 5's conservatism dial — fidelity to the data against freedom to generate.
 :::
 
 ## Act 4 — conditioning toward good designs
@@ -598,6 +631,17 @@ The answer is Lecture 5's, twice over: **rank-based** reweighting, so the weight
 ::: small
 Read the right-hand column again. The generative half, pushed hard enough, meets ==the optimiser-as-adversary== all over again — and answers it with an ensemble and a conservative re-ranker. The two routes of Part III do not stay separate for long.
 :::
+:::
+
+### Check — the rhyme worth remembering
+{q: 4}
+
+::: quiz Lecture 5 built a forward model and searched it; Lecture 6 built an inverse model and sampled it. Which later pair repeats this structure?
+- Model-based RL and offline RL
+- MDPs and dynamic programming
+- Bayesian optimisation and the multi-armed bandit
+- =Value-based RL, which learns $Q$ then takes an $\argmax$, versus policy-based RL, which learns the policy directly
+Learn a scoring function and search it, or learn the thing that produces answers and query it directly — the same two routes, met first in static design and again in sequential decisions. Recognising the rhyme is the point: Lecture 10 is not a new idea so much as this one, with a time index attached.
 :::
 
 ## Closing

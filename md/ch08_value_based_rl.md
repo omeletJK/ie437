@@ -236,6 +236,17 @@ That single inheritance is why TD, not MC, becomes the engine of control. We now
 :::
 :::
 
+### Check — MC against TD
+{q: 1}
+
+::: quiz Monte Carlo waits for the episode to end and averages the actual return; TD updates after one step using its own estimate of what follows. What is the trade?
+- =MC is unbiased but high-variance; TD bootstraps, so it is biased but much lower-variance and works without waiting for the end
+- MC has lower variance and higher bias; TD the reverse
+- Both are unbiased; TD is simply faster to compute
+- TD is unbiased only in deterministic environments, where it equals MC
+MC's target is a real sampled return — correct in expectation, but carrying the noise of every step that followed. TD's target $r + \gamma V(s')$ leans on a current estimate, importing whatever error that estimate has while discarding all the downstream noise. Bootstrapping is the trade at the heart of the lecture, and in Act 4 it turns out to be one of the three ingredients that can make learning diverge.
+:::
+
 ## Act 2 — improvement without a model
 {short: ACT 2, num: Act 2}
 
@@ -302,6 +313,20 @@ This is the ==exploration–exploitation trade-off== of the $n$-armed bandit, no
 ### The tax, seen — what a greedy agent never learns
 ::: widget gpi-explore {"eps":0.3,"seed":4}
 Two Q-learning agents, identical but for $\varepsilon$. The greedy one locks onto the near ==$+1$== it stumbled into first and stops looking — read its coverage figure: the actions it dislikes are never tried, so their values are never corrected. The exploring one pays a little return per episode and finds the far ==$+5$==.
+:::
+
+### Check — the price of exploring
+{q: 2}
+
+::: quiz An $\varepsilon$-greedy agent is left running with $\varepsilon$ fixed at $0.1$ forever. What happens to its *behaviour*?
+- It converges to the optimal policy, because $Q$ converges to $Q^*$
+- =$Q$ converges to $Q^*$, but the agent keeps taking a random action one time in ten
+- Neither converges — a fixed $\varepsilon$ prevents $Q$ from converging
+- It converges to the optimal policy only if the environment is deterministic
+Q-learning is **off-policy**: it learns $Q^*$ from whatever data arrives, so a fixed
+$\varepsilon$ costs nothing in the estimate. What it costs is the *return earned along the
+way* — the agent goes on paying the exploration tax forever. Decaying $\varepsilon \to 0$
+is what turns a converged $Q$ into converged behaviour.
 :::
 
 ## Act 3 — whose value are we learning?
@@ -379,6 +404,17 @@ Because the learned target is independent of the behavior, $Q$ converges to $Q^*
 ### The cliff — where the difference becomes visible
 ::: widget cliff-walk {"eps":0.1,"seed":3}
 **Q-learning** learns the *optimal* path — along the edge — but it *acts* $\varepsilon$-greedily, and the occasional random step plunges it off the cliff: higher reward in theory, worse online. **SARSA** accounts for its own exploration and learns a ==cautious== detour. Neither is "better" — the cliff teaches the design choice.
+:::
+
+### Check — what makes Q-learning off-policy
+{q: 3}
+
+::: quiz SARSA updates toward $r + \gamma Q(s', a')$ using the action actually taken next; Q-learning uses $r + \gamma \max_{a'} Q(s', a')$. Why does that one difference make Q-learning off-policy?
+- Because the $\max$ makes the update deterministic
+- Because Q-learning needs a replay buffer and SARSA does not
+- =Because the target refers to the greedy action, not the one the behaviour policy chose — so it estimates the optimal policy's value from another policy's data
+- Because SARSA converges to $Q^\*$ and Q-learning does not
+SARSA evaluates *the policy that is driving*, exploration and all — on the cliff it learns the safe path, because it accounts for the chance of stepping off while exploring. Q-learning evaluates the greedy policy regardless of who is driving, so it learns the optimal edge-hugging path and then keeps falling off it. Neither is wrong; they are answers to different questions.
 :::
 
 ## Act 4 — scaling past the table
@@ -509,6 +545,17 @@ Every one keeps the same skeleton: *sampled Bellman backup* $+$ *$Q$ for model-f
 ::: keypoint
 That wall — the $\max$ over a continuum — is exactly where ==Lecture 9== begins.
 :::
+:::
+
+### Check — the three ingredients
+{q: 4}
+
+::: quiz The deadly triad names three things that together can make value learning diverge. Which set?
+- Exploration, discounting, and a large state space
+- Non-stationarity, correlated samples, and a moving target network
+- High learning rate, sparse reward, and long horizon
+- =Function approximation, bootstrapping, and off-policy training
+Any **two** of the three are safe; all three together can send the estimate to infinity even when every reward is zero and the true value is zero everywhere. DQN's two tricks are best read as attacks on this: a replay buffer decorrelates the updates and a frozen target network weakens the bootstrap. Neither removes the third leg, which is why deep RL remains fragile.
 :::
 
 ## Closing

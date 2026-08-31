@@ -206,6 +206,17 @@ $p(E \mid B,S)$ rather than $p(E \mid B,S,D,C)$ is a claim about the world: once
 :::
 :::
 
+### Check — where the saving comes from
+{q: 1}
+
+::: quiz A Bayesian network factorises the joint as $\prod_i p(x_i \mid \mathrm{pa}(x_i))$. Where does the reduction from $2^n$ numbers actually come from?
+- =From the edges left *out*: each factor conditions only on parents, not on all predecessors
+- From the factorisation itself — writing the joint as a product of conditionals
+- From assuming every variable is binary
+- From the topological ordering chosen for the chain rule
+The chain rule $p(x_1)p(x_2 \mid x_1)p(x_3 \mid x_1,x_2)\cdots$ is **always** true and saves nothing — the last factor still conditions on everything. What buys the reduction is each missing edge, every one of which is a claimed conditional independence. A Bayesian network is therefore a statement about what does *not* influence what, and its compactness is only as honest as those claims.
+:::
+
 ## Act 2 — what the graph encodes
 {short: ACT 2, num: Act 2}
 
@@ -362,6 +373,17 @@ So the translation between graph and probability runs both ways and is exact: th
 :::
 :::
 
+### Check — the collider
+{q: 2}
+
+::: quiz Two independent causes point at one effect: $X \to Z \leftarrow Y$. What is the relationship between $X$ and $Y$?
+- Dependent, and conditioning on $Z$ makes them independent
+- =Independent, until you condition on $Z$ — which makes them dependent
+- Independent, and they stay independent whatever you condition on
+- Dependent, and no conditioning changes that
+This is the collider, and it runs opposite to the chain and the fork. Learning the alarm went off makes burglary and earthquake **compete** to explain it, so hearing that there was an earthquake lowers your belief in a burglary — they became dependent the moment you conditioned on their shared effect. *Explaining away* is the reason d-separation needs a special rule for colliders, and it is a standard way to introduce a correlation that is not there.
+:::
+
 ## Act 3 — reasoning with the network
 {short: ACT 3, num: Act 3}
 
@@ -493,6 +515,17 @@ Read it as Lecture 2's loop, run once per tick: yesterday's posterior is pushed 
 ::: block.accent Now add an input | and look what you have drawn
 Let an action $A_t$ steer the transition, $P(X_t \mid X_{t-1}, A_t)$, and the observation, $P(Y_t\mid X_t, A_t)$. That graph is a ==POMDP==. Delete the emission row and observe the state directly, and it is a ==Markov Decision Process.== Lecture 7 does not introduce a new object; it names this one.
 :::
+:::
+
+### Check — cheap to store, cheap to use?
+{q: 3}
+
+::: quiz A network is sparse: every node has at most three parents, so the whole model is a few hundred numbers. What does that guarantee about the cost of exact inference?
+- It is linear in the number of nodes
+- It is at worst quadratic in the number of nodes
+- =Nothing in general — exact inference can still be intractable; the cost follows the elimination order, not the storage
+- Inference is always cheaper than storage, since it never builds the full joint
+Storing the joint cheaply and **summing over it** cheaply are different problems. Exact inference is NP-hard in general, and its real cost is governed by how large the intermediate factors grow as variables are eliminated — the treewidth — which a sparse-looking graph can still make enormous. This is why the chapter has to talk about elimination order at all.
 :::
 
 ## Act 4 — from belief to decision
@@ -668,6 +701,17 @@ That alternating $\sum \max \sum \max$ is ==the Bellman equation==, four lecture
 ::: small
 $p(x_{t+1}\mid x_t,d_t)$ is the transition $P(s'\mid s,a)$; the additive $\sum_t u(x_t)$ is the return; the inner $\max$ is the optimal policy assumed for the future. Lecture 7 will give this a name, add a discount, and solve it by dynamic programming. Lecture 8 will delete $p$ and learn it from samples. ==Everything in Part IV is this one slide, extended through time and stripped of its model.==
 :::
+:::
+
+### Check — the Bellman equation, four lectures early
+{q: 4}
+
+::: quiz An influence diagram adds decision and utility nodes to the network. Evaluating one alternates which two operations?
+- Maximising over chance nodes and summing over decision nodes
+- Summing over both, weighted by utility
+- Maximising over both, in topological order
+- =Summing over chance nodes and maximising over decision nodes
+You **average** over what you cannot control and **maximise** over what you can, in the order the information actually arrives. That alternating $\sum \max \sum \max$ is the structure of the Bellman equation, met here in a one-shot setting. Lecture 7 does nothing more than let the chain run for many stages and give the pattern a name.
 :::
 
 ## Closing

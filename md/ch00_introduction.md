@@ -91,6 +91,13 @@ Learning the parameter (Ch 2), the structure (Ch 3), the function (Ch 4), the de
 :::
 :::
 
+### The two, drawn — only one of them answers to data
+{fill: center}
+
+::: widget two-uncertainties {"n":8,"seed":437}
+Drag the sample count. The ==blue band collapses== like $1/\sqrt{n}$ — that is what data buys. The amber band is the world's own spread, and it does not move at all however many samples you take.
+:::
+
 ## Three criteria, four categories
 {num: 02}
 
@@ -201,6 +208,17 @@ This course stops before that axis. Crossing it is the subject of the follow-on 
 ::: keypoint
 The rest of this lecture walks the four categories — and shows, for each, ==a system where the decision was actually made.==
 :::
+:::
+
+### Check — reading the cube
+{q: 1}
+
+::: quiz The course maps every decision problem onto three axes. Which three?
+- =One decision or a sequence · the world given as a model or learned from data · deciding alone or against others
+- Discrete or continuous · linear or non-linear · convex or non-convex
+- Deterministic or stochastic · finite or infinite horizon · one agent or many
+- Supervised, unsupervised, or reinforcement · online or offline · tabular or approximate
+Stages, model, and agents. Every lecture in this course is one position on that cube, and the course as a whole is a **route** through it: each lecture takes one more given away. Knowing which corner you are standing in is what tells you which method applies.
 :::
 
 ## Categories ① and ② — the static half
@@ -320,6 +338,17 @@ Ordinary BO starts each new intersection from a prior that knows nothing. ==Meta
 
 ::: figure traffic-results | 900
 Average number of waiting vehicles. Ours is best on every column, and the gain is largest where trials are scarcest — ==395.5 vs 408.5 in Hangzhou, 859.7 vs 920.1 in Manhattan.==
+:::
+
+### Check — what makes a decision problem hard
+{q: 2}
+
+::: quiz What distinguishes a *decision* problem from a prediction problem?
+- Decision problems always involve more data
+- =A prediction is scored against a truth that exists whatever you do; a decision changes the world it is scored in, and you never see what the alternatives would have given
+- Prediction problems are convex and decision problems are not
+- Decision problems require neural networks; prediction problems do not
+Predict tomorrow's demand and tomorrow arrives to grade you. Choose tomorrow's inventory and you learn only what your own choice produced — the counterfactual is gone. That missing feedback is why decision making needs its own theory, and it is what makes exploration, off-policy evaluation, and the whole of Lecture 12 necessary.
 :::
 
 ## Categories ③ and ④ — the dynamic half
@@ -445,6 +474,17 @@ Textbook reinforcement learning assumes a simulator you may query without limit.
 
 ::: figure offline-meta | 900
 Collect operation data across many tasks; train a general controller offline — the encoder, the critic and the actor share a buffer per task; then adapt on the target task with ==a handful of interactions, not a million==. This is Lecture 12's territory, and it is where a plant deployment actually begins.
+:::
+
+### Check — the four unknowns, taken one at a time
+{q: 3}
+
+::: quiz The course is described as removing one given at a time. In what order are they removed?
+- The state, then the action, then the reward
+- The data, then the model, then the objective
+- =First the objective $f$ becomes uncertain, then the problem becomes sequential, then the dynamics are unknown, and finally the right to interact is withdrawn
+- First the dynamics, then the objective, then the horizon
+Lecture 1 has everything: a known $f$ and known constraints. Lectures 2–6 make $f$ uncertain. Lecture 7 makes the decision a sequence. Lectures 8 and 10 delete the model — and now there are **two** unknowns at once, which is why RL is harder than everything before it. Lecture 12 takes the last given, the ability to experiment.
 :::
 
 ## The single spine
@@ -695,6 +735,17 @@ You will run one pass of the OI Factory on a problem of your own choosing. The d
 ::: small
 Every method in Lectures 1–12 is a candidate for part 2. The point of the gate is that ==the choice of method is not the deliverable== — a validated decision is.
 :::
+:::
+
+### Check — two inventions of the same idea
+{q: 4}
+
+::: quiz Sequential decision making was invented twice. Which two traditions, and what happens when each loses its model?
+- Statistics and computer science; both become supervised learning
+- Economics and control theory; both become game theory
+- Physics and operations research; both become stochastic optimisation
+- =Operations research as dynamic programming and control theory as optimal control — delete the model from either and reinforcement learning comes out
+Bellman's dynamic programming and Pontryagin's optimal control describe the same object in different vocabularies. Delete $P$ and $R$ from the first and you get value-based RL (Lecture 8); delete the dynamics $f$ from the second and you get policy-based RL (Lecture 10). The second half of this course runs the two stories in parallel precisely so the symmetry is visible.
 :::
 
 ## Closing

@@ -188,6 +188,17 @@ It also changes what a "95% interval" *means*, and the two meanings are not inte
 :::
 :::
 
+### Check — what the distribution is over
+{q: 1}
+
+::: quiz A Bayesian writes $p(\theta)$ for a physical constant $\theta$ that has one true, fixed value. What is that distribution describing?
+- =Our uncertainty about a fixed unknown — the distribution lives in the observer, not the world
+- That $\theta$ itself fluctuates from measurement to measurement
+- The histogram the data would form if we collected enough of it
+- Nothing meaningful — a constant cannot have a distribution
+This is the move the whole course rests on. The randomness modelled by a prior is **epistemic** — it is what *we* do not know — and it shrinks as data arrives. The randomness that stays no matter how much data you gather is **aleatoric**, and it belongs to the world. Confusing the two is how a model comes to claim certainty it has not earned.
+:::
+
 ## Act 2 — how data updates belief
 {short: ACT 2, num: Act 2}
 
@@ -325,6 +336,17 @@ The prior said 20 and the data says 10.55. The posterior says ==10.64== — the 
 Step 3 loops back to step 1. A Bayesian analysis is not finished when the posterior is computed — it is finished when the model has survived being doubted.
 :::
 
+### Check — who wins as the data piles up
+{q: 2}
+
+::: quiz The posterior mean is a weighted average of the prior mean and the estimate from the data. As the number of observations $n$ grows, what happens to the weight on the prior?
+- It stays fixed — the prior was chosen before the data and does not change
+- =It shrinks toward zero, so the data eventually overwhelms any proper prior
+- It grows, because the posterior becomes more confident
+- It shrinks only if the prior was chosen to be conjugate
+The weights are set by **precisions**, and the data's precision grows with $n$ while the prior's does not. So a prior is a thumb on the scale that a sufficiently large sample lifts off. This is the reassuring half; the other half is that when data is scarce — which is when you actually need help — the prior is doing most of the work, so it had better be honest.
+:::
+
 ## Act 3 — collapsing to a point: MLE, MAP, regularisation
 {short: ACT 3, num: Act 3}
 
@@ -412,6 +434,17 @@ This is the lecture's deepest bridge: ==the optimisation world and the Bayesian 
 :::
 :::
 
+### Check — the prior wearing a disguise
+{q: 3}
+
+::: quiz Ridge regression adds $\lambda \lVert w \rVert^2$ to the least-squares objective. Seen through Bayes, that penalty *is*:
+- A Laplace prior on $w$, which is what drives coefficients to exactly zero
+- A uniform prior on $w$ over a ball of radius $1/\lambda$
+- =A zero-mean Gaussian prior on $w$, with $\lambda$ setting its inverse variance
+- Not a prior at all — regularisation is a purely frequentist device
+Take $-\log$ of the posterior and the likelihood gives the squared error while the prior gives the penalty. A **Gaussian** prior yields the squared $\ell_2$ penalty of ridge; a **Laplace** prior yields the $\ell_1$ penalty of lasso, whose sharp peak at the origin is exactly why lasso sets coefficients to zero and ridge only shrinks them. Regularisation was never atheoretical — it was a prior all along.
+:::
+
 ## Act 4 — predicting with uncertainty intact
 {short: ACT 4, num: Act 4}
 
@@ -463,6 +496,17 @@ $$\mu_1 = \frac{\dfrac{\mu_0}{\tau_0^2}+\dfrac{n\bar y}{\sigma_Y^2}}{\dfrac{1}{\
 ::: small
 And the predictive variance is $\sigma_Y^2+\tau_1^2$ — measurement noise you can never remove, plus parameter uncertainty you can. The two kinds of uncertainty Lecture 0 named, arriving as two separate terms in one formula. When the "parameter" is an entire function, this same predictive integral becomes Gaussian-process regression — the core of Lecture 4.
 :::
+:::
+
+### Check — why not just use the best $\theta$
+{q: 4}
+
+::: quiz You have a posterior over $\theta$ but want a single prediction. Why integrate over all $\theta$ rather than plug in the MAP estimate?
+- Integration is more accurate on the mean; the two differ only in the average predicted
+- Because the MAP estimate is biased and the posterior mean is not
+- There is no real difference — the posterior predictive equals the MAP prediction
+- =Because plugging in one $\theta$ throws away parameter uncertainty, so the prediction claims to be more certain than it is
+The two often agree closely on the **centre** of the prediction and disagree badly on its **width**. A plug-in estimate reports only the noise the model expects at a known $\theta$; the posterior predictive also carries the fact that $\theta$ is not known. That extra width is what Lecture 4 goes on to use as a *reason to act* — you sample where the model admits it is unsure.
 :::
 
 ## Closing

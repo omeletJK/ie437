@@ -183,6 +183,17 @@ One line deleted, and with it every correction. The surrogate is fitted once and
 Five thousand designs in a 5,126-dimensional space. Whatever the surrogate believes about that space, ==almost all of it was never checked against anything== — and gradient ascent is free to walk in any of those directions. {p}(Trabucco et al., Design-Bench, 2022)
 :::
 
+### Check — the naive pipeline
+{q: 1}
+
+::: quiz You fit a surrogate $\hat{f}$ to a fixed dataset and hand it to an optimiser to maximise. The optimiser returns a design scoring far above anything in the data. What is the most likely explanation?
+- =The optimiser found a region where $\hat{f}$ is confidently wrong, and exploited the error rather than the function
+- The surrogate generalises well and has found a genuinely better design
+- The optimiser has not converged
+- The dataset was too small to fit the surrogate at all
+A surrogate is accurate **on the distribution it was trained on** and unconstrained off it. The optimiser is not a neutral user of the model — it is an adversary that actively seeks the argmax, and the argmax of $\hat{f}$ tends to sit exactly where the error is largest and positive. A spectacular predicted score is evidence of extrapolation, not of discovery.
+:::
+
 ## Act 2 — why it fails
 {short: ACT 2, num: Act 2}
 
@@ -266,6 +277,17 @@ Safe and pointless: ==beating $D$ was the entire task.==
 ::: keypoint
 Neither the optimiser nor its leash. The cure is a ==more honest surrogate== — one whose maximum sits where the evidence can support it.
 :::
+:::
+
+### Check — the shape of the failure
+{q: 2}
+
+::: quiz Why does the failure of the naive pipeline get *worse*, not better, as the optimiser gets stronger?
+- A stronger optimiser overfits the training data more heavily
+- =Because it searches harder for the maximum of $\hat{f}$, and the maximum of the *error* is what it finds
+- It does not — a stronger optimiser reduces the gap
+- Because stronger optimisers require larger surrogates, which generalise worse
+This is the uncomfortable part. Every improvement in the optimiser is an improvement in its ability to locate the surrogate's weakest point. The problem cannot be fixed downstream of the model, which is why the answer is to change the **model** — train it so that it actively pushes its own predictions down off the data, rather than leaving them free to soar.
 :::
 
 ## Act 3 — conservative objective models
@@ -382,6 +404,17 @@ Fit the data · push down what the optimiser would chase · hold up what the dat
 ::: small
 Lecture 12 meets this failure again with a policy in place of an optimiser and a $Q$-function in place of a surrogate, and answers it with the identical three terms. When it does, it will quote this slide.
 :::
+:::
+
+### Check — what conservatism costs
+{q: 3}
+
+::: quiz A conservative objective model is trained to push predicted values *down* on designs far from the data. Turn that conservatism up too far and what happens?
+- The model overfits the training data
+- The optimiser diverges
+- =The landscape flattens: everything off-data looks equally bad, so the search cannot find genuinely good novel designs either
+- Nothing — more conservatism is monotonically safer
+Conservatism is a **dial, not a direction**. Too little and the optimiser exploits the error; too much and the model refuses to recommend anything it has not already seen, which is a very safe way to be useless. The whole craft is finding the setting where the model is pessimistic exactly in proportion to its ignorance — a problem that returns, identically, as CQL in Lecture 12.
 :::
 
 ## Act 4 — other ways to be robust
@@ -502,6 +535,17 @@ Uncertainty is a **hazard**: stay away from where the band is wide, because noth
 ::: small
 Same Gaussian-process-era intuition, opposite operational consequence — which is why the offline methods are built around *conservatism* where BO was built around *exploration*. Lecture 4's lesson, made non-negotiable.
 :::
+:::
+
+### Check — the warning being handed on
+{q: 4}
+
+::: quiz What does this lecture hand to Lecture 6, and eventually to Lecture 12?
+- That surrogates should always be ensembles
+- That gradient-based optimisers are unsuitable for design
+- That fixed datasets are too small to support design optimisation
+- =That the optimiser is an adversary of its own model — it will find and exploit wherever the model is wrong
+State it once and it explains three separate lectures. A policy maximising a learned $Q$ is the same adversary as an optimiser maximising a learned $\hat{f}$, and it fails the same way, on actions rather than designs. Lecture 12 answers it with the same instrument: make the value function a **lower bound** off the data.
 :::
 
 ## Closing

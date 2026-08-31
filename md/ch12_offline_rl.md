@@ -205,6 +205,17 @@ Lecture 5 promised this slide would return with a policy in place of an optimise
 :::
 :::
 
+### Check — where offline RL breaks
+{q: 1}
+
+::: quiz You run ordinary Q-learning on a fixed dataset, changing nothing. The learned $Q$ climbs steadily while the policy's true return falls. What is happening?
+- =The $\max$ in the target queries $Q$ at actions absent from the data; those values are overestimated, and with no way to try them the error is never corrected
+- The learning rate is too high
+- The dataset is too small to fit $Q$
+- The discount factor is too close to 1
+Online, an over-valued action gets chosen, tried, and disappoints — the error corrects itself. Offline, that feedback loop is cut. The $\max$ systematically selects whichever out-of-distribution action happens to have the largest positive error, feeds it back as a target, and the estimate inflates without limit. It is Lecture 5's adversarial optimiser, wearing a policy.
+:::
+
 ## Act 2 — constrain the policy
 {short: ACT 2, num: Act 2}
 
@@ -279,6 +290,17 @@ It is worth dwelling on how little this is. On the D4RL benchmark it matches or 
 ::: block The cost the whole family pays | and it cannot be paid down
 Wherever the constraint **binds**, the policy inherits $\beta$'s ceiling. If $\beta$ was competent, that is cheap. If $\beta$ dithered, staying near it means dithering. And the constraint binds hardest exactly where $\beta$ was least confident — which is often where the improvement was available.
 :::
+:::
+
+### Check — what offline RL is for
+{q: 2}
+
+::: quiz If the policy must stay close to the data-collecting policy, why not simply clone it? What can offline RL do that behaviour cloning cannot?
+- Learn from fewer trajectories
+- =Stitch: combine the good segments of several mediocre trajectories into a path better than any single trajectory in the data
+- Handle continuous action spaces
+- Guarantee it will never perform worse than the behaviour policy
+Cloning can only reproduce the average of what it saw. Because the Bellman equation propagates value **across** trajectories through shared states, offline RL can discover that the first half of one poor trajectory joins the second half of another to make a good one — a route nobody in the dataset ever drove. That is the whole reason to accept the difficulty.
 :::
 
 ## Act 3 — constrain the value
@@ -372,6 +394,17 @@ It is the same dial in all three rows — ==how far may we trust a model beyond 
 ::: small
 Which is Lecture 5's closing move as well: convert the penalty into a *constraint* with a budget read in the units of the objective, so the hyperparameter is comparable across problems. TD3+BC's normaliser $\lambda$ and CQL's Lagrangian variant are both that move.
 :::
+:::
+
+### Check — the quotation from Lecture 5
+{q: 3}
+
+::: quiz CQL adds a term that pushes $Q$ *down* on actions not in the data. Which earlier idea is this, exactly?
+- The trust region of Lecture 1 and Lecture 10
+- The $\varepsilon$-greedy exploration tax of Lecture 8
+- =The conservative objective model of Lecture 5 — make the learned score a lower bound off the data, so the optimiser cannot exploit your ignorance
+- The target network of Lecture 8
+The static half and the dynamic half of this course meet the identical failure and answer it with the identical instrument. There, an optimiser exploited a surrogate $\hat{f}$ off the data; here, a policy exploits a learned $Q$ on unseen actions. Both are cured by training the model to be **pessimistic in proportion to its ignorance** — and both come with the same over-conservatism at the far end of the dial.
 :::
 
 ## Act 4 — the other two routes, and how you would know
@@ -483,6 +516,17 @@ In an industrial deployment this act comes *first*. Before anyone asks whether t
 :::
 :::
 
+### Check — the axis left uncrossed
+{q: 4}
+
+::: quiz The course toured the decision cube along the stages and model axes. Which axis is deliberately never crossed, and where does it go?
+- The stages axis — static to dynamic, left to a later course
+- The model axis, since offline RL is neither model-based nor data-driven
+- None — all three are crossed by Lecture 12
+- =The agents axis — single to multi-agent, which is where IE579 begins
+Every method in this course optimises **one** objective on behalf of **one** decision maker. Put a second agent in the world and the objective stops being fixed: the thing you are optimising against is now also optimising, an optimum becomes an equilibrium, and dynamic programming has to become game theory. The far face of the cube is real, named here, and crossed in IE579.
+:::
+
 ## Closing
 {short: CLOSING}
 
@@ -513,7 +557,7 @@ And what this lecture hands on is ==the course's last move== — conservative va
 ### The tour, complete — and the face we did not visit
 
 ::: widget course-cube {"step":5}
-The same cube Lecture 0 drew: ① the origin · ② the model axis on $f$ · ③ the stages axis · ④ it again on $r$ and $P$ — and ⑤, in that cell, ==the interaction withdrawn==. Step once more and no badge lights: **multi agents** is the crossing this course never makes.
+Lecture 0's cube, walked to its last cell: ⑤ ==the interaction withdrawn==. Step once more and no badge lights — **multi agents** is the crossing this course never makes.
 :::
 
 ### Every algorithm in Part IV assumed it could try something.

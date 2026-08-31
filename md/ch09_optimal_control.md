@@ -240,6 +240,17 @@ Same problem, same principle — but the backup now contains ==an optimisation, 
 :::
 :::
 
+### Check — the same problem, other clothes
+{q: 1}
+
+::: quiz Optimal control minimises a cost $\int c(x,u)\,dt$ subject to dynamics $\dot{x} = f(x,u)$. Read as an MDP, what plays the role of the reward?
+- =The negative of the cost, $-c(x,u)$ — the two traditions differ by a sign and a vocabulary
+- The dynamics $f$
+- The control $u$
+- The terminal constraint on $x(T)$
+State is state, control is action, dynamics are the transition, and cost is negative reward. Operations research maximised a return; control theory minimised a cost; both are solving the same object. Keeping the translation table in view is what makes the second half of this course two parallel stories rather than two unrelated ones.
+:::
+
 ## Act 2 — Bellman made infinitesimal
 {short: ACT 2, num: Act 2}
 
@@ -335,6 +346,17 @@ Three prices, and each is a limitation we will spend the rest of the course work
 ::: small
 So HJB is the ==characterisation==, rarely the computation. It is exactly solvable in essentially one case — and it happens to be the case every control engineer knows cold.
 :::
+:::
+
+### Check — what happens to Bellman in continuous time
+{q: 2}
+
+::: quiz Shrink the time step $\Delta t \to 0$ in the discrete Bellman equation. What do you get?
+- The Riccati equation
+- =The Hamilton–Jacobi–Bellman equation — a partial differential equation in the value function
+- Pontryagin's maximum principle
+- The Euler–Lagrange equation
+The recursion becomes a PDE. HJB is the Bellman equation with the discrete step taken to its limit, and it inherits both the strength — a sufficient condition for global optimality — and the weakness, since solving a PDE over a high-dimensional state space is exactly as hard as the curse of dimensionality suggests. That is why the next act cares so much about the one case that closes in form.
 :::
 
 ## Act 3 — the one closed form
@@ -456,6 +478,17 @@ Hold $u=-Kx$ in view: it is the closed form that policy gradient ==learns to app
 :::
 :::
 
+### Check — why LQR is the exception that matters
+{q: 3}
+
+::: quiz For linear dynamics and a quadratic cost, the optimal controller is $u = -Kx$, with $K$ from the Riccati equation. Why does this single special case deserve a whole act?
+- Because most real systems are exactly linear
+- Because it is the only case where the HJB equation has a solution
+- =Because it is the one case where the infinite-dimensional problem collapses to a finite matrix equation — and it is the local model that non-linear methods iterate on
+- Because quadratic costs are the only ones that are convex
+Almost nothing is truly linear-quadratic. What LQR gives is a **solvable local approximation**: linearise the dynamics and take a quadratic expansion of the cost around the current trajectory, solve exactly, step, and repeat. That is iLQR, and it is how the closed form earns its place — as the inner loop of methods for problems that are not LQ at all.
+:::
+
 ## Act 4 — the other view
 {short: ACT 4, num: Act 4}
 
@@ -537,6 +570,17 @@ The same problem the HJB widget solved: $\dot x = x+u$, $\int_0^2(x^2+u^2)dt$. G
 ::: small
 Feedback beats an open-loop plan for the reason Lecture 7 already gave: $\gamma(t,x)$ is valid from *any* state you actually reach, while $u^*(t)$ is valid only along the trajectory you predicted. But Pontryagin scales where HJB cannot, which is why every practical trajectory optimiser is built on it. Its machinery returns in Lecture 10 — REINFORCE is a trajectory view — and in Lecture 11, where a learned policy imitates an iLQR teacher.
 :::
+:::
+
+### Check — the parallel about to be drawn
+{q: 4}
+
+::: quiz Lecture 8 deleted $P$ and $R$ from the MDP and got value-based RL. Lecture 10 deletes what from optimal control?
+- The cost function $c$
+- The state $x$
+- The horizon $T$
+- =The dynamics $f$ — leaving a controller that must be improved from experience alone
+The two lineages lose their model in exactly the same way, one lecture apart. Delete $P$ from dynamic programming and you must sample the expectation; delete $f$ from optimal control and you can no longer differentiate through the rollout, so you must estimate the gradient from trajectories instead. Same deletion, two different repairs — and Lecture 11 gets the model back.
 :::
 
 ## Closing
@@ -660,5 +704,5 @@ $$\dot x^* = \frac{\partial H}{\partial\lambda} = f, \qquad \dot\lambda^* = -\fr
 **From Euler–Lagrange to Pontryagin.** Stationarity, $\partial_u H = 0$, presumes $u$ is interior to $U$. Pontryagin replaces it with the global condition $u^* = \argmin_{u\in U} H(t,x^*,u,\lambda^*)$, which remains valid on the *boundary* of $U$ — so it covers saturated actuators and bang-bang controls, where the derivative never vanishes.
 
 ::: small
-**A conserved quantity.** Along a trajectory $\frac{dH}{dt} = \frac{\partial H}{\partial u}\dot u + \frac{\partial H}{\partial t}$; for a time-invariant problem the second term vanishes and the first vanishes precisely when $u$ minimises $H$ at every instant. So $H$ is constant along an extremal and drifts along anything else — the invariant the Act 4 widget plots. The minimum principle is also the standard way to *state* equilibrium conditions for dynamic games, which is how Lecture 13 uses it.
+**A conserved quantity.** Along a trajectory $\frac{dH}{dt} = \frac{\partial H}{\partial u}\dot u + \frac{\partial H}{\partial t}$; for a time-invariant problem the second term vanishes and the first vanishes precisely when $u$ minimises $H$ at every instant. So $H$ is constant along an extremal and drifts along anything else — the invariant the Act 4 widget plots. The minimum principle is also the standard way to *state* equilibrium conditions for dynamic games, which is how ==IE579== uses it.
 :::

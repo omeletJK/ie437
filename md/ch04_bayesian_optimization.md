@@ -174,6 +174,17 @@ Chapter 2 ended on the Normal–Normal case and noted that the predictive varian
 :::
 :::
 
+### Check — a prior over what
+{q: 1}
+
+::: quiz Lecture 2 put a prior on a *parameter*. What does Bayesian optimisation put a prior on?
+- =The whole unknown function $f$ — a distribution over functions, not over numbers
+- The location of the optimum $x^\*$
+- The noise in each observation
+- The budget of evaluations remaining
+This is the step up in object. A Gaussian process says: before seeing any data, here is my belief about **every function** that $f$ could be. Each evaluation conditions that belief, and what comes back is not one fitted curve but a posterior over curves — a mean and, crucially, a variance that is small where you have looked and large where you have not.
+:::
+
 ## Act 2 — the Gaussian process
 {short: ACT 2, num: Act 2}
 
@@ -273,6 +284,17 @@ The first term rewards explaining the data, the second rewards a *rigid* model. 
 
 ::: widget gp-posterior
 The same seven observations, one kernel, one knob. Short length scale: the posterior spikes at each datum and falls back to the prior between them — the model believes nothing carries. Long length scale: a near-straight line that cannot bend to the data. The right panel is the marginal likelihood split into its two terms, and ==the total peaks where neither term is happy== — that is the Occam balance, drawn.
+:::
+
+### Check — what the length scale controls
+{q: 2}
+
+::: quiz You shorten a GP kernel's length scale $\ell$. What happens to the posterior?
+- It becomes smoother, and the uncertainty between data points shrinks
+- =It wiggles more, and the uncertainty grows back faster as you move away from a data point
+- Nothing changes between observations; $\ell$ only rescales the output
+- The mean is unaffected; only the observation noise changes
+The length scale says how far a datum's influence reaches. Short $\ell$ means each observation informs only its immediate neighbourhood, so the posterior returns to the prior — high variance — almost immediately beyond it. Long $\ell$ borrows strength across the whole domain and gives a smooth, confident, and possibly badly wrong fit. It is the single knob that decides how much the model is willing to extrapolate.
 :::
 
 ## Act 3 — where to look next
@@ -393,6 +415,17 @@ So say plainly what the acquisition function is. It is not a scoring heuristic b
 :::
 :::
 
+### Check — the acquisition function's job
+{q: 3}
+
+::: quiz An acquisition function turns a GP posterior into the next query. Why not simply query the point with the highest posterior *mean*?
+- Because the mean is biased upward wherever data is scarce
+- Because the mean has no maximum when the domain is continuous
+- =Because that is pure exploitation — it never visits the regions the model admits it knows nothing about, where the true optimum may sit
+- Because the posterior mean is not differentiable, so it cannot be maximised
+Maximising the mean trusts the model exactly where the model is least entitled to be trusted. Every acquisition function is a rule for trading the mean against the **variance**, and that trade is the seed of the explore–exploit problem that returns as $\varepsilon$-greedy in Lecture 8. Lecture 5 shows what happens to a design pipeline that forgets this and optimises the surrogate alone.
+:::
+
 ## Act 4 — beyond, toward RL
 {short: ACT 4, num: Act 4}
 
@@ -475,6 +508,17 @@ Read across the bottom row and you have Part IV. Read down the right column and 
 ::: small
 What carries over intact is the explore–exploit machinery of this lecture. What is added is a **value function**, to account for the future an action unlocks and not merely the reward it returns. That is Lecture 7.
 :::
+:::
+
+### Check — what BO assumes it may do
+{q: 4}
+
+::: quiz Bayesian optimisation is a loop: fit, choose, **evaluate**, repeat. Which assumption does the next lecture take away?
+- That $f$ is smooth enough for a GP prior
+- That the domain is low-dimensional
+- That evaluations are noiseless
+- =That you may query $f$ at a point of your choosing and get an answer back
+BO earns its sample efficiency by choosing where to look — it needs an **oracle** it can call. Lecture 5 removes exactly that: a fixed dataset, gathered by someone else, and no way to ask a new question. The loop collapses to a single pass, and every safeguard the loop provided has to be rebuilt from inside the model.
 :::
 
 ## Closing

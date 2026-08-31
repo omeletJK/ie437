@@ -219,6 +219,17 @@ So the optimum found in a learned model is only ==optimum from the model's point
 :::
 :::
 
+### Check — what a model buys
+{q: 1}
+
+::: quiz Model-based RL learns $\hat{P}$ and plans with it. What is the main thing it buys over model-free methods?
+- =Sample efficiency: the agent can generate as much imagined experience as it likes from a model fitted to comparatively little real data
+- Lower asymptotic error — the final policy is always better
+- Freedom from the Markov assumption
+- Guaranteed convergence, which model-free methods lack
+Real interaction is the scarce resource — it costs wall-clock time, hardware, or safety. A learned model turns a small amount of it into an unlimited supply of cheap synthetic experience. What it does **not** buy is accuracy: asymptotically, model-free methods trained on unlimited real data usually win, because they never inherit anyone else's modelling error.
+:::
+
 ## Act 2 — planning with a learned model
 {short: ACT 2, num: Act 2}
 
@@ -403,6 +414,17 @@ An input-convex recurrent model fits building dynamics as accurately as an ordin
 :::
 :::
 
+### Check — why imagined rollouts stay short
+{q: 2}
+
+::: quiz Dyna-style methods train on rollouts imagined by the learned model. Why are those rollouts usually kept to a handful of steps?
+- Longer rollouts are too expensive to compute
+- =Because one-step model error compounds: each imagined step feeds the next, so the trajectory drifts off the real dynamics exponentially
+- Because the discount factor makes distant steps irrelevant anyway
+- Because the replay buffer cannot hold long trajectories
+A model accurate to within $\epsilon$ per step is not accurate to within $\epsilon$ over fifty steps — the errors feed forward and the imagined state leaves the region the model was ever fitted on. Short rollouts branched from **real** states keep the model working where it is trustworthy, which is the same discipline as Lecture 5's conservatism and Lecture 10's trust region.
+:::
+
 ## Act 3 — differentiable control
 {short: ACT 3, num: Act 3}
 
@@ -470,6 +492,17 @@ The expert's dynamics lie outside the learner's model class. Against a plain sys
 ::: small
 The honest caveat: for nonlinear problems this needs iLQR to reach a fixed point, and sometimes it does not — then you are back to unrolling the solver. The controller becomes ==a differentiable layer==, and like every layer it has conditions of use.
 :::
+:::
+
+### Check — accurate is not the same as useful
+{q: 3}
+
+::: quiz Two learned models have the same one-step prediction error. One yields a much better policy. How is that possible?
+- One was trained for longer, so it generalises better
+- It is not possible — equal prediction error implies equal policy quality
+- =Because prediction loss weights all state dimensions equally, while the policy only cares about the errors that change which action is best
+- Because one model is stochastic and the other deterministic
+A model can spend all its capacity predicting a visually large but decision-irrelevant part of the state and still be useless, while a cruder model that gets the decision-relevant structure right supports a good policy. This is why **task-aware** or value-equivalent model learning exists at all: the objective you train the model on should be the objective you use it for.
 :::
 
 ## Act 4 — the lineages teach each other
@@ -703,6 +736,17 @@ Turbine layout with the yaw controller that will run on it; furnace geometry wit
 ::: small
 The evidence is already in the room. An input-convex model inside an MPC loop saved ==11.52%== of a building's energy and then ran on a real one; the differentiable-MPC literature names ==HVAC control and furnace control== as its motivating applications. Lecture 1's `trust-region` widget solved the wind-farm layout by a staircase of convex problems with the controller held fixed. ==Here the controller stops being fixed.==
 :::
+:::
+
+### Check — what is left to take away
+{q: 4}
+
+::: quiz Lecture 11 has the model back, both lineages rejoined, and planning available. What single assumption does Lecture 12 remove?
+- That the model can be learned accurately
+- That the reward function is known
+- That the state is fully observed
+- =That the agent may interact with the environment at all — the data is a fixed log, gathered by someone else
+Every method so far, model-based or model-free, could go and **try something**. Remove that and the whole safety net goes with it: a mistaken belief about an untried action can never be corrected by trying it. The static half of the course met this exact predicament in Lecture 5, and the answer turns out to be the same one.
 :::
 
 ## Closing
