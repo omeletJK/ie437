@@ -3,11 +3,11 @@
 
 > **v3 개정 — 다중 에이전트 축 전체를 IE579로 이관.**
 > v2는 Ch 12 Dynamic Games를 남겨 네 번째 전이(single→multi)를 건너게 했으나, IE437은 이제
-> **근접면(단일 에이전트)에서 끝난다.** Ch 13 Dynamic Games는 제거하고, **Ch 12 Offline RL이
-> 강의의 종결장**이 된다. 다중 에이전트 축은 0장에서 *이름을 붙이고 경계를 표시할 뿐* 건너지 않는다 —
+> **근접면(단일 에이전트)에서 끝난다.** Ch 12 Dynamic Games와 Ch 13 MARL을 모두 제거하고,
+> **Ch 12 Offline RL이 강의의 종결장**이 된다. 다중 에이전트 축은 0장에서 *이름을 붙이고 경계를 표시할 뿐* 건너지 않는다 —
 > 큐브의 원거리면이 IE579의 것임을 보여주는 것이 이 강의의 범위를 읽히게 만든다.
 >
-> 최종 구성: **0–12장 + 부록**, 13개 파일. 네 번째 전이 대신 **interactive → offline**이
+> 최종 구성: **0–12장 + 부록**, 14개 파일. 네 번째 전이 대신 **interactive → offline**이
 > 마지막 움직임이 된다.
 
 > **v2 개정 (Option A) — 다중에이전트 축소, Offline RL 신설.**
@@ -76,9 +76,9 @@
                   └▶ 동적, 모델 주어짐   (Ch 7, 9)
                        └▶ r·P 둘 다 미지  (Ch 8, 10)  ◀── 전이 3: model→data (두 배)
                             └▶ 모델 학습해 되찾음  (Ch 11)
-  ══ 전이 4: single→multi ══
-                                 └▶ 다중, 모델 주어짐  (Ch 12 Dynamic Games)
-                                      └▶ 게임 미지, 학습  (Ch 13 MARL)
+                                 └▶ 상호작용마저 꺼짐  (Ch 12 Offline RL)  ◀── 마지막 움직임
+  ══ 전이 4: single→multi ══  ✗ 이 코스는 건너지 않는다 → IE579
+                                      └▶ 다중 에이전트: 최적해가 균형이 되는 곳
 ```
 
 ---
@@ -172,15 +172,7 @@ Ch 7이 OR로 동적 의사결정을 풀었듯, 이제 *control theory*가 같�
 
 ---
 
-### Part V — 다수의 결정자 (다중 에이전트 축) — 단일 에이전트 두-계보를 거울처럼
-
-**Ch 12 · Dynamic Games (model-based)** — Ch 9(최적제어)의 다중 에이전트 평행. 전이 4(single→multi)를 건넌다. 최적화→게임, 최적해→**균형(equilibrium)**. Nash = 타 에이전트 고정 시 각자 최적제어, coupled HJB/Riccati. "특성화는 되지만 일반 계산은 불가" → 13장이 학습으로 메움.
-
-**~~Ch 13 · Policy-Based MARL~~ → IE579로 이관.** 91 frames의 완성 원고는 후속 과목 자산으로 유지. IE437에서는 Ch 13 Act 4 말미에 "이 벽을 학습으로 메우는 것이 IE579"라는 horizon 1–2장으로만 남긴다.
-
----
-
-### Part IV½ — 상호작용마저 빼앗긴다 (신설)
+### Finale — 상호작용마저 빼앗긴다
 
 **Ch 12 · Offline Reinforcement Learning** — *You cannot try. Learn from what was already done.*
 큐브의 같은 셀(동적·데이터기반·단일)이되, **질의권이 꺼진다**. 정적 세계에서 Ch 4(질의 가능) → Ch 5–6(고정 데이터셋)로 이미 배운 축이 동적 세계에서 닫히는 자리.
@@ -214,9 +206,9 @@ Ch 7이 OR로 동적 의사결정을 풀었듯, 이제 *control theory*가 같�
 | 7 | MDP & DP | 동적 일반화, 벨만 | 모델 주어진 순차 결정? | 벨만 방정식 (모델 필요) | A | ✅ |
 | 8 | Value-Based RL | 벨만 방정식 | 모델을 빼앗으면? | 연속 argmax 벽 | A | ✅ |
 | 9 | Optimal Control | 동적 결정의 2번째 학문 | 동역학 알 때 컨트롤러? | 피드백법칙 γ(x), u=Kx | B | ✅ |
-| 10 | Policy-Based RL | 최적제어 (동역학 f) | 동역학 빼앗으면? | trust-region 기계 (→ MARL) | B | ✅ |
+| 10 | Policy-Based RL | 최적제어 (동역학 f) | 동역학 빼앗으면? | trust-region 기계 (→ 11장) | B | ✅ |
 | 11 | Model-Based RL | 두 계보 | 모델을 학습해 되찾으면? | 학습모델+계획, bilevel 설계 | A+B | ✅ |
-| **12** | **Offline RL** | 학습모델(11), value·policy(8·10) | **상호작용을 빼앗으면?** | 보수적 가치·정책, OPE | A+B | ⬜ 신설 |
+| **12** | **Offline RL** | 학습모델(11), value·policy(8·10) | **상호작용을 빼앗으면?** | 보수적 가치·정책, OPE | A+B | ✅ |
 | ~~—~~ | ~~Dynamic Games~~ · ~~MARL~~ | — | — | **전부 IE579로 이관** | B' | 이관 |
 | 0 | Introduction | (전체) | 이 모든 게 어떻게 한 지도에? | 큐브 + 두 계보 지도 | — | ✅ |
 | A | Probability Review | — | 도구 상자 | — | — | ✅ |
@@ -226,6 +218,8 @@ Ch 7이 OR로 동적 의사결정을 풀었듯, 이제 *control theory*가 같�
 ---
 
 ## 5. 번호 재배치 맵 (Old → New)
+
+원본 자료(`lecture_slides/`의 PDF와 `tex/`)에서 현재 14개 장으로 오는 대응표. **v3 기준**이다.
 
 | 기존 파일 | 새 번호 / 제목 | 비고 |
 |---|---|---|
@@ -237,13 +231,19 @@ Ch 7이 OR로 동적 의사결정을 풀었듯, 이제 *control theory*가 같�
 | 5 Surrogate (Part 1–2) | **5** Data-Driven Design Opt. — Surrogate | 6과 한 모듈 |
 | 6 Generative (Part 1–2) | **6** Data-Driven Design Opt. — Generative | 5와 한 모듈 |
 | 7 MDP and Dynamic Programming | **7** 동일 | 계보 A 원형 |
-| 8 Value Based RL | **8** 동일 | ✅ 완료 |
-| **9 Optimal Control + Policy Based RL (합본)** | **9** Optimal Control **+** **10** Policy-Based RL **+** **12** Dynamic Games | **합본을 셋으로 분리** (게임이론 자료 포함) |
+| 8 Value Based RL | **8** 동일 | |
+| **9 Optimal Control + Policy Based RL (합본)** | **9** Optimal Control **+** **10** Policy-Based RL | **합본을 둘로 분리.** 여기 녹아 있던 게임이론(Nash·coupled HJB)은 **IE579로 이관** |
 | 10 Model Based RL | **11** Model-Based RL | +1 이동 |
-| 11 Policy-Based MARL | **13** Policy-Based MARL | +2 이동 (12 Dynamic Games 신설로) |
+| 11 Policy-Based MARL (`tex/Lecture13`) | — | **IE579로 이관** |
+| *(원본 없음)* | **12** Offline Reinforcement Learning | **신규 집필** · `md/_source/ch12_spec.md`가 유일한 기준 |
 | 21 Probability Review | **Appendix** | 부록 |
 
-**가장 큰 변화:** 기존 9장 합본을 **셋으로 분리** — 새 9장(최적제어)·10장(policy RL), 그리고 합본에 녹아 있던 **게임이론(Nash·coupled HJB)을 신설 12장 Dynamic Games로 독립**. 이에 따라 model-based RL은 11장, MARL은 13장으로 이동. 결과적으로 다중 에이전트 축(12→13)이 단일 에이전트 축(9→10)을 거울처럼 반영.
+**가장 큰 변화 둘.**
+
+1. **구 9장 합본을 둘로 분리** — 새 9장(최적제어)·10장(policy RL). 이로써 계보 B가 계보 A(7→8)와 같은 모양을 갖는다. 합본에 섞여 있던 게임이론 자료는 이 코스에서 쓰지 않는다.
+2. **비어 있던 "동적 × 오프라인" 칸을 12장 Offline RL로 신설** — 정적 세계의 4장(질의 가능) → 5–6장(고정 데이터셋) 비대칭이 동적 세계에서도 닫힌다. 이것이 코스의 종결장이다.
+
+> **v2에서 달라진 점.** v2는 구 9장 합본을 **셋**으로 쪼개 신설 12장 Dynamic Games를 두고 MARL을 13장에 놓았다. v3는 다중 에이전트 축 전체를 IE579로 넘기면서 그 둘을 모두 제거했고, 대신 12장이 Offline RL이 되었다. 따라서 **`tex/Lecture12_Dynamic_Games.tex`와 `tex/Lecture13_Policy_Based_MARL.tex`는 이 코스에 대응 장이 없다** — 지우지 않고 IE579용으로 남겨 둔 것이다.
 
 ---
 
@@ -282,35 +282,42 @@ Ch 7이 OR로 동적 의사결정을 풀었듯, 이제 *control theory*가 같�
 
 ---
 
-## 9. 권장 제작 순서 & 현황
+## 9. 제작 순서 & 현황
 
-**권장 순서:** 1 → 2 → 3 → 4 → [5–6] → 7 → 8 → 9 → 10 → 11 → 12, **0장은 표지로 마지막**, Appendix는 부록.
-*서사 사슬 일관성을 위해 번호 순서대로 이어서 집필.*
+**집필 순서:** 1 → 2 → 3 → 4 → [5–6] → 7 → 8 → 9 → 10 → 11 → 12, **0장은 표지로 마지막**, Appendix는 부록.
+*서사 사슬 일관성을 위해 번호 순서대로 이어서 집필 — 각 장의 handoff 슬라이드가 앞 장의 마지막 문장을 인용하기 때문.*
 
-**현재 현황** — **전체 완성 (15/15)** · 0–13장 + 부록, 모두 동일 템플릿으로 컴파일 검증
-- ✅ **Part I·II** (0·1·2·3·4) — 표지 + 최적화 + 베이지안 기초
-- ✅ **Part III** (5·6) — Data-Driven Design Optimization (search↔produce 듀얼)
-- ✅ **Part IV** (7·8·9·10·11) — 두 계보 2×2 + 재결합
-- ✅ **Part V** (12·13) — 다중 에이전트, **단일 에이전트 두-계보를 거울처럼 반영**:
-  - ✅ Ch 12 Dynamic Games (42p) — 신규 집필. Ch 9(optimal control)의 다중에이전트 평행: optimum→equilibrium, Nash=coupled optimal control, coupled HJB/Riccati. (소스 9번 deck의 게임이론 자료에 근거)
-  - ✅ Ch 13 Policy-Based MARL (228p) — 교수님 원본 템플릿. 새 번호·handoff로 정렬(상호참조 일괄 치환: 구 9→10, 구 10→12, 구 11→13; 7·8·1·2·6 유지). 본문 내용 무손상.
-- ✅ Appendix Probability Review (37p) — 다변량 정규분포 4성질 중심 도구 상자 + 사용처 역참조
+**산출물은 이제 beamer가 아니라 인터랙티브 HTML 덱이다.** `md/`가 유일한 진실이고, `build.mjs`가
+`html/chNN_*.html`을, `pdf.mjs`가 같은 슬라이드의 PDF를 만든다. 각 장은 스타일시트·엔진·위젯·KaTeX·
+폰트를 전부 인라인한 **단일 자립 파일**이라 네트워크 없이 열린다. 저작 규약은 `md/_SCHEMA.md`,
+장별 handoff 문구의 권위는 `md/_CHAIN.md`에 있다 — **이 문서가 아니다.**
 
-> **⚠️ 내가 내린 구조적 결정 (검토 요망):** 원본 MARL 덱은 직전 강의로 "model-based dynamic games(coupled HJB·Nash)"를 전제했는데, 이 자료는 실제로는 구 combined 9번 강의에 녹아 있었음. 새 spine에서 이를 **독립 장 Ch 12(Dynamic Games)로 분리**하고 MARL을 **Ch 13**으로 이동시켰음. 그 결과 다중 에이전트 축이 단일 에이전트의 두-계보 구조(모델기반 원형 → 데이터기반 확장)를 정확히 거울처럼 반영함:
-> - 단일: Ch 9 Optimal Control → Ch 10 Policy RL
-> - 다중: **Ch 12 Dynamic Games → Ch 13 MARL**
->
-> 만약 MARL을 Ch 12로 유지하고 게임이론을 그 도입부에 흡수시키길 원하시면, 두 덱을 병합할 수 있음(쉽게 되돌릴 수 있도록 분리 유지).
+**현재 현황** — **전체 완성 (14/14)** · 0–12장 + 부록
 
-**적용 완료 — 메인 서사(큐브 traversal) 강조**
-- ✅ **0장 재구성**: 큐브 traversal을 명시적 메인 서사로 — "세 번의 축 건너기" 프레임 + "미지수 1개(f) → 2개(r·P) 두 배" 2단 비교 + 세 답(value 융합 · policy 우회 · model 명시).
-- ✅ **전이 트래커**(3축 위 현재 위치 + 지금 건너는 축을 teal 화살표로 강조)를 재사용 macro로 만들어 **모든 강의(0–13) 도입부에 삽입** — 전 강의가 트래커로 시작:
-  - **축을 건너는 강의** (화살표 + "Crossing an axis" 프레임): 0·2(1→2), 7(6→7 대전이), 8·10(7→8, 9→10, 미지수 r·P 두 개), 12(11→12), 13(12→13)
-  - **같은 셀에서 심화하는 강의** (화살표 없는 "현재 위치" 프레임): 1(출발 코너), 3·4·5·6(정적·데이터·단일 심화), 9(제어 계보 원형, 모델축 리셋), 11(두 계보 재결합, 모델 학습 복귀)
-  - (부록은 큐브 위치가 없는 도구 상자이므로 트래커 미적용)
-  - → 모든 강의가 "지금 큐브의 어디에 있고, 어느 축을 건너는가"를 일관되게 표시.
+| Part | 장 | 슬라이드 |
+|---|---|---|
+| Map | 0 Introduction | 62 |
+| I | 1 Optimization Modeling | 38 |
+| II | 2 Bayesian Statistics · 3 Bayesian Networks · 4 Bayesian Optimization | 42 · 50 · 41 |
+| III | 5 Surrogate Design · 6 Generative Design | 44 · 52 |
+| IV | 7 MDP & DP · 8 Value-Based RL · 9 Optimal Control · 10 Policy-Based RL · 11 Model-Based RL | 50 · 45 · 46 · 48 · 57 |
+| Finale | 12 Offline RL | 43 |
+| Appendix | Probability Review | 35 |
 
-**남은 선택지 (옵션)**
-1. §2 두-계보 다이어그램을 별도 시각 자산으로 (현재는 표 형태).
-2. PDF 일괄 생성 (현재는 .tex만; 동일 프리앰블 `xelatex` 2회 + `TEXINPUTS=./sty:`).
-3. 강의 간 cross-reference(앞/뒤 포인터) 최종 일관성 점검.
+합계 **653 슬라이드 · 위젯 마운트 62개(고유 파일 60) · 퀴즈 56문항 · 그림·영상 32개**, PDF 전량 생성.
+전 장 오버플로 0 · JS 에러 0으로 검증(`_qa.mjs`).
+
+- ✅ **0장 재구성** — 큐브 traversal을 명시적 메인 서사로: "축 건너기" 프레임 + "미지수 1개(f) → 2개(r·P)" 2단 비교 + 세 답(value 융합 · policy 우회 · model 명시). 원본 pptx의 그림 19장·클립 11개를 복원해 넣었다.
+- ✅ **전이 트래커**를 `::: tracker` 디렉티브로 만들어 전 강의 도입부에 삽입 — 지금 큐브의 어디에 있고 어느 축을 건너는지를 일관되게 표시:
+  - **축을 건너는 강의**(화살표 + "Crossing an axis"): 2(1→2), 7(6→7 대전이), 8·10(7→8, 9→10 — 미지수 r·P 두 개)
+  - **같은 셀에서 심화하는 강의**(화살표 없음): 1(출발 코너), 3·4·5·6, 9(제어 계보 원형, 모델축 리셋), 11(두 계보 재결합), 12(오프라인)
+  - 부록은 큐브 위치가 없는 도구 상자이므로 트래커 미적용
+- ✅ **agents 축은 건너지 않는다** — 0장이 이름을 붙이고 큐브의 원거리면을 IE579의 영역으로 표시하며, 12장이 그것을 코스의 마지막 문장으로 되받는다.
+
+**해소된 항목**
+- ✅ §2 두-계보 구조는 `::: lineage` 2×2 그리드로 시각화됨(표 형태 아님).
+- ✅ PDF 일괄 생성 — `node pdf.mjs --all`, 헤드리스 Chromium이 1280×720 페이지로 출력. 퀴즈는 정답지로 인쇄된다.
+- ✅ 강의 간 cross-reference 일관성 점검 완료 — 삭제된 Ch 13을 가리키던 참조 2건(7장·9장)을 IE579로 정정. 전 장의 `inherits`/`handoff`가 `_CHAIN.md`와 일치함을 확인.
+
+**남은 선택지**
+1. 1–12장에도 원본 덱의 그림을 복원해 넣기 — 현재 실물 그림은 0장에만 있고, 나머지는 위젯으로만 그린다. 원본은 `lecture_slides/`에 있다.
