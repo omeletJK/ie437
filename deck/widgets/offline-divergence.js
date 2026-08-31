@@ -211,7 +211,7 @@ IE437.widget('offline-divergence', function (host, opts) {
     '<label class="wtog" data-rs2><i></i><span>max only over actions in D</span></label>' +
     '<span class="wlabel">sweep</span><span class="wnum" data-t></span>' +
     '<button class="wb" data-back>&larr;</button><button class="wb" data-fw>&rarr;</button>' +
-    '<button class="wb" data-run>run 50</button><button class="wb" data-rs>reset</button></div>' +
+    '<button class="wb" data-auto data-run>run 50</button><button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:14px;align-items:flex-start;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">what Q says about each action at s = 0</div><div data-c1></div></div>' +

@@ -327,10 +327,83 @@ button.wb:disabled{opacity:.4;cursor:default}
   background:#fff;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.28)}
 .wtog.on i{background:var(--ink)} .wtog.on i::after{left:15px}
 .wtog.on{color:var(--ink)}
+/* ---------- slider: the +/- pair's replacement ----------
+   Monotone ink like the rest of the chrome; the value sits to the right
+   in tabular figures so it does not jitter as you drag. */
+.wsl{display:flex;align-items:center;gap:9px;font:500 11px/1 var(--mono);color:var(--ink3);
+  cursor:pointer;user-select:none;white-space:nowrap}
+.wsl-l{letter-spacing:.06em}
+.wsl-v{font:600 12px/1 var(--mono);color:var(--ink);font-variant-numeric:tabular-nums;
+  min-width:3.2em;text-align:right}
+.dark .wsl{color:var(--wink3)} .dark .wsl-v{color:var(--wink)}
+.wsl input[type=range]{-webkit-appearance:none;appearance:none;width:112px;height:15px;
+  background:transparent;cursor:grab;margin:0}
+.wsl input[type=range]:active{cursor:grabbing}
+.wsl input[type=range]::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:var(--line)}
+.wsl input[type=range]::-moz-range-track{height:3px;border-radius:2px;background:var(--line)}
+.dark .wsl input[type=range]::-webkit-slider-runnable-track{background:var(--wline)}
+.dark .wsl input[type=range]::-moz-range-track{background:var(--wline)}
+.wsl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+  width:13px;height:13px;border-radius:50%;background:var(--ink);border:0;margin-top:-5px;
+  transition:transform .12s ease}
+.wsl input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;
+  background:var(--ink);border:0}
+.dark .wsl input[type=range]::-webkit-slider-thumb{background:var(--wink)}
+.dark .wsl input[type=range]::-moz-range-thumb{background:var(--wink)}
+.wsl input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.18)}
+.wsl input[type=range]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var(--accent-soft,rgba(37,99,235,.3))}
+
 .wnum{font:600 12.5px/1 var(--mono);color:var(--ink);letter-spacing:.02em;font-variant-numeric:tabular-nums}
 .dark .wnum{color:var(--wink)}
 .wlabel{font:500 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink4)}
 .dark .wlabel{color:var(--wink3)}
+
+/* ---------- quiz ----------
+   A check, not an exam: one question, a few options, and the reason
+   revealed the moment a guess is made. Recessed like every other panel —
+   the options sit on --panel2 with an ink outline, and only the verdict
+   is allowed colour. */
+.quiz{border:1px solid var(--line);border-radius:5px;background:var(--panel);
+  padding:20px 22px 18px;display:flex;flex-direction:column;gap:14px}
+.dark .quiz{border-color:var(--wline);background:var(--wpanel)}
+.qq{font:600 20px/1.35 var(--sans);color:var(--ink);letter-spacing:-.01em}
+.dark .qq{color:var(--wink)}
+.qopts{display:flex;flex-direction:column;gap:8px}
+.qopt{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;
+  padding:11px 14px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);
+  color:var(--ink2);font:400 15.5px/1.45 var(--sans);cursor:pointer;
+  transition:border-color .15s ease,background .15s ease,color .15s ease}
+.dark .qopt{border-color:var(--wline);background:var(--wpanel2);color:var(--wink2)}
+.qopt:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
+.dark .qopt:hover:not(:disabled){border-color:var(--wink2);color:var(--wink)}
+.qk{flex:none;width:21px;height:21px;border-radius:50%;border:1px solid var(--line);
+  font:600 10.5px/20px var(--mono);text-align:center;color:var(--ink3)}
+.dark .qk{border-color:var(--wline);color:var(--wink3)}
+.qtx{flex:1;min-width:0}
+
+/* the verdict — the one place colour is allowed in this panel */
+.quiz.done .qopt{cursor:default}
+.qopt.right{border-color:var(--green,#16A34A);background:rgba(22,163,74,.09);color:var(--ink)}
+.qopt.wrong{border-color:var(--red,#D64545);background:rgba(214,69,69,.08);color:var(--ink)}
+.qopt.right .qk{border-color:var(--green,#16A34A);color:var(--green,#16A34A)}
+.qopt.wrong .qk{border-color:var(--red,#D64545);color:var(--red,#D64545)}
+.dark .qopt.right,.dark .qopt.wrong{color:var(--wink)}
+.quiz.done .qopt:not(.right):not(.wrong){opacity:.5}
+
+.qwhy{display:none;border-top:1px solid var(--line);padding-top:13px;
+  font:400 15px/1.62 var(--sans);color:var(--ink2)}
+.dark .qwhy{border-color:var(--wline);color:var(--wink2)}
+.quiz.done .qwhy{display:block}
+.qwhy p{margin:0} .qwhy p+p{margin-top:8px}
+.qwhy strong{color:var(--ink);font-weight:600}
+.dark .qwhy strong{color:var(--wink)}
+
+@media print{
+  /* the printed slide is the answer key: every option keeps its verdict and
+     the explanation is always open */
+  .quiz .qwhy{display:block}
+  .qopt{cursor:default}
+}
 
 /* ---------- title / section / standout ---------- */
 .slide[data-layout="title"]{justify-content:center;padding:0 96px}
@@ -414,6 +487,7 @@ button.wb:disabled{opacity:.4;cursor:default}
   .rise{opacity:1 !important;transform:none !important;animation:none !important}
   .frag{opacity:1 !important;transform:none !important}
   .widget button,.wtog{visibility:hidden}
+  .wsl input[type=range]{visibility:hidden}   /* the value beside it still prints */
   .slide.dark::before{display:none}   /* the feTurbulence grain rasterises to megabytes in PDF */
   *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
 }

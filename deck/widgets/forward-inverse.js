@@ -97,9 +97,9 @@ IE437.widget('forward-inverse', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">220 designs, one landscape, two directions</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-dn>&minus; target</button>' +
-    '<button class="wb" data-val style="min-width:104px"></button>' +
-    '<button class="wb" data-up>target +</button></div>' +
+    '<span class="wlabel">target</span>' +
+    '<span class="wnum" data-val style="min-width:104px;display:inline-block;text-align:right"></span>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:column;gap:9px;padding:12px 16px 10px">' +
     '<div style="display:flex;gap:22px;justify-content:center;align-items:flex-start">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div data-a></div>' +
@@ -205,8 +205,10 @@ IE437.widget('forward-inverse', function (host, opts) {
       '<span style="color:var(--ink4)">Best in D: ' + DMAX.toFixed(2) + '.</span>';
   }
 
-  host.querySelector('[data-up]').onclick = function () { ti = Math.min(TARGETS.length - 1, ti + 1); drawB(); };
-  host.querySelector('[data-dn]').onclick = function () { ti = Math.max(0, ti - 1); drawB(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: TARGETS.length - 1, step: 1, value: ti,
+    on: function (v) { ti = v; drawB(); }
+  });
 
   drawB();
   return { finish: function () { ti = 2; drawB(); } };

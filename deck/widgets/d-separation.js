@@ -47,7 +47,7 @@ IE437.widget('d-separation', function (host, opts) {
     '<div class="wbar"><span class="wt">Wet grass &mdash; click a node to observe it</span>' +
     '<span class="wspacer"></span>' +
     '<span class="wlabel" data-hint></span>' +
-    '<button class="wb" data-step>walk the story &#9656;</button>' +
+    '<button class="wb" data-auto data-step>walk the story &#9656;</button>' +
     '<button class="wb" data-clr>clear</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:flex-start">' +
     '<div data-g style="flex:none"></div>' +

@@ -121,7 +121,7 @@ IE437.widget('dp-schedules', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">Two schedules of one dance, counted</span><span class="wspacer"></span>' +
     '<span class="wlabel">sweeps per improvement</span><span class="wnum" data-m></span>' +
-    '<button class="wb" data-dn>&larr;</button><button class="wb" data-up>&rarr;</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:5px">' +
     '<div class="wlabel">the shared arena</div><div data-g></div>' +
@@ -208,8 +208,10 @@ IE437.widget('dp-schedules', function (host, opts) {
       'the cheapest schedule is neither endpoint.</div>';
     host.querySelector('[data-stats]').innerHTML = html;
   }
-  host.querySelector('[data-up]').onclick = function () { mi = Math.min(MS.length - 1, mi + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { mi = Math.max(0, mi - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: MS.length - 1, step: 1, value: mi,
+    on: function (v) { mi = v; draw(); }
+  });
 
   draw();
   return { finish: function () { mi = 1; draw(); } };   /* m = 2, the cheapest schedule */

@@ -74,7 +74,7 @@ IE437.widget('contraction-rate', function (host, opts) {
     '<div class="wbar"><span class="wt">The error contracts by a factor of the discount, every sweep</span>' +
     '<span class="wspacer"></span>' +
     '<span class="wlabel">discount</span><span class="wnum" data-g></span>' +
-    '<button class="wb" data-dn>&darr;</button><button class="wb" data-up>&uarr;</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0">' +
     '<div class="wlabel">sup-norm distance to the fixed point, log scale</div><div data-c></div></div>' +
@@ -137,8 +137,10 @@ IE437.widget('contraction-rate', function (host, opts) {
       'measured error never crosses it. Its slope is log&#8321;&#8320;(γ) by construction; that the blue ' +
       'curve <b>runs parallel to it</b> is the contraction, not an assumption.';
   }
-  host.querySelector('[data-up]').onclick = function () { gi = Math.min(GAMMAS.length - 1, gi + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { gi = Math.max(0, gi - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: GAMMAS.length - 1, step: 1, value: gi,
+    on: function (v) { gi = v; draw(); }
+  });
 
   draw();
   return { finish: function () { gi = 2; draw(); } };    /* γ = 0.80 */

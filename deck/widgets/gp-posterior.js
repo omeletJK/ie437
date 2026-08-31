@@ -69,7 +69,7 @@ IE437.widget('gp-posterior', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">One kernel, one knob</span><span class="wspacer"></span>' +
     '<span class="wlabel">length scale</span><span class="wnum" data-l></span>' +
-    '<button class="wb" data-dn>&lambda; &darr;</button><button class="wb" data-up>&lambda; &uarr;</button>' +
+    '<span data-sl></span>' +
     '<button class="wb" data-best>best &lambda;</button><button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
@@ -218,9 +218,13 @@ IE437.widget('gp-posterior', function (host, opts) {
     if (X.length >= 24) return;
     X.push(x); Y.push(y); draw();
   });
-  host.querySelector('[data-up]').onclick = function () { li = Math.min(LAMS.length - 1, li + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { li = Math.max(0, li - 1); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { X = X0.slice(); Y = X0.map(TRUE); li = 7; draw(); };
+  var dial = IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: LAMS.length - 1, step: 1, value: li,
+    on: function (v) { li = v; draw(); }
+  });
+  host.querySelector('[data-rs]').onclick = function () {
+    X = X0.slice(); Y = X0.map(TRUE); li = 7; dial.set(7, false); draw();
+  };
   host.querySelector('[data-best]').onclick = function () {
     var b = -1e18, bi = 0;
     LAMS.forEach(function (l, k) { var v = fit(X, Y, l).lml; if (v > b) { b = v; bi = k; } });

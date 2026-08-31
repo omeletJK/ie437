@@ -101,7 +101,7 @@ IE437.widget('baseline-variance', function (host, opts) {
     '<span class="wspacer"></span>' +
     '<span class="wlabel">update</span><span class="wnum" data-n></span>' +
     '<button class="wb" data-one>one update</button>' +
-    '<button class="wb" data-run>run 100</button>' +
+    '<button class="wb" data-auto data-run>run 100</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody">' +
     '<div style="display:flex;gap:18px;justify-content:center">' +

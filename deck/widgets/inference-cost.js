@@ -33,7 +33,7 @@ IE437.widget('inference-cost', function (host, opts) {
     '<div class="wbar"><span class="wt">Same answer, two costs</span>' +
     '<span class="wspacer"></span>' +
     '<span class="wlabel">chain length</span><span class="wnum" data-n></span>' +
-    '<button class="wb" data-dn>&minus;</button><button class="wb" data-up>+</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="gap:12px">' +
     '<div data-chain style="align-self:center"></div>' +
     '<div style="display:flex;gap:22px;align-items:flex-start">' +
@@ -112,8 +112,6 @@ IE437.widget('inference-cost', function (host, opts) {
   function render() {
     drawChain(); drawChart();
     host.querySelector('[data-n]').textContent = 'n = ' + n;
-    host.querySelector('[data-up]').disabled = n >= NMAX;
-    host.querySelector('[data-dn]').disabled = n <= NMIN;
 
     var nm = naiveMults(n), vm = veMults(n);
     host.querySelector('[data-stats]').innerHTML =
@@ -134,8 +132,10 @@ IE437.widget('inference-cost', function (host, opts) {
       'only two variables. Choose a worse order and the factors grow; that is the whole difficulty.</span></div>';
   }
 
-  host.querySelector('[data-up]').onclick = function () { n = Math.min(NMAX, n + 1); render(); };
-  host.querySelector('[data-dn]').onclick = function () { n = Math.max(NMIN, n - 1); render(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: NMIN, max: NMAX, step: 1, value: n,
+    on: function (v) { n = v; render(); }
+  });
 
   render();
   return { finish: function () { n = 20; render(); } };

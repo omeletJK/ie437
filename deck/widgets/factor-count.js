@@ -36,8 +36,7 @@ IE437.widget('factor-count', function (host, opts) {
     '<button class="wb" data-k="1">1</button>' +
     '<button class="wb" data-k="2">2</button>' +
     '<button class="wb" data-k="3">3</button>' +
-    '<button class="wb" data-dn>&minus; variable</button>' +
-    '<button class="wb" data-up>+ variable</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:flex-start">' +
     '<div style="flex:none;display:flex;flex-direction:column;gap:8px">' +
     '<div class="wlabel">the satellite network &mdash; five variables</div>' +
@@ -122,8 +121,6 @@ IE437.widget('factor-count', function (host, opts) {
     host.querySelectorAll('[data-k]').forEach(function (b) {
       b.classList.toggle('on', +b.getAttribute('data-k') === k);
     });
-    host.querySelector('[data-up]').disabled = n >= NMAX;
-    host.querySelector('[data-dn]').disabled = n <= 2;
 
     var j = jointCost(n), c = netCost(n, k);
     host.querySelector('[data-read]').innerHTML =
@@ -137,8 +134,10 @@ IE437.widget('factor-count', function (host, opts) {
   host.querySelectorAll('[data-k]').forEach(function (b) {
     b.onclick = function () { k = +b.getAttribute('data-k'); draw(); };
   });
-  host.querySelector('[data-up]').onclick = function () { n = Math.min(NMAX, n + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { n = Math.max(2, n - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    label: 'variables', min: 2, max: NMAX, step: 1, value: n,
+    on: function (v) { n = v; draw(); }
+  });
 
   draw();
   return { finish: function () { n = 20; k = 2; draw(); } };

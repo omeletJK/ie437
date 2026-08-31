@@ -60,7 +60,7 @@ IE437.widget('explore-regret', function (host, opts) {
     '<div class="wbar"><span class="wt">How much exploration?</span><span class="wspacer"></span>' +
     '<button class="wb" data-rule></button>' +
     '<span class="wlabel" data-pl></span><span class="wnum" data-pv></span>' +
-    '<button class="wb" data-dn>&darr;</button><button class="wb" data-up>&uarr;</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">cumulative regret over 1000 pulls</div><div data-c1></div></div>' +
@@ -160,10 +160,16 @@ IE437.widget('explore-regret', function (host, opts) {
   }
 
   host.querySelector('[data-rule]').onclick = function () {
-    rule = rule === 'eps' ? 'ucb' : 'eps'; pi = rule === 'eps' ? 3 : 2; draw();
+    rule = rule === 'eps' ? 'ucb' : 'eps'; pi = rule === 'eps' ? 3 : 2;
+    /* the two rules have dials of different lengths, so re-range the track */
+    dial.input.max = pars().length - 1;
+    dial.set(pi, false);
+    draw();
   };
-  host.querySelector('[data-up]').onclick = function () { pi = Math.min(pars().length - 1, pi + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { pi = Math.max(0, pi - 1); draw(); };
+  var dial = IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: pars().length - 1, step: 1, value: pi,
+    on: function (v) { pi = v; draw(); }
+  });
 
   draw();
   return { finish: function () { rule = 'eps'; pi = 3; draw(); } };

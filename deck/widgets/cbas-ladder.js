@@ -118,7 +118,7 @@ IE437.widget('cbas-ladder', function (host, opts) {
     '<button class="wb" data-tg style="min-width:104px"></button>' +
     '<button class="wb" data-one>one shot</button>' +
     '<button class="wb" data-step>step</button>' +
-    '<button class="wb" data-run>run the ladder</button>' +
+    '<button class="wb" data-auto data-run>run the ladder</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:flex-start;padding:11px 16px 9px">' +
     '<div data-c></div><div data-t style="flex:1;min-width:0"></div></div>';

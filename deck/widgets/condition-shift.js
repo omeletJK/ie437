@@ -96,9 +96,9 @@ IE437.widget('condition-shift', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">the same objective as Lecture 5 &mdash; now conditioned, not searched</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-dn>&minus; bar</button>' +
-    '<button class="wb" data-val style="min-width:92px"></button>' +
-    '<button class="wb" data-up>bar +</button></div>' +
+    '<span class="wlabel">threshold</span>' +
+    '<span class="wnum" data-val style="min-width:92px;display:inline-block;text-align:right"></span>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:flex-start;padding:11px 16px 9px">' +
     '<div data-c></div>' +
     '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">' +
@@ -206,8 +206,10 @@ IE437.widget('condition-shift', function (host, opts) {
       '</div>';
   }
 
-  host.querySelector('[data-up]').onclick = function () { gi = Math.min(GAM.length - 1, gi + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { gi = Math.max(0, gi - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: GAM.length - 1, step: 1, value: gi,
+    on: function (v) { gi = v; draw(); }
+  });
 
   draw();
   return { finish: function () { gi = 5; draw(); } };

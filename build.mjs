@@ -204,6 +204,40 @@ function renderNode(n, ctx) {
       return '<div class="flow">' + out.join('') + '</div>';
     }
 
+    /* ::: quiz  The question?
+         - a wrong option
+         - =the right one          (= marks the answer)
+         - another wrong option
+         Any prose after the list is the explanation, revealed once answered.
+       The answer index is not written into the markup as a plain number a
+       curious student could read off the page source; it is only known to the
+       click handler after a guess is made. */
+    case 'quiz': {
+      const lines = rawText(n).split('\n');
+      const opts = [], why = [];
+      let answer = -1;
+      for (const raw of lines) {
+        const li = raw.match(/^\s*[-*]\s+(.*)$/);
+        if (li) {
+          let s = li[1].trim();
+          if (s.startsWith('=')) { answer = opts.length; s = s.slice(1).trim(); }
+          opts.push(s);
+        } else if (raw.trim()) why.push(raw);
+      }
+      if (!n.arg) throw new Error('::: quiz needs its question on the opening line');
+      if (opts.length < 2) throw new Error('::: quiz "' + n.arg + '" needs at least two options');
+      if (answer < 0) throw new Error('::: quiz "' + n.arg + '" marks no answer — prefix the right option with =');
+      ctx.quizzes++;
+      return '<div class="quiz" data-a="' + answer + '">' +
+        '<div class="qq">' + mdInline(n.arg) + '</div>' +
+        '<div class="qopts">' + opts.map((o, i) =>
+          '<button class="qopt" data-i="' + i + '">' +
+          '<span class="qk">' + String.fromCharCode(65 + i) + '</span>' +
+          '<span class="qtx">' + mdInline(o) + '</span></button>').join('') + '</div>' +
+        (why.length ? '<div class="qwhy">' + md2html(why.join('\n')) + '</div>' : '') +
+        '</div>';
+    }
+
     case 'qstrip':
       return qstrip(ctx.fm.questions || [], +(n.arg || ctx.slideAttrs.q || 0));
 
@@ -384,7 +418,7 @@ function build(file) {
   }
   pushSlide();
 
-  const ctx = { fm, widgets: new Set(), frag: 0, slideAttrs: {} };
+  const ctx = { fm, widgets: new Set(), frag: 0, slideAttrs: {}, quizzes: 0 };
   const N = slides.length;
   const label = fm.label || ('Lecture ' + fm.ch);      // an appendix is not a lecture
   const chapLabel = label + ' · ' + fm.title;
@@ -517,7 +551,8 @@ ${scripts}
      would show fourteen phantom changes in git. Write only what changed. */
   const changed = !fs.existsSync(out) || fs.readFileSync(out, 'utf8') !== doc;
   if (changed) fs.writeFileSync(out, doc);
-  return { out, changed, n: N, widgets: [...ctx.widgets], ch: fm.ch, title: fm.title,
+  return { out, changed, n: N, widgets: [...ctx.widgets], quizzes: ctx.quizzes,
+           ch: fm.ch, title: fm.title,
            subtitle: fm.subtitle, file: path.basename(out) };
 }
 
@@ -539,6 +574,7 @@ for (const f of files) {
     const r = build(path.join(MD, f));
     made.push(r);
     console.log('OK  ' + f + '  ->  ' + path.relative(ROOT, r.out) + '   ' + r.n + ' slides' +
+      (r.quizzes ? '   ' + r.quizzes + ' quiz' + (r.quizzes > 1 ? 'zes' : '') : '') +
       (r.widgets.length ? '   widgets: ' + r.widgets.join(', ') : ''));
     for (const w of r.widgets) {
       if (!fs.existsSync(path.join(ROOT, 'deck/widgets', w + '.js')))

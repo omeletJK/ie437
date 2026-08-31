@@ -100,7 +100,7 @@ IE437.widget('policy-gradient', function (host, opts) {
     '<span class="wlabel">episodes / update</span><span class="wnum" data-n></span>' +
     '<button class="wb" data-batch>batch size</button>' +
     '<button class="wb" data-one>one update</button>' +
-    '<button class="wb" data-run>run 100</button>' +
+    '<button class="wb" data-auto data-run>run 100</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div data-c></div>' +

@@ -107,6 +107,7 @@ Blocks open with `::: name [argument]` and close with a bare `:::`. They nest.
                       The arrow labels are drawn by CSS `content: attr()`, so they are
                       plain text — markdown and maths in them will not render.
 ::: widget id {json}  mount an interactive widget; the child text becomes its caption
+::: quiz Question?    a check-yourself question; see below
 ::: figure name [| width]   a picture from assets/chNN/; child text is the caption
 ::: video  name [| width]   a clip from assets/chNN/name.mp4 with assets/chNN/name.jpg as poster
 ```
@@ -144,6 +145,34 @@ clips comes to 126 KB.
 
 Add `.plain` (`::: figure.plain name`) to drop the hairline and white ground, for a picture that
 already has its own frame.
+
+### Quizzes
+
+One question, a few options, and the reason revealed the moment a guess is made. The convention
+in this course is **one per Act**, on its own slide at the Act's close, so the check happens while
+the argument is still fresh.
+
+```markdown
+::: quiz An $\varepsilon$-greedy agent runs with $\varepsilon$ fixed forever. What happens?
+- It converges to the optimal policy
+- =$Q$ converges to $Q^*$, but it keeps acting randomly one time in ten
+- Neither converges
+Q-learning is **off-policy**, so a fixed $\varepsilon$ costs nothing in the estimate. What it
+costs is the return earned along the way.
+:::
+```
+
+- The question is the text on the opening `:::` line. It takes markdown and maths.
+- Each `-` line is an option; **prefix the right one with `=`**. Options are lettered A, B, C…
+  in the order written, so shuffle them yourself — do not leave the answer at A every time.
+- Everything after the list is the explanation, shown once an answer is chosen.
+- The build **fails** on a quiz with no `=`, with fewer than two options, or with no question —
+  a silently unanswerable question would otherwise reach a lecture theatre.
+
+Answering marks the chosen option and the right one, fades the rest, and opens the explanation;
+it does *not* advance the slide, so the class can read the reason before anyone presses on. The
+printed deck and the PDF are the **answer key** — every quiz prints with its answer marked and
+its explanation open.
 
 ### Worked example
 
@@ -184,6 +213,24 @@ IE437.widget('my-widget', function (host, opts) {
   return { finish: function () { /* run to the end — used for PDF export */ } };
 });
 ```
+
+**Controls.** Prefer `IE437.slider(mount, {...})` to a pair of `+`/`−` buttons: one gesture instead
+of eight clicks, and the value is visible *while* you drag rather than only after. Pass
+`bare: true` when the widget already prints its own `.wlabel` and `.wnum` beside the track.
+
+```js
+var dial = IE437.slider(host.querySelector('[data-sl]'), {
+  label: 'discount', min: 0, max: GAMMAS.length - 1, step: 1, value: gi,
+  fmt: function (i) { return 'γ = ' + GAMMAS[i].toFixed(2); },
+  on: function (i) { gi = i; draw(); }
+});          // -> {get, set(v, fire), input, el};  a reset button calls dial.set(...)
+```
+
+**Autoplay.** A widget that sits dead until someone finds its toolbar is a widget most of a class
+never sees work, so arriving at a slide starts it. Mark the control that carries the widget to the
+state worth seeing with `data-auto` and the engine clicks it ~400 ms after the slide lands, or
+return an `auto()` method to do something else. The buttons stay — they are now for running it
+*again*, not for the first time. Printing and reduced-motion are exempt: `finish()` covers those.
 
 Rules that keep the PDF honest:
 

@@ -88,7 +88,7 @@ IE437.widget('pontryagin', function (host, opts) {
     '<span class="wspacer"></span>' +
     '<span class="wlabel">costate at t = 0</span>' +
     '<span class="wnum" data-l0 style="min-width:78px;text-align:right;display:inline-block"></span>' +
-    '<button class="wb" data-dn>&darr;</button><button class="wb" data-up>&uarr;</button>' +
+    '<span data-sl></span>' +
     '<button class="wb" data-solve>shoot for it</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">' +
@@ -179,12 +179,12 @@ IE437.widget('pontryagin', function (host, opts) {
       '<b style="font-family:var(--mono);color:' + BLUE + '">' + spread.toExponential(0) + '</b>' +
       ' obeying the principle, <b style="font-family:var(--mono);color:' + SLATE + '">' +
       spread2.toFixed(2) + '</b> not obeying it.</div>';
-    host.querySelector('[data-dn]').disabled = li <= 0;
-    host.querySelector('[data-up]').disabled = li >= LAD.length - 1;
   }
 
-  host.querySelector('[data-dn]').onclick = function () { if (li > 0) { li--; draw(); } };
-  host.querySelector('[data-up]').onclick = function () { if (li < LAD.length - 1) { li++; draw(); } };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: LAD.length - 1, step: 1, value: li,
+    on: function (v) { li = v; draw(); }
+  });
   host.querySelector('[data-solve]').onclick = function () { li = STAR; draw(); };
 
   draw();

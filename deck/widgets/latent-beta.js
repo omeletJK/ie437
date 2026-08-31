@@ -88,9 +88,9 @@ IE437.widget('latent-beta', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">an exactly solvable VAE &mdash; the KL weight, turned</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-dn>&minus; KL weight</button>' +
-    '<button class="wb" data-val style="min-width:96px"></button>' +
-    '<button class="wb" data-up>KL weight +</button></div>' +
+    '<span class="wlabel">KL weight</span>' +
+    '<span class="wnum" data-val style="min-width:96px;display:inline-block;text-align:right"></span>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:column;gap:8px;padding:11px 16px 9px">' +
     '<div style="display:flex;gap:24px;justify-content:center;align-items:flex-start">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:5px"><div data-a></div>' +
@@ -199,8 +199,10 @@ IE437.widget('latent-beta', function (host, opts) {
       ' &nbsp;&middot;&nbsp; reconstruction <b>' + rc.toFixed(3) + '</b><br>' + verdict;
   }
 
-  host.querySelector('[data-up]').onclick = function () { bi = Math.min(BETAS.length - 1, bi + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { bi = Math.max(0, bi - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: BETAS.length - 1, step: 1, value: bi,
+    on: function (v) { bi = v; draw(); }
+  });
 
   draw();
   return { finish: function () { bi = 3; draw(); } };

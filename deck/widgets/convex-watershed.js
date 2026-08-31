@@ -26,7 +26,7 @@ IE437.widget('convex-watershed', function (host, opts) {
     '<div class="wbar"><span class="wt">Local descent, twelve starts, one objective</span>' +
     '<span class="wspacer"></span>' +
     '<label class="wtog on" data-cx><i></i><span>convex objective</span></label>' +
-    '<button class="wb" data-run>descend</button>' +
+    '<button class="wb" data-auto data-run>descend</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="align-items:center;gap:6px">' +
     '<div data-c></div>' +

@@ -65,7 +65,7 @@ IE437.widget('dt-to-hjb', function (host, opts) {
     '<div class="wbar"><span class="wt">Shrink the step and the backup becomes the PDE</span>' +
     '<span class="wspacer"></span>' +
     '<span class="wlabel">step</span><span class="wnum" data-dt style="min-width:74px;display:inline-block;text-align:right"></span>' +
-    '<button class="wb" data-up>coarser</button><button class="wb" data-dn>halve &Delta;t</button>' +
+    '<span data-sl></span>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">' +
@@ -158,13 +158,13 @@ IE437.widget('dt-to-hjb', function (host, opts) {
           order.toFixed(3) + ' &mdash; first, as one Euler step should be</span>'
         : '<span style="color:var(--ink3)">press <b>halve &Delta;t</b> and read the ratio</span>') +
       '</div>';
-    host.querySelector('[data-dn]').disabled = li >= RUNS.length - 1;
-    host.querySelector('[data-up]').disabled = li <= 0;
   }
 
-  host.querySelector('[data-dn]').onclick = function () { if (li < RUNS.length - 1) { li++; draw(); } };
-  host.querySelector('[data-up]').onclick = function () { if (li > 0) { li--; draw(); } };
-  host.querySelector('[data-rs]').onclick = function () { li = 0; draw(); };
+  var dial = IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: RUNS.length - 1, step: 1, value: li,
+    on: function (v) { li = v; draw(); }
+  });
+  host.querySelector('[data-rs]').onclick = function () { li = 0; dial.set(0, false); draw(); };
 
   draw();
   return { finish: function () { li = RUNS.length - 1; draw(); } };

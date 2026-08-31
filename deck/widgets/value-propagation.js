@@ -82,7 +82,7 @@ IE437.widget('value-propagation', function (host, opts) {
     '<div class="wbar"><span class="wt">One backup, stepped</span><span class="wspacer"></span>' +
     '<label class="wtog" data-mx><i></i><span>max backup (value iteration)</span></label>' +
     '<span class="wlabel">sweep</span><span class="wnum" data-k></span>' +
-    '<button class="wb" data-s1>+1</button><button class="wb" data-s5>+5</button>' +
+    '<button class="wb" data-s1>+1</button><button class="wb" data-auto data-s5>+5</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:22px;align-items:center;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:5px">' +

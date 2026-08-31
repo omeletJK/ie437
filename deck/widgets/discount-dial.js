@@ -54,9 +54,7 @@ IE437.widget('discount-dial', function (host, opts) {
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">The same MDP, two different answers</span><span class="wspacer"></span>' +
-    '<span class="wlabel">discount</span><span class="wnum" data-g></span>' +
-    '<button class="wb" data-dn>&darr;</button><button class="wb" data-up>&uarr;</button>' +
-    '<button class="wb" data-rs>reset</button></div>' +
+    '<span data-sl></span><button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0">' +
     '<div class="wlabel">optimal value, and the optimal move out of each cell</div>' +
@@ -135,7 +133,6 @@ IE437.widget('discount-dial', function (host, opts) {
 
   function draw() {
     var g = GAMMAS[gi], r = solve(g);
-    host.querySelector('[data-g]').textContent = 'γ = ' + g.toFixed(2);
     drawCorridor(g, r); drawPlot(g);
     var right = 0; for (var i = 0; i < r.pol.length; i++) if (r.pol[i] > 0) right++;
     host.querySelector('[data-read]').innerHTML =
@@ -143,9 +140,12 @@ IE437.widget('discount-dial', function (host, opts) {
       'from START the optimal move is <b style="color:' + (r.pol[0] > 0 ? GREEN : AMBER) + '">' +
       (r.pol[0] > 0 ? 'right — six steps to +10' : 'left — one step to +1') + '</b>';
   }
-  host.querySelector('[data-up]').onclick = function () { gi = Math.min(GAMMAS.length - 1, gi + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { gi = Math.max(0, gi - 1); draw(); };
-  host.querySelector('[data-rs]').onclick = function () { gi = 4; draw(); };
+  var dial = IE437.slider(host.querySelector('[data-sl]'), {
+    label: 'discount', min: 0, max: GAMMAS.length - 1, step: 1, value: gi,
+    fmt: function (i) { return 'γ = ' + GAMMAS[i].toFixed(2); },
+    on: function (i) { gi = i; draw(); }
+  });
+  host.querySelector('[data-rs]').onclick = function () { dial.set(4); };
   /* keep the dial stops clear of the exact thresholds 10^(-1/3)=0.4642 and 10^(-1/5)=0.6310,
      so no frame of this widget ever sits on a knife-edge tie. */
 

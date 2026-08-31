@@ -86,7 +86,7 @@ IE437.widget('gpi-explore', function (host, opts) {
     '<span class="wlabel">right &epsilon;</span><span class="wnum" data-e></span>' +
     '<button class="wb" data-ec>cycle &epsilon;</button>' +
     '<button class="wb" data-r1>+1 ep</button>' +
-    '<button class="wb" data-r50>+50</button>' +
+    '<button class="wb" data-auto data-r50>+50</button>' +
     '<button class="wb" data-r200>+200</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="gap:12px">' +

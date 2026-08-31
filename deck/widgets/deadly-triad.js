@@ -15,7 +15,7 @@ IE437.widget('deadly-triad', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">Two states, zero rewards, true value = 0 &mdash; what could go wrong</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-run>run 4000 updates</button>' +
+    '<button class="wb" data-auto data-run>run 4000 updates</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px">' +
     '<div style="flex:.85;display:flex;flex-direction:column;gap:9px;justify-content:center;min-width:0">' +

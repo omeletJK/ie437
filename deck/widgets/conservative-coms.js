@@ -100,7 +100,7 @@ IE437.widget('conservative-coms', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">Conservatism, dialled</span><span class="wspacer"></span>' +
     '<span class="wlabel">conservatism</span><span class="wnum" data-a></span>' +
-    '<button class="wb" data-dn>α &darr;</button><button class="wb" data-up>α &uarr;</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:15px;align-items:flex-start;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">the surrogate, retrained</div><div data-c1></div></div>' +
@@ -206,8 +206,10 @@ IE437.widget('conservative-coms', function (host, opts) {
                 : 'The surrogate now <b>under</b>-promises at x* &mdash; a lower bound, so what it reports can be trusted.');
   }
 
-  host.querySelector('[data-up]').onclick = function () { ai = Math.min(ALPHA.length - 1, ai + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { ai = Math.max(0, ai - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: ALPHA.length - 1, step: 1, value: ai,
+    on: function (v) { ai = v; draw(); }
+  });
 
   draw();
   return { finish: function () { ai = 2; draw(); } };

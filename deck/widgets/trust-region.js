@@ -23,7 +23,7 @@ IE437.widget('trust-region', function (host, opts) {
     '<span class="wlabel">iterate</span><span class="wnum" data-k></span>' +
     '<button class="wb" data-start>new start</button>' +
     '<button class="wb" data-step>one step</button>' +
-    '<button class="wb" data-run>run 15</button>' +
+    '<button class="wb" data-auto data-run>run 15</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div data-c></div>' +

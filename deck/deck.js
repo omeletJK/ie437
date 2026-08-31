@@ -65,6 +65,43 @@
         transform: 'rotate(-90 10 ' + ((P.t + H - P.b) / 2) + ')', text: spec.ylabel }, svg);
       return { X: X, Y: Y };
     },
+    /* A labelled range control. This is the deck's answer to the +/- button
+       pair: one gesture instead of eight clicks, and the value is visible
+       while you drag it rather than only after. Returns {set, get, input}.
+
+         IE437.slider(bar, {label:'\u03bb', min:0, max:3, step:.1, value:1,
+                            fmt:function(v){return v.toFixed(1)}, on:draw}) */
+    slider: function (bar, o) {
+      var wrap = document.createElement('label');
+      wrap.className = 'wsl';
+      var name = document.createElement('span');
+      name.className = 'wsl-l'; name.innerHTML = o.label || '';
+      var input = document.createElement('input');
+      input.type = 'range';
+      input.min = o.min; input.max = o.max;
+      input.step = o.step == null ? (o.max - o.min) / 100 : o.step;
+      input.value = o.value == null ? o.min : o.value;
+      if (o.width) input.style.width = o.width + 'px';
+      var out = document.createElement('span');
+      out.className = 'wsl-v';
+      var fmt = o.fmt || function (v) { return String(v); };
+      function show() { if (!o.bare) out.textContent = fmt(+input.value); }
+      show();
+      input.addEventListener('input', function () { show(); if (o.on) o.on(+input.value); });
+      /* bare: the widget already prints its own label and reading beside the
+         track, so the slider contributes the track and nothing else. */
+      if (!o.bare) { wrap.appendChild(name); wrap.appendChild(input); wrap.appendChild(out); }
+      else wrap.appendChild(input);
+      if (bar) bar.appendChild(wrap);
+      return {
+        input: input, el: wrap,
+        get: function () { return +input.value; },
+        set: function (v, fire) {
+          input.value = v; show();
+          if (fire !== false && o.on) o.on(+input.value);
+        }
+      };
+    },
     el: function (tag, attrs, parent) {
       var NS = 'http://www.w3.org/2000/svg';
       var e = /^(svg|g|rect|circle|line|path|text|polyline|polygon|tspan|defs|marker)$/.test(tag)
@@ -174,6 +211,43 @@
     });
   }
 
+  /* ---------- quiz -------------------------------------------------
+     One guess, then the verdict and the reason. The answer index lives
+     in data-a and is read only on click, so it never has to be revealed
+     to open the question. Answering does not advance the slide — the
+     class reads the explanation before anyone presses on. */
+  function mountQuizzes(sl) {
+    $$('.quiz', sl).forEach(function (q) {
+      if (q.getAttribute('data-wired')) return;
+      q.setAttribute('data-wired', '1');
+      var answer = +q.getAttribute('data-a');
+      $$('.qopt', q).forEach(function (b) {
+        b.onclick = function () {
+          if (q.classList.contains('done')) return;
+          var chose = +b.getAttribute('data-i');
+          q.classList.add('done');
+          $$('.qopt', q).forEach(function (o) {
+            var i = +o.getAttribute('data-i');
+            if (i === answer) o.classList.add('right');
+            else if (i === chose) o.classList.add('wrong');
+            o.disabled = true;
+          });
+          balance(sl);
+        };
+      });
+    });
+  }
+  /* the printed deck is the answer key */
+  function revealQuizzes() {
+    $$('.quiz').forEach(function (q) {
+      q.classList.add('done');
+      var a = +q.getAttribute('data-a');
+      $$('.qopt', q).forEach(function (o) {
+        if (+o.getAttribute('data-i') === a) o.classList.add('right');
+      });
+    });
+  }
+
   /* ---------- navigation ------------------------------------------- */
   function showStep(sl, k, animate) {
     var groups = FRAGS[cur];
@@ -186,6 +260,31 @@
     });
   }
 
+  /* ---------- autoplay ---------------------------------------------
+     A widget that sits dead until someone finds its toolbar and clicks
+     "run" is a widget most of a class never sees work. So arriving at a
+     slide starts it: the engine calls the instance's own auto(), or
+     failing that clicks the control the widget marked data-auto. The
+     buttons stay — they are now for running it *again*, not for the
+     first time. Printing is exempt: finish() already freezes the end
+     state, and so is reduced-motion, where boot() calls finish().    */
+  var autoTimer = null;
+  function autoplay(sl) {
+    if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+    if (reduced || window.matchMedia('print').matches) return;
+    autoTimer = setTimeout(function () {
+      autoTimer = null;
+      LIVE.forEach(function (w) {
+        if (!w.__host || !sl.contains(w.__host) || !sl.classList.contains('active')) return;
+        try {
+          if (w.auto) { w.auto(); return; }
+          var b = w.__host.querySelector('[data-auto]');
+          if (b && !b.disabled) b.click();
+        } catch (e) { }
+      });
+    }, 420);
+  }
+
   function go(i, dir) {
     i = Math.max(0, Math.min(N - 1, i));
     var prev = cur;
@@ -193,6 +292,7 @@
     cur = i; step = (dir === 'back') ? FRAGS[cur].length : 0;
     var sl = slides[cur];
     mountWidgets(sl);
+    mountQuizzes(sl);
     sl.classList.add('active');
     balance(sl);
     showStep(sl, step, false);
@@ -200,6 +300,7 @@
       if (w.__host && sl.contains(w.__host)) { if (w.enter) w.enter(); }
       else if (w.leave) w.leave();
     });
+    autoplay(sl);
     $('#rail').style.width = ((cur + 1) / N * 100) + '%';
     var c = $('#hudn'); if (c) c.innerHTML = '<b>' + (cur + 1) + '</b> / ' + N;
     if (location.hash !== '#' + (cur + 1)) {
@@ -249,13 +350,15 @@
 
   /* ---------- print: freeze everything in its final state ---------- */
   window.addEventListener('beforeprint', function () {
-    slides.forEach(function (sl) { mountWidgets(sl); });
+    slides.forEach(function (sl) { mountWidgets(sl); mountQuizzes(sl); });
+    revealQuizzes();
     balanceAll();
     LIVE.forEach(function (w) { if (w.finish) { try { w.finish(); } catch (e) { } } });
     $$('.frag').forEach(function (f) { f.classList.add('on'); });
   });
   window.__deckPrintReady = function () {          // called by pdf.mjs before printing
-    slides.forEach(function (sl) { mountWidgets(sl); });
+    slides.forEach(function (sl) { mountWidgets(sl); mountQuizzes(sl); });
+    revealQuizzes();
     balanceAll();
     LIVE.forEach(function (w) { if (w.finish) { try { w.finish(); } catch (e) { } } });
     $$('.frag').forEach(function (f) { f.classList.add('on'); });

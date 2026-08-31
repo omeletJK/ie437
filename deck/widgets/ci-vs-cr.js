@@ -14,7 +14,7 @@ IE437.widget('ci-vs-cr', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">Both say 95% &mdash; and they are different claims</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-run>run ' + REPS + ' experiments</button>' +
+    '<button class="wb" data-auto data-run>run ' + REPS + ' experiments</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0">' +

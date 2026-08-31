@@ -35,7 +35,7 @@ IE437.widget('ridge-lasso-prior', function (host, opts) {
     '<div class="wbar"><span class="wt">One dial, two stories</span><span class="wspacer"></span>' +
     '<label class="wtog" data-lasso><i></i><span>use the L¹ penalty (Lasso)</span></label>' +
     '<span class="wlabel">λ</span><span class="wnum" data-l></span>' +
-    '<button class="wb" data-dn>λ &darr;</button><button class="wb" data-up>λ &uarr;</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0">' +
     '<div class="wlabel">optimisation view &mdash; error meets a budget</div><div data-c1></div></div>' +
@@ -142,8 +142,10 @@ IE437.widget('ridge-lasso-prior', function (host, opts) {
   host.querySelector('[data-lasso]').onclick = function () {
     lasso = !lasso; this.classList.toggle('on', lasso); draw();
   };
-  host.querySelector('[data-up]').onclick = function () { li = Math.min(LAM.length - 1, li + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { li = Math.max(0, li - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: LAM.length - 1, step: 1, value: li,
+    on: function (v) { li = v; draw(); }
+  });
 
   draw();
   return { finish: function () { lasso = true; host.querySelector('[data-lasso]').classList.add('on'); li = 3; draw(); } };

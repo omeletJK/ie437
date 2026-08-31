@@ -59,7 +59,7 @@ IE437.widget('omelet-stack', function (host, opts) {
     '<div class="wbar"><span class="wt">One model, many operations</span>' +
     '<span class="wspacer"></span>' +
     '<span class="wlabel">path</span><span class="wnum" data-say style="min-width:330px"></span>' +
-    '<button class="wb" data-play></button>' +
+    '<button class="wb" data-auto data-play></button>' +
     '<button class="wb" data-next>next &rsaquo;</button></div>' +
     '<div class="wbody"><div data-c></div></div>';
 

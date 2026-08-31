@@ -83,7 +83,7 @@ IE437.widget('bo-run', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">Bayesian optimisation, ten queries</span><span class="wspacer"></span>' +
     '<span class="wlabel">queries</span><span class="wnum" data-n></span>' +
-    '<button class="wb" data-s1>next query</button><button class="wb" data-s5>&times;5</button>' +
+    '<button class="wb" data-s1>next query</button><button class="wb" data-auto data-s5>&times;5</button>' +
     '<button class="wb" data-rs>reset</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;gap:4px"><div data-c1></div><div data-c2></div></div>' +

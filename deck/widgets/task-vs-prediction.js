@@ -50,7 +50,7 @@ IE437.widget('task-vs-prediction', function (host) {
     '<span class="wspacer"></span>' +
     '<span class="wlabel">where the task lives</span>' +
     '<span class="wnum" data-st style="min-width:56px;display:inline-block;text-align:right"></span>' +
-    '<button class="wb" data-dn>nearer the data</button><button class="wb" data-up>further out</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:24px;align-items:center;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">the control law each model asks for</div><div data-c1></div></div>' +
@@ -143,8 +143,10 @@ IE437.widget('task-vs-prediction', function (host) {
       : 'The model class cannot bend, so it must choose <b>where</b> to be wrong. Prediction loss chooses on the data’s terms; the task loss chooses on the controller’s.';
   }
 
-  host.querySelector('[data-dn]').onclick = function () { si = Math.max(0, si - 1); draw(); };
-  host.querySelector('[data-up]').onclick = function () { si = Math.min(ST.length - 1, si + 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: ST.length - 1, step: 1, value: si,
+    on: function (v) { si = v; draw(); }
+  });
 
   draw();
   return { finish: function () { si = 4; draw(); } };

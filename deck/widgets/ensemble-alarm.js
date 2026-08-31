@@ -82,7 +82,7 @@ IE437.widget('ensemble-alarm', function (host, opts) {
     '<div class="wbar"><span class="wt">Would an ensemble have caught it?</span><span class="wspacer"></span>' +
     '<label class="wtog" data-rev><i></i><span>reveal the true f</span></label>' +
     '<span class="wlabel">members</span><span class="wnum" data-k></span>' +
-    '<button class="wb" data-dn>K &darr;</button><button class="wb" data-up>K &uarr;</button></div>' +
+    '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:15px;align-items:flex-start;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">what the members agree on</div><div data-c1></div></div>' +
@@ -204,8 +204,10 @@ IE437.widget('ensemble-alarm', function (host, opts) {
   }
 
   host.querySelector('[data-rev]').onclick = function () { reveal = !reveal; this.classList.toggle('on', reveal); draw(); };
-  host.querySelector('[data-up]').onclick = function () { ki = Math.min(KS.length - 1, ki + 1); draw(); };
-  host.querySelector('[data-dn]').onclick = function () { ki = Math.max(0, ki - 1); draw(); };
+  IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: KS.length - 1, step: 1, value: ki,
+    on: function (v) { ki = v; draw(); }
+  });
 
   draw();
   return {
