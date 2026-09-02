@@ -197,14 +197,26 @@ code{font:500 .92em/1.5 var(--mono);background:rgba(22,24,29,.06);
 td.on,th.on{background:var(--panel2)}
 td.off{color:var(--red);font-weight:600}
 
-/* ---------- math ---------- */
-.katex{font-size:1.10em}
-.mathblock{text-align:center;overflow:visible;padding:19px 24px;
+/* ---------- math ----------
+   These are read from the back row of a large hall. A display equation is
+   the thing the slide is about, so it is set well above body size rather
+   than the 1px above it used to sit at; inline maths tracks whatever it
+   sits in, so it stays in proportion inside a small aside or a caption. */
+.katex{font-size:1.16em}
+.mathblock{text-align:center;overflow:visible;padding:19px 24px;font-size:20.5px;
   border:1px solid var(--line);background:var(--panel)}
 .mathblock .katex-display{margin:0}
 .dark .mathblock{border-color:var(--wline);background:var(--wpanel)}
 /* inside a panel, a column or a table cell the plate would be noise */
 .blk .mathblock,.col .mathblock,td .mathblock,.wcap .mathblock{border:0;background:none;padding:4px 0}
+/* tighter containers get a smaller step up, so nothing bursts its column */
+.blk .mathblock,.col .mathblock{font-size:18.5px}
+td .mathblock{font-size:16px}
+.wcap .mathblock{font-size:13.5px}
+/* {math: compact} — for a slide that stacks several derivations and would
+   otherwise run into the footer. Still above the old size, just not the full step. */
+.slide.mcompact .mathblock{font-size:17.5px}
+.slide.mcompact .blk .mathblock,.slide.mcompact .col .mathblock{font-size:16.5px}
 
 /* ---------- question strip ---------- */
 .qstrip{display:flex;align-items:center;justify-content:flex-start;margin:16px 0 0;flex:none}

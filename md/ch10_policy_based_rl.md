@@ -661,6 +661,7 @@ The two routes differ in what they make visible. The DP route shows that the res
 :::
 
 ### Backup 3 — the baseline: unbiased, and the best one
+{math: compact}
 **Unbiasedness, in full.** Split the trajectory expectation at time $t$; everything after $t$ integrates out and the score has mean zero under $\pi_\theta$:
 
 $$\E_{\tau}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big] = \E_{s_{0:t},a_{0:t-1}}\Big[b(s_t)\cdot\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]\Big] = \E\big[b(s_t)\cdot 0\big] = 0$$

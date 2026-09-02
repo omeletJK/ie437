@@ -629,8 +629,9 @@ The two lines meet in ==exactly one place==, and that meeting point is the solut
 :::
 
 ### Why the meeting point is unique — the contraction
+{math: compact}
 
-Define the **Bellman optimality operator** $\mathcal T$ on value functions:
+The **Bellman optimality operator** $\mathcal T$:
 
 $$(\mathcal T V)(s) = \max_a \sum_{s'} T(s,a,s')\big[R(s,a,s') + \gamma V(s')\big]$$
 
@@ -639,7 +640,7 @@ Value iteration is nothing but $V_{k+1} = \mathcal T V_k$. And $\mathcal T$ is a
 $$\lVert \mathcal T V - \mathcal T V'\rVert_\infty \;\le\; \gamma\,\lVert V - V'\rVert_\infty$$
 
 ::: reveal
-Two value functions disagreeing by $\delta$ anywhere are pushed to within $\gamma\delta$. By the Banach fixed-point theorem, $\gamma<1$ then buys three things at once:
+Two value functions disagreeing by $\delta$ are pushed to within $\gamma\delta$. By Banach's fixed-point theorem, $\gamma<1$ buys three things at once:
 
 - a **unique** fixed point $V^*$ — one answer, not a family;
 - **convergence from any $V_0$**, with no condition on the initialisation;
@@ -731,7 +732,7 @@ The *other* parent. Control theory solves the same dynamic problem with ==an inf
 :::
 
 ### What Lecture 8 receives
-{fill: tight}
+{fill: tight, math: compact}
 
 This lecture hands on ==the Bellman equation, which still needs the model.== In the form the next lecture opens with:
 

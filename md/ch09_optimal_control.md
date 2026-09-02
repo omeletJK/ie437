@@ -657,6 +657,7 @@ Compare Lecture 7's derivation of the Bellman optimality equation: identical, wi
 :::
 
 ### Backup 2 — why HJB is *sufficient*: the verification argument
+{math: compact}
 Suppose $V$ is continuously differentiable and satisfies HJB. Take any admissible $\gamma\in\Gamma$, with trajectory $x$ and terminal time $T$, alongside the candidate $\gamma^*$ with $x^*$ and $T^*$. Because the HJB right-hand side is a *minimum* over $u$, the arbitrary control can only do worse, while the minimising control attains it exactly:
 
 $$g(t,x,u) + \partial_x V\, f(t,x,u) + \partial_t V \;\ge\; 0, \qquad\qquad g(t,x^*,u^*) + \partial_x V\, f(t,x^*,u^*) + \partial_t V \;\equiv\; 0$$
@@ -674,6 +675,7 @@ A solution of the PDE is therefore a ==certificate==: no admissible strategy bea
 :::
 
 ### Backup 3 — LQR: the Riccati derivation, both times
+{math: compact}
 **Continuous time.** $\dot x = Ax+Bu$, running cost $g = x^\top Qx + u^\top Ru$. Guess $V(t,x)=x^\top P_t x$, so $\partial_x V = 2P_t x$ and $\partial_t V = x^\top \dot P_t x$. HJB reads
 
 $$-x^\top \dot P_t x = \min_u\Big\{\, 2x^\top P_t(Ax+Bu) + x^\top Qx + u^\top Ru \,\Big\}$$

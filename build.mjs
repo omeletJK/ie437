@@ -466,7 +466,9 @@ function build(file) {
     const kickN = s.attrs.kicker || (s.section && s.section.attrs.short) || '';
     let kick = s.section ? (kickN ? stripLead(s.section.title) : s.section.title) : (fm.title || '');
     if (kickN && kick.toUpperCase() === kickN.toUpperCase()) kick = '';   // no "CLOSING CLOSING"
-    return '<section class="slide' + (dark ? ' dark' : '') + '" data-layout="' + esc(layout) + '" data-i="' + i + '">\n' +
+    /* a dense derivation slide may step its equations back down a size */
+    const mcls = s.attrs.math === 'compact' ? ' mcompact' : '';
+    return '<section class="slide' + (dark ? ' dark' : '') + mcls + '" data-layout="' + esc(layout) + '" data-i="' + i + '">\n' +
       '  <div class="kicker"><span class="tick"></span>' + (kickN ? '<span class="kn">' + esc(kickN) + '</span>' : '') +
       '<span>' + esc(kick) + '</span><span class="kx">' + label + '</span></div>\n' +
       '  <h1 class="head rise">' + mdInline(s.title) +
