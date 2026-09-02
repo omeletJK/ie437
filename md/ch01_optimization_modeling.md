@@ -247,6 +247,44 @@ None of the three looks linear when stated. ==Modelling is the act of finding th
 :::
 :::
 
+### A fourth, from this lab — an LP *inside* a policy
+{sub: LPMARL — hierarchical multi-agent RL with a matching layer}
+
+The three above rewrite a problem until an LP appears. This one puts an LP ==inside a neural network.== Before $N$ agents can act they must be matched to tasks — and a learned score is not yet a decision.
+
+::: figure lpmarl-pipeline | 830
+A network scores every agent–task pair from the global state; an LP turns that score matrix into an actual assignment; each agent then acts under a policy conditioned on the task it was handed.
+:::
+
+::: reveal
+With $c_{ij}=f_\theta(h_i,h_j)$ scored from the two embeddings, the high-level policy *is* the allocation — each agent takes one task, each task has capacity $k_j$:
+
+$$\max_{z}\ \sum_{i,j} z_{ij}\,c_{ij} \qquad \text{s.t.}\quad \sum_j z_{ij}=1\ \ \forall i, \qquad \sum_i c_{ij}\,z_{ij}\le k_j\ \ \forall j$$
+:::
+
+::: reveal
+::: small
+The assignment polytope has integral vertices, so the relaxation returns a real matching, not a fractional one — which is why an **LP** and not a softmax belongs here.
+:::
+:::
+
+### Differentiating through the matching
+{sub: the same move as the bilevel work — the Jacobian of a KKT system}
+
+::: figure lpmarl-training | 1020
+The state produces the LP's costs $c=g_\theta(s)$; the LP returns the assignment $z^{*}$; each agent acts on its own column of $z^{*}$; the critic scores the joint action.
+:::
+
+The score network sits *before* an $\argmax$, so training it at all demands a gradient that passes **through the solver**:
+
+$$\nabla_\theta J \;=\; \E\Big[\nabla_{a_i}Q_\psi(s,a_i)\;\frac{\partial a}{\partial z^{*}}\;\hl{\frac{\partial z^{*}}{\partial c}}\;\frac{\partial c}{\partial\theta}\Big]$$
+
+::: reveal
+::: small
+The highlighted factor is the whole difficulty: $z^{*}$ is defined by an optimisation, not by a formula. It is recovered ==by differentiating the KKT equalities of the LP== — the identical construction the bilevel design work uses later in this lecture, and the same system Act 3 is about to certify. ==A discrete decision that a gradient can still flow through== is what an optimisation layer buys.
+:::
+:::
+
 ### Two that are quadratic, and one that is neither
 
 ::: cols
