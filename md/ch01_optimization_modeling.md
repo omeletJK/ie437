@@ -295,7 +295,62 @@ The classes above assume someone hands you $f$. Modern practice does the opposit
 
 ::: reveal
 ::: small
-This is the seam between Lecture 1 and Part IV. ==Convexity is not only a property you find; it is one you can impose== — and Lecture 11 will impose it on a learned dynamics model so that a planner can differentiate through the control problem, in the professor's own bilevel design work.
+This is the seam between Lecture 1 and Part IV. ==Convexity is not only a property you find; it is one you can impose.== The next four slides do exactly that, in the professor's own ongoing work: a learned dynamics model made convex where a planner has to differentiate through it — which is where Lecture 11 will pick the thread up again.
+:::
+:::
+
+### Bilevel design — the problem this makes tractable
+{sub: the professor's own ongoing work, and where Lecture 1 reaches Lecture 11}
+
+Much of engineering chooses a **design** once and then **operates** it for years: a wind farm's turbine layout, a robot's morphology, the placement of heaters in a furnace. The design $p$ is fixed up front; the operation $u_t$ is chosen afresh at every step. So judging a design means solving a whole control problem *inside* it.
+
+$$\begin{aligned}
+\min_{p\in\mathcal{P}}\ &\textstyle\sum_{t=0}^{T-1}\mathcal{L}(x_{t+1},u_t^{*};p) &&\dm{\text{upper level — the design}}\\[2pt]
+\text{s.t.}\ \ u_{0:T-1}^{*} = \argmin_{u_{0:T-1}}\ &\textstyle\sum_{t=0}^{T-1}\mathcal{L}(x_{t+1},u_t;p) &&\dm{\text{lower level — the operation}}\\[2pt]
+\text{s.t.}\ \ &x_{t+1}=f(x_t,u_t;p),\quad u_t\in\mathcal{U}_p
+\end{aligned}$$
+
+::: reveal
+::: small
+**Two difficulties, stacked.** Every single evaluation of the outer objective requires solving the inner problem to optimality. And in practice $f$ is not handed to you — the plant's dynamics must be learned. Learn them with an ordinary network and ==the inner problem is non-convex==: $u^{*}$ is then some local minimum, and the sensitivity $\mathrm{d}u^{*}/\mathrm{d}p$ that the outer level depends on is simply wrong.
+:::
+:::
+
+### Input-convex where it must be, free where it may be
+{sub: ICGNN — a graph network made convex in the operation variables only}
+
+::: figure icgnn-procedure | 740
+Heater placement in a heat-diffusion plant. The design $p$ builds a graph; each of $K$ lower-level problems is solved for $u^{*}$ — ==now a convex programme==; the loss is aggregated; implicit differentiation returns $\mathrm{d}u^{*}/\mathrm{d}p$; the chain rule turns it into a gradient step on the heater positions.
+:::
+
+::: reveal
+::: small
+The trick is that convexity is imposed **only where it is needed.** The ==convex path== carries the operation variables — the heat each heater emits, the temperatures the sensors read. The ==non-convex path== carries the geometry: where heaters and sensors physically sit. The surrogate stays a free, expressive function of the design while being a convex function of the control, which is exactly the split the bilevel structure asks for.
+:::
+:::
+
+### Why the convexity is load-bearing
+{sub: and why the bottom row of this table is Act 3}
+
+::: figure icgnn-compare | 980
+Three ways to attack the same bilevel problem. Only the third solves a convex lower level — and only the third can therefore ==satisfy the sufficiency of KKT.==
+:::
+
+::: reveal
+::: small
+Read the last row against Act 3. A non-convex lower level makes KKT *necessary but not sufficient*, so the $u^{*}$ handed upward may be a saddle or a local maximum, and the implicit gradient built from that KKT system inherits the error. Convexity is not decoration here: ==it is what makes the gradient the outer problem receives a true one.== Searching $\mathcal{P}$ alone rather than $\mathcal{U}\times\mathcal{P}$ is the second prize.
+:::
+:::
+
+### What it buys — and a warning that returns in Lecture 5
+
+::: figure icgnn-results | 715
+Predicted design cost (top left) against *true* design cost (bottom left), over 100 optimisation steps, with the heater layouts each method reaches.
+:::
+
+::: reveal
+::: small
+Watch the blue curve. The linear surrogate's **predicted** cost falls beautifully while its **true** cost climbs — $0.0706 \to 0.1305$, worse than where it started. ==The optimiser exploited the surrogate exactly where the surrogate was wrong==, and that failure is the whole subject of Lecture 5. The convex graph surrogate reaches $0.0319$ against the plain GNN's $0.0391$: convexity costs a little expressiveness and returns a gradient you can trust.
 :::
 :::
 
