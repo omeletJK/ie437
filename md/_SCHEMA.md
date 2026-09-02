@@ -81,6 +81,11 @@ One thing to know when writing a widget: `.wlabel` is set in uppercase, which ma
 | `\hl{...}` *inside* math | the accent inside the formula | `\hl{}` |
 | `{p}(Mnih et al., 2015)` | grey italic citation | `\paper{}` |
 
+**Leave a blank line after a `$$…$$` block.** Prose resuming on the line straight after a
+display equation is not read as the same paragraph: the block splits, and each inline `$x$` in
+it becomes a paragraph of its own. The slide still builds and `_qa.mjs` still passes — it is
+only visible in a render, which is how it reaches a lecture unnoticed.
+
 Extra KaTeX macros available: `\hl` `\alert` `\E` `\R` `\argmax` `\argmin`.
 Markdown tables, lists and `code` work as usual.
 

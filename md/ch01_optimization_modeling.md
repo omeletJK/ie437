@@ -203,6 +203,7 @@ $$f(y)\;\ge\;f(x)+\nabla f(x)^\top (y-x)\qquad\text{for all } x,y$$
 ::: block Why a local minimum is a global minimum
 This is the promise Act 2 opened with, and it is now one line. If $x^{*}$ is an unconstrained local minimum then $\nabla f(x^{*})=0$, so for **every** $y$:
 $$f(y)\;\ge\;f(x^{*})+0\;=\;f(x^{*})$$
+
 ==Local information about a convex function is global information.== Nothing about $y$ was assumed — it may be arbitrarily far away.
 :::
 :::
@@ -588,7 +589,7 @@ $$0\;\le\;\nabla f(x^{*})^\top(y-x^{*})\;=\;-t\,\lVert\nabla f(x^{*})\rVert_2^2 
 
 ::: reveal
 ::: small
-So the constrained condition is not a different rule; it is ==the same rule with fewer directions available.== On a boundary, $-\nabla f(x^{*})$ may simply not be a feasible direction, and the gradient is then free to stay non-zero — which is exactly the slack the multipliers of Act 3 will put a price on.
+So the constrained condition is not a different rule; it is ==the same rule with fewer directions available.== On a boundary, $-\nabla f(x^{*})$ may simply not be a feasible direction, and the gradient is then free to stay non-zero — which is exactly the slack the multipliers of the next slides will put a price on.
 :::
 :::
 
