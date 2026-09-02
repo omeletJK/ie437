@@ -63,6 +63,7 @@ Slide attributes:
 | `layout` | `title` `section` `standout` (default: normal) | slide template |
 | `theme` | `dark` | dark ground for a normal slide |
 | `fill` | *(omit — the engine balances)* · `center` · `split` · `tight` | override the vertical rhythm — see §6 |
+| `math` | `compact` | step display equations back down, for a slide stacking several derivations that would otherwise reach the footer |
 | `q` | `1`–`4` | which question the bare `::: qstrip` highlights |
 | `sub` | any text | a grey second line under the slide title |
 | `kicker` | any text | override the section's `short` chip |
@@ -295,6 +296,11 @@ crossed axis. Never tint something merely to decorate it. To restyle the whole c
 deck. Every panel — equation plate, table, block, lineage grid, tracker, widget shell — sits on
 `--panel`, a step darker, and anything emphasised within one sits on `--panel2` with an ink
 outline. A panel is therefore an inset in the page, never a white card floating above it.
+
+**Maths is set for the back row.** A display equation is what its slide is about, so it is
+set well above body size, while inline maths tracks whatever it sits in and so stays in
+proportion inside an aside, a column or a caption. A slide that stacks several derivations
+and runs long takes `{math: compact}` rather than a hand-tuned size.
 
 **Rhythm — measured at runtime.** CSS cannot know how tall a paragraph will set, so `deck.js`
 measures each slide after the fonts load and gives the leftover height back in this order:
