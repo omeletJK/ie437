@@ -200,11 +200,11 @@ The same descent rule, the same twelve starting points, two objectives. On the c
 Named convex forms, in order of generality.
 :::
 
-| Class | Objective | Feasible set |
-|---|---|---|
-| **Linear program (LP)** | $c^\top x + d$ | a polyhedron (affine inequalities) |
-| **Quadratic program (QP)** | $\tfrac12 x^\top P x + q^\top x$, with $P\succeq 0$ | a polyhedron |
-| **QCQP** | convex quadratic | an intersection of ellipsoids |
+| Class | Objective | Each constraint | The shape it carves |
+|---|---|---|---|
+| **Linear program (LP)** | $c^\top x + d$ | $a_i^\top x \le b_i$ | a ==half-space==; $m$ of them cut a polyhedron — flat faces, sharp corners |
+| **Quadratic program (QP)** | $\tfrac12 x^\top P x + q^\top x$, $P\succeq 0$ | $a_i^\top x \le b_i$ | ==the same polyhedron==; only the objective bent, plane into bowl |
+| **QCQP** | convex quadratic | $\tfrac12 x^\top P_i x + q_i^\top x + r_i \le 0$ | an ==ellipsoid== when $P_i\succ 0$; the walls are curved now, not flat |
 
 ::: reveal
 The progression matters because modelling is often a matter of *recognising* which named class your problem — or its convexified version — falls into; each has mature, reliable solvers. The LP's optimum sits at a vertex of the polyhedron; the QP's, where the quadratic's level sets first touch the feasible region.
@@ -251,28 +251,34 @@ None of the three looks linear when stated. ==Modelling is the act of finding th
 
 ::: cols
 ::: col Quadratic programs
-**Least squares with bounds.** $\min_x \lVert \mathbf{A}x-b\rVert_2^2$ subject to $l \le x \le u$ — a convex quadratic over a box.
+**Least squares with bounds.** $\min_x \lVert \mathbf{A}x-b\rVert_2^2$ subject to $l \le x \le u$. Convex for *every* $\mathbf{A}$: the Hessian $2\mathbf{A}^\top\mathbf{A}\succeq0$ whatever $\mathbf{A}$ holds, over a convex box. Nothing to check.
 
 **A linear programme with random cost.** If $c$ has mean $\bar c$ and covariance $\Sigma$, then $c^\top x$ has mean $\bar c^\top x$ and variance $x^\top\Sigma x$, so
 
 $$\min_x\ \bar c^\top x + \hl{\gamma\, x^\top \Sigma x}$$
 
-trades expected cost against risk. ==$\gamma$ is the first risk parameter of the course== — and the first time uncertainty enters an objective rather than a constraint.
+trades expected cost against risk — $\gamma$ is the first risk parameter of the course. A covariance is always $\Sigma\succeq0$, so this is convex ==exactly when $\gamma\ge0$==, when variance is a cost. Risk-*seeking* $\gamma<0$ makes the objective concave and leaves the convex world at once.
 :::
 ::: col.accent Robust linear programming
-The parameters of a real problem are rarely known. With $g_i$ uncertain there are two honest formulations, and they are the two halves of Lecture 0's uncertainty split:
+With $g_i$ uncertain there are two honest formulations — Lecture 0's uncertainty split — and ==only one is convex for free.==
 
-**Deterministic (worst case).** The constraint must hold for *every* $g_i$ in an uncertainty set $\mathcal{E}_i$:
+**Deterministic (worst case).** Hold for *every* $g_i$ in a set $\mathcal{E}_i$:
+
 $$g_i^\top x \le h_i \quad \forall g_i\in\mathcal{E}_i$$
 
-**Stochastic (chance constrained).** $g_i$ is random and the constraint need only hold with probability $\eta$:
+Convex for **any** $\mathcal{E}_i$, even a nonconvex one: the feasible set is an intersection of half-spaces, one per $g_i$. The set decides *tractability*, not convexity — an ellipsoid gives a cone constraint.
+
+**Stochastic (chance constrained).** Hold only with probability $\eta$:
+
 $$\mathbf{P}\big(g_i^\top x \le h_i\big) \ge \eta$$
+
+**Not convex in general.** Gaussian $g_i$ gives $\bar g_i^\top x + \Phi^{-1}(\eta)\lVert\Sigma_i^{1/2}x\rVert_2 \le h_i$ — a cone ==only when $\eta\ge\tfrac12$==, since that is when $\Phi^{-1}(\eta)\ge0$.
 :::
 :::
 
 ::: reveal
 ::: small
-Both keep the problem convex for the usual choices of $\mathcal{E}_i$ and $\eta$ — which is the point. ==Robustness is bought inside the convex world, not outside it.== Lecture 2 will take the second reading much further, and Lecture 5 will meet the first again when a surrogate has to be trusted only where the data supports it.
+Not "the usual choices", then, but three conditions: $\gamma\ge0$, any $\mathcal{E}_i$ at all, and $\eta\ge\tfrac12$. ==Robustness is bought inside the convex world — but not below even odds.== Lecture 2 takes the stochastic reading much further; Lecture 5 meets the worst-case one again when a surrogate must be trusted only where the data supports it.
 :::
 :::
 
