@@ -237,6 +237,22 @@
       });
     });
   }
+  /* Arriving is the reset gesture here too, exactly as it is for a widget:
+     a question you have already answered comes back unanswered, so the same
+     slide can be put to the class a second time — and so a student stepping
+     back to re-read the explanation is not shown their own guess as though
+     it were part of the slide. */
+  function resetQuizzes(sl) {
+    $$('.quiz', sl).forEach(function (q) {
+      q.classList.remove('done');
+      $$('.qopt', q).forEach(function (o) {
+        o.classList.remove('right');
+        o.classList.remove('wrong');
+        o.disabled = false;
+      });
+    });
+  }
+
   /* the printed deck is the answer key */
   function revealQuizzes() {
     $$('.quiz').forEach(function (q) {
@@ -312,6 +328,7 @@
     var sl = slides[cur];
     mountWidgets(sl);
     mountQuizzes(sl);
+    resetQuizzes(sl);            /* before balance: a cleared quiz is shorter */
     sl.classList.add('active');
     balance(sl);
     /* widgets mount above, so their step count is only known now */
