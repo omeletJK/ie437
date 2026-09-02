@@ -345,23 +345,115 @@ For an *unconstrained* convex problem this collapses to the familiar $\nabla f(x
 Minimise $\lVert x - c\rVert^2$ over a polygon, with $c$ outside it. Drag the point and read the test literally: the red arrow is a feasible direction that decreases $f$. It disappears exactly at the optimum, where the gradient supports the set — and that supporting normal, scaled, ==is the KKT multiplier==.
 :::
 
-### KKT — optimality with constraints, and a dual bound
+### The problem, restated — and the price of a constraint
 
-With constraints, introduce multipliers $\lambda_i\ge 0$ for $g_i$ and $\nu_j$ for $h_j$. The ==Karush–Kuhn–Tucker== conditions characterise optimality:
+Act 1 put every problem into one shape. Act 3 asks how you would *know* you had solved it:
 
-$$\nabla f(x^{*}) + \sum_i \lambda_i \nabla g_i(x^{*}) + \sum_j \nu_j \nabla h_j(x^{*}) = 0, \qquad g_i(x^{*})\le 0,\;\; h_j(x^{*})=0,\;\; \lambda_i\ge 0,\;\; \hl{\lambda_i\, g_i(x^{*})=0}$$
-
-::: reveal
-The last identity, ==complementary slackness==, says each constraint is either active ($g_i=0$) or ignored ($\lambda_i=0$). For convex problems KKT is *necessary and sufficient* — a certificate of global optimality.
-:::
+$$\min_{x}\ f(x) \qquad \text{subject to}\qquad g_i(x)\le 0\ \ (i=1,\dots,m), \qquad h_j(x)=0\ \ (j=1,\dots,p)$$
 
 ::: reveal
-**Duality, in one line.** The Lagrangian $L(x,\lambda,\nu)=f(x)+\sum_i\lambda_i g_i+\sum_j\nu_j h_j$ yields a dual function whose value ==lower-bounds== $p^{*}$ for any $\lambda\ge 0$. The gap between primal and dual is a computable measure of how close you are.
+The constraints are the whole difficulty: strip them away and $\nabla f(x^{*})=0$ settles it. So ==buy your way out of them.== Put a price $\lambda_i$ on each inequality and $\nu_j$ on each equality, and charge violations to the objective itself:
+
+$$L(x,\lambda,\nu)\;=\;f(x)\;+\;\sum_{i}\lambda_i\,g_i(x)\;+\;\sum_{j}\nu_j\,h_j(x)$$
 :::
 
 ::: reveal
 ::: small
-Differentiating the KKT system is exactly how one back-propagates through an optimisation layer — the trick behind differentiable LQR and MPC in Lecture 11.
+Why $\lambda_i\ge0$ but $\nu_j$ free: breaking $g_i\le0$ is a one-sided fault, so it must always *cost*. An equality can be missed from either side, and its price carries the sign of the miss.
+:::
+:::
+
+### The four KKT conditions
+{sub: what holds at a solution $x^{*}$, with multipliers $\lambda^{*}\ge0$ and $\nu^{*}$}
+
+::: cols c2
+::: col 1 · Stationarity
+$$\nabla f(x^{*}) + \sum_i \lambda_i^{*}\nabla g_i(x^{*}) + \sum_j \nu_j^{*}\nabla h_j(x^{*}) = 0$$
+
+The Lagrangian is flat in $x$ — with the prices paid, no direction improves it.
+:::
+::: col 2 · Primal feasibility
+$$g_i(x^{*})\le 0,\qquad h_j(x^{*})=0$$
+
+$x^{*}$ is a legal point of the problem we actually asked about.
+:::
+:::
+
+::: cols c2
+::: col 3 · Dual feasibility
+$$\lambda_i^{*}\ \ge\ 0$$
+
+No inequality is ever priced negatively — you are not paid to break one.
+:::
+::: col.accent 4 · Complementary slackness
+$$\lambda_i^{*}\,g_i(x^{*}) = 0$$
+
+Each constraint is ==either active or free==: $g_i=0$, or $\lambda_i=0$. Never priced and slack at once.
+:::
+:::
+
+### The intuition — a balance of forces
+
+Move the gradients to one side and stationarity stops being algebra:
+
+$$\underbrace{-\nabla f(x^{*})}_{\text{the pull downhill}}\;=\;\sum_{i}\lambda_i^{*}\underbrace{\nabla g_i(x^{*})}_{\text{wall }i\text{ pushes back}}\;+\;\sum_j \nu_j^{*}\nabla h_j(x^{*})$$
+
+::: reveal
+::: cols c3
+::: col A wall you do not touch
+If $g_i(x^{*})<0$ you are nowhere near wall $i$, so it exerts nothing: $\lambda_i=0$. That *is* complementary slackness.
+:::
+::: col Why prices are non-negative
+A wall can only push you back **into** the feasible set, never pull you out — so $\lambda_i\ge0$. An equality constrains from both sides, so $\nu_j$ may take either sign.
+:::
+::: col.accent What the price is worth
+Relax $g_i\le0$ to $g_i\le\epsilon$ and the optimum improves by about $\lambda_i\epsilon$. ==The multiplier is a shadow price== — what one unit of that constraint costs you.
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+The optimum is where ==the walls push back exactly as hard as the objective pulls.==
+:::
+:::
+
+### Why KKT certifies a *global* optimum
+{sub: the convex case, proved — five lines and no appendix}
+
+Let $f$ and every $g_i$ be convex, every $h_j$ affine, and let $x^{*}$ satisfy all four conditions. Take **any** feasible $y$:
+
+$$\begin{aligned}
+f(y) &\;\ge\; f(x^{*}) + \nabla f(x^{*})^\top(y-x^{*}) && \dm{\text{convexity of } f}\\[2pt]
+&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,\nabla g_i(x^{*})^\top(y-x^{*}) && \dm{\text{stationarity; the } h_j \text{ terms vanish}}\\[2pt]
+&\;\ge\; f(x^{*}) - \sum_i \lambda_i^{*}\big(g_i(y)-g_i(x^{*})\big) && \dm{\text{convexity of } g_i,\ \lambda_i^{*}\ge0}\\[2pt]
+&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,g_i(y) && \dm{\text{complementary slackness}}\\[2pt]
+&\;\ge\; f(x^{*}) && \dm{\lambda_i^{*}\ge0,\ g_i(y)\le0}
+\end{aligned}$$
+
+::: reveal
+::: small
+The $h_j$ terms vanish because an affine $h_j$ has $\nabla h_j^\top(y-x^{*}) = h_j(y)-h_j(x^{*}) = 0$ for feasible $y$. So $f(y)\ge f(x^{*})$ for *every* feasible $y$: ==not a local claim but a global one.== Conversely KKT is *necessary* when a constraint qualification such as Slater's holds — some strictly feasible point exists. Without convexity KKT stays necessary but stops being sufficient: a KKT point may be a minimum, a maximum, or a saddle.
+:::
+:::
+
+### Duality — a lower bound you get for free
+
+Minimise the Lagrangian over $x$ and the result depends on the prices alone:
+
+$$d(\lambda,\nu)\;=\;\inf_x\,L(x,\lambda,\nu)$$
+
+::: reveal
+For **any** $\lambda\ge0$ and any $\nu$, and any feasible $\tilde x$:
+
+$$d(\lambda,\nu)\;\le\;L(\tilde x,\lambda,\nu)\;=\;f(\tilde x)+\underbrace{\sum_i\lambda_i g_i(\tilde x)}_{\le\,0}+\underbrace{\sum_j\nu_j h_j(\tilde x)}_{=\,0}\;\le\;f(\tilde x)$$
+
+so $d(\lambda,\nu)\le p^{*}$ — ==weak duality, and it costs two lines.== The best such bound is $d^{*}=\max_{\lambda\ge0,\nu} d(\lambda,\nu)$, and $p^{*}-d^{*}\ge0$ is the ==duality gap==.
+:::
+
+::: reveal
+::: small
+For a convex problem with a constraint qualification the gap is zero, so the dual optimum *proves* the primal one. Even when you cannot solve the primal, any dual point brackets how far you might still be from optimal — which is the practical value of duality. Differentiating this same KKT system is how one back-propagates through an optimisation layer, the trick behind differentiable LQR and MPC in Lecture 11.
 :::
 :::
 
@@ -513,32 +605,7 @@ Hold onto two pieces: the standard form — it is the skeleton of every objectiv
 
 Complete statements, kept out of the narrative.
 
-### Backup 1 — the KKT conditions in full
-
-For $\min f(x)$ subject to $g_i(x)\le 0$ and $h_j(x)=0$, the KKT conditions at $x^{*}$, with multipliers $\lambda^{*}\ge 0$ and $\nu^{*}$:
-
-- **Stationarity** — $\nabla f(x^{*}) + \sum_i \lambda_i^{*} \nabla g_i(x^{*}) + \sum_j \nu_j^{*} \nabla h_j(x^{*}) = 0$
-- **Primal feasibility** — $g_i(x^{*})\le 0$, $h_j(x^{*})=0$
-- **Dual feasibility** — $\lambda_i^{*}\ge 0$
-- **Complementary slackness** — $\lambda_i^{*}\, g_i(x^{*}) = 0$
-
-::: small
-**Convex case.** If $f, g_i$ are convex and $h_j$ affine, and a constraint qualification such as Slater's holds, KKT is *necessary and sufficient* for global optimality — a checkable certificate. **Non-convex case.** KKT remains necessary under a constraint qualification but not sufficient: a KKT point may be a local minimum, a saddle, or a local maximum.
-:::
-
-### Backup 2 — Lagrangian duality and the gap
-
-**Lagrangian.** $L(x,\lambda,\nu) = f(x) + \sum_i \lambda_i g_i(x) + \sum_j \nu_j h_j(x)$.
-
-**Dual function.** $d(\lambda,\nu) = \inf_x L(x,\lambda,\nu)$. For any $\lambda\ge 0$ and any $\nu$, weak duality gives $d(\lambda,\nu)\le p^{*}$ — the dual is a *lower bound* on the optimum, always.
-
-**Dual problem.** $\max_{\lambda\ge0,\,\nu} d(\lambda,\nu) =: d^{*}$. The ==duality gap== is $p^{*} - d^{*}\ge 0$. For convex problems with a constraint qualification the gap is zero ($p^{*}=d^{*}$, *strong duality*), so the dual optimum certifies the primal.
-
-::: small
-**Use.** Even when you cannot solve the primal, evaluating $d(\lambda,\nu)$ at any feasible dual point brackets how far your current solution can possibly be from optimal — the practical value of duality.
-:::
-
-### Backup 3 — the successive convex programming loop
+### Backup — the successive convex programming loop
 
 **Algorithm — trust-region SCP.**
 
