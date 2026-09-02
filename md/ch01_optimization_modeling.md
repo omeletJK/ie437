@@ -188,6 +188,25 @@ Non-convex problems enjoy none of those guarantees for free, so much of practica
 A set is convex when the segment joining any two of its points stays inside it. A function is convex when the segment joining any two points of its graph stays *above* it — equivalently, when its epigraph is a convex set. ==Both halves of a convex problem are this one test.==
 :::
 
+### The same convexity, seen through the gradient
+{sub: the inequality the rest of this lecture rests on}
+
+The segment test is the definition. Differentiate it and convexity takes the form that actually does the work — for differentiable $f$:
+
+$$f(y)\;\ge\;f(x)+\nabla f(x)^\top (y-x)\qquad\text{for all } x,y$$
+
+::: reveal
+**Read the right-hand side.** That is the first-order Taylor expansion of $f$ at $x$ — the tangent plane. For a general function it says something about a *neighbourhood* of $x$ and nothing beyond it. For a convex function the inequality holds ==everywhere==: the tangent never rises above the graph, so a linearisation built from purely local information is a ==global underestimator.==
+:::
+
+::: reveal
+::: block Why a local minimum is a global minimum
+This is the promise Act 2 opened with, and it is now one line. If $x^{*}$ is an unconstrained local minimum then $\nabla f(x^{*})=0$, so for **every** $y$:
+$$f(y)\;\ge\;f(x^{*})+0\;=\;f(x^{*})$$
+==Local information about a convex function is global information.== Nothing about $y$ was assumed — it may be arbitrarily far away.
+:::
+:::
+
 ### The watershed, run twice
 
 ::: widget convex-watershed
@@ -216,36 +235,92 @@ These same quadratic models reappear in Act 4 as the *local* approximation of ha
 :::
 :::
 
-### Three problems that are secretly linear programs
-{fill: top}
+### Diet — where linear programming started
+{sub: Example 1.2}
 
-::: cols c3
-::: col Diet {p}(Example 1.2)
-Buy quantities $x_j$ of $n$ foods as cheaply as possible; food $j$ costs $c_j$ and carries $a_{ij}$ of nutrient $i$, and the diet needs at least $b_i$ of each.
-
-$$\min_{x\in\R_+^{n}} c^\top x \quad \text{s.t.}\ \sum_j a_{ij}x_j \ge b_i$$
+::: lede
+Buy quantities $x_j$ of $n$ foods as cheaply as possible, while meeting every nutritional requirement.
 :::
-::: col Piecewise-linear {p}(Example 1.3)
-A maximum of affine pieces is not linear, but its *epigraph* is:
 
-$$\min_x \max_i (a_i^\top x + b_i)$$
+The data is a price list and a nutrition table: food $j$ costs $c_j$, and one unit of it carries $a_{ij}$ of nutrient $i$. The diet must supply at least $b_i$ of each nutrient, and no quantity may be negative.
 
-$$=\ \min_{x,t} t \ \ \text{s.t.}\ a_i^\top x + b_i \le t$$
+$$\min_{x\in\R_+^{n}}\ c^\top x \qquad \text{s.t.}\quad \sum_j a_{ij}x_j \ \ge\ b_i \quad \forall i$$
 
-The epigraph rewrite of Act 1, earning its keep.
+::: reveal
+Look at the shape rather than the story. The objective is a price vector dotted with a quantity vector; each constraint is one row of the nutrition table held against one requirement. In the standard form of Act 1, “at least $b_i$” becomes $b_i - a_i^\top x \le 0$ — the same content with one sign flipped.
 :::
-::: col Chebyshev centre {p}(Example 1.4)
-The centre of the largest ball inscribed in $\mathcal{P}=\{x: a_i^\top x\le b_i\}$. The ball fits iff $\sup_{\lVert u\rVert\le r} a_i^\top(x_c+u) \le b_i$, and that supremum is available in closed form:
 
-$$\max_{x_c,r} r \ \ \text{s.t.}\ a_i^\top x_c + r\lVert a_i\rVert_2 \le b_i$$
+::: reveal
+::: keypoint
+The optimum sits at a ==vertex== of the polyhedron, so an optimal diet uses no more foods than there are binding nutrients.
+:::
+:::
+
+::: note
+Stigler posed this in 1945 and narrowed it by hand; Dantzig's simplex method settled it a few years later. The optimal diet was cheap, adequate, and close to inedible — a first lesson in what a model leaves out.
+:::
+
+### Piecewise-linear — the epigraph earns its keep
+{sub: Example 1.3}
+
+::: lede
+A maximum of affine pieces is not linear. Its *epigraph* is, and that turns out to be enough.
+:::
+
+::: cols c2
+::: col The problem
+Minimise the largest of several affine pieces:
+
+$$\min_x\ \max_i\ (a_i^\top x + b_i)$$
+
+The objective is convex — a maximum of affine functions always is — but it is not linear, and no LP solver will accept it.
+:::
+::: col.accent The rewrite
+Give the maximum a name, then push it down:
+
+$$\min_{x,t}\ t \qquad \text{s.t.}\quad a_i^\top x + b_i \le t$$
+
+One new variable, one constraint per piece, and it is an LP.
 :::
 :::
 
 ::: reveal
-::: small
-None of the three looks linear when stated. ==Modelling is the act of finding the rewrite==, and it is where the expertise lives — the solver is a commodity.
+Why it is sound: nothing in the objective rewards a large $t$, so at the optimum $t$ is squeezed down until it meets the largest piece. Minimising over the epigraph $\{(x,t) : t \ge f(x)\}$ therefore returns exactly $\min_x f(x)$.
+:::
+
+::: reveal
+::: keypoint
+The move is general — ==any convex objective can be traded for a linear one== over its epigraph. It returns in Act 3, and again as the surrogate in Lecture 10.
 :::
 :::
+
+### Chebyshev centre — an infinity of constraints, collapsed
+{sub: Example 1.4}
+
+::: lede
+Where inside a polyhedron can you put the largest ball? The unknowns are its centre $x_c$ and its radius $r$.
+:::
+
+Let $\mathcal{P}=\{x: a_i^\top x\le b_i\}$. The ball of radius $r$ about $x_c$ lies inside $\mathcal{P}$ exactly when *every* point of it satisfies *every* face:
+
+$$\sup_{\lVert u\rVert_2\le r}\ a_i^\top (x_c+u)\ \le\ b_i \qquad \forall i$$
+
+::: reveal
+As written that is one constraint for every $u$ in a ball — infinitely many. But the supremum is available in closed form: $a_i^\top u$ is largest when $u$ points along $a_i$, so it equals $r\lVert a_i\rVert_2$ by Cauchy–Schwarz. The infinity collapses to ==one linear constraint per face==:
+
+$$\max_{x_c,\,r}\ r \qquad \text{s.t.}\quad a_i^\top x_c + r\lVert a_i\rVert_2 \le b_i$$
+:::
+
+::: reveal
+::: keypoint
+$\lVert a_i\rVert_2$ is ==data, not a variable== — so the constraint is linear in $(x_c, r)$, which is all an LP asks.
+:::
+:::
+
+### None of the three looked linear when it was stated
+{layout: standout}
+
+Diet was already an LP and only had to be written down. The piecewise-linear objective needed a new variable. The Chebyshev centre needed an infinite family of constraints reduced by an inequality. ==Modelling is the act of finding the rewrite== — and it is where the expertise lives, because the solver is a commodity.
 
 ### A fourth, from this lab — an LP *inside* a policy
 {sub: LPMARL — hierarchical multi-agent RL with a matching layer}
@@ -285,33 +360,86 @@ The highlighted factor is the whole difficulty: $z^{*}$ is defined by an optimis
 :::
 :::
 
-### Two that are quadratic, and one that is neither
+### Least squares with bounds — nothing to check
+{sub: a quadratic programme that is convex for every $\mathbf{A}$}
 
-::: cols
-::: col Quadratic programs
-**Least squares with bounds.** $\min_x \lVert \mathbf{A}x-b\rVert_2^2$ subject to $l \le x \le u$. Convex for *every* $\mathbf{A}$: the Hessian $2\mathbf{A}^\top\mathbf{A}\succeq0$ whatever $\mathbf{A}$ holds, over a convex box. Nothing to check.
-
-**A linear programme with random cost.** If $c$ has mean $\bar c$ and covariance $\Sigma$, then $c^\top x$ has mean $\bar c^\top x$ and variance $x^\top\Sigma x$, so
-
-$$\min_x\ \bar c^\top x + \hl{\gamma\, x^\top \Sigma x}$$
-
-trades expected cost against risk — $\gamma$ is the first risk parameter of the course. A covariance is always $\Sigma\succeq0$, so this is convex ==exactly when $\gamma\ge0$==, when variance is a cost. Risk-*seeking* $\gamma<0$ makes the objective concave and leaves the convex world at once.
+::: lede
+Four problems follow, and each is put the same question: convex, and on what condition? This first one carries no condition at all.
 :::
-::: col.accent Robust linear programming
-With $g_i$ uncertain there are two honest formulations — Lecture 0's uncertainty split — and ==only one is convex for free.==
 
-**Deterministic (worst case).** Hold for *every* $g_i$ in a set $\mathcal{E}_i$:
+$$\min_x\ \lVert \mathbf{A}x-b\rVert_2^2 \quad \text{s.t.}\quad l \le x \le u$$
 
-$$g_i^\top x \le h_i \quad \forall g_i\in\mathcal{E}_i$$
+Expanded, the objective is $x^\top\mathbf{A}^\top\mathbf{A}x - 2b^\top\mathbf{A}x + b^\top b$ — a quadratic programme outright, with $P=2\mathbf{A}^\top\mathbf{A}$ and $q=-2\mathbf{A}^\top b$. Along any direction $v$, its Hessian $2\mathbf{A}^\top\mathbf{A}$ gives
 
-Convex for **any** $\mathcal{E}_i$, even a nonconvex one: the feasible set is an intersection of half-spaces, one per $g_i$. The set decides *tractability*, not convexity — an ellipsoid gives a cone constraint.
+$$v^\top \mathbf{A}^\top\mathbf{A}\,v \;=\; \lVert \mathbf{A}v\rVert_2^2 \;\ge\; 0 .$$
 
-**Stochastic (chance constrained).** Hold only with probability $\eta$:
+::: reveal
+A squared length cannot be negative, so $\mathbf{A}^\top\mathbf{A}\succeq0$ for ==every== $\mathbf{A}$ — whatever its shape, its rank, or how badly conditioned it is. The bounds are an intersection of $2n$ half-spaces, so the feasible set is a box. Both halves of the problem are convex by construction.
+:::
+
+::: reveal
+::: keypoint
+Convexity here is ==structural, not conditional==. There is no assumption to verify and no data that could break it.
+:::
+:::
+
+### A linear programme with random cost
+{sub: convex exactly when $\gamma\ge0$ — when variance is charged as a cost}
+
+The cost vector $c$ is not known, only its mean $\bar c$ and covariance $\Sigma$. The objective $c^\top x$ is then itself a random number:
+
+$$\E[c^\top x] = \bar c^\top x, \qquad \operatorname{Var}(c^\top x) = x^\top\Sigma x .$$
+
+Minimising a random number is not yet a decision, so you must say what its spread is worth. Charge for it linearly:
+
+::: reveal
+$$\min_x\ \bar c^\top x + \hl{\gamma\, x^\top \Sigma x}$$
+:::
+
+::: reveal
+$\gamma$ is the first risk parameter of the course — the price, in units of expected cost, that you put on variance. A covariance matrix is positive semidefinite by construction, since $v^\top\Sigma v = \operatorname{Var}(c^\top v)\ge0$ for every $v$. Scaling a convex quadratic by a non-negative number keeps it convex and by a negative one flips it, so the problem is convex ==exactly when $\gamma\ge0$==.
+:::
+
+::: reveal
+::: keypoint
+$\gamma>0$ is risk-averse and $\gamma=0$ risk-neutral, returning the plain LP; risk-*seeking* $\gamma<0$ makes the objective concave and leaves the convex world at once. The condition is a modelling decision, not a technicality.
+:::
+:::
+
+### Robust LP — the worst case is convex for free
+{sub: deterministic — the constraint must hold for every $g_i$ in a set $\mathcal{E}_i$}
+
+::: lede
+Now the *constraint* is the uncertain thing rather than the objective. Lecture 0's split between deterministic and stochastic uncertainty gives two honest formulations of it, and the two do not fare alike.
+:::
+
+Demand that the constraint survive every outcome in an uncertainty set $\mathcal{E}_i$:
+
+$$g_i^\top x \le h_i \qquad \forall\, g_i\in\mathcal{E}_i$$
+
+::: reveal
+This is not one constraint but one per element of $\mathcal{E}_i$ — infinitely many of them when $\mathcal{E}_i$ is a continuum. Every one is a half-space in $x$, and an intersection of half-spaces is convex however many there are. The feasible set is therefore convex for ==any $\mathcal{E}_i$ whatever==, a nonconvex or disconnected one included.
+:::
+
+::: reveal
+What the shape of $\mathcal{E}_i$ decides is *tractability*, not convexity. An ellipsoidal $\mathcal{E}_i$ collapses that infinite family into a single second-order cone constraint, $\bar g_i^\top x + \lVert P_i^\top x\rVert_2 \le h_i$; a polyhedral one collapses by duality into finitely many linear constraints.
+:::
+
+### Robust LP — the chance constraint is not
+{sub: stochastic — the constraint need hold only with probability $\eta$}
+
+Ask instead that the constraint hold merely often enough:
 
 $$\mathbf{P}\big(g_i^\top x \le h_i\big) \ge \eta$$
 
-**Not convex in general.** Gaussian $g_i$ gives $\bar g_i^\top x + \Phi^{-1}(\eta)\lVert\Sigma_i^{1/2}x\rVert_2 \le h_i$ — a cone ==only when $\eta\ge\tfrac12$==, since that is when $\Phi^{-1}(\eta)\ge0$.
+For a general distribution that set is ==not convex==. Take $g_i$ Gaussian, though, and it can be written out: $g_i^\top x$ is then a scalar Gaussian with mean $\bar g_i^\top x$ and standard deviation $\lVert\Sigma_i^{1/2}x\rVert_2$, so standardising the requirement gives
+
+::: reveal
+$$\bar g_i^\top x + \Phi^{-1}(\eta)\,\lVert\Sigma_i^{1/2}x\rVert_2 \le h_i .$$
 :::
+
+::: reveal
+The norm is convex, so the whole is a second-order cone constraint — but only if the number multiplying it is non-negative, and $\Phi^{-1}(\eta)\ge0$ exactly when ==$\eta\ge\tfrac12$==. Below even odds the sign flips: the constraint starts rewarding spread instead of penalising it, and convexity is gone.
 :::
 
 ::: reveal
@@ -428,7 +556,39 @@ Optimality $=$ ==no feasible direction points downhill.==
 :::
 
 ::: small
-For an *unconstrained* convex problem this collapses to the familiar $\nabla f(x^{*}) = 0$.
+Both directions of the *if and only if*, and the collapse to the familiar $\nabla f(x^{*})=0$, are on the next slide.
+:::
+:::
+
+### Why that condition is exact — and what it becomes with no constraints
+{sub: both directions, and the collapse to $\nabla f = 0$}
+
+::: cols c2
+::: col Sufficient
+Suppose $\nabla f(x^{*})^\top(y-x^{*})\ge 0$ for every feasible $y$. The global underestimator finishes it:
+
+$$f(y)\;\ge\;f(x^{*})+\underbrace{\nabla f(x^{*})^\top(y-x^{*})}_{\ge\,0}\;\ge\;f(x^{*})$$
+
+True for *every* feasible $y$, so $x^{*}$ is a ==global== minimum — not merely a local one.
+:::
+::: col Necessary
+Suppose instead some feasible $y$ has $\nabla f(x^{*})^\top(y-x^{*})<0$. The feasible set is convex, so $x_t=x^{*}+t(y-x^{*})$ stays in it, and
+
+$$\tfrac{\mathrm d}{\mathrm dt}f(x_t)\big|_{t=0}=\nabla f(x^{*})^\top(y-x^{*})<0$$
+
+Then $f(x_t)<f(x^{*})$ for small $t>0$: $x^{*}$ was not optimal after all.
+:::
+:::
+
+::: reveal
+**With no constraints the condition *is* $\nabla f(x^{*})=0$.** If the gradient vanishes the inequality is trivial. For the converse, every $y$ is now feasible — so try the steepest-descent direction itself, $y=x^{*}-t\,\nabla f(x^{*})$ with $t>0$:
+
+$$0\;\le\;\nabla f(x^{*})^\top(y-x^{*})\;=\;-t\,\lVert\nabla f(x^{*})\rVert_2^2 \qquad\Longrightarrow\qquad \nabla f(x^{*})=0$$
+:::
+
+::: reveal
+::: small
+So the constrained condition is not a different rule; it is ==the same rule with fewer directions available.== On a boundary, $-\nabla f(x^{*})$ may simply not be a feasible direction, and the gradient is then free to stay non-zero — which is exactly the slack the multipliers of Act 3 will put a price on.
 :::
 :::
 
