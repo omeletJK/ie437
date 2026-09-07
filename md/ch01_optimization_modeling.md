@@ -695,76 +695,94 @@ Step 2 needs no convexity of $f$; ==optimality $\Longleftrightarrow\nabla f=0$ a
 Minimise $\lVert x-c\rVert^2$ over a polygon, with $c$ outside it. Drag the point: the red arrow shows a feasible decrease. At the optimum, $-\nabla f$ points outside the set, so the zero-gradient rule does not apply. Likewise, $\min_{x\in[1,3]}x^2$ has $x^{*}=1$ and $f'(1)=2$, yet $2(y-1)\ge0$ for every feasible $y$. KKT expresses how active constraints balance that nonzero gradient.
 :::
 
-### The problem, restated — and the price of a constraint
+### Why can the optimum stop at a wall?
+{sub: one variable, one constraint — the idea behind KKT}
 
-Act 1 put every problem into one shape. Act 3 asks how you would *know* you had solved it:
+Choose a setting $x$ with cost $x^2$. The setting must be at least 1:
 
-$$\min_{x}\ f(x) \qquad \text{subject to}\qquad g_i(x)\le 0\ \ (i=1,\dots,m), \qquad h_j(x)=0\ \ (j=1,\dots,p)$$
-
-::: reveal
-For differentiable convex minimisation on the full space, $\nabla f(x^{*})=0$ settles optimality. Constraints restrict the available directions. So ==buy your way out of them.== Put a price $\lambda_i$ on each inequality and $\nu_j$ on each equality, and charge violations to the objective itself:
-
-$$L(x,\lambda,\nu)\;=\;f(x)\;+\;\sum_{i}\lambda_i\,g_i(x)\;+\;\sum_{j}\nu_j\,h_j(x)$$
-:::
-
-::: reveal
-::: small
-Why $\lambda_i\ge0$ but $\nu_j$ free: breaking $g_i\le0$ is a one-sided fault, so it must always *cost*. An equality has no distinguished feasible side, so its multiplier is unrestricted in sign. The Lagrangian is a device for bounds and stationarity, not a non-negative penalty for every violation.
-:::
-:::
-
-### The four KKT conditions
-{sub: what holds at a solution $x^{*}$, with multipliers $\lambda^{*}\ge0$ and $\nu^{*}$}
+$$\min_x\ x^2 \qquad \text{subject to } x\ge1 \qquad \dm{\big(g(x)=1-x\le0\big)}$$
 
 ::: cols c2
-::: col 1 · Stationarity
-$$\nabla f(x^{*}) + \sum_i \lambda_i^{*}\nabla g_i(x^{*}) + \sum_j \nu_j^{*}\nabla h_j(x^{*}) = 0$$
-
-The Lagrangian is flat in $x$ — with the prices paid, no direction improves it.
-:::
-::: col 2 · Primal feasibility
-$$g_i(x^{*})\le 0,\qquad h_j(x^{*})=0$$
-
-$x^{*}$ is a legal point of the problem we actually asked about.
+::: col
+::: widget kkt-wall
 :::
 :::
-
-::: cols c2
-::: col 3 · Dual feasibility
-$$\lambda_i^{*}\ \ge\ 0$$
-
-No inequality is ever priced negatively — you are not paid to break one.
-:::
-::: col.accent 4 · Complementary slackness
-$$\lambda_i^{*}\,g_i(x^{*}) = 0$$
-
-Each constraint is ==either active or free==: $g_i=0$, or $\lambda_i=0$. Never priced and slack at once.
-:::
-:::
-
-### The intuition — a balance of forces
-
-Move the gradients to one side and stationarity stops being algebra:
-
-$$\underbrace{-\nabla f(x^{*})}_{\text{descent force}}\;+\;\underbrace{\left(-\sum_i\lambda_i^{*}\nabla g_i(x^{*})-\sum_j\nu_j^{*}\nabla h_j(x^{*})\right)}_{\text{constraint reaction}}\;=\;0$$
+::: col Three small steps
+**Without the wall:** choose $x=0$, where the cost is smallest.
 
 ::: reveal
-::: cols c3
-::: col A wall you do not touch
-If $g_i(x^{*})<0$ you are nowhere near wall $i$, so it exerts nothing: $\lambda_i=0$. That *is* complementary slackness.
+**With the wall:** stop at $x^{*}=1$. The cost still pulls left: $-f'(1)=-2$.
 :::
-::: col Why prices are non-negative
-For $g_i\le0$, $\nabla g_i$ is an outward normal at a regular boundary. The reaction $-\lambda_i\nabla g_i$ points inward when $\lambda_i\ge0$. Equality reactions may point either way.
-:::
-::: col.accent What the price is worth
-When the optimal value is differentiable in the bound, relaxing $g_i\le0$ to $g_i\le\epsilon$ decreases the optimal cost by approximately $\lambda_i\epsilon$. ==The multiplier is a shadow price== — what one unit of that constraint costs you.
+
+::: reveal
+**Balance the pull:** the wall pushes right with strength $\lambda=2$. The two effects cancel: $-2+2=0$.
 :::
 :::
 :::
 
 ::: reveal
 ::: keypoint
-The optimum is where ==the walls push back exactly as hard as the objective pulls.==
+With a constraint, ==the gradient can be nonzero at the optimum.== KKT checks how the constraint balances it.
+:::
+:::
+
+### KKT asks four simple questions
+{sub: check the same example at $x^{*}=1$ and $\lambda^{*}=2$}
+
+Combine the cost and the constraint in one expression — the **Lagrangian**:
+
+$$L(x,\lambda)=x^2+\lambda(1-x) \qquad \frac{\partial L}{\partial x}=2x-\lambda$$
+
+::: table
+| Question | KKT condition | Check at $(x,\lambda)=(1,2)$ |
+|---|---|---|
+| **Is the setting allowed?** | Primal feasibility: $1-x\le0$ | $1-1=0\le0$ ✓ |
+| **Does the wall push inward?** | Dual feasibility: $\lambda\ge0$ | $2\ge0$ ✓ |
+| **Is any unused wall powerless?** | Complementary slackness: $\lambda(1-x)=0$ | $2(1-1)=0$ ✓ |
+| **Do the two pushes balance?** | Stationarity: $2x-\lambda=0$ | $2(1)-2=0$ ✓ |
+:::
+
+::: reveal
+::: keypoint
+All four checks pass. ==For this convex problem, that certifies the global optimum.==
+:::
+:::
+
+::: small
+A slack constraint has zero multiplier; a tight constraint *may* also have zero multiplier. The general form for multiple constraints is in the appendix.
+:::
+
+### What is a little more freedom worth?
+{sub: the same multiplier also measures the value of relaxing the wall}
+
+Now let the minimum allowed setting be $a$: minimise $x^2$ subject to $x\ge a$.
+
+::: cols c2
+::: col
+::: widget kkt-wall {"mode":"price"}
+Move $a$ left to relax the bound. Once $a<0$, the preferred point $x=0$ is inside the allowed region: the bound is slack and its price is zero.
+:::
+:::
+::: col Relax the bound from 1 to 0.9
+**Before:** best $x=1$, cost $1$, multiplier $\lambda=2$.
+
+::: reveal
+**After:** best $x=0.9$, cost $0.81$. The actual saving is **0.19**.
+:::
+
+::: reveal
+**Predict the saving using the original price:**
+
+$$\lambda\times\text{relaxation}=2\times0.1=0.20.$$
+
+Close to $0.19$: the price gives a ==local approximation== for a small change.
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+$\lambda$ is the **shadow price**: how much the best cost improves per small unit of extra freedom. At $a=0$, the bound is tight but its price is already zero.
 :::
 :::
 
@@ -1406,4 +1424,34 @@ Complete statements, kept out of the narrative.
 
 ::: small
 **Why the ratio test.** It measures whether the convex model can be trusted at the proposed step. Trust grows where the model predicts well and shrinks where it does not — the same modelling principle that motivates the KL-constrained update in TRPO, though TRPO uses a different step-selection procedure.
+:::
+
+### Backup — the general Lagrangian and KKT conditions
+{math: compact}
+
+For $\min_x f(x)$ subject to $g_i(x)\le0$ and $h_j(x)=0$, combine all constraints:
+
+$$L(x,\lambda,\nu)=f(x)+\sum_i\lambda_i g_i(x)+\sum_j\nu_j h_j(x).$$
+
+::: cols c2
+::: col Allowed point and inward reactions
+**Primal feasibility:**
+
+$$g_i(x^{*})\le0,\qquad h_j(x^{*})=0.$$
+
+**Dual feasibility:** $\lambda_i^{*}\ge0$. Equality multipliers $\nu_j^{*}$ are free in sign: an equality has no allowed side.
+:::
+::: col No unused reaction and balanced forces
+**Complementary slackness:**
+
+$$\lambda_i^{*}g_i(x^{*})=0 \qquad \forall i.$$
+
+**Stationarity:**
+
+$$\nabla f(x^{*})+\sum_i\lambda_i^{*}\nabla g_i(x^{*})+\sum_j\nu_j^{*}\nabla h_j(x^{*})=0.$$
+:::
+:::
+
+::: small
+For differentiable convex $f,g_i$ and affine $h_j$, these four conditions are **sufficient** for global optimality. A constraint qualification such as Slater's makes them **necessary** as well. Without convexity, they are generally not sufficient. A slack inequality must have zero multiplier; a tight inequality can have either zero or a positive multiplier.
 :::
