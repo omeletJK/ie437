@@ -10,7 +10,8 @@
       738,
       519
     ],
-    "sha256": "912019e441cc5adb4957414b23ae40c58d27e1e9c6487bcf125f950426506772"
+    "sha256": "912019e441cc5adb4957414b23ae40c58d27e1e9c6487bcf125f950426506772",
+    "usage": "archived original crop; replaced by vector reconstruction in main lecture"
   },
   {
     "asset": "housing-model-source.png",
@@ -23,7 +24,8 @@
       836,
       384
     ],
-    "sha256": "52a07f374065955bdabbabe5652833b19ee4cc3e1be0617ac17684993cd798d6"
+    "sha256": "52a07f374065955bdabbabe5652833b19ee4cc3e1be0617ac17684993cd798d6",
+    "usage": "archived original crop; replaced by vector reconstruction in main lecture"
   },
   {
     "asset": "regression-beliefs-source.png",
@@ -36,7 +38,8 @@
       714,
       531
     ],
-    "sha256": "496688eaa3ec84ee983ee823deb1482b4767de210e7c70ad45308352cfc2e1da"
+    "sha256": "496688eaa3ec84ee983ee823deb1482b4767de210e7c70ad45308352cfc2e1da",
+    "usage": "archived original crop; replaced by vector reconstruction in main lecture"
   },
   {
     "asset": "pokemon-map-source.jpg",
@@ -44,6 +47,47 @@
     "source_page": 36,
     "transformation": "none; original embedded image extracted",
     "xref": 135,
-    "sha256": "04c58aa574a729721a1a2e94bcccb9deb1602c87d9af2f74039fd68ce13d26c1"
+    "sha256": "04c58aa574a729721a1a2e94bcccb9deb1602c87d9af2f74039fd68ce13d26c1",
+    "usage": "retained in main lecture"
+  },
+  {
+    "asset": "coin-update-early.svg",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 19,
+    "transformation": "Exact first six count states from source; Beta densities recomputed, two columns and three rows.",
+    "generator": "scripts/redraw_ch02.py",
+    "numerical_provenance": "assets/ch02/redraw-data.json",
+    "usage": "main lecture",
+    "sha256": "a047c8a0cd9edb2df8716f16d1e4c3da2061c41993801eac4ff2c476a0dfb6cd"
+  },
+  {
+    "asset": "coin-update-late.svg",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 19,
+    "transformation": "Exact remaining four count states from source; Beta densities recomputed, two columns and two rows.",
+    "generator": "scripts/redraw_ch02.py",
+    "numerical_provenance": "assets/ch02/redraw-data.json",
+    "usage": "main lecture",
+    "sha256": "f92fabc23c0cf171cda596986c6135142230a6d66f0382e6c017b8a3eab4ebe2"
+  },
+  {
+    "asset": "housing-model-flow.svg",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 50,
+    "transformation": "Task -> model -> estimation layout redrawn; house data are explicitly illustrative.",
+    "generator": "scripts/redraw_ch02.py",
+    "numerical_provenance": "assets/ch02/redraw-data.json",
+    "usage": "main lecture",
+    "sha256": "d4836e5b1b8d5e71c6326f61faafaa8a231fa2d854fec489a7519a5da2e9963f"
+  },
+  {
+    "asset": "regression-posterior-grid.svg",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 62,
+    "transformation": "Original two-row, three-column comparison recomputed on nested simulated datasets; same seed and model as live widget. Original raw regression data were not supplied.",
+    "generator": "scripts/redraw_ch02.py",
+    "numerical_provenance": "assets/ch02/redraw-data.json",
+    "usage": "main lecture",
+    "sha256": "ac3edf643005802cc85ffc47f39cc8c11b7d1d6a8d91109e9e7611ba9df2687e"
   }
 ]

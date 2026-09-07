@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="265" viewBox="0 0 1100 265" role="img" aria-label="House sales data become a linear model, then an estimation problem and a prediction">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#92979f"/></marker></defs>
+<rect width="1100" height="265" fill="white"/>
+<g font-family="Inter, DejaVu Sans, sans-serif" fill="#16181d">
+<g fill="#f4f5f6" stroke="#d5d8dc"><rect x="8" y="35" width="310" height="215" rx="7"/><rect x="395" y="35" width="310" height="215" rx="7"/><rect x="782" y="35" width="310" height="215" rx="7"/></g>
+<g font-size="17" font-weight="600"><text x="25" y="23">REAL-WORLD TASK</text><text x="412" y="23">FORMAL MODEL</text><text x="799" y="23">ESTIMATE AND PREDICT</text></g>
+<g stroke="#92979f" stroke-width="2" marker-end="url(#arrow)"><path d="M326 138H384"/><path d="M713 138H771"/></g>
+<g stroke="#2563eb" stroke-width="3" fill="none"><path d="M38 115L83 73L128 115M47 108V162H119V108M73 162V130H94V162"/></g>
+<text x="145" y="104" font-size="15">Area → sale price</text><text x="145" y="132" font-size="15">50 m² → 3.1</text><text x="145" y="158" font-size="15">80 m² → 4.8</text>
+<text x="27" y="205" font-size="17">What price for a new house?</text><text x="27" y="230" font-size="12" fill="#717780">Illustrative data; prices in arbitrary units.</text>
+<text x="418" y="112" font-size="25" fill="#2563eb">y = w₀ + w₁x + ε</text><text x="418" y="155" font-size="17">Features x, unknown weights w</text><text x="418" y="195" font-size="16">Noise describes variation</text><text x="418" y="220" font-size="16">between individual sales.</text>
+<text x="805" y="102" font-size="18">Fit residuals → least squares</text><text x="805" y="140" font-size="18">Add noise model → MLE</text><text x="805" y="178" font-size="18">Add prior → posterior / MAP</text><text x="805" y="220" font-size="18" fill="#2563eb">New house → predictive price</text>
+</g></svg>

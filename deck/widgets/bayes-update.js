@@ -17,11 +17,13 @@ IE437.widget('bayes-update', function (host, opts) {
   var pi = 0, n = 0, y = 0, rand = IE437.rng(opts.seed || 39);
 
   host.innerHTML =
-    '<div class="wbar"><span class="wt">A coin of unknown bias &mdash; belief, updated</span>' +
+    '<div class="wbar"><span class="wt">One coin, successive updates</span>' +
     '<span class="wspacer"></span>' +
     '<button class="wb" data-prior></button>' +
-    '<button class="wb" data-t1>+1 toss</button>' +
-    '<button class="wb" data-t10>+10</button>' +
+    '<button class="wb" data-hht>Load HHT</button>' +
+    '<button class="wb" data-head aria-label="Record a head">H</button>' +
+    '<button class="wb" data-tail aria-label="Record a tail">T</button>' +
+    '<button class="wb" data-t10>Simulate +10</button>' +
     '<button class="wb" data-t50>+50</button>' +
     '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
@@ -109,12 +111,14 @@ IE437.widget('bayes-update', function (host, opts) {
     host.dataset.alpha = a1; host.dataset.beta = b1; host.dataset.mean = postMean;
   }
 
-  host.querySelector('[data-t1]').onclick = function () { toss(1); };
+  host.querySelector('[data-hht]').onclick = function () { pi = 1; n = 3; y = 2; rand = IE437.rng(opts.seed || 39); draw(); };
+  host.querySelector('[data-head]').onclick = function () { n++; y++; draw(); };
+  host.querySelector('[data-tail]').onclick = function () { n++; draw(); };
   host.querySelector('[data-t10]').onclick = function () { toss(10); };
   host.querySelector('[data-t50]').onclick = function () { toss(50); };
-  var __reset = function () { pi = 0; n = 0; y = 0; rand = IE437.rng(opts.seed || 39); draw(); };
+  var __reset = function () { pi = opts.preset === 'HHT' ? 1 : 0; n = opts.preset === 'HHT' ? 3 : 0; y = opts.preset === 'HHT' ? 2 : 0; rand = IE437.rng(opts.seed || 39); draw(); };
   host.querySelector('[data-prior]').onclick = function () { pi = (pi + 1) % PRIORS.length; draw(); };
 
-  draw();
-  return { reset: __reset, finish: function () { if (n < 50) toss(50 - n); } };
+  __reset();
+  return { reset: __reset, finish: function () { __reset(); if (opts.preset !== 'HHT') toss(50); } };
 });

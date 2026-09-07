@@ -27,8 +27,8 @@ IE437.widget('bayes-regression', function (host, opts) {
     '<div data-num style="font:400 12.5px/1.85 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 12px/1.6 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.075);padding-top:10px">' +
-    'μ<sub>w</sub> is the ridge solution with λ = σ²/τ² (σ = 2.4, τ = 6). The MAP is the posterior&rsquo;s peak, as it must ' +
-    'be. What the Gaussian adds is Σ<sub>w</sub>: the width of the answer.</div></div></div>';
+    'Noise SD σ = 2.4; prior SD τ = 6 on both weights. For this Gaussian posterior, mean and MAP coincide. ' +
+    'Σ<sub>w</sub> describes their uncertainty. The ridge connection comes next.</div></div></div>';
 
   var CW = 320, CH = 250;
   var sv1 = IE437.svg(CW, CH), sv2 = IE437.svg(CW, CH);
