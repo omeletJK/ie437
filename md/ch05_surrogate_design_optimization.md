@@ -451,12 +451,19 @@ Converting a penalised objective into a constrained one to get a directly interp
 
 ::: cols
 ::: col.accent COMs — a conservative *objective*
-$$\theta^* = \argmin_\theta \tfrac12\E_{D}\big[(f_\theta(x)-y)^2\big] + \alpha\big(\E_{\mu(x)}[f_\theta] - \E_{D}[f_\theta]\big)$$
+$$\begin{aligned}
+\theta^*=\argmin_\theta\;\Big\{&\tfrac12\E_D[(f_\theta(x)-y)^2]\\
+&+\alpha\big(\E_\mu[f_\theta]-\E_D[f_\theta]\big)\Big\}.
+\end{aligned}$$
 
 The optimiser exploits $f_\theta$ at ==out-of-distribution inputs==.
 :::
 ::: col.accent CQL — a conservative *value*
-$$Q^* = \argmin_Q \tfrac12\E_{D}\big[(Q - \mathcal B^{\pi}\hat Q)^2\big] + \alpha\,\E_{s\sim D}\Big(\log\textstyle\sum_a e^{Q(s,a)} - \E_{a\sim\hat\pi_\beta}[Q(s,a)]\Big)$$
+$$\begin{aligned}
+Q^*=\argmin_Q\;\Big\{&\tfrac12\E_D[(Q-\mathcal B^\pi\hat Q)^2]\\
+&+\alpha\,\E_{s\sim D}\Big[\log\textstyle\sum_a e^{Q(s,a)}\\
+&\qquad-\E_{a\sim\hat\pi_\beta(\cdot\mid s)}[Q(s,a)]\Big]\Big\}.
+\end{aligned}$$
 
 The policy exploits $Q$ at ==out-of-distribution actions==.
 :::
@@ -549,9 +556,12 @@ $$L(\theta) = \max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \delta\sim\mat
 Gaussian smoothing of the *inputs* under worst-case *weight* perturbations, $B(\theta) = \{\tilde\theta : \lVert\theta_l-\tilde\theta_l\rVert_F \le \epsilon\lVert\theta_l\rVert_F\}$; the inner maximisation by projected gradient ascent.
 :::
 ::: col.accent Stage 2 — re-smooth as you go
-$$\theta_t = \argmin_{\tilde\theta\in B(\theta)} \big\lVert\nabla_x f(x;\tilde\theta)\big\rVert_2\Big|_{x = x^{(t)}} + \alpha\big(f(x^{(t)};\tilde\theta) - f(x^{(t)};\theta_{t-1})\big)^2$$
+$$\begin{aligned}
+\theta_t=\argmin_{\tilde\theta\in B(\theta)}\;\Big\{&\lVert\nabla_x f(x^{(t)};\tilde\theta)\rVert_2\\
+&+\alpha\big[f(x^{(t)};\tilde\theta)-f(x^{(t)};\theta_{t-1})\big]^2\Big\}.
+\end{aligned}$$
 
-Stage 1 only smooths where the data is. So at *every* ascent step, re-adapt the model to be flat at the current candidate — first term for smoothness, second to stop $\theta$ drifting.
+Stage 1 only smooths where the data is. So at *every* ascent step, re-adapt the model to be flat at the current candidate — first term for smoothness, second to anchor the previous prediction.
 :::
 :::
 :::

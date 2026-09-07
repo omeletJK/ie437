@@ -386,7 +386,11 @@ This decomposition assumes $f(X)=\E[Y\mid X]$ and zero-mean conditional noise fo
 
 ::: cols
 ::: col Ensembles
-$$p(\theta\mid\mathcal D)\approx\tfrac1N\textstyle\sum_i \delta(\theta_i),\quad \int p(s'\mid s,a,\theta)p(\theta\mid\mathcal D)\,d\theta \approx \tfrac1N\textstyle\sum_i p(s'\mid s,a,\theta_i)$$
+$$\begin{aligned}
+p(\theta\mid\mathcal D)&\approx\tfrac1N\textstyle\sum_i\delta_{\theta_i}(\theta),\\
+p(s'\mid s,a,\mathcal D)&=\int p(s'\mid s,a,\theta)p(\theta\mid\mathcal D)\,d\theta\\
+&\approx\tfrac1N\textstyle\sum_i p(s'\mid s,a,\theta_i).
+\end{aligned}$$
 
 Train each $\theta_i$ on $\mathcal D_i$, sampled with replacement. ==Lecture 5's `ensemble-alarm`, in dynamics.==
 :::

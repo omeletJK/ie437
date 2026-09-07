@@ -379,7 +379,7 @@ Drag the mean, reshape $\Sigma$ with the correlation and scale controls, then dr
 ::: col Ch 4 — the GP posterior
 Take $Y_1=\mathbf y_{1:n}$ and $Y_2=f(x)$, so $\Sigma_{11}=\mathbf K+\sigma_\epsilon^2\mathbf I$, $\Sigma_{21}=\mathbf k^\top$, $\Sigma_{22}=k(x,x)$:
 
-$$\mu(x\mid\mathcal D) = \mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y$$
+$$\mu(x\mid\mathcal D)=\mathbf k^\top\Sigma_{11}^{-1}\mathbf y.$$
 
 ==A GP posterior is Gaussian conditioning, and nothing else.==
 :::
@@ -391,7 +391,10 @@ It lands on $\mathcal N(\mu_w,\Sigma_w)$ with $\mu_w$ the ridge solution, $\lamb
 ::: col Ch 9 — LQR with noise
 For finite-horizon, fully observed LQ control with additive zero-mean noise independent of state and action, the value is quadratic **plus a constant**. Put noise back into $x_{t+1}=Ax_t+Bu_t+w_t$ and
 
-$$\E[x^\top P x] = \mu^\top P\mu + \mathrm{tr}(P\Sigma), \quad x\sim\mathcal N(\mu,\Sigma)$$
+$$\begin{aligned}
+x&\sim\mathcal N(\mu,\Sigma),\\
+\E[x^\top P x]&=\mu^\top P\mu+\mathrm{tr}(P\Sigma).
+\end{aligned}$$
 
 The noise adds a *constant*. The gain $K$ is unchanged — certainty equivalence, in one line.
 :::

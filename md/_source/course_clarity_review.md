@@ -56,10 +56,10 @@ New small numerical examples are instructional constructions, not new empirical 
 ## Verification
 
 - `node build.mjs --all`: 14 HTML decks, 14 matching PDFs, 795 pages and the site index.
-- `node tests/course-review.mjs`: screen and print geometry, all 56 quiz answers, mounting and range controls for 75 widget instances, widget lifecycle exceptions, missing images, KaTeX errors, and the boxed-math CSS regression.
+- `node tests/course-review.mjs`: screen and print geometry (including intrinsic math widths inside columns), all 56 quiz answers, mounting and range controls for 75 widget instances, widget lifecycle exceptions, missing images, KaTeX errors, and the boxed-math CSS regression.
 - `node tests/ch02-labs.mjs`: the six interactive Bayesian experiment models, controlled HHT updating, and keyboard navigation.
 - Independent numerical checks cover 19 values/identities, including GP/EI, COMs, KL, Bellman/TD/control, expectiles, the CQL penalty minimum, and finite-difference verification of policy and implicit gradients.
 - All exported PDF page counts are checked against source slide counts. Two representative pages per deck are rasterized and visually reviewed; the three initially dense pages and the boxed Bellman result receive additional review.
-- Visual review found a class-name collision: diagram `.fbox` styles obscured KaTeX's `\boxed` content. Diagram styles are now scoped to `.flow > .fbox`; the integration test checks that mathematical boxes remain transparent and unconstrained by diagram height.
+- Visual review found a class-name collision: diagram `.fbox` styles obscured KaTeX's `\boxed` content. Diagram styles are now scoped to `.flow > .fbox`; the integration test checks that mathematical boxes remain transparent and unconstrained by diagram height. A second visual check exposed long equations extending beyond their columns. The full-course check now measures KaTeX base widths, and affected expressions are split into calculation steps without shrinking the type.
 
 The review does not assert that all research extensions are introductory or that classroom comprehension has been empirically tested. Core tasks and advanced extensions are explicitly identified to support teaching at the requested level.

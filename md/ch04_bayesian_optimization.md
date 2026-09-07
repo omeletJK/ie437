@@ -327,9 +327,13 @@ $$\sigma_y^2(x)=0.488+0.25=0.738.$$
 - **Sums and products** — sums and products of valid kernels remain valid. Sums describe independent additive components; a product kernel combines similarity requirements. A pointwise product of two GPs is generally not itself Gaussian.
 :::
 ::: col.accent Fitting $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$
-Maximise the **marginal likelihood** of the data:
+Maximise the **log marginal likelihood**. Write $\mathbf C_\theta=\mathbf K_\theta+\sigma_\epsilon^2\mathbf I$:
 
-$$\theta^*=\argmax_\theta \Big[\underbrace{-\tfrac12\mathbf y^\top(\mathbf K_\theta+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y}_{\text{data fit}}\;\underbrace{-\tfrac12\log|\mathbf K_\theta+\sigma_\epsilon^2\mathbf I|}_{\text{complexity}}\; - \tfrac{n}{2}\log 2\pi\Big]$$
+$$\begin{aligned}
+\ell(\theta)&=\underbrace{-\tfrac12\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\text{data fit}}\\
+&\quad\underbrace{-\tfrac12\log|\mathbf C_\theta|}_{\text{complexity}}-\tfrac n2\log(2\pi),\\
+\theta^*&=\argmax_\theta\ell(\theta).
+\end{aligned}$$
 
 The first term rewards explaining the data, the second rewards a *rigid* model. Their sum balances fit and model complexity. Optimising it can have local optima and needs numerical care; it is another Lecture 1 optimisation inside the loop.
 :::

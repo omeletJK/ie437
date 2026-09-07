@@ -468,11 +468,14 @@ With a deterministic $\mu$ the **inner expectation disappears** and only the env
 ::: col The two losses
 **Critic**, by Bellman error on a replayed minibatch:
 
-$$L(w) = \frac1N\sum_i\Big(Q_w(s_i,a_i) - \big[r_i + \gamma(1-d_i)\,Q_{w^-}(s_i\prime,\mu_{\theta^-}(s_i\prime))\big]\Big)^2$$
+$$\begin{aligned}
+y_i&=r_i+\gamma(1-d_i)\,Q_{w^-}(s_i\prime,\mu_{\theta^-}(s_i\prime)),\\
+L(w)&=\frac1N\sum_i\big(Q_w(s_i,a_i)-y_i\big)^2.
+\end{aligned}$$
 
 Here $s_i\prime$ is the next state stored with sample $i$, and $d_i$ indicates true termination. **Actor**, by the deterministic policy gradient:
 
-$$\nabla_\theta J \approx \frac1N\sum_i \nabla_a Q_w(s,a)\big|_{a=\mu_\theta(s_i)}\nabla_\theta\mu_\theta(s_i)$$
+$$\nabla_\theta J \approx \frac1N\sum_i \nabla_a Q_w(s_i,a)\big|_{a=\mu_\theta(s_i)}\nabla_\theta\mu_\theta(s_i)$$
 :::
 ::: col.accent The stabilisers, returning
 - **replay buffer** — off-policy is now permitted, so use it;

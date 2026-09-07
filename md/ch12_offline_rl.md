@@ -212,12 +212,19 @@ Both targets use the same real reward. The difference comes entirely from an **u
 
 ::: cols
 ::: col.accent COMs — a conservative *objective*
-$$\theta^* = \argmin_\theta \tfrac12\E_{D}\big[(f_\theta(x)-y)^2\big] + \alpha\big(\E_{\mu(x)}[f_\theta] - \E_{D}[f_\theta]\big)$$
+$$\begin{aligned}
+\theta^*=\argmin_\theta\;\Big\{&\tfrac12\E_D[(f_\theta(x)-y)^2]\\
+&+\alpha\big(\E_\mu[f_\theta]-\E_D[f_\theta]\big)\Big\}.
+\end{aligned}$$
 
 The optimiser exploits $f_\theta$ at ==out-of-distribution inputs==.
 :::
 ::: col.accent CQL — a conservative *value*
-$$Q^* = \argmin_Q \tfrac12\E_{D}\big[(Q - \mathcal B^{\pi}\hat Q)^2\big] + \alpha\,\E_{s\sim D}\Big(\log\textstyle\sum_a e^{Q(s,a)} - \E_{a\sim\hat\pi_\beta}[Q(s,a)]\Big)$$
+$$\begin{aligned}
+Q^*=\argmin_Q\;\Big\{&\tfrac12\E_D[(Q-\mathcal B^\pi\hat Q)^2]\\
+&+\alpha\,\E_{s\sim D}\Big[\log\textstyle\sum_a e^{Q(s,a)}\\
+&\qquad-\E_{a\sim\hat\pi_\beta(\cdot\mid s)}[Q(s,a)]\Big]\Big\}.
+\end{aligned}$$
 
 The policy exploits $Q$ at ==out-of-distribution actions==.
 :::
@@ -559,9 +566,13 @@ $H$ decisions, two actions, $\beta$ a coin flip and $\pi$ choosing the good acti
 
 ::: cols
 ::: col Doubly robust {p}(Jiang & Li, 2016; Thomas & Brunskill, 2016)
-$$\hat V_{\text{DR}} = \hat V(s_1) + \sum_{t} \gamma^{t-1} \Big(\textstyle\prod_{t'\le t}\rho_{t'}\Big)\big(r_t + \gamma \hat V(s_{t+1}) - \hat Q(s_t,a_t)\big)$$
+$$\begin{aligned}
+W_t&=\textstyle\prod_{t'\le t}\rho_{t'},\\
+\delta_t&=r_t+\gamma\hat V(s_{t+1})-\hat Q(s_t,a_t),\\
+\hat V_{\mathrm{DR}}&=\hat V(s_1)+\sum_t\gamma^{t-1}W_t\delta_t.
+\end{aligned}$$
 
-Under support and appropriate independent fitting, DR is unbiased when the ratios are correct or the relevant Q model is exact. The weights now multiply ==Bellman residuals== rather than returns, so a good model shrinks the variance in proportion to how good it is.
+With support and appropriate independent fitting, DR is unbiased if the ratios are correct or the relevant Q model is exact. Weights multiply ==Bellman residuals==; an accurate model can reduce their variance.
 :::
 ::: col Fitted Q evaluation {p}(Le, Voloshin & Yue, 2019)
 Regress $Q^\pi$ directly: $\;Q \leftarrow r + \gamma\, \E_{a'\sim\pi}[Q(s',a')]$, fitted on $D$. FQE avoids products of trajectory ratios, but its error still depends on horizon, coverage, function approximation, and fitting. More data can reduce estimation error; misspecification or missing support can leave irreducible error.

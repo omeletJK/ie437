@@ -21,9 +21,14 @@ function geometry(selector){
    const r=el.getBoundingClientRect();if(r.height<2||r.width<1)continue;
    if(lim-r.bottom<minGap){minGap=lim-r.bottom;who=String(el.className||el.tagName).slice(0,60);}
    // KaTeX internal struts and SVG plotting coordinates can deliberately extend.
-   if(!el.closest('.katex')||el.classList.contains('katex')){
+   if(!el.closest('.katex')||el.classList.contains('katex')||el.matches('.katex-html > .base')){
     maxRight=Math.max(maxRight,r.right-(box.right-24));maxLeft=Math.max(maxLeft,box.left+24-r.left);
    }
+  }
+  for(const base of sl.querySelectorAll('.katex-html > .base')){
+   const container=base.closest('.mathblock, .col, td, .blk, .wcap');if(!container)continue;
+   const r=base.getBoundingClientRect(),limit=container.getBoundingClientRect();
+   maxRight=Math.max(maxRight,r.right-limit.right-4);maxLeft=Math.max(maxLeft,limit.left-r.left-4);
   }
   return minGap<6||maxRight>1||maxLeft>1?[{slide:+sl.dataset.i+1,title:sl.querySelector('h1,h2')?.textContent,gap:Math.round(minGap),right:Math.round(maxRight),left:Math.round(maxLeft),who}]:[];
  });

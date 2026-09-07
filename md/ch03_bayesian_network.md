@@ -296,14 +296,17 @@ Chain any two variables through a third and there are only three shapes. Whether
 :::
 
 ::: reveal
-For these isolated three-node graphs, observing a chain or fork middle node **blocks** the path; observing a collider **opens** it. An open path permits dependence but does not force it for every choice of probabilities:
+For these isolated graphs, observing a chain or fork middle node **blocks** the path; observing a collider **opens** it. An open path permits dependence:
 
-$$\text{fork: } p(x,y\mid z) = \frac{p(z)p(x\mid z)p(y\mid z)}{p(z)} = p(x\mid z)p(y\mid z) \qquad \text{collider: } p(x,y\mid z) = \frac{p(x)p(y)\,\hl{p(z\mid x,y)}}{p(z)} \;\not\equiv\; p(x\mid z)p(y\mid z)$$
+$$\begin{aligned}
+\text{fork: }\quad p(x,y\mid z)&=p(x\mid z)p(y\mid z),\\
+\text{collider: }\quad p(x,y\mid z)&=\frac{p(x)p(y)\,\hl{p(z\mid x,y)}}{p(z)}\;\not\equiv\;p(x\mid z)p(y\mid z).
+\end{aligned}$$
 :::
 
 ::: reveal
 ::: small
-D-separation tells us which independences hold for **every** distribution with this factorisation. An open path means the graph gives no independence guarantee; special probability tables can still make the variables independent.
+D-separation guarantees independence for **every** compatible probability table. An open path gives no such guarantee; special tables can still make the variables independent.
 :::
 :::
 
@@ -692,7 +695,10 @@ The same network, live. Choose an action and the expected utility is computed by
 ::: col What changes
 A second decision $S$ *found a start-up?* is added, with $U_S(\text{yes}) = -200\,000$, and an information edge $P \dashrightarrow S$ — the prize is known before the start-up is founded. Crucially, ==income now hangs off $S$ and $P$, not off $E$.==
 
-$$U(E) = \sum_{P}\ \hl{\max_{S}}\ \sum_{I} p(I\mid S,P)\,p(P\mid E)\big[U_C(E)+U_B(I)+U_S(S)\big]$$
+$$\begin{aligned}
+U(E)&=U_C(E)+\sum_P p(P\mid E)\\
+&\quad\hl{\max_S}\Big[U_S(S)+\sum_I p(I\mid S,P)U_B(I)\Big].
+\end{aligned}$$
 :::
 ::: col.accent What happens
 $$U(\text{do PhD}) = \hl{190\,195}$$
