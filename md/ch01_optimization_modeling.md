@@ -619,46 +619,80 @@ $$x^{*}\text{ globally optimal}\quad\hl{\Longleftrightarrow}\quad\nabla f(x^{*})
 Opening line: We prove both directions because this condition does more than describe something an optimum must satisfy: it completely characterises optimality. The previous two columns describe what one implication alone permits; after both proofs, passing and failing are decisive for this convex problem.
 :::
 
-### With no constraints, every direction is available
+### Unconstrained optimality — combine two equivalences
 {math: compact}
 
-The constrained condition becomes $\nabla f(x^{*})=0$ when $X=\R^n$. At a boundary, fewer directions are available.
+Keep $f$ **convex and differentiable**. The conclusion follows in two steps; the second step simplifies the condition from the first.
+
+**Step 1 — the general convex problem, already proved.** For a convex feasible set $X$ and $x^{*}\in X$,
+
+$$x^{*}\text{ globally optimal}\quad\hl{\Longleftrightarrow}\quad\nabla f(x^{*})^\top(y-x^{*})\ge0,\quad\forall y\in X.$$
+
+::: reveal
+**Step 2 — no constraints means $X=\R^n$.** Every direction is available, so the first-order inequality simplifies to
+
+$$\nabla f(x^{*})^\top(y-x^{*})\ge0,\quad\forall y\in\R^n\quad\hl{\Longleftrightarrow}\quad\nabla f(x^{*})=0.$$
+
+We prove this second equivalence on the next slide. It is a statement about which directions are feasible.
+:::
+
+::: reveal
+**Combine the two — convex + differentiable + unconstrained:**
+
+$$x^{*}\text{ globally optimal}\quad\hl{\Longleftrightarrow}\quad\nabla f(x^{*})=0.$$
+
+::: keypoint
+Under these three assumptions, ==zero gradient is both necessary and sufficient for global optimality.==
+:::
+:::
+
+### Why the first-order inequality becomes a zero gradient
+{math: compact}
+
+**Proving Step 2.** Set $X=\R^n$ and write $C(x^{*})$ for $\nabla f(x^{*})^\top(y-x^{*})\ge0$ for every $y\in\R^n$.
 
 ::: cols c2
-::: col Full space · the gradient must vanish
-If $\nabla f(x^{*})=0$, the dot product is zero for every $y$, so $C(x^{*})$ holds immediately.
+::: col Zero gradient ⇒ first-order inequality
+If $\nabla f(x^{*})=0$, then for every $y$,
 
-::: reveal
-Conversely, if $C(x^{*})$ holds, choose the feasible point $y=x^{*}-\nabla f(x^{*})$. Then
+$$\nabla f(x^{*})^\top(y-x^{*})=0\ge0.$$
 
-$$0\le\nabla f(x^{*})^\top(y-x^{*})=-\lVert\nabla f(x^{*})\rVert_2^2,$$
+So $C(x^{*})$ holds immediately.
+:::
+::: col First-order inequality ⇒ zero gradient
+Assume $C(x^{*})$. Because every point is feasible, choose $y=x^{*}-t\nabla f(x^{*})$ with any $t>0$:
 
-which forces $\nabla f(x^{*})=0$. For convex $f$, this is a global certificate; for a general differentiable $f$, it is only necessary at a local minimum.
+$$0\le\nabla f(x^{*})^\top(y-x^{*})=-t\lVert\nabla f(x^{*})\rVert_2^2.$$
+
+Because $t>0$ and a squared norm is non-negative, the gradient must be zero.
 :::
 :::
-::: col A boundary · a nonzero gradient is allowed
-Return to $\min_{x\in[1,3]}x^2$. At $x^{*}=1$, the derivative is **2**, not zero.
 
 ::: reveal
-Nevertheless, every feasible $y$ satisfies
+::: cols c2
+::: col Necessary for an unconstrained optimum
+A nonzero gradient gives a feasible descent direction $-\nabla f(x^{*})$, so a small step would lower the cost and contradict optimality.
+:::
+::: col Sufficient when f is also convex
+The global tangent bound becomes
 
-$$f'(1)(y-1)=2(y-1)\ge0.$$
+$$f(y)\ge f(x^{*})+0=f(x^{*}),\qquad\forall y.$$
 
-The steepest-descent direction points left, outside $X$. The point passes the first-order test and is globally optimal.
+Thus a zero gradient certifies a global minimum.
 :::
 :::
 :::
 
 ::: reveal
 ::: keypoint
-==The same rule, with fewer feasible directions.== KKT will express how active constraints balance a nonzero objective gradient at a boundary optimum.
+Step 2 needs no convexity of $f$; ==optimality $\Longleftrightarrow\nabla f=0$ also needs Step 1.== Without convexity, $f(x)=x^3$ still has $f'(0)=0$ but no minimum at zero.
 :::
 :::
 
 ### The condition, made draggable
 
 ::: widget kkt-point
-Minimise $\lVert x - c\rVert^2$ over a polygon, with $c$ outside it. Drag the point and read the test literally: the red arrow is a feasible direction that decreases $f$. It disappears exactly at the optimum, where the gradient supports the set — and the outward vector $-\nabla f(x^{*})$ is a non-negative combination of active constraint normals. The scalar coefficients are the ==KKT multipliers==.
+Minimise $\lVert x-c\rVert^2$ over a polygon, with $c$ outside it. Drag the point: the red arrow shows a feasible decrease. At the optimum, $-\nabla f$ points outside the set, so the zero-gradient rule does not apply. Likewise, $\min_{x\in[1,3]}x^2$ has $x^{*}=1$ and $f'(1)=2$, yet $2(y-1)\ge0$ for every feasible $y$. KKT expresses how active constraints balance that nonzero gradient.
 :::
 
 ### The problem, restated — and the price of a constraint

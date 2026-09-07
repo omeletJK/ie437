@@ -107,6 +107,7 @@ Source: `pptx/1. Optimization Problem Modeling.pptx` (62 slides). The HTML chapt
 - Source slides 51–62 are dynamic control/LQR/iLQR material. Detailed derivations remain with the course’s optimal-control chapter rather than duplicating that chapter here.
 - The workshop example and its KKT certificate are new, explicitly illustrative calculations: profit 8 at (0, 4), machine multiplier 2, demand multiplier 0, non-negativity multipliers (1, 0).
 - The first-order optimality theorem is expanded into separate necessity and sufficiency proofs. Necessity uses convexity of the full feasible set and differentiability; sufficiency uses the convex objective's global tangent lower bound. The new `first-order-proof` widget illustrates a feasible descent, the certificate for minimising $x^2$ on $[1,3]$, and the stationary non-minimum of $x^3$ at zero. These are original teaching examples, not figures extracted from the PowerPoint.
+- The unconstrained specialisation explicitly composes two equivalences: global optimality iff the general first-order inequality (under convexity and differentiability), and that inequality iff zero gradient when $X=\mathbb R^n$. The latter is proved in both directions using $y=x^*-t\nabla f(x^*)$, $t>0$; it needs no objective convexity by itself. The final optimality equivalence retains all three assumptions: convex, differentiable and unconstrained.
 
 ## Theory references
 
