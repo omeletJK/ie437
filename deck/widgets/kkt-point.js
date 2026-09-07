@@ -67,10 +67,10 @@ IE437.widget('kkt-point', function (host, opts) {
     'font:700 13px/1.4 var(--mono);letter-spacing:.05em"></div>' +
     '<div data-num style="font:400 12.5px/1.9 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 12px/1.6 var(--sans);color:var(--ink3);border-top:1px solid rgba(22,24,29,.075);padding-top:11px">' +
-    'The unconstrained minimiser sits outside the feasible set, so the optimum is pushed onto the ' +
-    'boundary. Here &nabla;f points inward, while &minus;&nabla;f is an outward normal. ' +
-    'For an active constraint g &le; 0, &minus;&nabla;f = &lambda;&nabla;g; ' +
-    '&lambda; &ge; 0 is a scalar coefficient, not a normal vector.</div></div></div>';
+    'The point c is the best choice without constraints, but it is outside the polygon. ' +
+    'Click “snap to optimum”: the best allowed point lies on the boundary. ' +
+    'There, &minus;&nabla;f points outside and every feasible direction has a non-negative initial slope. ' +
+    'The next example explains how a boundary can balance a nonzero gradient.</div></div></div>';
 
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);

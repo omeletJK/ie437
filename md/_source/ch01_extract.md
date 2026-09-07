@@ -120,4 +120,27 @@ Source: `pptx/1. Optimization Problem Modeling.pptx` (62 slides). The HTML chapt
 
 The previous deployed deck did contain the general KKT table, but its heading was “The same four questions, for any number of walls” and it followed the shadow-price example. The revision makes the statement explicit and places it before all KKT checking examples and the sufficiency proof. The four equations are visible together without reveal steps. The problem's differentiability assumption and multiplier quantifier are explicit; inequality multipliers are non-negative and equality multipliers have no sign restriction.
 
-Order: boundary intuition → general problem/Lagrangian → formal four-condition statement → optimality theorem → one-bound example → production certificate → sufficiency proof → shadow-price interpretation → duality. The theorem distinguishes convex sufficiency from necessity under Slater, with strict inequalities and satisfied affine equalities. Non-convex necessity remains qualified by a constraint qualification. The source for the convex KKT theorem is Boyd & Vandenberghe §5.5.3, checked against the authors' official book/slides.
+Order: boundary intuition → general problem/Lagrangian → formal four-condition statement → plain-language interpretation → optimality theorem → solve and check the one-bound example → production certificate → sufficiency proof → shadow-price interpretation → duality and a worked bound → comprehension check → research applications. The theorem distinguishes convex sufficiency from necessity under Slater, with strict inequalities and satisfied affine equalities. Non-convex necessity remains qualified by a constraint qualification. The source for the convex KKT theorem is Boyd & Vandenberghe §5.5.3, checked against the authors' official book/slides.
+
+
+## Third-year clarity review
+
+The intended prerequisites are basic differential calculus and linear algebra, now stated on the roadmap. This is a content and presentation review, not an empirical student comprehension study. The original Acts, research cases and source figures are retained.
+
+| Previously missing connection | Revision | Student should be able to explain |
+|---|---|---|
+| First-order condition to KKT | Explain the shift from checking every feasible point to a finite system involving objective and constraint gradients. | Why a constrained optimum can have a nonzero objective gradient. |
+| Conditions to everyday meaning | Define active/slack and map each KKT equation to the same one-bound example. | Slack implies zero multiplier; active does not imply a positive multiplier. |
+| Multiplier sign | Relate the inward correction to the sign of the constraint derivative; give an equality example with a negative multiplier. | Why inequality weights are non-negative under the chosen convention and equality weights are free. |
+| Necessity assumptions | Give the Slater point 2 for the lower bound 1 and distinguish this point from the boundary optimum. | Slater requires some strictly feasible point, not a strictly feasible optimum. |
+| A guessed certificate to an actual calculation | Solve slack and active cases for the one-variable example; derive the production multipliers from two stationarity equations. | Obtain the point and multipliers and discard inconsistent candidates. |
+| Stationarity to all four checks | Show that (x, lambda)=(2,4) passes stationarity but fails complementary slackness. | Stationarity by itself is insufficient. |
+| KKT to global optimality | Reuse the earlier convex, unconstrained zero-gradient result on the Lagrangian with fixed multipliers. Combine f(y) >= L(y) >= L(x*) = f(x*). | Where convexity, stationarity, feasibility and complementary slackness enter the proof. |
+| A dual function to an actual bound | Complete the square for the same model and obtain d(lambda)=lambda-lambda^2/4. Feasible x=1 and lambda=2 give matching upper/lower bounds. | Why a bound can certify a decision without searching all feasible decisions. |
+| Core theory to advanced applications | Put the KKT quiz before research cases; mark the implicit-differentiation derivation as advanced. | Distinguish optimality certification from differentiability of the solution map. |
+
+The main deck adds three explanatory slides; the original expanded gradient proof moves to a fourth new appendix page (83 to 87 pages overall). The formal KKT statement remains at page 38 and all four conditions remain visible together. The production point and objective value are unchanged.
+
+The slack-constraint quiz previously overclaimed that relaxing a slack constraint leaves the optimizer unchanged. It now states the exact complementary-slackness implication and limits any sensitivity interpretation to a first-order value change under suitable assumptions. The convexity quiz now distinguishes a genuine local minimum from an arbitrary algorithm's stopping point.
+
+Mathematical cross-check: Boyd and Vandenberghe, *Convex Optimization*, §5.5.3 and the authors' [Lecture 9 discussion](https://see.stanford.edu/materials/lsocoee364a/transcripts/ConvexOptimizationI-Lecture09.html) on KKT sufficiency, necessity and Slater. The scalar and production calculations were checked directly.
