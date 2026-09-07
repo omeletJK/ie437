@@ -3,19 +3,22 @@
    Successive convexification on a non-convex objective. Each step
    fits a convex quadratic model, minimises it inside the trust
    radius, then judges the step by the ratio of actual to predicted
-   improvement — accept and grow, or reject and shrink.
-   The same ratio logic returns as TRPO's KL trust region (Lec 10).
+   improvement. Grow after a successful boundary step; shrink after
+   rejection. Stop using a projected-gradient test for the box domain.
    ============================================================ */
 IE437.widget('trust-region', function (host, opts) {
   var E = IE437.el;
   var INK = '#16181D', BLUE = '#2563EB', RED = '#D64545', AMBER = '#D97706', SLATE = '#64748B';
-  var X0 = 0, X1 = 12, B = 1.15, ETA = 0.25, RHO0 = 0.8, RHOMAX = 3.2;
-  var STARTS = [1.1, 8.6, 4.4];
-  var si = 0, x, rho, k, hist, last;
+  var X0 = 0, X1 = 12, B = 0.35, ETA = 0.25, RHO0 = 0.8, RHOMAX = 3.2;
+  // Two interior basins and a boundary optimum; modest curvature also exposes rejected steps.
+  var STARTS = [1.1, 8.6, 0.12];
+  var si = 0, x, rho, k, hist, last, stopped;
+  var TOL = 2e-3;
 
   function f(v) { return 0.95 * Math.sin(1.15 * v) + 0.055 * (v - 5.6) * (v - 5.6) + 1.7; }
   function df(v) { return 1.0925 * Math.cos(1.15 * v) + 0.11 * (v - 5.6); }
   function model(v, xk) { var d = v - xk; return f(xk) + df(xk) * d + 0.5 * B * d * d; }
+  function residual() { return Math.abs(x - Math.max(X0, Math.min(X1, x - df(x)))); }
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">Successive convexification &mdash; a staircase of easy problems</span>' +
@@ -33,18 +36,20 @@ IE437.widget('trust-region', function (host, opts) {
     '<div data-num style="font:400 12.5px/1.95 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 12px/1.6 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.075);padding-top:11px">' +
-    'The ratio asks whether the convex model deserved to be believed. Trust grows where it ' +
-    'predicts well and shrinks where it does not &mdash; nothing about the true objective is ' +
-    'ever solved directly.</div></div></div>';
+    'The ratio tests the local model. Strong agreement at the interval boundary can enlarge it; ' +
+    'rejection shrinks it. The projected-gradient residual recognises stationary points of the ' +
+    'box-constrained problem, including boundary optima. This is not a global certificate.</div></div></div>';
 
   var CW = 520, CH = 276;
   var sv = IE437.svg(CW, CH);
   host.querySelector('[data-c]').appendChild(sv);
 
   function reset() {
-    x = STARTS[si]; rho = RHO0; k = 0; hist = [x]; last = null; draw();
+    x = STARTS[si]; rho = RHO0; k = 0; hist = [x]; last = null; stopped = ''; draw();
   }
   function step() {
+    if (stopped) return;
+    if (residual() <= TOL) { stopped = 'stationary'; draw(); return; }
     var g = df(x);
     var cand = x - g / B;                                  // unconstrained model minimiser
     if (cand < x - rho) cand = x - rho;
@@ -52,12 +57,16 @@ IE437.widget('trust-region', function (host, opts) {
     if (cand < X0) cand = X0; if (cand > X1) cand = X1;
     var pred = f(x) - model(cand, x);
     var act = f(x) - f(cand);
-    var r = pred > 1e-12 ? act / pred : 0;
+    if (pred <= 1e-12) { stopped = 'stalled'; draw(); return; }
+    var r = act / pred;
     var accept = r >= ETA;
-    last = { cand: cand, r: r, accept: accept, from: x, rho: rho };
-    if (accept) { x = cand; rho = (r > 0.75) ? Math.min(RHOMAX, rho * 2) : rho; hist.push(x); }
+    var grow = accept && r > 0.75 && Math.abs(cand - x) >= 0.9 * rho && rho < RHOMAX;
+    last = { cand: cand, r: r, accept: accept, from: x, rho: rho, grow: grow };
+    if (accept) { x = cand; if (grow) rho = Math.min(RHOMAX, rho * 2); hist.push(x); }
     else { rho = rho * 0.5; }
     k++;
+    if (residual() <= TOL) stopped = 'stationary';
+    else if (rho < 1e-10) stopped = 'stalled';
     draw();
   }
 
@@ -99,16 +108,20 @@ IE437.widget('trust-region', function (host, opts) {
 
     host.querySelector('[data-k]').textContent = k;
     var st = host.querySelector('[data-status]');
-    if (!last) {
-      st.textContent = 'press “one step”'; st.style.background = 'rgba(22,24,29,.05)'; st.style.color = 'var(--ink2)';
-    } else if (Math.abs(df(x)) < 2e-3 && rho < 0.2) {
-      st.innerHTML = 'CONVERGED<br><span style="font-weight:400;font-size:11px;letter-spacing:0">' +
-        'the gradient has vanished and the trust region has closed in</span>';
+    if (stopped === 'stationary') {
+      st.innerHTML = 'FIRST-ORDER STATIONARY<br><span style="font-weight:400;font-size:11px;letter-spacing:0">' +
+        'projected-gradient residual is small; global optimality is not certified</span>';
       st.style.background = 'rgba(22,24,29,.06)'; st.style.color = 'var(--ink)';
+    } else if (stopped === 'stalled') {
+      st.innerHTML = 'STALLED<br><span style="font-weight:400;font-size:11px;letter-spacing:0">' +
+        'no reliable model step; the optimality test has not passed</span>';
+      st.style.background = 'rgba(214,69,69,.10)'; st.style.color = RED;
+    } else if (!last) {
+      st.textContent = 'press “one step”'; st.style.background = 'rgba(22,24,29,.05)'; st.style.color = 'var(--ink2)';
     } else if (last.accept) {
       st.innerHTML = 'ACCEPTED &nbsp;·&nbsp; r = ' + last.r.toFixed(2) +
         '<br><span style="font-weight:400;font-size:11px;letter-spacing:0">the model was believable &mdash; step taken' +
-        (last.r > 0.75 ? ', trust grown' : '') + '</span>';
+        (last.grow ? ', trust grown' : '') + '</span>';
       st.style.background = 'rgba(37,99,235,.10)'; st.style.color = BLUE;
     } else {
       st.innerHTML = 'REJECTED &nbsp;·&nbsp; r = ' + last.r.toFixed(2) +
@@ -119,6 +132,7 @@ IE437.widget('trust-region', function (host, opts) {
       'x<sup>(k)</sup> = <b>' + x.toFixed(3) + '</b> &nbsp;&middot;&nbsp; f = <b>' + f(x).toFixed(3) + '</b><br>' +
       'trust radius &rho; = <b>' + rho.toFixed(3) + '</b> &nbsp;&middot;&nbsp; ' +
       'gradient f&prime; = ' + df(x).toFixed(3) + '<br>' +
+      'projected-gradient residual = <b data-residual>' + residual().toFixed(4) + '</b><br>' +
       'accepted steps: ' + (hist.length - 1) + ' of ' + k;
   }
 
@@ -128,5 +142,5 @@ IE437.widget('trust-region', function (host, opts) {
   host.querySelector('[data-start]').onclick = function () { si = (si + 1) % STARTS.length; reset(); };
 
   reset();
-  return { reset: __reset, finish: function () { if (k === 0) for (var i = 0; i < 15; i++) step(); } };
+  return { reset: __reset, finish: function () { for (var i = 0; i < 120 && !stopped; i++) step(); } };
 });

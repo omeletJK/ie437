@@ -1,0 +1,170 @@
+[
+  {
+    "asset": "heat-diffusion-system.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 26,
+    "media": "ppt/media/image54.png",
+    "sha256": "c03c9cb6e63386c741aa1665ace3c8854e4ffe63f142790c8212841dfe685c32",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "heater-sensor-layout.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 26,
+    "media": "ppt/media/image55.png",
+    "sha256": "70a23546ddd6706beff777a560cf3b0c7cba2b9ffd590447823cc7d3cdd9f13f",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "icgnn-architecture.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 27,
+    "media": "ppt/media/image57.png",
+    "sha256": "6003041c40c3a5492c119b46d4a529aaf383dbea4657ea8408a0d2d63a5220c7",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "heater-optimizer-comparison.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 28,
+    "media": "ppt/media/image60.png",
+    "sha256": "6784e7ef2ec7448d32c8bfe4524ed9baa0e92cf6082ff7365cefc0d318688b94",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "heater-surrogate-comparison.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 28,
+    "media": "ppt/media/image61.png",
+    "sha256": "18894edf36f510b725d038628f77be1559c41e534061367b7de29e08fffeec7d",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "windfarm-wakes.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 43,
+    "media": "ppt/media/image62.jpeg",
+    "sha256": "d86920cc5cf26a45d245f4e304be696ce53c2ca3399ce1f598ea757b91dcea60",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wake-cross-section.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 44,
+    "media": "ppt/media/image63.jpeg",
+    "sha256": "0c1ed5f2335702d8986ba52ca8d0f715e14ffd3e0f4c0b02611c4903a51a8ce0",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wake-recovery.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 44,
+    "media": "ppt/media/image70.jpeg",
+    "sha256": "d4e214706d5f52b5bb561f27d531ca30827a32b8a8dea8d0175194d7063a21a0",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wake-superposition.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 44,
+    "media": "ppt/media/image71.jpeg",
+    "sha256": "c88b2df8defaa257a5e7ecdc188b229acc5a1c9cca9e415c88c19590e9808d80",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-rose.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 45,
+    "media": "ppt/media/image72.png",
+    "sha256": "003c1886f16b445c919bc5bdc07bb8b9085a46aa7363c35641306f65c06ce95f",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-speed-distributions.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 45,
+    "media": "ppt/media/image73.jpeg",
+    "sha256": "3250d89acb1d9f55dc42f2eacd77d9da7518a86f90795689233b30cfe78a808f",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-joint-distribution.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 45,
+    "media": "ppt/media/image74.jpeg",
+    "sha256": "a972918be4dbe67e510ccdb165f7ff393049549cfaf257f44fc491815fcf08c1",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-spacing-convexification.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 49,
+    "media": "ppt/media/image75.jpeg",
+    "sha256": "ee523892415418f9da5abf948e4520f9d048403d3d1e0ef2717e52a0af02a506",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-layout-result.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 50,
+    "media": "ppt/media/image77.jpeg",
+    "sha256": "ac485130a3c6d671e636d59a20ea1d17c0e3c2fb24ebbf755d40a9f60a7d10e4",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-efficiency-history.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 50,
+    "media": "ppt/media/image78.jpeg",
+    "sha256": "69853a9399dcd8fdff4ce908409fbf2cbf3c037aa700d024ec599669ccc3fa12",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "wind-direction-efficiency.jpg",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 50,
+    "media": "ppt/media/image79.jpeg",
+    "sha256": "f32850cdbb0f65876cfe3788a78d76b014d3431d06112b0b5f1a08820185daa5",
+    "transformation": "none; original bytes extracted from PPTX"
+  },
+  {
+    "asset": "lpmarl-pipeline.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 36,
+    "media": null,
+    "sha256": "6a8b5532a8d7ea5fb01dbf0f0475415d63cacd04748277b5142ce35e29b68d89",
+    "transformation": "pre-existing PNG rendition of the source diagram"
+  },
+  {
+    "asset": "lpmarl-training.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 37,
+    "media": null,
+    "sha256": "c4322a96239444493d42958c7676bd74a58db3725ad124e1abc4d5da3280174c",
+    "transformation": "pre-existing PNG rendition of the source diagram"
+  },
+  {
+    "asset": "icgnn-compare.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 25,
+    "media": "ppt/media/image53.png",
+    "sha256": "13ed69f5db4a99ebc4e22f2358a5c153250fbb675a6483ade5810055bab7a522",
+    "transformation": "pre-existing PNG rendition of the source diagram"
+  },
+  {
+    "asset": "icgnn-procedure.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 27,
+    "media": "ppt/media/image58.png",
+    "sha256": "5c533b711ff8e6338a90d2eaca309a2ae665dccefd259c07441deccbc61c4467",
+    "transformation": "pre-existing PNG rendition of the source diagram"
+  },
+  {
+    "asset": "icgnn-results.png",
+    "source": "pptx/1. Optimization Problem Modeling.pptx",
+    "slide": 28,
+    "media": "ppt/media/image59.png",
+    "sha256": "81f45d9f53568e9bd274e27a7fae9b1e25b4791b562284520716b4b76359e7f3",
+    "transformation": "pre-existing PNG rendition of the source diagram"
+  }
+]

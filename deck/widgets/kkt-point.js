@@ -14,10 +14,13 @@ IE437.widget('kkt-point', function (host, opts) {
   var W = 430, H = 330, PAD = 26, DOM = [0, 10.4];
   var pt = [4.2, 3.0];
 
-  var SX = function (v) { return PAD + (v - DOM[0]) / (DOM[1] - DOM[0]) * (W - 2 * PAD); };
-  var SY = function (v) { return H - PAD - (v - DOM[0]) / (DOM[1] - DOM[0]) * (H - 2 * PAD); };
-  var IX = function (px) { return DOM[0] + (px - PAD) / (W - 2 * PAD) * (DOM[1] - DOM[0]); };
-  var IY = function (py) { return DOM[0] + (H - PAD - py) / (H - 2 * PAD) * (DOM[1] - DOM[0]); };
+  // Equal units on both axes keep Euclidean contours circular and normals perpendicular.
+  var SCALE = Math.min(W - 2 * PAD, H - 2 * PAD) / (DOM[1] - DOM[0]);
+  var MID = (DOM[0] + DOM[1]) / 2;
+  var SX = function (v) { return W / 2 + (v - MID) * SCALE; };
+  var SY = function (v) { return H / 2 - (v - MID) * SCALE; };
+  var IX = function (px) { return MID + (px - W / 2) / SCALE; };
+  var IY = function (py) { return MID - (py - H / 2) / SCALE; };
 
   var grad = function (p) { return [2 * (p[0] - C[0]), 2 * (p[1] - C[1])]; };
 
@@ -65,8 +68,9 @@ IE437.widget('kkt-point', function (host, opts) {
     '<div data-num style="font:400 12.5px/1.9 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 12px/1.6 var(--sans);color:var(--ink3);border-top:1px solid rgba(22,24,29,.075);padding-top:11px">' +
     'The unconstrained minimiser sits outside the feasible set, so the optimum is pushed onto the ' +
-    'boundary. There the gradient is normal to the active edge and points out of the set &mdash; that ' +
-    'normal, scaled, is the multiplier &lambda; &ge; 0 of KKT.</div></div></div>';
+    'boundary. Here &nabla;f points inward, while &minus;&nabla;f is an outward normal. ' +
+    'For an active constraint g &le; 0, &minus;&nabla;f = &lambda;&nabla;g; ' +
+    '&lambda; &ge; 0 is a scalar coefficient, not a normal vector.</div></div></div>';
 
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);
@@ -82,7 +86,7 @@ IE437.widget('kkt-point', function (host, opts) {
         stroke: INK, 'stroke-opacity': .09, 'stroke-width': 1 }, sv);
     });
     var rr = Math.hypot(pt[0] - C[0], pt[1] - C[1]);
-    E('circle', { cx: SX(C[0]), cy: SY(C[1]), r: (SX(rr) - SX(0)), fill: 'none',
+    E('circle', { cx: SX(C[0]), cy: SY(C[1]), r: rr * SCALE, fill: 'none', 'data-role': 'current-contour',
       stroke: INK, 'stroke-opacity': .32, 'stroke-width': 1.3, 'stroke-dasharray': '4 4' }, sv);
 
     /* feasible set */
@@ -95,7 +99,7 @@ IE437.widget('kkt-point', function (host, opts) {
       'font-family': 'IBM Plex Mono, monospace', text: 'FEASIBLE' }, sv);
 
     /* c and the optimum */
-    E('circle', { cx: SX(C[0]), cy: SY(C[1]), r: 4, fill: 'none', stroke: INK,
+    E('circle', { cx: SX(C[0]), cy: SY(C[1]), r: 4, fill: 'none', stroke: INK, 'data-role': 'unconstrained-centre',
       'stroke-opacity': .5, 'stroke-width': 1.4 }, sv);
     E('text', { x: SX(C[0]) - 8, y: SY(C[1]) - 8, 'text-anchor': 'end', 'font-size': 11,
       fill: INK, 'fill-opacity': .5, 'font-style': 'italic', text: 'c' }, sv);
@@ -120,12 +124,26 @@ IE437.widget('kkt-point', function (host, opts) {
       E('line', {
         x1: SX(pt[0] - nx * T), y1: SY(pt[1] - ny * T),
         x2: SX(pt[0] + nx * T), y2: SY(pt[1] + ny * T),
-        stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4'
+        stroke: BLUE, 'stroke-width': 1.8, 'stroke-dasharray': '5 4', 'data-role': 'supporting-line'
       }, sv);
+      [-1, 1].forEach(function (sign) {
+        var ex = pt[0] + sign * g[0] / gl * 1.65;
+        var ey = pt[1] + sign * g[1] / gl * 1.65;
+        var angle = Math.atan2(SY(ey) - SY(pt[1]), SX(ex) - SX(pt[0]));
+        var colour = sign > 0 ? BLUE : AMBER;
+        E('line', { x1: SX(pt[0]), y1: SY(pt[1]), x2: SX(ex), y2: SY(ey),
+          stroke: colour, 'stroke-width': 2, 'data-role': sign > 0 ? 'gradient-arrow' : 'descent-arrow' }, sv);
+        E('path', { d: 'M' + SX(ex) + ' ' + SY(ey) +
+          'L' + (SX(ex) - 8 * Math.cos(angle - .4)) + ' ' + (SY(ey) - 8 * Math.sin(angle - .4)) +
+          'L' + (SX(ex) - 8 * Math.cos(angle + .4)) + ' ' + (SY(ey) - 8 * Math.sin(angle + .4)) + 'Z',
+          fill: colour }, sv);
+        E('text', { x: SX(ex) + 6, y: SY(ey) + 4, 'font-size': 11, fill: colour,
+          text: sign > 0 ? '\u2207f' : '\u2212\u2207f' }, sv);
+      });
     }
 
     /* the point itself */
-    E('circle', { cx: SX(pt[0]), cy: SY(pt[1]), r: 7, fill: optimal ? BLUE : INK }, sv);
+    E('circle', { cx: SX(pt[0]), cy: SY(pt[1]), r: 7, fill: optimal ? BLUE : INK, 'data-role': 'current-point' }, sv);
     E('circle', { cx: SX(pt[0]), cy: SY(pt[1]), r: 12, fill: 'transparent', style: 'cursor:grab' }, sv);
 
     var vd = host.querySelector('[data-verdict]');
