@@ -749,7 +749,7 @@ All four checks pass. ==For this convex problem, that certifies the global optim
 :::
 
 ::: small
-A slack constraint has zero multiplier; a tight constraint *may* also have zero multiplier. The general form for multiple constraints is in the appendix.
+A slack constraint has zero multiplier; a tight constraint *may* also have zero multiplier. The general form, for any number of constraints, is two slides on.
 :::
 
 ### What is a little more freedom worth?
@@ -783,6 +783,51 @@ Close to $0.19$: the price gives a ==local approximation== for a small change.
 ::: reveal
 ::: keypoint
 $\lambda$ is the **shadow price**: how much the best cost improves per small unit of extra freedom. At $a=0$, the bound is tight but its price is already zero.
+:::
+:::
+
+### The same four questions, for any number of walls
+{sub: the KKT conditions in general — $m$ inequalities, $p$ equalities}
+
+For $\min_x f(x)$ subject to $g_i(x)\le0$, $i=1,\dots,m$ and $h_j(x)=0$, $j=1,\dots,p$, price every constraint and fold it into the objective:
+
+$$L(x,\lambda,\nu)\;=\;f(x)\;+\;\sum_{i=1}^{m}\lambda_i\,g_i(x)\;+\;\sum_{j=1}^{p}\nu_j\,h_j(x)$$
+
+::: table
+| Question | KKT condition |
+|---|---|
+| **Is the point allowed?** | Primal feasibility: $g_i(x^{*})\le0$ and $h_j(x^{*})=0$ for every $i,j$ |
+| **Does every wall push inward?** | Dual feasibility: $\lambda_i^{*}\ge0$ — the $\nu_j^{*}$ are free in sign, since an equality has no allowed side |
+| **Is every unused wall powerless?** | Complementary slackness: $\lambda_i^{*}\,g_i(x^{*})=0$ for every $i$ |
+| **Do all the pushes balance?** | Stationarity: $\nabla f(x^{*})+\sum_i\lambda_i^{*}\nabla g_i(x^{*})+\sum_j\nu_j^{*}\nabla h_j(x^{*})=0$ |
+:::
+
+::: reveal
+::: small
+The one-variable example is the case $m=1$, $p=0$, $g(x)=1-x$: stationarity reads $2x-\lambda=0$, and the table two slides back is this one, row for row.
+:::
+:::
+
+### The KKT theorem — when the four checks are enough, and when they must hold
+{sub: the statement the rest of Act 3 leans on}
+
+The four checks are a *test*. A test is only useful if passing it means something and failing it rules something out — and each of those is a theorem with its own hypothesis.
+
+::: reveal
+::: block Sufficient — passing certifies
+If $f$ and every $g_i$ are convex and every $h_j$ is affine, then any $(x^{*},\lambda^{*},\nu^{*})$ that passes all four checks has $x^{*}$ a ==global== minimum. Convexity is the hypothesis; the proof is two slides on.
+:::
+:::
+
+::: reveal
+::: block Necessary — an optimum must pass
+If $x^{*}$ is a local minimum and a **constraint qualification** holds, then multipliers $(\lambda^{*},\nu^{*})$ passing all four checks ==exist==. For a convex problem Slater's condition suffices — some strictly feasible point exists; in general, linear independence of the active constraint gradients at $x^{*}$ does. Convexity itself is not needed for this direction.
+:::
+:::
+
+::: reveal
+::: keypoint
+Convex and qualified: ==the four checks are exactly optimality.== Non-convex: they are a necessary filter that a maximum or a saddle can also pass.
 :::
 :::
 
