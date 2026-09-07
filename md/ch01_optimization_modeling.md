@@ -726,7 +726,76 @@ With a constraint, ==the gradient can be nonzero at the optimum.== KKT checks ho
 :::
 :::
 
-### KKT asks four simple questions
+### KKT setup — the problem and its Lagrangian
+{sub: introduce the variables before stating the conditions}
+
+Assume $f,g_i,h_j:\mathbb R^n\to\mathbb R$ are continuously differentiable. Consider
+
+$$\begin{aligned}
+\min_{x\in\mathbb R^n}\quad & f(x)\\
+\text{subject to}\quad & g_i(x)\le0,\quad i=1,\ldots,m,\\
+& h_j(x)=0,\quad j=1,\ldots,p.
+\end{aligned}$$
+
+The **Lagrangian** combines the objective and the constraints:
+
+$$L(x,\lambda,\nu)=f(x)+\sum_{i=1}^{m}\lambda_i g_i(x)+\sum_{j=1}^{p}\nu_j h_j(x).$$
+
+::: keypoint
+We check a point $x^{*}$ together with multipliers: $\lambda^{*}$ for inequalities and $\nu^{*}$ for equalities. ==The next slide states the four conditions they must satisfy together.==
+:::
+
+### KKT conditions — formal statement
+{sub: Karush–Kuhn–Tucker conditions}
+
+A point $x^{*}$ satisfies KKT if **there exist** multipliers $\lambda^{*}\in\mathbb R^m$, $\nu^{*}\in\mathbb R^p$ satisfying all four conditions:
+
+$$\begin{aligned}
+\text{1. Primal feasibility:}\quad &g_i(x^{*})\le0,\quad h_j(x^{*})=0.\\[5pt]
+\text{2. Dual feasibility:}\quad &\lambda_i^{*}\ge0,\quad \nu_j^{*}\text{ unrestricted in sign}.\\[5pt]
+\text{3. Complementary slackness:}\quad &\lambda_i^{*}g_i(x^{*})=0.\\[5pt]
+\text{4. Stationarity:}\quad &\nabla_xL(x^{*},\lambda^{*},\nu^{*})=0.
+\end{aligned}$$
+
+Every inequality condition holds for $i=1,\ldots,m$; every equality condition for $j=1,\ldots,p$. Expanded stationarity is
+
+$$\nabla f(x^{*})+\sum_{i=1}^{m}\lambda_i^{*}\nabla g_i(x^{*})+\sum_{j=1}^{p}\nu_j^{*}\nabla h_j(x^{*})=0.$$
+
+::: keypoint
+==Feasible point, valid multipliers, complementary slackness, and balanced gradients — all four together.== The theorem next states when this certifies optimality.
+:::
+
+### KKT optimality theorem — necessary and sufficient
+{sub: conditions first; their guarantee second; the proof follows the examples}
+
+For the differentiable problem just stated, suppose $f,g_i$ are **convex** and $h_j$ are **affine**.
+
+::: cols c2
+::: col Sufficient: KKT certifies an optimum
+If $(x^{*},\lambda^{*},\nu^{*})$ satisfies all four KKT conditions, then $x^{*}$ is a **global minimizer**.
+
+$$\text{KKT}\quad\Longrightarrow\quad\text{global optimality}.$$
+
+This direction does **not** require Slater's condition.
+:::
+::: col.accent Necessary: an optimum has multipliers
+If **Slater's condition** holds, every global minimizer $x^{*}$ admits multipliers satisfying KKT.
+
+$$\text{global optimality}\quad\Longrightarrow\quad\text{KKT}.$$
+
+Slater requires a point $\bar x$ with all $g_i(\bar x)<0$ and all $h_j(\bar x)=0$.
+:::
+:::
+
+::: keypoint
+Under the stated convexity assumptions and Slater: ==$x^{*}$ is globally optimal if and only if suitable KKT multipliers exist.==
+:::
+
+::: small
+For a non-convex differentiable problem, a local minimum still has KKT multipliers under an appropriate constraint qualification, but a KKT point need not be a local minimum. Reference: Boyd & Vandenberghe, *Convex Optimization*, §5.5.3.
+:::
+
+### KKT example — check the four conditions
 {sub: check the same example at $x^{*}=1$ and $\lambda^{*}=2$}
 
 Combine the cost and the constraint in one expression — the **Lagrangian**:
@@ -749,7 +818,47 @@ All four checks pass. ==For this convex problem, that certifies the global optim
 :::
 
 ::: small
-A slack constraint has zero multiplier; a tight constraint *may* also have zero multiplier. The general form, for any number of constraints, is two slides on.
+This is the general KKT system with $f(x)=x^2$, $g(x)=1-x$ and no equalities. A slack inequality has zero multiplier; a tight inequality may also have zero multiplier.
+:::
+
+### Certifying the production decision with actual multipliers
+{math: compact}
+
+Return to the workshop model: minimise $-3x_1-2x_2$ subject to $2x_1+x_2\le4$, $x_1\le1$ and $x\ge0$. We proposed $x^{*}=(0,4)$.
+
+::: reveal
+Order the inequalities as machine time, demand, $-x_1\le0$, $-x_2\le0$. Choose $\lambda^{*}=(2,0,1,0)\ge0$. There are no equality multipliers. Stationarity is
+
+$$\binom{-3}{-2}+2\binom{2}{1}+0\binom{1}{0}+1\binom{-1}{0}+0\binom{0}{-1}=\binom{0}{0}.$$
+:::
+
+::: reveal
+Machine time binds; the demand constraint is slack and has zero price. Product A's non-negativity constraint binds, while product B's is slack. Every multiplier times its constraint value is zero. ==All four KKT conditions hold.==
+:::
+
+::: reveal
+::: keypoint
+The LP is convex, so the certificate proves profit 8 is globally optimal. The machine-time price is 2: an extra unit of capacity is worth 2 in this model.
+:::
+:::
+
+### Why KKT certifies a *global* optimum
+{sub: proof of the sufficient direction stated in the KKT theorem}
+
+Let $f$ and every $g_i$ be differentiable and convex, every $h_j$ affine, and suppose $(x^{*},\lambda^{*},\nu^{*})$ satisfies the stated KKT conditions. Take **any** feasible $y$:
+
+$$\begin{aligned}
+f(y) &\;\ge\; f(x^{*}) + \nabla f(x^{*})^\top(y-x^{*}) && \dm{\text{convexity of } f}\\[2pt]
+&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,\nabla g_i(x^{*})^\top(y-x^{*}) && \dm{\text{stationarity; the } h_j \text{ terms vanish}}\\[2pt]
+&\;\ge\; f(x^{*}) - \sum_i \lambda_i^{*}\big(g_i(y)-g_i(x^{*})\big) && \dm{\text{convexity of } g_i,\ \lambda_i^{*}\ge0}\\[2pt]
+&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,g_i(y) && \dm{\text{complementary slackness}}\\[2pt]
+&\;\ge\; f(x^{*}) && \dm{\lambda_i^{*}\ge0,\ g_i(y)\le0}
+\end{aligned}$$
+
+::: reveal
+::: small
+The $h_j$ terms vanish because an affine $h_j$ has $\nabla h_j^\top(y-x^{*}) = h_j(y)-h_j(x^{*}) = 0$ for feasible $y$. So $f(y)\ge f(x^{*})$ for *every* feasible $y$: ==not a local claim but a global one.== This proves the sufficient direction: a KKT certificate gives global optimality for the stated convex problem. The converse requires the constraint qualification stated in the theorem.
+:::
 :::
 
 ### What is a little more freedom worth?
@@ -783,91 +892,6 @@ Close to $0.19$: the price gives a ==local approximation== for a small change.
 ::: reveal
 ::: keypoint
 $\lambda$ is the **shadow price**: how much the best cost improves per small unit of extra freedom. At $a=0$, the bound is tight but its price is already zero.
-:::
-:::
-
-### The same four questions, for any number of walls
-{sub: the KKT conditions in general — $m$ inequalities, $p$ equalities}
-
-For $\min_x f(x)$ subject to $g_i(x)\le0$, $i=1,\dots,m$ and $h_j(x)=0$, $j=1,\dots,p$, price every constraint and fold it into the objective:
-
-$$L(x,\lambda,\nu)\;=\;f(x)\;+\;\sum_{i=1}^{m}\lambda_i\,g_i(x)\;+\;\sum_{j=1}^{p}\nu_j\,h_j(x)$$
-
-::: table
-| Question | KKT condition |
-|---|---|
-| **Is the point allowed?** | Primal feasibility: $g_i(x^{*})\le0$ and $h_j(x^{*})=0$ for every $i,j$ |
-| **Does every wall push inward?** | Dual feasibility: $\lambda_i^{*}\ge0$ — the $\nu_j^{*}$ are free in sign, since an equality has no allowed side |
-| **Is every unused wall powerless?** | Complementary slackness: $\lambda_i^{*}\,g_i(x^{*})=0$ for every $i$ |
-| **Do all the pushes balance?** | Stationarity: $\nabla f(x^{*})+\sum_i\lambda_i^{*}\nabla g_i(x^{*})+\sum_j\nu_j^{*}\nabla h_j(x^{*})=0$ |
-:::
-
-::: reveal
-::: small
-The one-variable example is the case $m=1$, $p=0$, $g(x)=1-x$: stationarity reads $2x-\lambda=0$, and the table two slides back is this one, row for row.
-:::
-:::
-
-### The KKT theorem — when the four checks are enough, and when they must hold
-{sub: the statement the rest of Act 3 leans on}
-
-The four checks are a *test*. A test is only useful if passing it means something and failing it rules something out — and each of those is a theorem with its own hypothesis.
-
-::: reveal
-::: block Sufficient — passing certifies
-If $f$ and every $g_i$ are convex and every $h_j$ is affine, then any $(x^{*},\lambda^{*},\nu^{*})$ that passes all four checks has $x^{*}$ a ==global== minimum. Convexity is the hypothesis; the proof is two slides on.
-:::
-:::
-
-::: reveal
-::: block Necessary — an optimum must pass
-If $x^{*}$ is a local minimum and a **constraint qualification** holds, then multipliers $(\lambda^{*},\nu^{*})$ passing all four checks ==exist==. For a convex problem Slater's condition suffices — some strictly feasible point exists; in general, linear independence of the active constraint gradients at $x^{*}$ does. Convexity itself is not needed for this direction.
-:::
-:::
-
-::: reveal
-::: keypoint
-Convex and qualified: ==the four checks are exactly optimality.== Non-convex: they are a necessary filter that a maximum or a saddle can also pass.
-:::
-:::
-
-### Certifying the production decision with actual multipliers
-{math: compact}
-
-Return to the workshop model: minimise $-3x_1-2x_2$ subject to $2x_1+x_2\le4$, $x_1\le1$ and $x\ge0$. We proposed $x^{*}=(0,4)$.
-
-::: reveal
-Choose machine-time multiplier $\lambda=2$, demand multiplier $\mu=0$ and non-negativity multipliers $\nu=(1,0)$. All are non-negative, and stationarity is
-
-$$\binom{-3}{-2}+2\binom{2}{1}+0\binom{1}{0}-\binom{1}{0}=\binom{0}{0}.$$
-:::
-
-::: reveal
-Machine time binds; the demand constraint is slack and has zero price. Product A's non-negativity constraint binds, while product B's is slack. Every multiplier times its constraint value is zero. ==All four KKT conditions hold.==
-:::
-
-::: reveal
-::: keypoint
-The LP is convex, so the certificate proves profit 8 is globally optimal. The machine-time price is 2: an extra unit of capacity is worth 2 in this model.
-:::
-:::
-
-### Why KKT certifies a *global* optimum
-{sub: the convex case, proved — five lines and no appendix}
-
-Let $f$ and every $g_i$ be differentiable and convex, every $h_j$ affine, and let $x^{*}$ satisfy all four conditions. Take **any** feasible $y$:
-
-$$\begin{aligned}
-f(y) &\;\ge\; f(x^{*}) + \nabla f(x^{*})^\top(y-x^{*}) && \dm{\text{convexity of } f}\\[2pt]
-&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,\nabla g_i(x^{*})^\top(y-x^{*}) && \dm{\text{stationarity; the } h_j \text{ terms vanish}}\\[2pt]
-&\;\ge\; f(x^{*}) - \sum_i \lambda_i^{*}\big(g_i(y)-g_i(x^{*})\big) && \dm{\text{convexity of } g_i,\ \lambda_i^{*}\ge0}\\[2pt]
-&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,g_i(y) && \dm{\text{complementary slackness}}\\[2pt]
-&\;\ge\; f(x^{*}) && \dm{\lambda_i^{*}\ge0,\ g_i(y)\le0}
-\end{aligned}$$
-
-::: reveal
-::: small
-The $h_j$ terms vanish because an affine $h_j$ has $\nabla h_j^\top(y-x^{*}) = h_j(y)-h_j(x^{*}) = 0$ for feasible $y$. So $f(y)\ge f(x^{*})$ for *every* feasible $y$: ==not a local claim but a global one.== Conversely KKT is *necessary* when a constraint qualification such as Slater's holds — some strictly feasible point exists. Without convexity, KKT remains necessary at a local optimum under an appropriate constraint qualification, but is generally not sufficient: a KKT point may be a minimum, a maximum, or a saddle.
 :::
 :::
 
