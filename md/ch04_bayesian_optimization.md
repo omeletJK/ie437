@@ -119,6 +119,19 @@ Three earlier lectures fused into one turn of a crank: step 1 is Lecture 2's Bay
 You should be able to ==calculate a small GP update and explain why two acquisition rules choose different points.== Matrix derivations and the bandit toolkit remain in the appendix.
 :::
 
+### Reading guide — from an expensive experiment to the next measurement
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Frazier, *A Tutorial on Bayesian Optimization* (2018)](https://arxiv.org/abs/1807.02811) | How do GP regression and an acquisition rule form one loop? |
+| **Compare** | [Jones, Schonlau & Welch, *Efficient Global Optimization of Expensive Black-Box Functions* (1998)](https://doi.org/10.1023/A:1008306431147) | Why evaluate expected improvement instead of only the predicted optimum? |
+| **Apply** | [Snoek, Larochelle & Adams, *Practical Bayesian Optimization of Machine Learning Algorithms* (NeurIPS 2012)](https://proceedings.neurips.cc/paper/2012/hash/05311655a15b75fab86956663e1819cd-Abstract.html) | How does the same loop select expensive model-training hyperparameters? |
+
+::: keypoint
+Understand one GP update and one acquisition choice first. The original traffic and wind cases then add context; multi-output, constrained and multiobjective BO extend the same loop.
+:::
+
 ## Act 1 — a belief over an unknown function
 {short: ACT 1, num: Act 1}
 
@@ -530,6 +543,22 @@ Press *next query* and watch EI decide. The second query goes straight to the fa
 
 ::: small
 The lecture's own run took eleven queries and stopped at $x=1.11$, $y=2.24$ — the same answer, to the precision the noise allows.
+:::
+
+### Two representative BO applications — the same loop, different experiments
+{sub: EGO for expensive engineering functions · practical BO for ML hyperparameters}
+
+| | Jones, Schonlau & Welch: EGO (1998) | Snoek, Larochelle & Adams (2012) |
+|---|---|---|
+| Decision $x$ | an engineering design | a model's hyperparameters |
+| One expensive observation | a simulation or physical evaluation | train the model and measure validation performance |
+| Shared idea | GP surrogate and expected improvement | GP-based acquisition and repeated experiments |
+| Additional emphasis | spend a small evaluation budget well | kernel/hyperparameter treatment, evaluation duration and parallelism |
+
+**Teaching experiment:** give grid search, random search and BO the same initial observations and evaluation budget. Plot the best observed value after each query; if evaluation costs differ, also compare elapsed cost. Keep a separate test set for the final ML evaluation.
+
+::: keypoint
+A smooth posterior plot is a regression result. **A better recommendation under the same experimental budget** is an optimization result. [EGO](https://doi.org/10.1023/A:1008306431147) · [Practical Bayesian Optimization](https://proceedings.neurips.cc/paper/2012/hash/05311655a15b75fab86956663e1819cd-Abstract.html)
 :::
 
 ### This loop is a policy — the first in the course

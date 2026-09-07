@@ -50,3 +50,15 @@ two lineages joined, and the single axis deliberately left uncrossed, named as I
 ## Interpretation of the teaching map
 
 The OR/control columns are a teaching comparison, not disjoint historical or mathematical categories. Both traditions use values, policies and dynamic programming. Removing access to a model motivates sample-based methods; it does not prove that their learned policy equals a model-based global optimum. A sequential influence diagram becomes an MDP only after specifying an appropriate Markov information state, observations and return structure.
+
+
+## Representative-paper connections added in September 2026
+
+These connections supplement the handoff wording above.
+
+- **6 → 9–12:** Diffusion Policy introduces observation-conditioned action chunks and feedback execution. Its demonstration imitation objective is distinguished from reward-based RL.
+- **8 → 10:** Double DQN separates selection from evaluation; TD3's twin-critic minimum is a different intervention.
+- **10 → 11:** SAC is the off-policy learner in MBPO. Actor–critic learning is the prerequisite for Dreamer's latent-imagination loop.
+- **3 + 6 + 10 → 11:** Hidden-state inference, latent representation learning and actor–critic learning meet in Dreamer. DreamerV3 supplies later empirical context, not a new derivation prerequisite.
+- **10 → 12:** TD3 is taught in the main lecture before TD3+BC adds an offline imitation term. CQL and IQL then expose different interventions on the same fixed-data problem.
+- **Research depth:** COMs and VAE–DDPM–CbAS remain the main design narratives. Detailed NEMO/RoMA, MINs benchmark, DDOM/BootGen and GPS/PLATO material remains in appendices with source-topic links.

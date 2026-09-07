@@ -135,6 +135,19 @@ So the whole lecture is one failure and its cure: the surrogate **overestimates*
 You should be able to ==explain a failure using two candidate designs and calculate the signs of the COMs loss terms.== NEMO, RoMA and theorem details are extensions of this core idea.
 :::
 
+### Reading guide — one failure, one main corrective objective
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Trabucco et al., *Conservative Objective Models for Effective Offline Model-Based Optimization* (ICML 2021)](https://proceedings.mlr.press/v139/trabucco21a.html) | How can fitting an accurate average predictor still produce a bad design? |
+| **Compare** | NEMO's resistance to optimistic model updates and RoMA's local robustness; detailed losses are in the appendix | What different modelling bias does each method add? |
+| **Apply** | The source Design-Bench comparisons, PRIME and crystal-design cases | Does the returned design improve measured performance, not just predicted score? |
+
+::: keypoint
+Explain the signs of the COMs loss using two candidate designs. NEMO and RoMA are comparison readings; their detailed derivations and full benchmark table remain available as research extensions.
+:::
+
 ## Act 1 — the naive approach
 {short: ACT 1, num: Act 1}
 
@@ -517,78 +530,22 @@ They are not rivals so much as three readings of the same sentence: ==the surrog
 :::
 :::
 
-### NEMO — how easily could the model have been talked into it?
+### How much of each method to learn
 
-The conditional NML distribution is the estimator closest to maximum likelihood ==when the test label is chosen adversarially==:
+| Reading level | What you should be able to explain |
+|---|---|
+| **Core — COMs** | Fit the observed labels, then penalize the surrogate's optimism on designs found by its own optimizer. Calculate the two terms in one loss. |
+| **Compare — NEMO / RoMA** | Recognize two other interventions: resistance to an optimistic model update, and robustness to nearby model parameters. |
+| **Advanced — original derivations and benchmarks** | Follow the full objectives and compare the reported tasks. These pages are retained in the appendix. |
 
-$$p_{\text{NML}}(y\mid x) = \frac{p\big(y \mid x;\ \hat\theta_{D\cup(x,y)}\big)}{\displaystyle\int p\big(y' \mid x;\ \hat\theta_{D\cup(x,y')}\big)\,dy'}$$
-
-::: reveal
-::: flow
-- **Pick a candidate label $y'$** | for the query point $x$
-- **Refit** | $\hat\theta_{D\cup(x,y')}$ — the MLE on the data *plus that made-up point*
-- **Ask how well it fits** | $p(y'\mid x;\hat\theta_{D\cup(x,y')})$
-- !**Normalise over all $y'$** | the answer is a normalised predictive distribution
-:::
-:::
-
-::: reveal
-::: small
-Far from the data, *every* candidate label can be accommodated almost perfectly — one extra point barely moves a flexible model — so the normalised distribution can be wide, provided the refits and normalisation are well defined. Near the data, only labels close to the trend survive the refit, and it can be narrower. ==Uncertainty is measured as how easily the model could have been talked into any answer.== The integral is intractable, so NEMO quantises $y$ into $K$ bins, keeps $K$ models, and updates them incrementally *while* it optimises $x$ rather than rebuilding them at each iterate.
-:::
+::: keypoint
+The common question is **what prevents a search from exploiting prediction error?** Similar motivation does not make the three objectives or their guarantees identical.
 :::
 
 ### But surely an ensemble would have caught it?
 
 ::: widget ensemble-alarm {"seed":17}
 Ten surrogates, each fitted to a bootstrap resample of the same fifteen points. Out of distribution their spread does widen — by about six times. Their actual error grows ==thirty-seven times==. At the design their own averaged optimiser returns, the truth sits eighteen standard deviations outside the band they agree on. The alarm fires; it is simply far too quiet, because the members share an architecture and so extrapolate wrongly *together*.
-:::
-
-### RoMA — flatten the surface the optimiser is standing on
-
-RoMA targets sensitivity of predictions and gradients near candidate inputs. A jagged surrogate can create spurious peaks; even a smooth surrogate can extrapolate incorrectly. Smoothness is a useful modelling bias, not a sufficient condition for accuracy.
-
-::: reveal
-::: cols
-::: col Stage 1 — train it smooth
-$$L(\theta) = \max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \delta\sim\mathcal N(0,\sigma)}\Big[\big(f(x+\delta;\tilde\theta)-y\big)^2\Big]$$
-
-Gaussian smoothing of the *inputs* under worst-case *weight* perturbations, $B(\theta) = \{\tilde\theta : \lVert\theta_l-\tilde\theta_l\rVert_F \le \epsilon\lVert\theta_l\rVert_F\}$; the inner maximisation by projected gradient ascent.
-:::
-::: col.accent Stage 2 — re-smooth as you go
-$$\begin{aligned}
-\theta_t=\argmin_{\tilde\theta\in B(\theta)}\;\Big\{&\lVert\nabla_x f(x^{(t)};\tilde\theta)\rVert_2\\
-&+\alpha\big[f(x^{(t)};\tilde\theta)-f(x^{(t)};\theta_{t-1})\big]^2\Big\}.
-\end{aligned}$$
-
-Stage 1 only smooths where the data is. So at *every* ascent step, re-adapt the model to be flat at the current candidate — first term for smoothness, second to anchor the previous prediction.
-:::
-:::
-:::
-
-::: reveal
-::: small
-The source figure says it in two panels: without the prior, a jagged surrogate's tallest spike is a *wrong solution*; with it, the surrogate lies on the truth and the argmax is the ==right one==.
-:::
-:::
-
-### What the benchmark says
-{sub: source-reported best-of-batch task scores; Avg uses the source's normalised aggregate}
-
-::: table center
-| method | GFP | Molecule | Supercond. | Hopper | Ant | DKitty | **Avg** |
-|---|---|---|---|---|---|---|---|
-| *Dataset max* | 3.152 | 6.558 | 73.90 | 1361.6 | 108.5 | 215.9 | *1.000* |
-| Gradient ascent | 2.894 | 6.636 | 89.64 | 1050.8 | 399.9 | 390.7 | 1.237 |
-| MINs | 3.315 | 6.508 | 80.23 | 746.1 | 388.5 | 352.9 | 1.304 |
-| CbAS | **3.408** | 6.301 | 72.17 | 547.1 | 393.0 | 396.1 | 1.324 |
-| COMs | 3.305 | 6.876 | 110.0 | 2395.7 | 378.8 | 341.4 | 1.589 |
-| NEMO | 3.359 | 6.682 | **127.0** | 2130.1 | 393.7 | **431.6** | 1.687 |
-| **RoMA** | 3.357 | **6.890** | 103.9 | **2466.5** | **468.5** | 384.3 | ==**1.705**== |
-:::
-
-::: small
-Naive gradient ascent is not useless — it has the lowest aggregate score among the six methods shown, and on HopperController it returns less than the best trajectory already in the dataset. Every method that beats it does so by ==adding a constraint on what the surrogate is allowed to believe==, not by searching harder.
 :::
 
 ### All three say the same thing
@@ -781,4 +738,72 @@ for t = 1 … T:
 
 ::: small
 Quantisation flattens the landscape and kills the gradient, so NEMO's head outputs one minus the CDF of a *logistic* distribution sampled at intervals of $1/K$ and takes the mean; gradients then flow through the logistic mean $\mu(x)$, and Proposition 4.1 guarantees $\langle\nabla_x\mu(x),\nabla_x y_{\text{mean}}(x)\rangle \ge 0$ — the smooth surrogate gradient never points against the one we want.
+:::
+
+### NEMO — how easily could the model have been talked into it?
+
+The conditional NML distribution is the estimator closest to maximum likelihood ==when the test label is chosen adversarially==:
+
+$$p_{\text{NML}}(y\mid x) = \frac{p\big(y \mid x;\ \hat\theta_{D\cup(x,y)}\big)}{\displaystyle\int p\big(y' \mid x;\ \hat\theta_{D\cup(x,y')}\big)\,dy'}$$
+
+::: reveal
+::: flow
+- **Pick a candidate label $y'$** | for the query point $x$
+- **Refit** | $\hat\theta_{D\cup(x,y')}$ — the MLE on the data *plus that made-up point*
+- **Ask how well it fits** | $p(y'\mid x;\hat\theta_{D\cup(x,y')})$
+- !**Normalise over all $y'$** | the answer is a normalised predictive distribution
+:::
+:::
+
+::: reveal
+::: small
+Far from the data, *every* candidate label can be accommodated almost perfectly — one extra point barely moves a flexible model — so the normalised distribution can be wide, provided the refits and normalisation are well defined. Near the data, only labels close to the trend survive the refit, and it can be narrower. ==Uncertainty is measured as how easily the model could have been talked into any answer.== The integral is intractable, so NEMO quantises $y$ into $K$ bins, keeps $K$ models, and updates them incrementally *while* it optimises $x$ rather than rebuilding them at each iterate.
+:::
+:::
+
+### RoMA — flatten the surface the optimiser is standing on
+
+RoMA targets sensitivity of predictions and gradients near candidate inputs. A jagged surrogate can create spurious peaks; even a smooth surrogate can extrapolate incorrectly. Smoothness is a useful modelling bias, not a sufficient condition for accuracy.
+
+::: reveal
+::: cols
+::: col Stage 1 — train it smooth
+$$L(\theta) = \max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \delta\sim\mathcal N(0,\sigma)}\Big[\big(f(x+\delta;\tilde\theta)-y\big)^2\Big]$$
+
+Gaussian smoothing of the *inputs* under worst-case *weight* perturbations, $B(\theta) = \{\tilde\theta : \lVert\theta_l-\tilde\theta_l\rVert_F \le \epsilon\lVert\theta_l\rVert_F\}$; the inner maximisation by projected gradient ascent.
+:::
+::: col.accent Stage 2 — re-smooth as you go
+$$\begin{aligned}
+\theta_t=\argmin_{\tilde\theta\in B(\theta)}\;\Big\{&\lVert\nabla_x f(x^{(t)};\tilde\theta)\rVert_2\\
+&+\alpha\big[f(x^{(t)};\tilde\theta)-f(x^{(t)};\theta_{t-1})\big]^2\Big\}.
+\end{aligned}$$
+
+Stage 1 only smooths where the data is. So at *every* ascent step, re-adapt the model to be flat at the current candidate — first term for smoothness, second to anchor the previous prediction.
+:::
+:::
+:::
+
+::: reveal
+::: small
+The source figure says it in two panels: without the prior, a jagged surrogate's tallest spike is a *wrong solution*; with it, the surrogate lies on the truth and the argmax is the ==right one==.
+:::
+:::
+
+### What the benchmark says
+{sub: source-reported best-of-batch task scores; Avg uses the source's normalised aggregate}
+
+::: table center
+| method | GFP | Molecule | Supercond. | Hopper | Ant | DKitty | **Avg** |
+|---|---|---|---|---|---|---|---|
+| *Dataset max* | 3.152 | 6.558 | 73.90 | 1361.6 | 108.5 | 215.9 | *1.000* |
+| Gradient ascent | 2.894 | 6.636 | 89.64 | 1050.8 | 399.9 | 390.7 | 1.237 |
+| MINs | 3.315 | 6.508 | 80.23 | 746.1 | 388.5 | 352.9 | 1.304 |
+| CbAS | **3.408** | 6.301 | 72.17 | 547.1 | 393.0 | 396.1 | 1.324 |
+| COMs | 3.305 | 6.876 | 110.0 | 2395.7 | 378.8 | 341.4 | 1.589 |
+| NEMO | 3.359 | 6.682 | **127.0** | 2130.1 | 393.7 | **431.6** | 1.687 |
+| **RoMA** | 3.357 | **6.890** | 103.9 | **2466.5** | **468.5** | 384.3 | ==**1.705**== |
+:::
+
+::: small
+Naive gradient ascent is not useless — it has the lowest aggregate score among the six methods shown, and on HopperController it returns less than the best trajectory already in the dataset. Every method that beats it does so by ==adding a constraint on what the surrogate is allowed to believe==, not by searching harder.
 :::

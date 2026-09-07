@@ -148,6 +148,19 @@ One question per Act. This strip returns at every transition — watch the highl
 
 You should be able to **calculate one update**, name the policy its target evaluates, and explain why a tabular convergence theorem does not automatically cover DQN.
 
+### Reading guide — from a tabular target to a learned value function
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Mnih et al., *Human-level control through deep reinforcement learning* (Nature 2015)](https://doi.org/10.1038/nature14236) | What lets the Q-learning target train a network from replayed images? |
+| **Compare** | [van Hasselt, Guez & Silver, *Deep Reinforcement Learning with Double Q-learning* (AAAI 2016)](https://arxiv.org/abs/1509.06461) | Why separate selecting an action from evaluating its value? |
+| **Apply** | The original windy gridworld, six rooms and Atari examples | Which issue is about the target, and which is about state representation? |
+
+::: keypoint
+Use Sutton–Barto Chapters 5–6 for MC and TD prerequisites. DQN is the main research case; Double DQN explains a specific failure. Dueling, prioritized replay and Rainbow remain a brief extension map.
+:::
+
 ## Act 1 — evaluation without a model
 {short: ACT 1, num: Act 1}
 
@@ -686,6 +699,28 @@ every $C$ steps: $w^- \leftarrow w$
 ::: small
 Trace the lineage of each box: *act $\varepsilon$-greedy* (Act 2's exploration tax), *the $\max$ in the target* (Act 3's off-policy Q-learning), *bootstrap target* (Act 1's TD), *buffer $+$ frozen $w^-$* (Act 4's triad fixes). One loop holds the whole lecture.
 :::
+:::
+
+### Double DQN — select with one estimate, evaluate with another
+{sub: van Hasselt, Guez & Silver · AAAI 2016 · one nonterminal target calculation}
+
+At the next state, suppose the two networks give:
+
+| Action | Online $Q_w$ | Target $Q_{w^-}$ |
+|---|---|---|
+| A | **8** | 4 |
+| B | 7 | **6** |
+
+For immediate reward 1 and discount 0.9:
+
+$$y_{\rm DQN}=1+0.9\max(4,6)=6.4.$$
+
+Double DQN selects $a^*=\argmax_a Q_w(s',a)=A$, then evaluates that action with the target network:
+
+$$y_{\rm Double}=1+0.9Q_{w^-}(s',A)=1+0.9(4)=4.6.$$
+
+::: keypoint
+Separating **selection and evaluation** reduces a source of overestimation; neither number is guaranteed correct. This is different from TD3's minimum of two critics in Lecture 10. [Double DQN](https://arxiv.org/abs/1509.06461)
 :::
 
 ### What comes after DQN — one slide of horizon

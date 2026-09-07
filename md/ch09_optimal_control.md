@@ -152,6 +152,19 @@ One question per Act. This strip returns at every transition — watch the highl
 Here we minimize **cost**, so good actions reduce $V$. We write feedback as $u=-Kx$; this chapter's $\gamma(t,x)$ denotes a control rule, not a discount factor.
 :::
 
+### Reading guide — solve the same system using different mathematical tools
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Tedrake, *Underactuated Robotics*: selected LQR sections](https://underactuated.mit.edu/lqr.html) and this lecture's Bellman/HJB derivation | Why does the linear-quadratic special case admit a tractable controller? |
+| **Compare** | HJB verification, Riccati/LQR and Pontryagin necessary conditions | Which method gives a value function, a gain, or candidate trajectory conditions? |
+| **Apply** | One scalar system solved three ways, then the original control examples | Do the methods agree under the stated LQ assumptions? |
+
+::: keypoint
+The same small problem is the main comparison. HJB and Pontryagin derivations are advanced reading; their historical importance does not make every technical step a prerequisite for computing feedback.
+:::
+
 ## Act 1 — it is the same problem
 {short: ACT 1, num: Act 1}
 
@@ -610,6 +623,23 @@ A costate is a **marginal future cost**. Pontryagin carries this sensitivity alo
 
 ::: widget pontryagin {"seed":11}
 The same problem the HJB widget solved: $\dot x = x+u$, $\int_0^2(x^2+u^2)dt$. Guess $\lambda(0)$, integrate the coupled equations forward, and check whether $\lambda(2)=0$ as the transversality condition demands. Exactly one guess lands — and it is ==$\lambda^*(0)=2P(0)x_0$==, the value gradient from the *other* method. The dashed trace is a control that does *not* minimise $H$ pointwise — and its Hamiltonian, conserved to fourteen digits when the principle is obeyed, drifts.
+:::
+
+### One scalar system, three views of the same answer
+{sub: teaching comparison · continuous-time infinite-horizon LQR}
+
+Use $\dot x=u$, cost $\int_0^\infty(x^2+u^2)\,dt$, and the stabilizing infinite-horizon solution.
+
+| View | Calculation | Answer |
+|---|---|---|
+| **HJB** | Try $V(x)=Px^2$: $0=\min_u(x^2+u^2+2Pxu)$ | $u=-Px$, then $1-P^2=0$ |
+| **LQR / Riccati** | $A=0,B=1,Q=R=1$ gives $1-P^2=0$ | choose stabilizing $P=1$ |
+| **Pontryagin** | $H=x^2+u^2+\lambda u$, $H_u=0$ | $u=-\lambda/2$; along this solution $\lambda=2x$ |
+
+Thus all three are consistent with **$u=-x$**, $x(t)=x_0e^{-t}$ and $V(x_0)=x_0^2$. At $x_0=2$, the total cost is **4**.
+
+::: keypoint
+Agreement here comes from the LQ structure and the stabilizing solution. Pontryagin's conditions alone do not certify an arbitrary nonlinear candidate as globally optimal. Compare the mathematical guarantees as well as the answer.
 :::
 
 ### HJB versus Pontryagin — distinguish what each certifies

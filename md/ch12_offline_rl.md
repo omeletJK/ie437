@@ -120,6 +120,19 @@ By the end, calculate an inflated Q target, a two-action expectile, and an impor
 Offline means **no new environment interaction during learning**. Off-policy describes a difference between the data policy and the target policy; it does not necessarily mean offline.
 :::
 
+### Reading guide — three main responses to a fixed dataset
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Kumar et al., *Conservative Q-Learning for Offline Reinforcement Learning* (NeurIPS 2020)](https://arxiv.org/abs/2006.04779) | How can the critic discourage actions unsupported by the data? |
+| **Compare** | [Fujimoto & Gu, *A Minimalist Approach to Offline Reinforcement Learning* (NeurIPS 2021)](https://arxiv.org/abs/2106.06860) and [Kostrikov et al., IQL (ICLR 2022)](https://arxiv.org/abs/2110.06169) | What is constrained: the actor update, the value, or the action queries? |
+| **Apply** | The logged-route stitching example and off-policy evaluation calculations | Can measured evidence support the claimed improvement? |
+
+::: keypoint
+TD3+BC, CQL and IQL form the main method comparison. BCQ/BEAR/BRAC are a compact family map; sequence models and learned-model methods extend the picture. Evaluation is part of the main lesson.
+:::
+
 ## Act 1 — what breaks: distributional shift
 {short: ACT 1, num: Act 1}
 
@@ -288,6 +301,27 @@ So the offline problem is not "imitate the data" but ==seek better expected retu
 Two logged routes from **S** to **G**, crossing at **M**. One is cheap early and expensive late; the other is expensive early and cheap late. Both cost ==7==. Behaviour cloning reproduces them and costs ==7== too, whether it copies the modal action or samples the whole distribution. Tabular $Q$-learning on the *same twenty transitions* returns $S\to A_1\to M\to B_2\to G$ at a cost of ==4== — a route no one ever drove, assembled entirely from steps that were.
 :::
 
+### TD3+BC — one line, and the price of the family
+{sub: Fujimoto & Gu, NeurIPS 2021}
+
+Take TD3 — Lecture 10's overestimation-hardened DDPG — exactly as it stands. Add one term to the actor loss:
+
+$$\pi \;\leftarrow\; \argmax_\pi\; \E_{(s,a)\sim D}\Big[\,\hl{\lambda}\, Q(s, \pi(s)) \;-\; \big(\pi(s) - a\big)^2\,\Big], \qquad \lambda = \frac{\alpha}{\frac1N\sum_i |Q(s_i,a_i)|}$$
+
+A behaviour-cloning term, and a normaliser $\lambda$ that reduces sensitivity to the scale of Q; it does not eliminate task dependence. No generative model, no divergence estimate, no extra network.
+
+::: reveal
+::: small
+Fujimoto & Gu report competitive performance against more elaborate offline methods on their D4RL evaluation, with substantially lower training overhead. This supports using a simple baseline before adding machinery; it is not a claim of dominance on every offline dataset. [A Minimalist Approach to Offline Reinforcement Learning (NeurIPS 2021)](https://arxiv.org/abs/2106.06860)
+:::
+:::
+
+::: reveal
+::: block The cost the whole family pays | and it cannot be paid down
+A tight distribution constraint can limit improvement. A support constraint can still select better actions than the behavior policy by changing their probabilities. The right restriction depends on coverage and estimation error.
+:::
+:::
+
 ### Three ways to say "stay close"
 
 ::: table center
@@ -305,27 +339,6 @@ The distinction in column two is the one that matters. A **support** constraint 
 ::: reveal
 ::: small
 Written as a modified backup, BCQ is one edit to the target: $\;y = r + \gamma\max_{a'\in \mathcal{A}_{G}(s')} Q(s',a')$ with $\mathcal{A}_G(s')$ the sampled candidate set. That is the ==escape hatch from Act 1's widget, made into an algorithm.==
-:::
-:::
-
-### TD3+BC — one line, and the price of the family
-{sub: Fujimoto & Gu, NeurIPS 2021}
-
-Take TD3 — Lecture 10's overestimation-hardened DDPG — exactly as it stands. Add one term to the actor loss:
-
-$$\pi \;\leftarrow\; \argmax_\pi\; \E_{(s,a)\sim D}\Big[\,\hl{\lambda}\, Q(s, \pi(s)) \;-\; \big(\pi(s) - a\big)^2\,\Big], \qquad \lambda = \frac{\alpha}{\frac1N\sum_i |Q(s_i,a_i)|}$$
-
-A behaviour-cloning term, and a normaliser $\lambda$ that reduces sensitivity to the scale of Q; it does not eliminate task dependence. No generative model, no divergence estimate, no extra network.
-
-::: reveal
-::: small
-It is worth dwelling on how little this is. On the D4RL benchmark it matches or beats BCQ, BEAR and BRAC while training in a fraction of the time — which is the field's own evidence that ==the hard part was never the machinery, it was knowing what to constrain.== {p}(Fu et al., D4RL, 2020)
-:::
-:::
-
-::: reveal
-::: block The cost the whole family pays | and it cannot be paid down
-A tight distribution constraint can limit improvement. A support constraint can still select better actions than the behavior policy by changing their probabilities. The right restriction depends on coverage and estimation error.
 :::
 :::
 
@@ -448,8 +461,22 @@ It is the same dial in all three rows — ==how far may we trust a model beyond 
 
 ::: reveal
 ::: small
-Which is Lecture 5's closing move as well: convert the penalty into a *constraint* with a budget read in the units of the objective, so the budget has an interpretable scale; cross-task transfer still needs checking. TD3+BC's normaliser $\lambda$ and CQL's Lagrangian variant are both that move.
+CQL's Lagrangian variant turns the penalty into a constraint with a budget. TD3+BC instead normalizes the Q term to reduce sensitivity to its numerical scale. Both address balancing terms, but **normalization is not a constrained optimization derivation**; cross-task transfer still needs checking.
 :::
+:::
+
+### One offline problem, three different interventions
+
+All three start with a fixed log and face the same risk: the learned policy may prefer actions whose value is poorly supported by that log.
+
+| Main method | What is changed? | Question to ask when reading its loss |
+|---|---|---|
+| **TD3+BC** | The actor objective | How strongly does copying logged actions oppose maximizing the critic? |
+| **CQL** | The critic objective | Which candidate actions have their values pushed down relative to the data? |
+| **IQL** | Value fitting and policy extraction | How do expectile fitting and weighted cloning use logged actions without maximizing over new actions during value training? |
+
+::: keypoint
+These are different responses to **unsupported improvement**. None creates missing evidence about an unseen action. Judge the resulting policy using the coverage and evaluation checks in Act 4.
 :::
 
 ### Check — the quotation from Lecture 5

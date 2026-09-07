@@ -130,6 +130,19 @@ Two objects, and they are the two halves of the lecture: a **generative model** 
 You should be able to ==explain why averaging designs can fail, calculate an ELBO, and normalise conditioning weights.== The diffusion and score-SDE derivations are optional extensions.
 :::
 
+### Reading guide — model designs before asking for better ones
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Kingma & Welling, *Auto-Encoding Variational Bayes* (ICLR 2014)](https://arxiv.org/abs/1312.6114) and [Ho et al., *Denoising Diffusion Probabilistic Models* (NeurIPS 2020)](https://arxiv.org/abs/2006.11239) | What is trained, and what is sampled, in each generative model? |
+| **Compare** | [Brookes, Park & Listgarten, *Conditioning by Adaptive Sampling for Robust Design* (ICML 2019)](https://proceedings.mlr.press/v97/brookes19a.html) | How can an existing generator be conditioned toward good designs? |
+| **Apply** | The original design cases; a closing [Diffusion Policy (RSS 2023)](https://diffusion-policy.cs.columbia.edu/) preview | How does a generated design vector differ from a generated action sequence? |
+
+::: keypoint
+The main route is VAE → DDPM → CbAS. MINs is a contrasting inverse method; DDOM and BootGen details are research extensions. Diffusion Policy is an imitation-learning connection, not a replacement for design optimization.
+:::
+
 ## Act 1 — inverting the function
 {short: ACT 1, num: Act 1}
 
@@ -720,83 +733,19 @@ The prior is the leash. The oracle is just as wrong out there as it was in Lectu
 :::
 :::
 
-### What it does on real design problems
-{sub: MINs, three tasks · note the third column}
+### From conditioning to design methods — compare the mechanisms
 
-::: table center
-| task | dimension | dataset avg | dataset best | forward map | **MIN** |
-|---|---|---|---|---|---|
-| MNIST, thickest recognisable "3" | 1,024 | 149.0 | 265.0 | *Invalid* | **276.3** |
-| MNIST, variant (b) | 1,024 | 149.0 | 163.0 | *Invalid* | **234.3** |
-| Faces, youngest ($\ge 15$) | 12,288 | 38.7 | $-15.0$ | *Invalid* | **$-12.2$** |
-| Faces, youngest ($\ge 25$) | 12,288 | 41.5 | $-25.0$ | *Invalid* | **$-23.9$** |
-| HopperController reward | 3,843 | 442.9 | 1915.5 | 93.1 | **1960.1** |
-| Pendulum reward | 1,537 | 14.7 | 344.5 | 3.4 | **1000.0** |
-:::
+| Method | How it favors good designs | Role in this lecture |
+|---|---|---|
+| **CbAS** | Refit using predicted success probabilities and an importance ratio | **Core:** connect conditioning, sampling and weighting |
+| **MINs** | Learn an inverse map and select the requested score | Compare: asking for a score beyond the data |
+| **DDOM** | Reweight observed designs and guide conditional diffusion | Advanced: use DDPM as the conditional generator |
+| **BootGen** | Rank-weight data, then augment with proxy-scored samples | Advanced: iterative pseudo-labeling |
 
-::: small
-The *forward map* column is Lecture 5's naive route, and on four of six tasks its answer is not a wrong design but ==not a design at all== — a 32×32 array of pixels that is not an image of a digit, a 64×64 array that is not a face. On Hopper it is a controller scoring $93$ where the dataset already contained one scoring $1915$. Meanwhile MIN beats the dataset's best on five of six. {p}(Kumar & Levine, 2020)
-:::
-
-### The 2023 descendants
-{sub: what happens when the generative model gets better, and when it does not}
-
-::: cols
-::: col DDOM — diffusion as the inverse map {p}(ICML 2023)
-The inverse map is one-to-many; a unimodal model averages the modes. So make it a **conditional diffusion model**, trained on the MINs weights and sampled with classifier-free guidance:
-
-$$\epsilon_\theta(x,t,y) = (1+\gamma)\,\epsilon_{\text{cond}}(x,t,y) - \gamma\,\epsilon_{\text{uncond}}(x,t)$$
-
-On a three-mode test problem the reverse trajectory splits and recovers **all three**. Best mean rank on Design-Bench: $2.8$, against COMs' $3.7$ and gradient ascent's $3.5$.
-:::
-::: col.accent BootGen — and the failure returns {p}(Kim, Berto, Ahn & Park, NeurIPS 2023)
-Generative modelling *"sometimes gives us bad results — lack of generalisability on high-scoring regions."* The stated reason: ==exploiting a single trained model may be dangerous, and fall into out-of-distribution.==
-
-The answer is Lecture 5's, twice over: **rank-based** reweighting, so the weights do not depend on the objective's scale; and **bootstrapping** — several generators, each augmenting its training set with its own top-$K$ samples as scored by a proxy. Average $0.895$ against the dataset's $0.365$ and the best baseline's $0.792$, with the ==highest diversity and novelty== of any method tested.
-:::
-:::
-
-::: reveal
-::: small
-Read the right-hand column again. The generative half, pushed hard enough, meets ==the optimiser-as-adversary== all over again — and answers it with an ensemble and a conservative re-ranker. The two routes of Part III do not stay separate for long.
-:::
-:::
-
-### DDOM — reweight the data, then guide a conditional diffusion model
-{sub: original Part 2 pp. 30–34 · the source algorithm in three steps}
-
-::: flow
-- **Reweight** | give high-scoring observed designs more training weight
-- **Train** | learn a score-conditioned diffusion model
-- **Generate** | ask for a high score and denoise with guidance
-:::
-
-Classifier-free guidance combines conditional and unconditional noise predictions:
-
-$$\hat\epsilon=(1+g)\epsilon_\theta(x_t,t,y)-g\epsilon_\theta(x_t,t),\qquad g\ge0.$$
-
-The source's reweighting ablation reports D'Kitty scores **0.926 → 0.930** and ANT **0.907 → 0.941**; improvements are task dependent. These are the paper's benchmark results, not a guarantee for a new dataset.
+The VAE and DDPM explain **how to represent and sample a distribution**. CbAS explains **how to shift that distribution toward a desired event**. A model's requested or predicted score still needs evaluation.
 
 ::: keypoint
-The score supplied to the generator is a **condition**, not a measured outcome of the generated design. The returned design still needs independent evaluation.
-:::
-
-### BootGen — generated labels do not become new measurements
-{sub: original Part 2 pp. 35–41 · rank weighting and iterative augmentation}
-
-::: flow
-- **Fit** | train a score-conditioned generator with rank weights
-- **Propose** | generate candidates for a requested high score
-- **Relabel** | use a proxy to score and select candidates
-- **Augment** | retrain with the selected pseudo-labelled examples
-:::
-
-The source uses weights proportional to $[k|D|+\operatorname{rank}(y,D)]^{-1}$ before normalisation: higher-ranked designs receive greater weight. This differs from weighting directly by the numerical score gap.
-
-BootGen can expand its training pool without new oracle evaluations. That pool contains **model-generated evidence**, so proxy errors can be reinforced as the loop repeats.
-
-::: keypoint
-This bootstrapping is iterative **pseudo-labelling and augmentation**. It is not the same operation as resampling the original dataset to construct a bootstrap ensemble.
+Follow VAE → DDPM → CbAS first. The original MINs benchmarks and DDOM/BootGen details remain in the appendix for comparison after that chain is clear.
 :::
 
 ### Check — the rhyme worth remembering
@@ -830,6 +779,34 @@ The generator can miss modes, violate constraints or respond poorly to an extrem
 
 ::: keypoint
 ==Both routes need evidence about the final design.== They can be combined: generate plausible candidates, enforce constraints, then rank them with a conservative model.
+:::
+
+### Diffusion Policy — generate a sequence of actions
+{sub: Chi et al. · RSS 2023 · bridge from design generation to robot behavior}
+
+Replace a static design with an **action sequence**, and condition on the robot's recent observations. Training uses expert observation–action pairs and a diffusion noise-prediction loss.
+
+::: figure diffusion-policy-loop | 1000
+A conceptual redraw of the observation-conditioned generation and execution loop. Denoising steps happen inside one decision; they are not physical time steps.
+:::
+
+::: keypoint
+This paper learns to **imitate demonstrated behavior**. The generator is a policy, but its training objective here is not an RL return. [Diffusion Policy](https://diffusion-policy.cs.columbia.edu/)
+:::
+
+### Execute a little, observe again — why action chunks need feedback
+{sub: an illustrative four-action horizon; not the paper's fixed hyperparameters}
+
+At time $t$, generate $(a_t,a_{t+1},a_{t+2},a_{t+3})$ and execute the first **two** actions. At $t+2$, observe again and generate a new four-action sequence from the updated context.
+
+| What changes? | Why it matters |
+|---|---|
+| A sequence replaces one averaged action | Different demonstrated ways around an obstacle can remain different modes. |
+| New observations replace the old context | Receding-horizon execution can respond when the object has moved. |
+| Expert actions provide the training target | No learned reward function or transition simulator is required by this imitation objective. |
+
+::: keypoint
+The execution pattern anticipates **feedback and MPC** (Lectures 9–11). Learning from a fixed demonstration set does not by itself make an algorithm **offline RL** (Lecture 12): inspect the objective, not just where its data came from. [Paper](https://arxiv.org/abs/2303.04137)
 :::
 
 ### Where we are — the design-optimisation duality, complete
@@ -1001,4 +978,83 @@ The importance weight uses the *previous* iterate as the proposal, which correct
 
 ::: small
 **The subtlety both share.** Querying *above* the observed range is extrapolation — the same off-distribution hazard as Lecture 5, moved from input space into output space. Practical systems temper $y_{\text{target}}$ and re-rank the samples with a (conservative) forward model, which marries the two halves of Part III into one pipeline: ==generate to stay valid, score to select==.
+:::
+
+### What it does on real design problems
+{sub: MINs, three tasks · note the third column}
+
+::: table center
+| task | dimension | dataset avg | dataset best | forward map | **MIN** |
+|---|---|---|---|---|---|
+| MNIST, thickest recognisable "3" | 1,024 | 149.0 | 265.0 | *Invalid* | **276.3** |
+| MNIST, variant (b) | 1,024 | 149.0 | 163.0 | *Invalid* | **234.3** |
+| Faces, youngest ($\ge 15$) | 12,288 | 38.7 | $-15.0$ | *Invalid* | **$-12.2$** |
+| Faces, youngest ($\ge 25$) | 12,288 | 41.5 | $-25.0$ | *Invalid* | **$-23.9$** |
+| HopperController reward | 3,843 | 442.9 | 1915.5 | 93.1 | **1960.1** |
+| Pendulum reward | 1,537 | 14.7 | 344.5 | 3.4 | **1000.0** |
+:::
+
+::: small
+The *forward map* column is Lecture 5's naive route, and on four of six tasks its answer is not a wrong design but ==not a design at all== — a 32×32 array of pixels that is not an image of a digit, a 64×64 array that is not a face. On Hopper it is a controller scoring $93$ where the dataset already contained one scoring $1915$. Meanwhile MIN beats the dataset's best on five of six. {p}(Kumar & Levine, 2020)
+:::
+
+### The 2023 descendants
+{sub: what happens when the generative model gets better, and when it does not}
+
+::: cols
+::: col DDOM — diffusion as the inverse map {p}(ICML 2023)
+The inverse map is one-to-many; a unimodal model averages the modes. So make it a **conditional diffusion model**, trained with score-based reweighting and sampled with classifier-free guidance:
+
+$$\epsilon_\theta(x,t,y) = (1+\gamma)\,\epsilon_{\text{cond}}(x,t,y) - \gamma\,\epsilon_{\text{uncond}}(x,t)$$
+
+On a three-mode test problem the reverse trajectory splits and recovers **all three**. Best mean rank on Design-Bench: $2.8$, against COMs' $3.7$ and gradient ascent's $3.5$.
+:::
+::: col.accent BootGen — and the failure returns {p}(Kim, Berto, Ahn & Park, NeurIPS 2023)
+Generative modelling *"sometimes gives us bad results — lack of generalisability on high-scoring regions."* The stated reason: ==exploiting a single trained model may be dangerous, and fall into out-of-distribution.==
+
+The answer is Lecture 5's, twice over: **rank-based** reweighting, so the weights do not depend on the objective's scale; and **bootstrapping** — several generators, each augmenting its training set with its own top-$K$ samples as scored by a proxy. Average $0.895$ against the dataset's $0.365$ and the best baseline's $0.792$, with the ==highest diversity and novelty== of any method tested.
+:::
+:::
+
+::: reveal
+::: small
+Read the right-hand column again. The generative half, pushed hard enough, meets ==the optimiser-as-adversary== all over again — and answers it with an ensemble and a conservative re-ranker. The two routes of Part III do not stay separate for long.
+:::
+:::
+
+### DDOM — reweight the data, then guide a conditional diffusion model
+{sub: original Part 2 pp. 30–34 · the source algorithm in three steps}
+
+::: flow
+- **Reweight** | give high-scoring observed designs more training weight
+- **Train** | learn a score-conditioned diffusion model
+- **Generate** | ask for a high score and denoise with guidance
+:::
+
+Classifier-free guidance combines conditional and unconditional noise predictions:
+
+$$\hat\epsilon=(1+g)\epsilon_\theta(x_t,t,y)-g\epsilon_\theta(x_t,t),\qquad g\ge0.$$
+
+The source's reweighting ablation reports D'Kitty scores **0.926 → 0.930** and ANT **0.907 → 0.941**; improvements are task dependent. These are the paper's benchmark results, not a guarantee for a new dataset.
+
+::: keypoint
+The score supplied to the generator is a **condition**, not a measured outcome of the generated design. The returned design still needs independent evaluation.
+:::
+
+### BootGen — generated labels do not become new measurements
+{sub: original Part 2 pp. 35–41 · rank weighting and iterative augmentation}
+
+::: flow
+- **Fit** | train a score-conditioned generator with rank weights
+- **Propose** | generate candidates for a requested high score
+- **Relabel** | use a proxy to score and select candidates
+- **Augment** | retrain with the selected pseudo-labelled examples
+:::
+
+The source uses weights proportional to $[k|D|+\operatorname{rank}(y,D)]^{-1}$ before normalisation: higher-ranked designs receive greater weight. This differs from weighting directly by the numerical score gap.
+
+BootGen can expand its training pool without new oracle evaluations. That pool contains **model-generated evidence**, so proxy errors can be reinforced as the loop repeats.
+
+::: keypoint
+This bootstrapping is iterative **pseudo-labelling and augmentation**. It is not the same operation as resampling the original dataset to construct a bootstrap ensemble.
 :::

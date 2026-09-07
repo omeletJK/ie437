@@ -133,7 +133,7 @@ One question per Act. This strip returns at every transition — watch the highl
 
 - **Q1 — How do we get a gradient without $f$?** The ==score-function trick==: the dynamics enter the trajectory's law and leave its log-derivative. {p}(Williams, 1992; Sutton et al., 2000)
 - **Q2 — Why is the estimate so noisy?** Causality, baselines, the advantage — and the ==actor–critic==. {p}(Mnih et al., 2016)
-- **Q3 — How do we handle continuous control?** ==DPG / DDPG==: the actor climbs $\nabla_a Q$ instead of searching it. {p}(Silver et al., 2014; Lillicrap et al., 2015)
+- **Q3 — How do we handle continuous control?** DDPG establishes the actor–critic chain rule; ==TD3== repairs critic-related errors, and ==SAC== learns an entropy-regularized stochastic actor.
 - **Q4 — How large a step dare we take?** Trust regions in policy space: ==TRPO== and ==PPO==. {p}(Schulman et al., 2015; 2017)
 
 ### Learning route — make a good action more likely
@@ -143,13 +143,26 @@ One question per Act. This strip returns at every transition — watch the highl
 ::: flow
 - **REINFORCE** | reward weights a log-probability gradient
 - **Baseline / critic** | compare an action with its alternatives
-- **Deterministic actor** | follow a critic's action gradient
-- !**TRPO / PPO** | limit incentives for large updates
+- **DDPG → TD3 / SAC** | compare critic errors and entropy
+- !**PPO versus SAC** | compare update control and data reuse
 :::
 
-**Core goal:** calculate one policy update and one clipped objective. Occupancy measures, the exact optimal baseline, and the Fisher-matrix derivation are in the appendix.
+**Core goal:** calculate a policy update, a TD3 target, an entropy-regularized choice and a clipped objective. Occupancy measures, the exact optimal baseline, and the Fisher-matrix derivation are in the appendix.
 
-We use **finite episodic, undiscounted returns** for the main score-function examples. When discounting is used, its weights must be retained consistently. Reward $r_{t+1}$ follows action $a_t$.
+We use **finite episodic, undiscounted returns** for the main score-function examples. The TD3/SAC examples use discounted critic targets and state their discount explicitly; retain those weights consistently. Reward $r_{t+1}$ follows action $a_t$.
+
+### Reading guide — learn feedback, then test the critic and the data regime
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Schulman et al., *Proximal Policy Optimization Algorithms* (2017)](https://arxiv.org/abs/1707.06347) | How is an advantage estimate used while discouraging large policy changes? |
+| **Compare** | [Haarnoja et al., *Soft Actor-Critic* (ICML 2018)](https://proceedings.mlr.press/v80/haarnoja18b.html); [Fujimoto et al., TD3 (ICML 2018)](https://proceedings.mlr.press/v80/fujimoto18a.html) | What changes when learning from replay, using twin critics or rewarding entropy? |
+| **Apply** | The scalar feedback benchmark and the TD3/entropy calculations in this lecture | Does a better critic score imply a better real controller? |
+
+::: keypoint
+First derive REINFORCE and DDPG. Then compare PPO and SAC as two complete learning procedures. TD3 supplies the prerequisite for Lecture 12's TD3+BC; A3C, GAE and exact trust-region derivations provide supporting context.
+:::
 
 ## Act 1 — a gradient without the model
 {short: ACT 1, num: Act 1}
@@ -443,13 +456,13 @@ The score-function identity gives $\mathbb{E}[\nabla \log \pi \cdot b(s)] = 0$ f
 ::: qstrip
 :::
 
-The source deck states the debt in one sentence: *"although DQN solves problems with high-dimensional observation spaces, it can only handle ==discrete and low-dimensional action spaces=="*. There are exactly two ways to put a continuous action into a Q-network, and both break.
+The source deck states the debt in one sentence: *"although DQN solves problems with high-dimensional observation spaces, it can only handle ==discrete and low-dimensional action spaces=="*. Consider two common choices for using a Q-network with continuous actions.
 
 ::: cols
 ::: col Option 1 — discretise the action
 One output head per action, as in DQN. Take $-1\le a\le 1$ and cut it into bins of width $\Delta a$.
 
-*What is a good $\Delta a$?* Coarse bins mean poor control resolution; fine bins mean $n^d$ heads for $d$ joints. And the optimum is ==never exactly on the grid==.
+*What is a good $\Delta a$?* Coarse bins mean poor control resolution; fine bins mean $n^d$ heads for $d$ joints. And the optimum may lie ==between grid points==.
 :::
 ::: col.accent Option 2 — feed the action in
 One network $Q_w(s,a)$ with the action as an input, so the action stays continuous.
@@ -460,14 +473,14 @@ But the update needs $\max_{a'}Q_w(s',a')$, and $Q_w$ is ==non-convex in $a'$==.
 
 ::: reveal
 ::: small
-Option 1 keeps the update and breaks the action space; option 2 keeps the action space and breaks the update. ==There is no third way that keeps Q-learning==, which is why the answer has to come from the other lineage.
+Discretization changes the action set; generic continuous maximization adds an inner numerical search. Structured critics can make that search easier. Here we pursue a different practical choice: **learn an actor that proposes the action**, then improve it using the critic.
 :::
 :::
 
 ### The wall, measured
 
 ::: widget continuous-argmax {"seed":3}
-One state, one continuous action, and the critic's $Q(s,\cdot)$ across it. Nine bins already cost $9^6 = 531{,}441$ evaluations per transition on a six-joint arm — and still miss the peak by $0.16$. Twenty-one bins close the gap and cost ==85,766,121==. The actor emits its action in ==one forward pass== and refines it by following $\nabla_a Q$: cheap, and only ever *local* — move its start and watch it settle on the wrong hill, which is honest, and is why TD3 and SAC exist.
+One state, one continuous action, and the critic's $Q(s,\cdot)$ across it. Nine bins already cost $9^6 = 531{,}441$ evaluations per transition on a six-joint arm — and still miss the peak by $0.16$. Twenty-one bins close the gap and cost ==85,766,121==. The actor emits its action in ==one forward pass== and refines it by following $\nabla_a Q$: cheap, and only ever *local* — move its start and watch it settle on the wrong hill, which exposes local optimization. TD3 addresses critic-related errors and SAC changes the objective; neither guarantees finding the best peak.
 :::
 
 ### The deterministic fix — the actor climbs the critic
@@ -533,24 +546,6 @@ A step of size 0.1 gives $\theta_{\mathrm{new}}=0+0.1(4)=0.4$. The critic's scor
 The actor follows the **critic's slope**, without differentiating the environment. If the critic is wrong around 0.4, an improved predicted value may still mean worse real performance.
 :::
 
-### A deterministic actor explores nothing
-
-A deterministic policy has no randomness to explore with, and the obvious repair — act uniformly at random — is a poor one. The source deck gives three reasons, and the third is unusual in this course:
-
-- random actions drive the policy update into regions where the critic ==is not accurate== (Lecture 5's adversarial-optimiser hazard, in an RL costume);
-- exploring *unseen states* needs action that is **consistent along the episode**, not resampled each step;
-- and on real hardware, ==rapid random input changes can strain actuators==.
-
-::: reveal
-::: block The pendulum argument | the source deck's own picture
-Swinging a pole upright takes a *sustained* push in one direction, then alternation near the top. Independent zero-mean noise often cancels across steps and may explore sustained maneuvers inefficiently, so a uniformly random policy might eventually find the swing-up — after enormously many samples.
-:::
-
-::: small
-Hence the ==Ornstein–Uhlenbeck== process, $\,dx_t = -\kappa\,x_t\,dt + \sigma\,dW_t$, added to $\mu_\theta(s)$: noise that is *temporally correlated*, so exploration pushes rather than jitters.
-:::
-:::
-
 ### $\mu_\theta(s)$ and $K$ — compare their feedback role
 
 ::: lede
@@ -575,6 +570,100 @@ Same **role** — a state-to-action feedback rule — but different learning pro
 ::: small
 The Act 1 widget uses a simple LQ benchmark with a known Riccati answer to assess a learned gain. Success on this example illustrates the feedback role; it is not a general convergence guarantee for policy gradients or DDPG.
 :::
+:::
+
+### A deterministic actor explores nothing
+
+A deterministic policy has no randomness to explore with, and the obvious repair — act uniformly at random — is a poor one. The source deck gives three reasons, and the third is unusual in this course:
+
+- random actions drive the policy update into regions where the critic ==is not accurate== (Lecture 5's adversarial-optimiser hazard, in an RL costume);
+- exploring *unseen states* needs action that is **consistent along the episode**, not resampled each step;
+- and on real hardware, ==rapid random input changes can strain actuators==.
+
+::: reveal
+::: block The pendulum argument | the source deck's own picture
+Swinging a pole upright takes a *sustained* push in one direction, then alternation near the top. Independent zero-mean noise often cancels across steps and may explore sustained maneuvers inefficiently, so a uniformly random policy might eventually find the swing-up — after enormously many samples.
+:::
+
+::: small
+Hence the ==Ornstein–Uhlenbeck== process, $\,dx_t = -\kappa\,x_t\,dt + \sigma\,dW_t$, added to $\mu_\theta(s)$: noise that is *temporally correlated*, so exploration pushes rather than jitters.
+:::
+:::
+
+### TD3 — keep the deterministic actor, repair three critic-related failures
+{sub: Fujimoto, van Hoof & Meger · ICML 2018 · Addressing Function Approximation Error in Actor-Critic Methods}
+
+A DDPG actor can exploit an erroneously high critic value. TD3 changes **the target and update timing**. Here $d$ is the terminal indicator and $\epsilon$ is zero-mean Gaussian target noise.
+
+| Change | Operation | Purpose |
+|---|---|---|
+| Clipped double Q | use the smaller of two target-critic values | reduce overly optimistic bootstrap targets |
+| Delayed policy updates | update the actor less often than the critics | allow critic estimates to improve before the next actor step |
+| Target policy smoothing | add clipped noise to the target action | average over nearby actions instead of rewarding a narrow spurious peak |
+
+$$\begin{aligned}
+\tilde a'&=\operatorname{clip}\big(\mu_{\theta^-}(s')+\operatorname{clip}(\epsilon,-c,c),a_{\min},a_{\max}\big),\\
+y&=r+\gamma(1-d)\min_{i=1,2}Q_{w_i^-}(s',\tilde a').
+\end{aligned}$$
+
+::: keypoint
+The two critics each regress to this target. On delayed steps the actor climbs the **first** critic. Target smoothing noise is separate from exploration noise used to collect data. [TD3](https://proceedings.mlr.press/v80/fujimoto18a.html)
+:::
+
+### Calculate a TD3 target — and keep its guarantee in proportion
+
+Let $r=1$, $\gamma=0.9$, and $d=0$. A target actor proposes 0.5; the clipped target noise is 0.1, so the smoothed action is **0.6** within the bounds $[-1,1]$.
+
+| Value at that same next action | Estimate |
+|---|---|
+| First target critic | $Q_{w_1^-}(s',0.6)=8$ |
+| Second target critic | $Q_{w_2^-}(s',0.6)=6$ |
+
+$$y_{\rm TD3}=1+0.9\min(8,6)=6.4.$$
+
+Using the first estimate alone would give **8.2** at this action. If the transition were terminal, both targets would instead be **1**. An illustrative delay of two means two critic updates for each actor update.
+
+::: keypoint
+A smaller target addresses one error mechanism; it is not a certified lower bound on the true return. Critics can share errors. Lecture 12 keeps these TD3 mechanics and adds a behaviour-cloning term for fixed-data learning.
+:::
+
+### SAC — reward good actions while preserving policy entropy
+{sub: Haarnoja et al. · ICML 2018 · an entropy-regularized objective}
+
+SAC trains a **stochastic actor** from replay. Its discounted episodic objective includes policy entropy:
+
+$$J(\pi)=\mathbb E_\pi\!\left[\sum_{t=0}^{T-1}\gamma^t\big(r_{t+1}+\alpha_H\mathcal H(\pi(\cdot\mid s_t))\big)\right].$$
+
+Here $\alpha_H>0$ is the **entropy temperature**, not the gradient step size. Consider a one-step, two-action illustration with rewards 2 and 1.8, and $\alpha_H=0.5$:
+
+| Policy | Expected reward | Entropy, using natural logs | Reward + temperature × entropy |
+|---|---|---|---|
+| Always choose the first action | 2 | 0 | **2** |
+| Choose each with probability 0.5 | 1.9 | $\log2\approx0.693$ | **2.247** |
+
+::: keypoint
+The mixture wins **between these two candidates** because the objective values diversity as well as reward. This discrete illustration explains the entropy term; continuous SAC uses a probability density and differential entropy. [Soft Actor-Critic](https://proceedings.mlr.press/v80/haarnoja18b.html)
+:::
+
+### SAC in the learning loop — a soft target and a stochastic actor
+{sub: twin-Q formulation from Soft Actor-Critic Algorithms and Applications · 2018/2019}
+
+Draw a next action $a'\sim\pi_\theta(\cdot\mid s')$ for each replayed transition. Train both critics toward
+
+$$y=r+\gamma(1-d)\left[\min_{i=1,2}Q_{w_i^-}(s',a')-\alpha_H\log\pi_\theta(a'\mid s')\right].$$
+
+The actor minimizes, over replayed states and newly sampled current-policy actions,
+
+$$L_\pi=\mathbb E_{s\sim D,\,a\sim\pi_\theta}\left[\alpha_H\log\pi_\theta(a\mid s)-\min_iQ_{w_i}(s,a)\right].$$
+
+::: flow
+- **Replay** | reuse real transitions for critic fitting
+- **Sample actions** | use the current stochastic actor
+- **Improve** | trade critic value against loss of entropy
+:::
+
+::: keypoint
+The actor can use the reparameterization idea from Lecture 6. The original ICML version used a separate value network; these equations are the later twin-Q variant. Neither replay nor entropy fixes missing coverage in a fixed offline log. [Algorithms and Applications](https://arxiv.org/abs/1812.05905)
 :::
 
 ### Check — the deterministic gradient
@@ -671,6 +760,22 @@ PPO removes the incentive to increase a good action too much or decrease a bad o
 The clipped objective as a function of the ratio, for a good action ($\hat A>0$) and a bad one ($\hat A<0$). Read the slopes: for $\hat A>0$ the gradient is ==exactly zero above $1+\epsilon$== — no reward for making a good action still likelier. For $\hat A<0$ it is zero *below* $1-\epsilon$ but ==stays alive above $1+\epsilon$==: an action already too probable and known to be bad keeps being pushed down. The clip only removes the incentive that would take you out of the region.
 :::
 
+### PPO and SAC — compare complete learning procedures
+{sub: Schulman et al. (2017) · Haarnoja et al. (2018)}
+
+| Question | PPO | SAC |
+|---|---|---|
+| Which data? | recent rollouts under the collection policy; reused for a limited number of epochs | a replay buffer containing transitions from earlier policies |
+| What guides the actor? | an estimated advantage with a clipped probability-ratio objective | soft Q estimates and an entropy term |
+| What controls the update? | clipping changes incentives for probability-ratio changes | actor/critic optimization and an entropy temperature |
+| How is exploration represented? | stochastic collection policy; an entropy bonus is often added | entropy is part of the stated maximum-entropy objective |
+
+Both can use stochastic neural policies in continuous control. PPO clipping is not a hard KL guarantee; SAC's replay is not a guarantee that arbitrary offline data will suffice.
+
+::: keypoint
+Compare **return, environment steps and computation** under the same evaluation protocol. TD3 is a deterministic off-policy comparison; Lecture 12 removes further interaction. [PPO](https://arxiv.org/abs/1707.06347) · [SAC](https://proceedings.mlr.press/v80/haarnoja18b.html)
+:::
+
 ### Check — why large policy changes are discouraged
 {q: 4}
 
@@ -718,7 +823,7 @@ One orphaning move, made twice: ==delete the model, sample instead.==
 Lecture 1 and TRPO both control where a local approximation is trusted, using different metrics and acceptance rules. PPO clipping instead changes incentives in its sampled objective; it does not impose a hard KL bound. Lecture 12 adds another issue: evaluating a changed policy using a fixed log.
 
 ::: small
-Lecture 11 asks the question both extensions have been avoiding: if deleting the model cost us this much, what happens if we *learn* it — and plan with it, and let an optimal-control teacher train a policy student?
+Lecture 11 adds a learned model: MBPO uses SAC to learn from short synthetic rollouts, while Dreamer trains an actor and critic in latent imagination. Lecture 12 later starts from TD3 and adds behavior cloning when fresh interaction is unavailable.
 :::
 :::
 
@@ -730,7 +835,7 @@ The dynamics never solved, only experienced — and the controller learned, not 
 ### Questions?
 {layout: standout}
 
-Read against Lecture 8's closing and the symmetry is exact: value-based RL kept the Bellman equation and threw away the model; policy-based RL kept the feedback law and threw away the dynamics. Two parents, one orphaning move. And the through-line of every algorithm today is a single expression, $\E[\nabla_\theta\log\pi_\theta\cdot\hat A]$ — they differ only in *which advantage they trust* and *how large a step they dare*.
+Lecture 8 learns action values; this lecture learns feedback policies. Explain the policy-gradient estimate first, then distinguish **DDPG/TD3's deterministic actor**, **PPO's clipped update**, and **SAC's entropy-regularized learning**. Their objectives, data and estimators differ. Which learned model could help each one use fewer real interactions?
 
 ## Appendix — backup slides
 {short: APPENDIX}
@@ -808,12 +913,12 @@ The derivation assumes an invertible positive-definite local Fisher matrix and a
 :::
 
 ### Backup 6 — the policy-based zoo, placed
-All of them are $\E[\nabla_\theta\log\pi_\theta\,\hat A]$, or its deterministic form $\E[\nabla_\theta\mu_\theta\nabla_aQ]$. They differ only in ==which advantage they trust== (Act 2) and ==how large a step they dare== (Act 4).
+These methods share policy optimization, but differ in objectives, estimators, data distributions and update rules. SAC explicitly includes entropy; PPO uses a clipped surrogate. A single vanilla policy-gradient formula does not specify every algorithm below.
 
 | Method | Key idea | Reference |
 |---|---|---|
 | REINFORCE | Monte-Carlo policy gradient, no critic | Williams, 1992 |
-| A3C / A2C | parallel actor–critic; parallelism replaces replay | Mnih et al., 2016 |
+| A3C / A2C | parallel actor–critic; recent diverse rollouts | Mnih et al., 2016 |
 | GAE | $\lambda$-weighted advantage | Schulman et al., 2016 |
 | DPG / DDPG | deterministic actor climbs $\nabla_a Q$; off-policy | Silver 2014; Lillicrap 2015 |
 | TD3 | twin critics, delayed actor — the overestimation fix | Fujimoto et al., 2018 |

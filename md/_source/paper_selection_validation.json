@@ -1,0 +1,571 @@
+{
+  "review_date": "2026-09-07",
+  "scope": "Final local build: all decks checked; changed Chapters 5/10/11 rechecked after corrections. Public deployment is verified separately.",
+  "decks": 14,
+  "slides": 872,
+  "quizzes": 56,
+  "widget_instances": 75,
+  "pdfs": 14,
+  "pdf_pages": 872,
+  "pdf_pages_visually_reviewed": 61,
+  "original_source_pdf_count": 13,
+  "original_source_pages": 1102,
+  "source_topic_blocks": 123,
+  "source_heading_references": 528,
+  "source_numerical_checks": 25,
+  "new_numerical_checks": 16,
+  "source_sha256": {
+    "ch00_introduction.md": "14abdbc53ea57809bff04e17a7f495d2c66e7ca2c081c6aca8d9b160a08c44f9",
+    "ch01_optimization_modeling.md": "3866280c3aa555f779fbf816589f475993af7c9961ce14aeea669d26a9da8e89",
+    "ch02_bayesian_statistics.md": "771c5bf00633d33ac13b8c22465019aa5e6e0a418a3ac7bc61a9327255cc659a",
+    "ch03_bayesian_network.md": "72e9230c136b47244b6e33a6bf1180740aa1cec8f48f1ac7b9e7c26ee60b9de2",
+    "ch04_bayesian_optimization.md": "e13f2a1778d00a3d17e7e96a4ec5a1eaba621f26ed09056963ad7b87744e8184",
+    "ch05_surrogate_design_optimization.md": "e1a01509a3faf1266431c1369ae90a67109639b91183577440090b8c1486d99a",
+    "ch06_generative_design_optimization.md": "0da79eb129a6d9de0a99c7684dce28976bf263a480d1fc8bab88e758ffdc3774",
+    "ch07_mdp_dp.md": "a228345f679b1ddac95c3d6c63156fa47c15fdd52dd6578dcd186d74b8f3f21b",
+    "ch08_value_based_rl.md": "046e02afe4b44d1cc4842007c8fd13ab900d8972d1cd1314b2c2a53b91b143b4",
+    "ch09_optimal_control.md": "bdbf9de8f748d26f36cc618f70af8b390a94e6406ae60da32d3f8d5234891abe",
+    "ch10_policy_based_rl.md": "a7c9c1270b68140dd4f7ef0cd59453c9e9b8787f8e7cd64222f5d316103fbff1",
+    "ch11_model_based_rl.md": "5bb3b737f3f8f3e0097db3c1ba5ab204cc912d4fede7f7561d3ce7c3e8bce26c",
+    "ch12_offline_rl.md": "f421dea44f6a5b30a7c4d02a726118381d7fbb268bdf4d0fcfd544389cf50f99",
+    "ch99_probability_review.md": "bb7176fda3a5792600dbb23199e5e128598bada27c1413d40c599c75f659e258"
+  },
+  "rendering_results": [
+    {
+      "file": "ch00_introduction.html",
+      "slides": 67,
+      "quizzes": 4,
+      "widgets": 6,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch01_optimization_modeling.html",
+      "slides": 90,
+      "quizzes": 4,
+      "widgets": 10,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch02_bayesian_statistics.html",
+      "slides": 87,
+      "quizzes": 4,
+      "widgets": 13,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch03_bayesian_network.html",
+      "slides": 67,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch04_bayesian_optimization.html",
+      "slides": 61,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch05_surrogate_design_optimization.html",
+      "slides": 50,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch06_generative_design_optimization.html",
+      "slides": 66,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch07_mdp_dp.html",
+      "slides": 56,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch08_value_based_rl.html",
+      "slides": 57,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch09_optimal_control.html",
+      "slides": 52,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch10_policy_based_rl.html",
+      "slides": 62,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch11_model_based_rl.html",
+      "slides": 69,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch12_offline_rl.html",
+      "slides": 49,
+      "quizzes": 4,
+      "widgets": 6,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch99_probability_review.html",
+      "slides": 39,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    }
+  ],
+  "visual_review_pages": [
+    {
+      "file": "ch00-04.png",
+      "deck": "ch00_introduction",
+      "page": 4,
+      "title": "Reading guide — learn a solver, then recognise the real decision"
+    },
+    {
+      "file": "ch00-53.png",
+      "deck": "ch00_introduction",
+      "page": 53,
+      "title": "A representative NCO paper — learn the next city"
+    },
+    {
+      "file": "ch01-08.png",
+      "deck": "ch01_optimization_modeling",
+      "page": 8,
+      "title": "Reading guide — certify an optimum, then differentiate a decision"
+    },
+    {
+      "file": "ch01-54.png",
+      "deck": "ch01_optimization_modeling",
+      "page": 54,
+      "title": "OptNet in one dimension — the decision is the layer output"
+    },
+    {
+      "file": "ch02-08.png",
+      "deck": "ch02_bayesian_statistics",
+      "page": 8,
+      "title": "Reading guide — one Bayesian calculation, several observation models"
+    },
+    {
+      "file": "ch03-08.png",
+      "deck": "ch03_bayesian_network",
+      "page": 8,
+      "title": "Reading guide — representation, inference, learning and decisions"
+    },
+    {
+      "file": "ch04-08.png",
+      "deck": "ch04_bayesian_optimization",
+      "page": 8,
+      "title": "Reading guide — from an expensive experiment to the next measurement"
+    },
+    {
+      "file": "ch04-34.png",
+      "deck": "ch04_bayesian_optimization",
+      "page": 34,
+      "title": "Two representative BO applications — the same loop, different experiments"
+    },
+    {
+      "file": "ch05-09.png",
+      "deck": "ch05_surrogate_design_optimization",
+      "page": 9,
+      "title": "Reading guide — one failure, one main corrective objective"
+    },
+    {
+      "file": "ch05-34.png",
+      "deck": "ch05_surrogate_design_optimization",
+      "page": 34,
+      "title": "How much of each method to learn"
+    },
+    {
+      "file": "ch05-48.png",
+      "deck": "ch05_surrogate_design_optimization",
+      "page": 48,
+      "title": "NEMO — how easily could the model have been talked into it?"
+    },
+    {
+      "file": "ch05-49.png",
+      "deck": "ch05_surrogate_design_optimization",
+      "page": 49,
+      "title": "RoMA — flatten the surface the optimiser is standing on"
+    },
+    {
+      "file": "ch05-50.png",
+      "deck": "ch05_surrogate_design_optimization",
+      "page": 50,
+      "title": "What the benchmark says"
+    },
+    {
+      "file": "ch06-09.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 9,
+      "title": "Reading guide — model designs before asking for better ones"
+    },
+    {
+      "file": "ch06-46.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 46,
+      "title": "From conditioning to design methods — compare the mechanisms"
+    },
+    {
+      "file": "ch06-50.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 50,
+      "title": "Diffusion Policy — generate a sequence of actions"
+    },
+    {
+      "file": "ch06-51.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 51,
+      "title": "Execute a little, observe again — why action chunks need feedback"
+    },
+    {
+      "file": "ch06-63.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 63,
+      "title": "What it does on real design problems"
+    },
+    {
+      "file": "ch06-64.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 64,
+      "title": "The 2023 descendants"
+    },
+    {
+      "file": "ch06-65.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 65,
+      "title": "DDOM — reweight the data, then guide a conditional diffusion model"
+    },
+    {
+      "file": "ch06-66.png",
+      "deck": "ch06_generative_design_optimization",
+      "page": 66,
+      "title": "BootGen — generated labels do not become new measurements"
+    },
+    {
+      "file": "ch07-09.png",
+      "deck": "ch07_mdp_dp",
+      "page": 9,
+      "title": "Reading guide — understand the backup before the algorithm"
+    },
+    {
+      "file": "ch08-09.png",
+      "deck": "ch08_value_based_rl",
+      "page": 9,
+      "title": "Reading guide — from a tabular target to a learned value function"
+    },
+    {
+      "file": "ch08-46.png",
+      "deck": "ch08_value_based_rl",
+      "page": 46,
+      "title": "Double DQN — select with one estimate, evaluate with another"
+    },
+    {
+      "file": "ch09-09.png",
+      "deck": "ch09_optimal_control",
+      "page": 9,
+      "title": "Reading guide — solve the same system using different mathematical tools"
+    },
+    {
+      "file": "ch09-40.png",
+      "deck": "ch09_optimal_control",
+      "page": 40,
+      "title": "One scalar system, three views of the same answer"
+    },
+    {
+      "file": "ch10-07.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 7,
+      "title": "The roadmap — four questions"
+    },
+    {
+      "file": "ch10-08.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 8,
+      "title": "Learning route — make a good action more likely"
+    },
+    {
+      "file": "ch10-09.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 9,
+      "title": "Reading guide — learn feedback, then test the critic and the data regime"
+    },
+    {
+      "file": "ch10-30.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 30,
+      "title": "The wall Lecture 8 left"
+    },
+    {
+      "file": "ch10-31.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 31,
+      "title": "The wall, measured"
+    },
+    {
+      "file": "ch10-37.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 37,
+      "title": "TD3 — keep the deterministic actor, repair three critic-related failures"
+    },
+    {
+      "file": "ch10-38.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 38,
+      "title": "Calculate a TD3 target — and keep its guarantee in proportion"
+    },
+    {
+      "file": "ch10-39.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 39,
+      "title": "SAC — reward good actions while preserving policy entropy"
+    },
+    {
+      "file": "ch10-40.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 40,
+      "title": "SAC in the learning loop — a soft target and a stochastic actor"
+    },
+    {
+      "file": "ch10-48.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 48,
+      "title": "PPO and SAC — compare complete learning procedures"
+    },
+    {
+      "file": "ch10-52.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 52,
+      "title": "What we hand on"
+    },
+    {
+      "file": "ch10-54.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 54,
+      "title": "Questions?"
+    },
+    {
+      "file": "ch10-61.png",
+      "deck": "ch10_policy_based_rl",
+      "page": 61,
+      "title": "Backup 6 — the policy-based zoo, placed"
+    },
+    {
+      "file": "ch11-07.png",
+      "deck": "ch11_model_based_rl",
+      "page": 7,
+      "title": "Lecture 8 promised this lecture, in three lines"
+    },
+    {
+      "file": "ch11-08.png",
+      "deck": "ch11_model_based_rl",
+      "page": 8,
+      "title": "The roadmap — four questions"
+    },
+    {
+      "file": "ch11-09.png",
+      "deck": "ch11_model_based_rl",
+      "page": 9,
+      "title": "Learning route — use a learned model, then check what it changes"
+    },
+    {
+      "file": "ch11-10.png",
+      "deck": "ch11_model_based_rl",
+      "page": 10,
+      "title": "Reading guide — choose how much of the learned model to trust"
+    },
+    {
+      "file": "ch11-40.png",
+      "deck": "ch11_model_based_rl",
+      "page": 40,
+      "title": "Three routes from a model to a policy"
+    },
+    {
+      "file": "ch11-42.png",
+      "deck": "ch11_model_based_rl",
+      "page": 42,
+      "title": "What limits direct policy optimization?"
+    },
+    {
+      "file": "ch11-44.png",
+      "deck": "ch11_model_based_rl",
+      "page": 44,
+      "title": "Route 3 — imagine the data"
+    },
+    {
+      "file": "ch11-48.png",
+      "deck": "ch11_model_based_rl",
+      "page": 48,
+      "title": "MBPO — branch short rollouts from real data"
+    },
+    {
+      "file": "ch11-49.png",
+      "deck": "ch11_model_based_rl",
+      "page": 49,
+      "title": "Dreamer — learn feedback inside a latent world model"
+    },
+    {
+      "file": "ch11-50.png",
+      "deck": "ch11_model_based_rl",
+      "page": 50,
+      "title": "What imagination teaches — calculate one target"
+    },
+    {
+      "file": "ch11-51.png",
+      "deck": "ch11_model_based_rl",
+      "page": 51,
+      "title": "Three uses of a model — compare the decision loops"
+    },
+    {
+      "file": "ch11-52.png",
+      "deck": "ch11_model_based_rl",
+      "page": 52,
+      "title": "From Dreamer to DreamerV3 — read the evidence at the right level"
+    },
+    {
+      "file": "ch11-53.png",
+      "deck": "ch11_model_based_rl",
+      "page": 53,
+      "title": "The reunion, and the limits"
+    },
+    {
+      "file": "ch11-58.png",
+      "deck": "ch11_model_based_rl",
+      "page": 58,
+      "title": "What we hand on"
+    },
+    {
+      "file": "ch11-67.png",
+      "deck": "ch11_model_based_rl",
+      "page": 67,
+      "title": "Guided policy search — solve it by alternation"
+    },
+    {
+      "file": "ch11-68.png",
+      "deck": "ch11_model_based_rl",
+      "page": 68,
+      "title": "What makes it work — and where the trust region reappears"
+    },
+    {
+      "file": "ch11-69.png",
+      "deck": "ch11_model_based_rl",
+      "page": 69,
+      "title": "The teacher that watches the student — PLATO"
+    },
+    {
+      "file": "ch12-08.png",
+      "deck": "ch12_offline_rl",
+      "page": 8,
+      "title": "Reading guide — three main responses to a fixed dataset"
+    },
+    {
+      "file": "ch12-20.png",
+      "deck": "ch12_offline_rl",
+      "page": 20,
+      "title": "TD3+BC — one line, and the price of the family"
+    },
+    {
+      "file": "ch12-29.png",
+      "deck": "ch12_offline_rl",
+      "page": 29,
+      "title": "One dial, and both ends are bad"
+    },
+    {
+      "file": "ch12-30.png",
+      "deck": "ch12_offline_rl",
+      "page": 30,
+      "title": "One offline problem, three different interventions"
+    },
+    {
+      "file": "ch99-04.png",
+      "deck": "ch99_probability_review",
+      "page": 4,
+      "title": "Reading guide — read the tool where the course first needs it"
+    }
+  ]
+}

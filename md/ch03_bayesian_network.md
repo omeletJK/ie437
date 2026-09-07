@@ -111,6 +111,19 @@ So far the course has *modelled* (Ch 1–2). Here modelling and deciding are joi
 By the end, you should be able to ==compute a small posterior, explain a collider, and choose an action from expected utilities.== The full elimination and sequential-decision derivations are backup material.
 :::
 
+### Reading guide — representation, inference, learning and decisions
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Koller & Friedman, *Probabilistic Graphical Models* (2009): selected sections on Bayesian networks and inference](https://mitpress.mit.edu/9780262013192/probabilistic-graphical-models/) | What factorization and independence claims does a graph encode? |
+| **Compare** | Discrete HMM filtering versus the linear Gaussian Kalman update | Which quantities change when a state becomes continuous? |
+| **Apply** | The original alarm, aircraft and PhD-decision examples | Which question asks for a probability, a learned model, or an action? |
+
+::: keypoint
+The book is a reference for selected concepts. The core exercise is a small factorization and one predict–observe–update step; structure search and advanced time-series models are second-pass reading.
+:::
+
 ## Act 1 — the joint as a graph
 {short: ACT 1, num: Act 1}
 

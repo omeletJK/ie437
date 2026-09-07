@@ -123,7 +123,7 @@ Backup 4 of Lecture 8 set model-based RL aside with a ledger. Here it is, and he
 
 ::: reveal
 ::: small
-And Lecture 10 leaves something more specific: ==the trust-region machinery==. It returns in Act 4, unchanged, as the constraint $D_{\mathrm{KL}}\!\big(p(\tau)\,\|\,\bar p(\tau)\big)\le\epsilon$ that keeps a trajectory optimiser inside the region where its local model is believable. Same object, third appearance.
+Lecture 10 supplies **SAC** for MBPO's policy learner and **actor–critic learning** for understanding Dreamer. Its KL constraints also help read the guided-policy-search extension: a similar local-update idea, now applied to trajectory distributions.
 :::
 :::
 
@@ -135,7 +135,7 @@ And Lecture 10 leaves something more specific: ==the trust-region machinery==. I
 - **Q1 — Why bring a model back at all?** Sample efficiency, and ==the spectrum== it opens between model-free and fully differentiable control.
 - **Q2 — How do we use a learned model?** ==Planning== over $f_\theta$ — Lecture 9's optimal control, run on learned dynamics, and re-planned every step.
 - **Q3 — Can the planner itself be trained?** ==Differentiable MPC== — backpropagate *through* the optimiser, and fit the model to the task.
-- **Q4 — How do the lineages reunite?** Three routes from a model to a policy, of which ==guided policy search== is the clearest: control teaches, a network learns. {p}(Levine & Koltun, 2013)
+- **Q4 — How do the lineages reunite?** Compare ==Dyna → MBPO== with ==Dreamer==: use the model to create short training transitions, or learn an actor and critic in latent imagination. Guided policy search supplies a teacher-based comparison.
 
 ### Learning route — use a learned model, then check what it changes
 
@@ -148,9 +148,22 @@ And Lecture 10 leaves something more specific: ==the trust-region machinery==. I
 - !**Learn a policy** | differentiate, imitate, or simulate
 :::
 
-**Core goal:** calculate a two-step plan and an imagined Q update. Differentiable MPC and guided policy search are the **advanced extension**; their KKT derivations remain in the appendix.
+**Core goal:** calculate a two-step plan and an imagined value target, then distinguish PETS/MPC, MBPO and Dreamer. Differentiable MPC is an advanced bridge to Lecture 1; detailed KKT and GPS/PLATO derivations remain in the appendix.
 
 A good model should support good decisions on the states the controller will actually visit. Small training error alone cannot establish that.
+
+### Reading guide — choose how much of the learned model to trust
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Janner et al., *When to Trust Your Model: Model-Based Policy Optimization* (NeurIPS 2019)](https://arxiv.org/abs/1906.08253) | Why start short model rollouts from real states? |
+| **Compare** | [Hafner et al., *Dream to Control: Learning Behaviors by Latent Imagination* (ICLR 2020)](https://arxiv.org/abs/1912.01603) | How can a latent world model train an actor and critic? |
+| **Apply** | The original control cases and [Hafner et al., *Mastering Diverse Control Tasks through World Models* (Nature 2025)](https://www.nature.com/articles/s41586-025-08744-2) | What does the later Dreamer result demonstrate beyond the teaching diagram? |
+
+::: keypoint
+Dyna and PETS establish the model-use choices; MBPO and Dreamer are the main comparison. PILCO connects to GPs. Detailed GPS/PLATO and KKT-based MPC derivations remain research extensions.
+:::
 
 ## Act 1 — the spectrum of model use
 {short: ACT 1, num: Act 1}
@@ -599,24 +612,16 @@ A model can spend all its capacity predicting a visually large but decision-irre
 ::: qstrip
 :::
 
-::: flow
-- **1 · Backpropagate** | the model into the policy — PILCO
-- !**2 · Imitate** | an optimal-control teacher — guided policy search
-- **3 · Simulate** | data from the model — Dyna
-:::
-
-::: reveal
-::: keypoint
-Each route is one of the course's earlier chapters, ==feeding its own data-driven descendant.==
-:::
-:::
-
-::: reveal
-| route | who teaches | who learns |
+| How the model helps | Representative method | What the policy learner receives |
 |---|---|---|
-| backpropagate | Lecture 9's shooting view — a chain of Jacobians | the policy parameters $\theta$ |
-| imitate | Lecture 9's iLQR, as an oracle | Lecture 10's $\pi_\theta$ |
-| simulate | Lecture 7's planning backup | Lecture 8's $Q$-learning |
+| **Differentiate predictions** | PILCO; the original Dreamer | Gradients of predicted future performance |
+| **Supply a teacher** | Guided policy search | Actions from an optimized local controller |
+| **Supply experience** | Dyna → MBPO | Simulated transitions for value/policy updates |
+
+**Read the first two as connections to control.** Then follow Dyna → MBPO and compare Dreamer's latent imagination. Dreamer also trains a critic; these categories describe uses of a model, not mutually exclusive algorithm families.
+
+::: keypoint
+Ask **what the model produces and how that output updates the policy**. The detailed GPS/PLATO derivations are retained in the appendix.
 :::
 
 ### Route 1 — backpropagate the model into the policy
@@ -635,22 +640,18 @@ The result is the data-efficiency headline of the field: real cart-pole swing-up
 :::
 :::
 
-### Why route 1 is not the answer
+### What limits direct policy optimization?
 
-::: cols
-::: col What PILCO fixed
-Model bias is worst when data is scarce and no prior structure is available: many different deterministic functions fit the same handful of transitions, and they disagree wildly between the points. A ==probabilistic== model reports that disagreement instead of picking one curve, and planning can then respect it.
-:::
-::: col.red What remains broken
-- **Parameter sensitivity** — the same pathology as shooting methods. Policy parameters ==couple every time step==, so there is no LQR-like second-order structure and no dynamic programming to exploit.
-- **Vanishing and exploding gradients** — a product of many Jacobians, exactly as in backpropagation through time. And unlike an LSTM, ==we cannot choose a convenient dynamics; nature chose it.==
-:::
-:::
+| Issue | Why it matters | What can help |
+|---|---|---|
+| **Model bias** | Optimizing predicted reward can exploit dynamics errors. | Real-data collection, uncertainty estimates and limited imagination horizons |
+| **Long gradient chains** | Repeated Jacobian products can vanish or explode. | Suitable representations, shorter horizons and bootstrapped value estimates |
+| **Uncertain predictions** | A probabilistic model can still be miscalibrated. | Check predictions where the current policy actually visits |
 
-::: reveal
-::: small
-Note the contrast with Lecture 10. The policy gradient's score-function form has ==no product of Jacobians at all== — the dynamics vanished. With enough samples it is the more stable estimator. That is why route 3 exists.
-:::
+PILCO propagates uncertainty in a GP model. Dreamer later learns a latent state model and combines imagination with a critic. Neither removes the need to learn useful dynamics from real experience.
+
+::: keypoint
+Direct gradients are one design choice. Score-function policy gradients avoid differentiating the dynamics but introduce their own variance; neither estimator is uniformly better in every problem.
 :::
 
 ### Route 2 — let optimal control teach
@@ -673,72 +674,10 @@ Three rows, three lectures. The middle row constrains the trajectory to be *phys
 :::
 :::
 
-### Guided policy search — solve it by alternation
-
-The constrained program, with an augmented Lagrangian:
-
-$$\bar{\mathcal L}(\tau,\theta,\lambda) = c(\tau) + \sum_t \lambda_t^\top\big(\pi_\theta(x_t)-u_t\big) + \sum_t \rho_t\lVert\pi_\theta(x_t)-u_t\rVert^2$$
-
-::: flow
-- !**1 · Trajectory optimisation** | $\tau^*\leftarrow \min_\tau \bar{\mathcal L}$ — via iLQR
-- **2 · Supervised fit** | $\theta^*\leftarrow \min_\theta \bar{\mathcal L}$ — via SGD
-- **3 · Dual update** | $\lambda \leftarrow \lambda + \alpha\, d\bar{\mathcal L}/d\lambda$
-:::
-
-::: reveal
-Step 1 is Lecture 9. Step 2 is plain supervised learning. Step 3 is dual gradient ascent — and its derivation uses the same envelope argument as Act 3: at the inner optimum $d\mathcal L/dx^*=0$, so ==the gradient through the $\arg\min$ collapses to a single term.==
-:::
-
-::: reveal
-::: keypoint
-And the direction of teaching is not one-way: ==the optimal-control teacher adapts to the learner==, avoiding actions the student cannot mimic.
-:::
-:::
-
-### What makes it work — and where the trust region reappears
-
-In the stochastic form, the local controller is constrained to stay near the previous one:
-
-$$\min_p \sum_t \E_{p(x_t,u_t)}\big[c(x_t,u_t)\big] \quad\text{s.t.}\quad \hl{D_{\mathrm{KL}}\big(p(\tau)\,\|\,\bar p(\tau)\big)\le\epsilon},\quad p(u_t\mid x_t)=\pi_\theta(u_t\mid x_t)$$
-
-$$p(u_t\mid x_t) = \mathcal N\big(K_t(x_t-\hat x_t) + k_t + \hat u_t,\;\Sigma_t\big)$$
-
-::: reveal
-Look at the second line. The local policy ==*is* Lecture 9's $u=Kx$==, with a Gaussian around it — which is why optimising the trajectory hands you the local controller for free, out of the LQR structure.
-
-::: small
-And the first line is ==Lecture 1's trust region, third appearance==: a constraint that keeps each step inside the region where the local model is believable. Lecture 1 measured that region in $\lVert x - x^{(k)}\rVert$, Lecture 10 in KL between policies, and here in KL between *trajectory distributions*. Same ratio-and-restrict logic every time.
-:::
-:::
-
-::: reveal
-::: small
-Because time-varying linear-Gaussian dynamics are a strong and reasonable *local* assumption for a physical system, each trajectory is optimised from very few samples: ==5 to 20== where REPS, CEM and RWR need 100 to 800, and nine real manipulation tasks — stacking lego, threading a ring, screwing a bottle cap — converge in about ==40 samples each==. Policy search has become supervised learning against an oracle. {p}(Levine & Abbeel, 2014; Levine et al., 2016)
-:::
-:::
-
-### The teacher that watches the student — PLATO
-
-::: lede
-The naive version of route 2 collects a dataset from an MPC expert and fits the policy to it. That ignores the one thing imitation always breaks on.
-:::
-
-The states visited by the *teacher* are not the states visited by the *learner*, so nothing guarantees long-horizon performance. **PLATO** repairs it by pulling the teacher toward the student at every step:
-
-$$\pi^t_\lambda(u\mid x_t,\theta) \leftarrow \min_\pi\; J_t(\pi\mid x_t) + \lambda\, D_{\mathrm{KL}}\big(\pi(u\mid x_t)\,\|\,\pi_\theta(u\mid o_t)\big)$$
-
-::: reveal
-==The only difference from ordinary MPC is that KL term.== It encourages the teacher’s actions and state distribution to stay closer to the student’s, while still reacting competently to surprises the half-trained student could not survive.
-
-::: small
-Two practical consequences. The MPC teacher may use ==full state== at training time while the final policy uses ==only the observations== the robot will have at test time — the input-remapping trick. And in flight experiments the crash count stays near zero throughout training, where DAgger's saturates: these are empirical safety results, not a guarantee of zero crashes in other settings. {p}(Kahn et al., 2017)
-:::
-:::
-
 ### Route 3 — imagine the data
 
 ::: lede
-The simplest reunion of all: use the model to *manufacture experience*, and hand it to any model-free algorithm unchanged.
+The simplest reunion: generate transitions with the learned model and use them in a compatible value or policy learner. The update formula can stay the same even though the data quality changes.
 :::
 
 ::: block Dyna — online Q-learning that performs model-free RL with a model
@@ -752,7 +691,7 @@ The simplest reunion of all: use the model to *manufacture experience*, and hand
 Line 3 is Lecture 8, untouched. Line 4 is a sampled planning backup on an estimated model, extending Lecture 7's planning idea. ==The two lineages meet inside a single loop, four lines apart.== {p}(Sutton, 1990)
 
 ::: small
-Only short rollouts are needed — as few as one step — and the algorithm still sees diverse states, because the imagined transitions start from every state in the buffer. Longer rollouts from $\pi$ give MVE and MBPO; the question their titles ask is the honest one: ==*when* to trust your model.==
+Only short rollouts are needed — as few as one step — and the algorithm still sees diverse states, because the imagined transitions start from every state in the buffer. MBPO develops this idea with **short policy rollouts branched from real states** and an off-policy learner. MVE instead uses model rollouts in value-target construction. The length and the use of the imagined sequence both matter.
 :::
 :::
 
@@ -793,28 +732,96 @@ with $P(x)\succ0$, the unique maximizing action is **$\mu(x)$**, analytically. T
 :::
 :::
 
+### MBPO — branch short rollouts from real data
+{sub: Janner et al. · NeurIPS 2019 · Dyna's idea with a continuous-control learner}
+
+::: flow
+- **Fit** | train a dynamics ensemble on real transitions
+- **Branch** | start from states sampled from real replay
+- **Imagine** | run the current policy for a short horizon
+- !**Improve** | train SAC with real and model-generated transitions
+:::
+
+Keep collecting real experience to update the model. The synthetic buffer expands the learner's training opportunities; it does not add new measurements of the environment.
+
+**Count the trade-off:** 100 real starting states produce 100 synthetic transitions at horizon 1, or 500 at horizon 5. The second option uses five times as many predictions, with more opportunities for compounding error. These are illustrative budgets, not recommended settings for every task.
+
+::: keypoint
+The important change is **short, branched imagination**, not simply more simulation. Choose model use in light of its error and policy shift. [When to Trust Your Model](https://arxiv.org/abs/1906.08253)
+:::
+
+### Dreamer — learn feedback inside a latent world model
+{sub: Hafner et al. · ICLR 2020 · a conceptual redraw of the learning loop}
+
+The observation may be an image. Infer a compact model state from the **observation history**, then predict future latent states and rewards under the actor's actions.
+
+::: figure dreamer-learning-loop | 1000
+The model state summarizes recurrent memory and stochastic latent information. Inferring it from observations differs from predicting it without future observations.
+:::
+
+::: keypoint
+Lecture 3 supplies hidden-state inference, Lecture 6 supplies latent representation learning, and Lecture 10 supplies actor–critic learning. Dreamer joins them inside one feedback loop. [Dream to Control](https://arxiv.org/abs/1912.01603)
+:::
+
+### What imagination teaches — calculate one target
+{sub: a two-step illustration of bootstrapping, not the full Dreamer loss}
+
+From an inferred state, the actor and model predict rewards **2, then 1**. The critic assigns value **4** to the final imagined state. With $\gamma=0.9$ and no termination:
+
+$$\widehat G=2+0.9(1)+0.9^2(4)=6.14.$$
+
+| Component | What it learns from this computation |
+|---|---|
+| **Critic** | Predict future return; 6.14 is one possible bootstrapped training target. |
+| **Actor** | Prefer actions with higher predicted return. The original continuous-action Dreamer propagates gradients through imagined dynamics. |
+| **World model** | Fit observed trajectories, rewards and representations from real replay; imagined reward is not a new ground-truth label. |
+
+::: keypoint
+The paper combines different rollout lengths through $\lambda$-returns. A convincing imagined return still depends on model and critic accuracy; acting in the real environment supplies the next correction.
+:::
+
+### Three uses of a model — compare the decision loops
+
+| | PETS / MPC | MBPO | Dreamer |
+|---|---|---|---|
+| Model output | predicted trajectories | short synthetic transitions | latent trajectories and rewards |
+| How actions improve | search candidate sequences | off-policy SAC updates | actor–critic learning in imagination |
+| At deployment | re-plan, execute the first action | act with the learned policy | infer model state, then act with the learned policy |
+| Key risk | plans exploit model error | synthetic data bias value learning | latent predictions bias actor and critic |
+
+PETS emphasizes probabilistic ensembles and trajectory sampling. Dreamer does not need to search action sequences at every real step: the actor has already learned from imagined futures.
+
+::: keypoint
+All three use a learned model, but they spend computation in different places. Compare real interaction cost, training/planning cost and performance under the same evaluation conditions.
+:::
+
+### From Dreamer to DreamerV3 — read the evidence at the right level
+{sub: the 2020 paper explains the principle; the 2025 paper tests broader robustness}
+
+| Read | Main question | Evidence or mechanism to examine |
+|---|---|---|
+| **Dreamer — ICLR 2020** | Can an actor learn from compact imagined futures? | Latent dynamics, predicted rewards and value-based imagination |
+| **DreamerV3 — Nature 2025** | Can the recipe work across diverse domains with fixed hyperparameters? | Normalization, balancing and transformations; broad empirical evaluation |
+
+The 2025 paper reports results across **more than 150 tasks in eight domains** and collecting diamonds in Minecraft without human demonstrations or curricula. This is evidence about the evaluated settings; it does not establish optimality or success on every new control problem.
+
+::: keypoint
+Learn the original architecture before studying the later implementation details. Versions differ: DreamerV3 uses a score-function actor estimator for both continuous and discrete actions. [Nature paper](https://www.nature.com/articles/s41586-025-08744-2)
+:::
+
 ### The reunion, and the limits
 
-::: lede
-Three routes, one mechanism: a model-based method supplies the answers, a data-driven method learns to reproduce them, and the model underneath is *learned*.
-:::
+A learned model can support **planning, simulated experience or policy learning in imagination**. These operations connect the course's value and control methods without making them identical.
 
-::: reveal
-::: block The whole of Part IV, in one line
-DP / optimal control *(model-based)* $\;\xrightarrow{\ \text{teaches}\ }\;$ value / policy *(data-driven)*, on top of a ==learned dynamics model==. Four chapters become one system.
-:::
-:::
+| Benefit to test | Limitation to check |
+|---|---|
+| Fewer costly real interactions | Fitting the model also consumes data and computation. |
+| More opportunities to improve a policy | Repeated synthetic experience can reinforce the same model error. |
+| Compact representations for image observations | A useful latent state must retain information needed for future decisions. |
+| Faster action selection with a trained actor | Training performance need not transfer to new states or changed dynamics. |
 
-::: reveal
-And the honest ledger, which the source deck insists on:
-
-- **You need a model** — not always available, and ==sometimes harder to learn than the policy itself==;
-- **Learning it costs time and data** — expressive classes are slow, fast classes are inexpressive;
-- **It relies on assumptions** — linearisability, continuity, smoothness.
-
-::: small
-Route 1 is simple but unstable; route 2 is sample-efficient but needs a real planner (iLQR, MCTS, MPC); route 3 is simple; relative sample efficiency depends on model accuracy, rollout length, and task.
-:::
+::: keypoint
+PETS plans; MBPO supplies short simulated transitions; Dreamer learns an actor and critic in latent imagination. **Measure actual control performance**, with interaction and computation budgets stated.
 :::
 
 ### And design optimisation returns — bilevel
@@ -876,7 +883,7 @@ We can decide statically (Ch 1–6) and dynamically (Ch 7–11); with a model an
 :::
 
 ::: reveal
-Every repair in this lecture depended on one privilege we never questioned: when the model was wrong, ==we could go and collect the transition that proved it==. Version 2 aggregated data. Version 3 re-planned from a fresh measurement. Dyna interleaved imagined updates with real ones that corrected them.
+Every repair in this lecture depended on one privilege we never questioned: when the model was wrong, ==we could go and collect the transition that proved it==. Version 2 aggregated data. Version 3 re-planned from a fresh measurement. Dyna and MBPO mixed real and imagined experience; Dreamer learned its world model from real trajectories.
 :::
 
 ::: reveal
@@ -974,4 +981,66 @@ $$\min_{\theta,\,p(\tau)}\ \E_{p(\tau)}\Big[\textstyle\sum_t c(x_t,u_t)\Big]\qua
 
 ::: small
 The through-line of the whole course: ==respect the model's uncertainty, or it will be weaponised against you.== Lecture 5 said it about a surrogate over designs; this lecture says it about a surrogate over dynamics; Lecture 12 will say it once more, about a value function, with the escape hatch of fresh data closed.
+:::
+
+### Guided policy search — solve it by alternation
+
+The constrained program, with an augmented Lagrangian:
+
+$$\bar{\mathcal L}(\tau,\theta,\lambda) = c(\tau) + \sum_t \lambda_t^\top\big(\pi_\theta(x_t)-u_t\big) + \sum_t \rho_t\lVert\pi_\theta(x_t)-u_t\rVert^2$$
+
+::: flow
+- !**1 · Trajectory optimisation** | $\tau^*\leftarrow \min_\tau \bar{\mathcal L}$ — via iLQR
+- **2 · Supervised fit** | $\theta^*\leftarrow \min_\theta \bar{\mathcal L}$ — via SGD
+- **3 · Dual update** | $\lambda \leftarrow \lambda + \alpha\, d\bar{\mathcal L}/d\lambda$
+:::
+
+::: reveal
+Step 1 is Lecture 9. Step 2 is plain supervised learning. Step 3 is dual gradient ascent — and its derivation uses the same envelope argument as Act 3: at the inner optimum $d\mathcal L/dx^*=0$, so ==the gradient through the $\arg\min$ collapses to a single term.==
+:::
+
+::: reveal
+::: keypoint
+And the direction of teaching is not one-way: ==the optimal-control teacher adapts to the learner==, avoiding actions the student cannot mimic.
+:::
+:::
+
+### What makes it work — and where the trust region reappears
+
+In the stochastic form, the local controller is constrained to stay near the previous one:
+
+$$\min_p \sum_t \E_{p(x_t,u_t)}\big[c(x_t,u_t)\big] \quad\text{s.t.}\quad \hl{D_{\mathrm{KL}}\big(p(\tau)\,\|\,\bar p(\tau)\big)\le\epsilon},\quad p(u_t\mid x_t)=\pi_\theta(u_t\mid x_t)$$
+
+$$p(u_t\mid x_t) = \mathcal N\big(K_t(x_t-\hat x_t) + k_t + \hat u_t,\;\Sigma_t\big)$$
+
+::: reveal
+Look at the second line. The local policy ==*is* Lecture 9's $u=Kx$==, with a Gaussian around it — which is why optimising the trajectory hands you the local controller for free, out of the LQR structure.
+
+::: small
+And the first line is ==Lecture 1's trust region, third appearance==: a constraint that keeps each step inside the region where the local model is believable. Lecture 1 measured that region in $\lVert x - x^{(k)}\rVert$, Lecture 10 in KL between policies, and here in KL between *trajectory distributions*. Same ratio-and-restrict logic every time.
+:::
+:::
+
+::: reveal
+::: small
+Because time-varying linear-Gaussian dynamics are a strong and reasonable *local* assumption for a physical system, each trajectory is optimised from very few samples: ==5 to 20== where REPS, CEM and RWR need 100 to 800, and nine real manipulation tasks — stacking lego, threading a ring, screwing a bottle cap — converge in about ==40 samples each==. Policy search has become supervised learning against an oracle. {p}(Levine & Abbeel, 2014; Levine et al., 2016)
+:::
+:::
+
+### The teacher that watches the student — PLATO
+
+::: lede
+The naive version of route 2 collects a dataset from an MPC expert and fits the policy to it. That ignores the one thing imitation always breaks on.
+:::
+
+The states visited by the *teacher* are not the states visited by the *learner*, so nothing guarantees long-horizon performance. **PLATO** repairs it by pulling the teacher toward the student at every step:
+
+$$\pi^t_\lambda(u\mid x_t,\theta) \leftarrow \min_\pi\; J_t(\pi\mid x_t) + \lambda\, D_{\mathrm{KL}}\big(\pi(u\mid x_t)\,\|\,\pi_\theta(u\mid o_t)\big)$$
+
+::: reveal
+==The only difference from ordinary MPC is that KL term.== It encourages the teacher’s actions and state distribution to stay closer to the student’s, while still reacting competently to surprises the half-trained student could not survive.
+
+::: small
+Two practical consequences. The MPC teacher may use ==full state== at training time while the final policy uses ==only the observations== the robot will have at test time — the input-remapping trick. And in flight experiments the crash count stays near zero throughout training, where DAgger's saturates: these are empirical safety results, not a guarantee of zero crashes in other settings. {p}(Kahn et al., 2017)
+:::
 :::

@@ -143,6 +143,19 @@ For each model: ==define it, calculate the update, run an experiment, then expla
 Source alignment: original Lecture 2 PDF 3–69.
 :::
 
+### Reading guide — one Bayesian calculation, several observation models
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Murphy, *Probabilistic Machine Learning: An Introduction* (2022): probability, Bayesian statistics and linear regression sections](https://probml.github.io/pml-book/book1.html) | What distribution is specified, updated, and used for prediction? |
+| **Compare** | MLE, MAP and full Bayes on the same coin or regression data | Which answer is a point estimate, and which carries uncertainty? |
+| **Apply** | The original Pokémon district counts and housing-price example | How does the observation model affect the estimate and prediction? |
+
+::: keypoint
+Use selected sections as a reference, not the entire book as an assignment. For each example write the likelihood, prior, posterior and predictive target before doing algebra.
+:::
+
 ### Bayes' rule — name each part before using it
 
 ::: qstrip

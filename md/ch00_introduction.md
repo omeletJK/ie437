@@ -36,6 +36,19 @@ Every lecture this term is the same question, asked again with one more thing ma
 
 The wind-farm, traffic, and furnace cases are **motivation**. Read each by its decision, objective, available data, and validation. Their network architectures and research extensions will make more sense after the corresponding lectures.
 
+### Reading guide — learn a solver, then recognise the real decision
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Kool, van Hoof & Welling, *Attention, Learn to Solve Routing Problems!* (ICLR 2019)](https://arxiv.org/abs/1803.08475) | How can a policy construct a route one choice at a time? |
+| **Compare** | A conventional routing heuristic and the NCO role table later in this lecture | What is learned: the solution, an improvement step, or a solver component? |
+| **Apply** | The original wind-farm, traffic, furnace and routing cases | Which objective, constraints and evaluation budget define success? |
+
+::: keypoint
+First identify the decision. Read the routing paper for its construction loop and experiment design; detailed network architecture is optional. The engineering cases show where this pattern must meet physical and operational constraints.
+:::
+
 ### What this course is about — in one sentence
 
 ::: keypoint
@@ -621,6 +634,21 @@ Ask **which decision the network makes inside the solver**. A learned heuristic'
 
 ::: figure nco-rl-vs-il | 880
 **Imitation learning** fits solver-provided solutions. **Reinforcement learning** uses reward or objective feedback. Their sample efficiency, solution quality, and generalization depend on the training setup; neither has a universal advantage. The choice is Lecture 8 and Lecture 10 arriving in a new domain.
+:::
+
+### A representative NCO paper — learn the next city
+{sub: Kool, van Hoof & Welling · ICLR 2019 · a four-city teaching example}
+
+An attention model encodes the cities. A policy selects the next **unvisited** city, masks visited cities, and returns to the start after all cities have been visited.
+
+::: figure routing-comparison | 880
+The same four locations, two valid tours. These distances are an illustrative calculation, not a reported benchmark from the paper.
+:::
+
+For unit-square cities, the perimeter tour costs **4**; the crossing tour costs $2+2\sqrt2\approx4.828$. Training by REINFORCE compares a sampled tour with a greedy-rollout baseline and adjusts its probability using the cost difference.
+
+::: keypoint
+The policy learns **how to construct** a solution; the objective still evaluates the resulting tour. Compare feasibility, tour length and computational budget with a conventional solver. [Attention, Learn to Solve Routing Problems!](https://arxiv.org/abs/1803.08475)
 :::
 
 ### One engine, three domains — ① Vehicle routing

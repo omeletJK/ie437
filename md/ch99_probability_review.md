@@ -34,6 +34,19 @@ You should be able to check a weighted average, split variance into two parts, a
 
 **Notation:** $\mathcal N(\mu,\sigma^2)$ uses **variance** as its second argument. Matrix inverses in the Gaussian density require a positive-definite covariance.
 
+### Reading guide — read the tool where the course first needs it
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Murphy, *Probabilistic Machine Learning: An Introduction* (2022): probability and Gaussian sections](https://probml.github.io/pml-book/book1.html) | Which random variable and conditioning information appear in each expectation? |
+| **Compare** | [Sutton & Barto, *Reinforcement Learning: An Introduction* (2018): returns and sampled estimates](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) | What changes when an expectation is approximated from trajectories? |
+| **Apply** | Coin prediction, GP conditioning and policy-gradient baselines | Which identity justifies the calculation, and what assumptions does it need? |
+
+::: keypoint
+This is a reference toolbox, not a survey of new papers. Work the small examples and return to the relevant lecture; no separate research-paper assignment is required.
+:::
+
 ### Why an appendix — the few facts everything rested on
 
 ::: lede

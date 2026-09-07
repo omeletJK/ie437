@@ -167,6 +167,19 @@ By the end, you should be able to **calculate a backup**, explain why immediate 
 Unless stated otherwise: a finite, stationary MDP, bounded rewards, and $0\le\gamma<1$. Finite-horizon problems can include time in the state; undiscounted examples need separate termination assumptions.
 :::
 
+### Reading guide — understand the backup before the algorithm
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Sutton & Barto, *Reinforcement Learning: An Introduction*, 2nd ed. (2018), Chapters 3–4](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) | How does one expected return become a Bellman backup? |
+| **Compare** | Policy iteration versus value iteration on the same MDP | Which operation evaluates a policy, and which improves it? |
+| **Apply** | The original gridworld, with the same transition and reward conventions | How many backups are needed before the preferred action changes? |
+
+::: keypoint
+Calculate one backup and two sweeps before reading the convergence proof. The figures and widgets use the same mathematical objects; a newer research paper is not needed to replace this foundation.
+:::
+
 ## Act 1 — the arena, and the value of a state
 {short: ACT 1, num: Act 1}
 

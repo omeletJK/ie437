@@ -107,6 +107,19 @@ Prerequisites: derivatives, dot products and basic matrix algebra. We introduce 
 
 **Advanced applications:** optimization layers, bilevel design, and wind-farm subproblems show where the tools lead; their research details need not be mastered before the core examples.
 
+### Reading guide — certify an optimum, then differentiate a decision
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Boyd & Vandenberghe, *Convex Optimization* (2004), §§3.1, 4.1, 5.5](https://web.stanford.edu/~boyd/cvxbook/) | Which assumptions make first-order or KKT conditions a certificate? |
+| **Compare** | [Amos & Kolter, *OptNet: Differentiable Optimization as a Layer in Neural Networks* (ICML 2017)](https://proceedings.mlr.press/v70/amos17a.html) | How does changing a QP input change its optimal decision? |
+| **Apply** | The production example, followed by the original heater and wind-farm cases | What remains convex, and what requires an approximation? |
+
+::: keypoint
+KKT conditions and a small worked example come before optimization layers. OptNet is the advanced application of sensitivity analysis; ICNN describes a different choice: how to parameterize a convex function.
+:::
+
 ## Act 1 — the standard form
 {short: ACT 1, num: Act 1}
 
@@ -1098,6 +1111,24 @@ $$\frac{\mathrm d J}{\mathrm d\theta}=\frac{\partial J}{\partial z^{*}}\,\frac{\
 ::: small
 This chain rule is useful only if the middle sensitivity exists. For an exact LP with a fixed feasible region, changing objective coefficients can leave the optimal vertex unchanged, then make it jump. A differentiable layer must specify its regularisation, smoothing or derivative convention; ==an exact discrete argmax does not supply useful gradients automatically.== The weighted model above also changes its feasible region through $c$.
 :::
+:::
+
+### OptNet in one dimension — the decision is the layer output
+{sub: Amos & Kolter · ICML 2017 · scalar illustration of a differentiable QP layer}
+
+A neural network predicts $c$. Instead of treating $c$ as the final answer, solve a constrained decision:
+
+$$z^*(c)=\argmin_{z\ge0}\tfrac12(z-c)^2=\max(c,0).$$
+
+| Predicted input | Optimal decision | Sensitivity away from the boundary |
+|---|---|---|
+| $c=-1$ | $z^*=0$ | $dz^*/dc=0$; the constraint binds |
+| $c=2$ | $z^*=2$ | $dz^*/dc=1$; the constraint is inactive |
+
+If the desired decision is 3, use $L=\tfrac12(z^*-3)^2$. At $c=2$, $dL/dc=(2-3)(1)=-1$. A gradient step of size 0.1 changes $c$ to **2.1**, and the decision loss falls from **0.5 to 0.405**.
+
+::: keypoint
+Training follows **network input → optimal decision → task loss**. At $c=0$ this solution map has a kink; differentiability needs conditions. The next slide states those conditions. [OptNet](https://proceedings.mlr.press/v70/amos17a.html)
 :::
 
 ### What differentiating KKT actually requires
