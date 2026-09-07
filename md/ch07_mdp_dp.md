@@ -31,30 +31,34 @@ questions:
 ### Markov Decision Processes & Dynamic Programming
 {layout: title}
 
-## The handoff — one choice becomes a sequence
-{short: HANDOFF}
-
-Every lecture so far chose $x$ once. From here, a decision reshapes the state the next decision faces.
-
 ### Where we are — the deepest crossing
+| Previous step | This chapter's question |
+|---|---|
+| Lecture 1 defined objectives and constraints; Lecture 3 added beliefs and utilities. | Now each action changes the next state and later opportunities. |
 
-::: tracker
-:::
-
-::: lineage mb-A
-:::
-
-::: small
-Six lectures have moved along **one** axis — from a world handed to us to a world learned from data. This one moves along the other, and the model comes *back*: $P$ and $R$ are given again. What changes is that ==a decision now creates the situation the next decision must face.==
-:::
-
-::: reveal
-Lecture 1 asked for a point, $\min_x f(x)$. This lecture asks for a **rule**, because we cannot know in advance which states the future will hand us.
+A Markov state summarizes the information needed for future prediction. Begin with a known transition model and calculate an expected return.
 
 ::: keypoint
-The single optimisation splits into time — and ==that changes what an answer even is.==
+Calculate a temperature-control backup, then repeat after changing a transition.
 :::
+
+### Learning route — one backup before a whole algorithm
+**Bring:** Expectation, a discounted sum and finite tables.
+
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | State/action/return → Bellman backup → evaluate and improve → PI/VI |
+| **Work without the solution** | Calculate a temperature-control backup, then repeat after changing a transition. |
+| **Return later** | The contraction proof and detailed convergence assumptions are second-pass reading. |
+
+::: keypoint
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
+
+## Act 1 — the arena, and the value of a state
+{short: ACT 1, num: Act 1}
+
+**Q1.** A greedy rule scores an action by its own reward. Build the object that scores a *situation* instead.
 
 ### Why a sequence is not many single choices
 {sub: from the deck's opening example}
@@ -90,101 +94,6 @@ Which forces a new object. Instead of a number $f(x)$ attached to a decision, we
 :::
 :::
 
-### Two inheritances — Lecture 1 stretched, Lecture 3 unrolled
-
-| Lecture 1 (static) | Lecture 7 (dynamic) | what time adds |
-|---|---|---|
-| decision variable $x$ | action $a_t$ chosen at state $s_t$ | a choice, repeated |
-| objective $f(x)$ | return $\sum_t \gamma^t r_{t+1}$ | rewards accumulate |
-| the world is fixed | $s_{t+1}\sim P(\cdot\mid s_t,a_t)$ | actions reshape the future |
-| optimum $x^*$ | optimal **policy** $\pi^*(s)$ | a rule, not a point |
-| "what is best here?" | "what is best ==from here on==?" | the value function $V^*(s)$ |
-
-::: reveal
-::: small
-Lecture 3 introduced expected utility and sequential decisions under an information structure. Here we add the assumptions needed for an MDP: a Markov state, known transition and reward models, and an explicit horizon or discount. The continuation utility is now the value of decisions still to come.
-:::
-:::
-
-### Where the two lineages split
-{sub: the source deck's own taxonomy, pp. 4–5}
-
-::: cols
-::: col Model based — $T$ and $R$ given
-| | finite actions | infinite actions |
-|---|---|---|
-| **discrete time** | ==MDP *(Lec 7)*== | dynamic system *(Lec 9)* |
-| **continuous time** | continuous-time MDP | continuous-time system |
-
-::: small
-$P(s_{t+1}\mid s_t,a_t)$ &nbsp;·&nbsp; $x_{t+1}=f(x_t,u_t)$, $\dot x_t=f(x_t,u_t)$
-:::
-:::
-::: col.accent Model free — learned from experience
-| | finite actions | infinite actions |
-|---|---|---|
-| **discrete time** | ==value-based RL *(Lec 8)*== | policy-based RL *(Lec 10)* |
-| **continuous time** | — | — |
-
-::: small
-The empty cells are outside this course’s scope. Continuous-time reinforcement learning also exists.
-:::
-:::
-:::
-
-::: reveal
-These columns describe **the examples chosen for this course**: finite-action MDPs in Lecture 7 and continuous-control systems in Lecture 9. MDPs can also have continuous spaces; policy methods can also handle discrete actions. The common question is how to choose actions over time.
-
-::: small
-Lecture 9 is the mirror of this lecture, not its sequel. Lecture 8 sits directly below it; Lecture 10 directly below Lecture 9.
-:::
-:::
-
-### The roadmap — four questions
-
-::: qstrip 0
-:::
-
-- **Q1 — Why can't we just be greedy?** Actions couple through the state, so we need a ==value of being somewhere==, not of doing something.
-- **Q2 — What must that value satisfy?** The ==Bellman equation== — consistency first, then optimality.
-- **Q3 — How do we solve it, given the model?** ==Policy iteration== and ==value iteration==, which turn out to be one algorithm on two schedules.
-- **Q4 — Why does either converge?** The dance of ==generalised policy iteration==, and the ==contraction== that makes its fixed point unique.
-
-### Learning route — one backup before a whole algorithm
-
-**Bring:** expected values, geometric series, and the meaning of an optimal decision from Lecture 1.
-
-::: flow
-- **Describe** | state, action, next reward
-- **Evaluate** | one Bellman backup
-- **Improve** | compare actions using future value
-- !**Repeat** | policy iteration and value iteration
-:::
-
-By the end, you should be able to **calculate a backup**, explain why immediate reward can mislead, and distinguish a convergence guarantee from a finite stopping rule.
-
-::: keypoint
-Unless stated otherwise: a finite, stationary MDP, bounded rewards, and $0\le\gamma<1$. Finite-horizon problems can include time in the state; undiscounted examples need separate termination assumptions.
-:::
-
-### Reading guide — understand the backup before the algorithm
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Sutton & Barto, *Reinforcement Learning: An Introduction*, 2nd ed. (2018), Chapters 3–4](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) | How does one expected return become a Bellman backup? |
-| **Compare** | Policy iteration versus value iteration on the same MDP | Which operation evaluates a policy, and which improves it? |
-| **Apply** | The original gridworld, with the same transition and reward conventions | How many backups are needed before the preferred action changes? |
-
-::: keypoint
-Calculate one backup and two sweeps before reading the convergence proof. The figures and widgets use the same mathematical objects; a newer research paper is not needed to replace this foundation.
-:::
-
-## Act 1 — the arena, and the value of a state
-{short: ACT 1, num: Act 1}
-
-**Q1.** A greedy rule scores an action by its own reward. Build the object that scores a *situation* instead.
-
 ### The arena — a Markov decision process
 {q: 1}
 
@@ -211,7 +120,6 @@ The goal is not a trajectory. It is ==a policy $\pi:\mathcal S\to\mathcal A$== t
 :::
 
 ### The Markov property — and the licence it grants
-
 $$P(S_{t+1}=s' \mid S_t, A_t, S_{t-1}, A_{t-1}, \dots, S_0, A_0) \;=\; P(S_{t+1}=s'\mid S_t, A_t)$$
 
 Given the present state, the future and the past are independent. A state signal that retains all the relevant information is called Markov — the position and velocity of a projectile under known dynamics. A game state must also include the player to move and any history required by its rules.
@@ -231,7 +139,6 @@ Without it, "the value of a state" would be meaningless — value would have to 
 :::
 
 ### The goal — return, and the discount
-
 The agent maximises accumulated reward, not immediate reward. Two settings:
 
 ::: cols
@@ -259,7 +166,6 @@ A warning from the source deck worth repeating: ==the reward signal communicates
 :::
 
 ### A policy is a rule, not a point
-
 $$\pi:\mathcal S\to\mathcal A, \qquad \pi^* = \argmax_\pi\ \E\big[U^\pi(s)\big] \quad \hl{\text{for all } s}$$
 
 ::: reveal
@@ -271,7 +177,6 @@ A policy may be deterministic, $a^*=\pi^*(s)$, or stochastic, $p(a\mid s)=\pi^*(
 :::
 
 ### The value of a state, and the value of an action
-
 ::: cols
 ::: col $V^\pi$ — how good is it to *be* here
 $$V^\pi(s) = \E_\pi\big[U_t \mid S_t=s\big] = \E_\pi\Big[\textstyle\sum_{k\ge0}\gamma^k r_{t+k+1}\,\Big|\,S_t=s\Big]$$
@@ -312,7 +217,7 @@ A corridor with a small prize one step to the left of START and a large prize si
 - To make the transition probabilities easier to estimate from data
 - To guarantee the reward is bounded
 - To ensure the optimal policy is deterministic
-Without it, the value of "here" would depend on the whole history, and there would be nothing finite to iterate over. The Markov property is what collapses an exponential tree of histories into a graph of states, and everything after it — the Bellman equation, dynamic programming, every algorithm in Lectures 8 to 12 — is built on that collapse. Choosing the state representation *is* choosing whether the assumption holds.
+Without a sufficient state, the value of "here" can depend on earlier observations; one may need to include history or a belief state. The Markov property is what collapses an exponential tree of histories into a graph of states, and everything after it — the Bellman equation, dynamic programming, every algorithm in Lectures 8 to 12 — is built on that collapse. Choosing the state representation *is* choosing whether the assumption holds.
 :::
 
 ## Act 2 — the Bellman equation
@@ -343,7 +248,6 @@ The infinite tree closes on itself. ==That is the entire trick.==
 :::
 
 ### The Bellman expectation equation
-
 Peel one step off the return and let the Markov property close the loop:
 
 $$V^\pi(s) = \E_\pi\Big[\underbrace{r_{t+1}}_{\text{now}} + \gamma\underbrace{\textstyle\sum_{k\ge0}\gamma^k r_{t+2+k}}_{\text{the rest}}\,\Big|\,S_t=s\Big]
@@ -364,7 +268,6 @@ For a finite $\mathcal S$ this is ==a system of $|\mathcal S|$ linear equations 
 :::
 
 ### Calculate one backup — reward now plus value later
-
 Take one action. Let $\gamma=0.9$ and suppose our current successor values are:
 
 | possible outcome | probability | reward | next value | reward + discounted value |
@@ -381,7 +284,6 @@ A backup is a weighted average of **reward now + estimated future**. It is not a
 :::
 
 ### $Q$ and $V$ — one lookahead apart
-
 $$Q^\pi(s,a) = \sum_{s'} T(s,a,s')\big[R(s,a,s') + \gamma V^\pi(s')\big], \qquad
 \hl{V^\pi(s) = Q^\pi(s,\pi(s))}$$
 
@@ -400,7 +302,6 @@ That cache is worthless while the model is free — with $T$ in hand you can rec
 :::
 
 ### Bellman optimality — choose now, then choose again later
-
 **At the current state**, choose an action before the random transition:
 
 $$V^*(s)=\max_a\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma V^*(s')\big].$$
@@ -415,8 +316,42 @@ The two maxima choose actions at **different times**. We observe $s'$ before cho
 
 A single optimal continuation policy works from every successor in our finite discounted MDP. That is why the remaining value can be written as $V^*(s')$.
 
-### The principle of optimality, and the policy read off
+### Temperature thread — calculate a temperature-control backup
+{sub: shared teaching example · predict before revealing the calculation}
 
+At $x=-2$, choose off ($u=0$) or heat ($u=1$). For now, $x'=x+u$ is known. Reward is $r=-[(x')^2+u^2]$, discount is 0.9, and the current continuation estimates are $V(-2)=-3$, $V(-1)=-1$.
+
+**Predict:** Compare the immediate cost and the continuation value before choosing the action.
+
+::: reveal
+**Calculate and check.**
+
+| Action | Reward | One Bellman target |
+|---|---|---|
+| Off | −4 | $-4+0.9(-3)=\mathbf{-6.7}$ |
+| Heat | −2 | $-2+0.9(-1)=\mathbf{-2.9}$ |
+
+This backup selects **heat**. The supplied V values are inputs to this sweep, not a claim that convergence has occurred.
+:::
+
+::: keypoint
+An action is evaluated by what happens now and the value of the state it reaches.
+:::
+
+### Try it — heating succeeds only 20 percent of the time
+{sub: work independently · reveal only after writing an answer}
+
+Off behaves as before. Heat reaches $x'=-1$ with probability 0.2 and remains at $x'=-2$ with probability 0.8, while still paying effort $u^2=1$. Keep the same continuation estimates. Does the backup still choose heat?
+
+::: reveal
+**Check your answer.** A failed heating step has reward −5 and target $-5+0.9(-3)=-7.7$. The heat target is $0.2(-2.9)+0.8(-7.7)=\mathbf{-6.74}$. Off gives −6.7, so this backup chooses **off**.
+:::
+
+::: keypoint
+Changing a transition changes both next-state cost and continuation value. Take the expectation over complete outcomes.
+:::
+
+### The principle of optimality, and the policy read off
 ::: block Bellman's principle of optimality
 An optimal policy has the property that, whatever the first action and the state it leads to, the ==remaining decisions must themselves be optimal from that state.==
 :::
@@ -434,7 +369,6 @@ The source deck's gloss: *any* greedy policy with respect to $V^*$ is optimal, =
 :::
 
 ### Check the timing — guessing a coin before or after the toss
-
 A fair coin will be tossed. Choose **heads** or **tails**; a correct guess pays 1.
 
 ::: cols
@@ -498,7 +432,6 @@ Set the right-hand box beside Lecture 1's $x^*=\argmax_x f(x)$ — the source de
 :::
 
 ### Policy evaluation — sweeping the backup
-
 ```
 Initialise V₀(s) ← 0 for every s ∈ S
 Repeat for k = 0, 1, 2, …
@@ -527,7 +460,6 @@ The in-place variant is the first crack in the idea that DP must proceed in lock
 :::
 
 ### Two sweeps — how a delayed reward changes the action
-
 Let $\gamma=0.9$. At **A**, stop for 2 or continue for 0 to B. At **B**, the only action pays 4 and terminates. Terminal value is 0.
 
 | synchronous sweep | value at A | value at B | greedy action at A using these values |
@@ -573,7 +505,6 @@ The deck's own figure, stepped. **Expectation backup** reproduces its printed ta
 :::
 
 ### The policy is optimal long before the value is
-
 ::: lede
 The source deck draws a blue cross through the last two rows of its own figure. It is the most useful thing on the slide.
 :::
@@ -600,7 +531,6 @@ This is the whole licence for truncating the inner loop, and everything in the r
 :::
 
 ### Policy improvement — greedy on your own value
-
 Given $V^\pi$, ask at each state whether a *single-step* deviation would pay:
 
 $$\pi'(s) = \argmax_{a}\; Q^\pi(s,a) \quad\Longrightarrow\quad Q^\pi(s,\pi'(s)) \ge Q^\pi(s,\pi(s)) = V^\pi(s)$$
@@ -620,7 +550,6 @@ The proof (Appendix, Backup 3) is a telescope: substitute the inequality, expand
 :::
 
 ### Policy iteration, and its bottleneck
-
 $$\pi_0 \xrightarrow{\;\text{PE}\;} V^{\pi_0} \xrightarrow{\;\text{PI}\;} \pi_1 \xrightarrow{\;\text{PE}\;} V^{\pi_1} \xrightarrow{\;\text{PI}\;} \pi_2 \longrightarrow \cdots \longrightarrow \pi^*$$
 
 Alternate the two moves until the policy stops changing. Each round gives an *exact* value for an *exact* policy, and finite termination follows with consistent tie handling; the number of rounds need not be small.
@@ -643,7 +572,6 @@ And the previous slide has already told us the deeper answer: since the greedy s
 :::
 
 ### Value iteration — one optimality backup per sweep
-
 Policy iteration evaluates a fixed policy before improving it. Value iteration directly applies the **optimality** backup:
 
 $$V_{k+1}(s)\leftarrow\max_a\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma V_k(s')\big].$$
@@ -663,17 +591,6 @@ Lecture 8 replaces the model-weighted expectation with sampled transitions and i
 
 ::: widget dp-schedules {"m":1}
 One MDP, one stopping rule, both algorithms — and a dial for the number of evaluation sweeps per improvement. At $m=\infty$ the schedule *is* policy iteration; drive $m$ down and it slides continuously toward value iteration. Policy iteration reaches $\pi^*$ in ==9 improvements== but spends ==16,124 backups== getting there; value iteration needs ==17 sweeps== and only ==1,972==. Same $V^*$, same $\pi^*$, an eightfold difference in work — and the cheapest schedule, at $m=2$, is ==neither endpoint.==
-:::
-
-### Check — what value iteration is really doing
-{q: 3}
-
-::: quiz For a finite MDP with bounded rewards and $0\le\gamma<1$, value iteration converges from any finite $V_0$. What guarantees that?
-- The objective is convex in $V$
-- The state space is finite
-- =The Bellman operator is a $\gamma$-contraction in the sup-norm, so each sweep shrinks the distance to the unique fixed point by a factor $\gamma$
-- The rewards are bounded, so $V$ cannot diverge
-The Banach fixed-point theorem does the whole job. Each application of the operator brings any two value functions closer by at least $\gamma$, which forces both a **unique** fixed point and convergence to it from anywhere. The error after $k$ sweeps decays like $\gamma^k$ — which is also why a $\gamma$ near 1 is not free, and why Lecture 8 has to worry when the operator is no longer a contraction.
 :::
 
 ## Act 4 — why it works
@@ -729,7 +646,6 @@ $\gamma$ is not a modelling afterthought bolted on to keep a sum finite. It is =
 :::
 
 ### What the contraction bound actually says
-
 Suppose $\gamma=0.8$ and the initial maximum value error is at most 10.
 
 $$\lVert V_k-V^*\rVert_\infty\le 10(0.8)^k.$$
@@ -747,6 +663,17 @@ This is an **upper bound**, not a prediction that every observed error follows t
 A practical certificate uses the Bellman residual: $\lVert V-V^*\rVert_\infty\le\lVert\mathcal TV-V\rVert_\infty/(1-\gamma)$. A small update matters relative to $1-\gamma$.
 :::
 
+### Check — what value iteration is really doing
+{q: 3}
+
+::: quiz For a finite MDP with bounded rewards and $0\le\gamma<1$, value iteration converges from any finite $V_0$. What guarantees that?
+- The objective is convex in $V$
+- The state space is finite
+- =The Bellman operator is a $\gamma$-contraction in the sup-norm, so each sweep shrinks the distance to the unique fixed point by a factor $\gamma$
+- The rewards are bounded, so $V$ cannot diverge
+The Banach fixed-point theorem does the whole job. Each application of the operator brings any two value functions closer by a factor no greater than $\gamma$, which forces both a **unique** fixed point and convergence to it from anywhere. The error after $k$ sweeps decays like $\gamma^k$ — which is also why a $\gamma$ near 1 is not free, and why Lecture 8 has to worry when the operator is no longer a contraction.
+:::
+
 ### The rate is the discount
 {fill: top}
 
@@ -755,7 +682,6 @@ $\lVert V_k - V^*\rVert_\infty$ against sweep number, on a log axis. In this dem
 :::
 
 ### Order does not matter either — asynchronous DP
-
 Every sweep so far updated all states in lockstep. Nothing required that.
 
 - **In-place**: overwrite $V(s)$ immediately, and reuse it within the same sweep.
@@ -776,7 +702,6 @@ Sampled RL is asynchronous DP driven by whichever states the trajectory happens 
 :::
 
 ### Three things we have not paid for
-
 The machine is complete and provably correct. Every part of it borrows something.
 
 | what value iteration does | what it needs | what happens without it |
@@ -799,7 +724,7 @@ Three debts, and the next lecture defaults on all three. Notice they are not ind
 - A deterministic policy
 - A discount factor strictly less than 1
 - =The model — the transition probabilities $P$ and the reward function $R$, needed to compute the expectation
-Every backup in this lecture evaluates $\sum_{s'} P(s' \mid s,a)[\ldots]$, which you can only write down if you own $P$ and $R$. Lecture 8 deletes them and keeps everything else, so the question becomes: how do you take an expectation you cannot compute? The answer — sample it — is the whole of reinforcement learning.
+Every backup in this lecture evaluates $\sum_{s'} P(s' \mid s,a)[\ldots]$, which you can only write down if you own $P$ and $R$. Lecture 8 assumes the full model is unavailable and uses observed transitions, so the question becomes: how do you take an expectation you cannot compute? Sampling the backup is the starting point for the value-based methods in Lecture 8.
 :::
 
 ## Closing
@@ -808,7 +733,6 @@ Every backup in this lecture evaluates $\sum_{s'} P(s' \mid s,a)[\ldots]$, which
 The equation is proved, the solvers are exact, and everything rested on owning the world.
 
 ### Where we are — one parent established
-
 ::: lineage mb-A
 :::
 
@@ -863,6 +787,19 @@ Value, defined recursively, turns an intractable search over plans into local ba
 {short: APPENDIX}
 
 The derivations, kept out of the narrative.
+
+### Reading guide — understand the backup before the algorithm
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Sutton & Barto, *Reinforcement Learning: An Introduction*, 2nd ed. (2018), Chapters 3–4](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) | How does one expected return become a Bellman backup? |
+| **Compare** | Policy iteration versus value iteration on the same MDP | Which operation evaluates a policy, and which improves it? |
+| **Apply** | The original gridworld, with the same transition and reward conventions | How many backups are needed before the preferred action changes? |
+
+::: keypoint
+Calculate one backup and two sweeps before reading the convergence proof. The figures and widgets use the same mathematical objects; a newer research paper is not needed to replace this foundation.
+:::
 
 ### Backup 1 — the Bellman equation, derived
 {fill: top}
@@ -929,4 +866,38 @@ Each pass converts one more step of the trajectory from $\pi$ to $\pi'$, and the
 
 ::: small
 **Why it matters downstream.** Sampled RL is asynchronous DP whose update order is chosen for it by the environment: Q-learning backs up whatever $(s,a)$ the trajectory delivers, in whatever order experience delivers them. The "every state infinitely often" condition here is the model-based ancestor of the exploration requirement in Lecture 8 — and the reason $\varepsilon$ must not be allowed to reach zero too soon.
+:::
+
+### Where the two lineages split
+{sub: the source deck's own taxonomy, pp. 4–5}
+
+::: cols
+::: col Model based — $T$ and $R$ given
+| | finite actions | infinite actions |
+|---|---|---|
+| **discrete time** | ==MDP *(Lec 7)*== | dynamic system *(Lec 9)* |
+| **continuous time** | continuous-time MDP | continuous-time system |
+
+::: small
+$P(s_{t+1}\mid s_t,a_t)$ &nbsp;·&nbsp; $x_{t+1}=f(x_t,u_t)$, $\dot x_t=f(x_t,u_t)$
+:::
+:::
+::: col.accent Model free — learned from experience
+| | finite actions | infinite actions |
+|---|---|---|
+| **discrete time** | ==value-based RL *(Lec 8)*== | policy-based RL *(Lec 10)* |
+| **continuous time** | — | — |
+
+::: small
+The empty cells are outside this course’s scope. Continuous-time reinforcement learning also exists.
+:::
+:::
+:::
+
+::: reveal
+These columns describe **the examples chosen for this course**: finite-action MDPs in Lecture 7 and continuous-control systems in Lecture 9. MDPs can also have continuous spaces; policy methods can also handle discrete actions. The common question is how to choose actions over time.
+
+::: small
+Lecture 9 is the mirror of this lecture, not its sequel. Lecture 8 sits directly below it; Lecture 10 directly below Lecture 9.
+:::
 :::

@@ -1,64 +1,45 @@
-# The handoff chain — fixed wording
+# The course handoff chain
 
-Every chapter opens by naming what the previous one left and closes by naming what it passes on.
-Those two sentences are **not** for an author to invent: they are the course's spine, and a drifting
-phrase here is how a fifteen-lecture argument comes apart. The `inherits:` and `handoff:` fields of a
-chapter's front matter must match this table exactly, and the closing slide must hand off in these
-words.
+The opening names a usable prerequisite and one new question; the closing names the resulting skill and its limitation. Keep the concepts consistent, but use natural wording rather than repeating a script. This is a 14-deck course (0–12 and the probability appendix).
 
-| Ch | inherits — what the previous lecture left | hands off — what this lecture leaves |
+| Chapter | Bring | Learn and pass on |
 |---|---|---|
-| 0 | — | the three-axis cube, and the route through it |
-| 1 | the three-axis map (Lecture 0) | the template `min f s.t. g ≤ 0` |
-| 2 | the template `min f s.t. g ≤ 0` (Lecture 1) | belief as a distribution |
-| 3 | a belief over one parameter (Lecture 2) | structured belief, plus decision and utility nodes — the influence diagram, a precursor to MDPs |
-| 4 | structured belief, and a prior over functions (Lecture 3) | the acquisition policy — the seed of an RL policy — and the bandit |
-| 5 | `argmax f` with a GP, but the oracle removed (Lecture 4) | a forward model then search, and the warning that the optimiser is an adversary |
-| 6 | the same problem, inverted (Lecture 5) | an inverse model then sampling — the rhyme that returns as value ↔ policy |
-| 7 | the dynamic generalisation of Lecture 1, and the decision network of Lecture 3 | the Bellman equation, which still needs the model |
-| 8 | the Bellman optimality equation (Lecture 7) | the continuous-argmax wall |
-| 9 | dynamic decision making's second parent — control theory, alongside Lecture 7's OR | the feedback law γ(x), u = Kx |
-| 10 | optimal control, with the dynamics f still given (Lecture 9) | the trust-region machinery |
-| 11 | both lineages, each with the model thrown away (Lectures 8 and 10) | a learned model plus planning, and bilevel design |
-| 12 | learned models (Lecture 11) and the value and policy methods of Lectures 8 and 10 | **the course's last move** — conservative values and policies, off-policy evaluation, and the one axis left uncrossed, which is where **IE579** begins |
+| 0 | A familiar engineering decision | Decision, objective, information and constraints; the course map |
+| 1 | Calculus and linear algebra | Formulate; use convexity, first-order conditions and KKT with their assumptions |
+| 2 | Basic probability | Specify a likelihood, update a parameter belief and predict a new observation |
+| 3 | Bayes and marginalization | Represent → infer → learn local tables → filter a hidden state → choose by utility |
+| 4 | Gaussian conditioning | GP → acquisition → evaluation → posterior update |
+| 5 | Regression and optimization | Diagnose selected-model error; fit and use COMs conservatively |
+| 6 | Probability distributions and latent variables | VAE → DDPM training/sampling → conditioning toward successful designs |
+| 7 | One-step decisions and conditional expectation | MDP → Bellman backup → policy/value iteration → convergence meaning |
+| 8 | Bellman targets | MC/TD → sampled control → Q-learning → DQN and Double DQN |
+| 9 | Calculus and Bellman reasoning | One-step feedback → LQR → HJB interpretation → PMP interpretation |
+| 10 | Values, derivatives and policy probabilities | REINFORCE → baseline/critic → DDPG/TD3/SAC → controlled policy updates |
+| 11 | Regression, control and actor–critic | Model → MPC/PETS → Dyna/MBPO → Dreamer; advanced optimizer derivatives later |
+| 12 | TD3, SAC and Bellman learning | Fixed-data failure → policy/value restrictions → evaluation with coverage assumptions |
+| 99 | Arithmetic and basic probability | Expectation, total variance, Gaussian conditioning and sampling as a reusable toolbox |
 
-## Two structural rhymes that must survive
+## Common worked example
 
-**Lecture 7 ↔ 9 and Lecture 8 ↔ 10.** These are the two lineages of the course (spine §2), and the
-symmetry has to be visible slide by slide, not merely asserted. Lecture 8's opening says: *MDP and DP
-is the model-based origin of the OR lineage; delete the model (P, R) and you get value-based RL.*
-Lecture 10's opening must be built to the same shape: *optimal control is the model-based origin of
-the control lineage; delete the dynamics f and you get policy-based RL.* Same slide count in the
-handoff, same translation table, same closing move.
+Use normalized temperature error x = T − 22, heater command u, next error x′ = x + u, and cost c = (x′)² + u² as the introductory one-step model. It is a teaching example, not building physics. State every variant: hidden dynamics, sensor noise, action restrictions, or access to new trials. The learner must not secretly know the simulator's hidden formula. The one-step LQR gain is not the infinite-horizon gain.
 
-**Lecture 5 ↔ 12.** The static half of the course teaches "the optimiser exploits the surrogate
-where it is wrong" and answers it with conservative objective models. The dynamic half meets the
-identical failure — a policy exploiting the Q-function on out-of-distribution actions — and answers
-it with conservative Q-learning. Lecture 12 should say so out loud and quote Lecture 5.
+Each deck includes a `Temperature thread` example and a `Try it` variant. Ask for a prediction before the calculation, reveal the answer, then change one condition. Preserve the lecture's original engineering cases as applications, with detailed material in appendices where appropriate.
 
-## Where the crossing tracker goes
+## Connections that must be precise
 
-Chapters that **cross an axis** get the tracker with an arrow and a "crossing" frame: 2 (model),
-7 (stages), 8 and 10 (model, and now two unknowns). The agents axis is never crossed in this course.
-Chapters that **deepen inside a cell** get the tracker with no arrow: 1, 3, 4, 5, 6, 9, 11, 12.
-The appendix has no position on the cube and takes no tracker.
+- The OR/control columns compare approaches; they are not exclusive historical categories. Both use values, policies and dynamic programming.
+- 5 ↔ 12: optimization can select optimistic model errors. COMs and CQL have related motivations but different objectives, targets and guarantees. Maximizing true value plus error does not necessarily maximize error alone.
+- 6 → 11: latent representation learning combines with hidden-state inference from 3 and actor–critic from 10 in Dreamer. Diffusion Policy is a demonstration-learning bridge, not automatically reward-based RL.
+- 8 → 10: Double DQN separates selection and evaluation; TD3's twin-critic minimum is a different operation.
+- 10 → 11 → 12: SAC is the learner in MBPO; TD3 precedes TD3+BC; offline training then restricts new interaction.
+- Trust regions, conservative objectives and short rollouts all manage unreliable extrapolation in different ways. An analogy is not an equality or a guarantee.
+- The cube is a teaching map. Chapters 7 and 9 restore known models; not every chapter monotonically removes an assumption. RL need not have both unknown rewards and unknown transitions.
+- Multi-agent material is an IE579 preview. Offline RL closes the taught route.
 
-**Lecture 12 closes the course.** It is the finale, so its closing does two jobs rather than one:
-it states the chapter's own result, and it stands the whole course back up — the cube toured, the
-two lineages joined, and the single axis deliberately left uncrossed, named as IE579's.
+## Structure and evidence
 
-## Interpretation of the teaching map
+Keep opening orientation short: previous skill → current question → core route. Reading lists belong after the core route. Do not force equal slide counts or an identical number of conceptual sections. Keep four milestone quizzes per deck; place them after the concept needed to answer them.
 
-The OR/control columns are a teaching comparison, not disjoint historical or mathematical categories. Both traditions use values, policies and dynamic programming. Removing access to a model motivates sample-based methods; it does not prove that their learned policy equals a model-based global optimum. A sequential influence diagram becomes an MDP only after specifying an appropriate Markov information state, observations and return structure.
+State each theorem's assumptions and result before its proof. Teach a small calculation before abstract derivations. A research paper illustrates a named question; its popularity does not make every technical detail a prerequisite.
 
-
-## Representative-paper connections added in September 2026
-
-These connections supplement the handoff wording above.
-
-- **6 → 9–12:** Diffusion Policy introduces observation-conditioned action chunks and feedback execution. Its demonstration imitation objective is distinguished from reward-based RL.
-- **8 → 10:** Double DQN separates selection from evaluation; TD3's twin-critic minimum is a different intervention.
-- **10 → 11:** SAC is the off-policy learner in MBPO. Actor–critic learning is the prerequisite for Dreamer's latent-imagination loop.
-- **3 + 6 + 10 → 11:** Hidden-state inference, latent representation learning and actor–critic learning meet in Dreamer. DreamerV3 supplies later empirical context, not a new derivation prerequisite.
-- **10 → 12:** TD3 is taught in the main lecture before TD3+BC adds an offline imitation term. CQL and IQL then expose different interventions on the same fixed-data problem.
-- **Research depth:** COMs and VAE–DDPM–CbAS remain the main design narratives. Detailed NEMO/RoMA, MINs benchmark, DDOM/BootGen and GPS/PLATO material remains in appendices with source-topic links.
+Preserve original topics through main slides, appendices and `md/_source/source_fidelity_map.json`. When a heading moves or repeated orientation is merged, update the map, including treatment and provenance. Detailed verification is recorded in `md/_source/teaching_structure_review.md`.

@@ -26,49 +26,36 @@ questions:
 ### Data-Driven Design Optimization — Surrogate-Based
 {layout: title}
 
-## The handoff — optimisation with no oracle
-{short: HANDOFF}
-
-Lecture 4 could *query* the expensive function whenever it wished. Take the query away and the same loop turns on itself.
-
 ### Where we are — the query is taken away
+| Previous step | This chapter's question |
+|---|---|
+| Lecture 4 could request another evaluation. | Now work with a fixed design dataset. |
 
-::: tracker
-:::
+The goal remains a good real design. A learned objective can be accurate on the data and misleading where the optimizer searches.
 
-::: table center
-|   | Model-based (certain) | Data-driven (uncertain) |
-|---|---|---|
-| **Static, single** | optimisation *(Lec 1)* | belief *(Lec 2–3)* · acting on belief *(Lec 4)* · ==design from a fixed dataset *(Lec 5–6)*== |
-:::
-
-Lecture 4 built a posterior over an unknown $f$ and then *acted* — chose a point, queried it, folded the answer back in. Often you cannot. The data is already collected and ==fixed==: a database of proteins and their activity, of alloys and their strength, of accelerator layouts and their latency. No new experiments; the budget was spent, or the wet lab is closed, or one evaluation costs a month.
-
-::: reveal
-::: small
-Lecture 4 leaves us $\argmax_x f(x)$ with a GP — and this lecture ==removes the oracle==. Same cell of the cube: static, data-driven, single agent, and the same goal as Lecture 1. What has been taken away is not the model but the right to check.
-:::
-:::
-
-### Five ways to optimise a black box, and what every one of them needs
-{sub: what the source lecture spends fifteen slides establishing}
-
-| method | what it does | what it costs |
-|---|---|---|
-| **Gradient ascent on a proxy** | fit $f_\theta$ to the data so far, step $x_{t+1} = x_t + \eta\nabla_x f_\theta(x_t)$, evaluate | one query per step |
-| **Genetic algorithms** | population, truncation selection of the top $E$, crossover, mutation | $N$ queries per generation |
-| **CMA-ES** | sample from an adaptive Gaussian $\mathcal N(\mathbf m_t,\sigma_t^2 C_t)$; update mean, covariance and step size | $n$ queries per generation |
-| **Bayesian optimisation** *(Lec 4)* | GP posterior, then $x_{t+1} = \argmax_x A_t(x)$ | one query per round |
-| **Policy gradient** | learn $\pi_\theta(x)$ by $\nabla_\theta\E_{x\sim\pi_\theta}[f(x)] = \E[\nabla_\theta\log\pi_\theta(x)\,f(x)]$ | $n$ queries per round |
-
-::: reveal
 ::: keypoint
-Every one of the five is a loop, and every loop closes through ==an evaluation of the real $f$.==
+Show when a better predicted heater score gives a worse real decision.
 :::
+
+### Learning route — separate prediction quality from design quality
+**Bring:** A fitted regression model and gradient-based optimization.
+
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | Fit → optimize → diagnose model exploitation → calculate the COMs loss |
+| **Work without the solution** | Show when a better predicted heater score gives a worse real decision. |
+| **Return later** | NEMO/RoMA derivations and full benchmark tables are in the appendix. |
+
+::: keypoint
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
+
+## Act 1 — the naive approach
+{short: ACT 1, num: Act 1}
+
+**Q1.** Supervised learning, then optimisation. Two lines, and on paper it should work.
 
 ### The problem, and the two routes out of it
-
 The offline problem is that loop with one line struck out — and it is exactly Lecture 1's goal under a harsh new constraint:
 
 $$\text{find}\quad x^* = \argmax_x f(x) \qquad\text{with \hl{only} a fixed dataset } D = \{(x_1,f(x_1)),\dots,(x_N,f(x_N))\}$$
@@ -93,65 +80,6 @@ Learn the inverse map $p(x\mid y)$ and **sample** designs that are already good.
 The source deck's figure is a picture of one deleted arrow: real data flows into an offline optimiser, a design flows out to superconductors, DNA sequences, proteins and robot morphologies — and the return arrow, from the design back to the world, is struck through: ==no additional interactions==.
 :::
 :::
-
-### The thesis — the surrogate's blind spots are where you will be sent
-{fill: center}
-
-::: keypoint
-An optimiser turned loose on a learned surrogate will seek out exactly the inputs where ==the surrogate is wrongly optimistic.==
-:::
-
-::: reveal
-It sounds like Lecture 4 again — fit a model of $f$, optimise it. Offline the danger is far sharper. In BO a promising point could be *checked* by querying it, and a wrong belief was corrected within one round. Here a design the surrogate loves but that is in fact worthless is ==returned as the answer==.
-:::
-
-::: reveal
-::: small
-So the whole lecture is one failure and its cure: the surrogate **overestimates** where it has no data, the optimiser **exploits** that overestimation, and the fix is to make the surrogate deliberately **conservative** exactly where it will be attacked. Keep that sentence; Lecture 12 will need it, one axis over.
-:::
-:::
-
-### The roadmap — four questions
-
-::: qstrip 0
-:::
-
-- **Q1 — What changes when optimisation goes offline?** No oracle, so no way to check a candidate before returning it.
-- **Q2 — Why does the naive "fit and ascend" fail?** ==Overestimation== off the data, on a narrow manifold of valid inputs.
-- **Q3 — How do we fix it?** ==Conservative objective models== — penalise the surrogate where the optimiser attacks.
-- **Q4 — What else helps?** Honest ==uncertainty== (NEMO) and local ==smoothness== (RoMA).
-
-### Learning route — separate prediction quality from design quality
-
-**Start with:** regression loss, gradient ascent and the BO loop from Lecture 4.
-
-::: flow
-- **Diagnose** | compare the surrogate's prediction with the true score
-- **Correct** | train against inputs the optimiser is likely to exploit
-- **Evaluate** | compare proposed designs with the best measured design
-:::
-
-::: keypoint
-You should be able to ==explain a failure using two candidate designs and calculate the signs of the COMs loss terms.== NEMO, RoMA and theorem details are extensions of this core idea.
-:::
-
-### Reading guide — one failure, one main corrective objective
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Trabucco et al., *Conservative Objective Models for Effective Offline Model-Based Optimization* (ICML 2021)](https://proceedings.mlr.press/v139/trabucco21a.html) | How can fitting an accurate average predictor still produce a bad design? |
-| **Compare** | NEMO's resistance to optimistic model updates and RoMA's local robustness; detailed losses are in the appendix | What different modelling bias does each method add? |
-| **Apply** | The source Design-Bench comparisons, PRIME and crystal-design cases | Does the returned design improve measured performance, not just predicted score? |
-
-::: keypoint
-Explain the signs of the COMs loss using two candidate designs. NEMO and RoMA are comparison readings; their detailed derivations and full benchmark table remain available as research extensions.
-:::
-
-## Act 1 — the naive approach
-{short: ACT 1, num: Act 1}
-
-**Q1.** Supervised learning, then optimisation. Two lines, and on paper it should work.
 
 ### The obvious method — fit a proxy, then climb it
 {q: 1}
@@ -218,7 +146,7 @@ Only 3,200 designs in a 5,126-dimensional space for HopperController. Whatever t
 - The surrogate generalises well and has found a genuinely better design
 - The optimiser has not converged
 - The dataset was too small to fit the surrogate at all
-Training error alone does not establish generalisation, and predictions far from the training distribution can be unreliable. The optimiser is not a neutral user of the model — it is an adversary that actively seeks the argmax, and the argmax of $\hat{f}$ tends to sit exactly where the error is largest and positive. A spectacular predicted score alone establishes neither success nor failure; it needs evidence about the proposed design.
+Training error alone does not establish generalisation, and predictions far from the training distribution can be unreliable. Optimization actively seeks a high predicted score. Positive errors can change which candidate wins, especially outside well-covered data regions. A spectacular predicted score alone establishes neither success nor failure; it needs evidence about the proposed design.
 :::
 
 ## Act 2 — why it fails
@@ -252,7 +180,6 @@ The two want different cures. Problem 1 is about the *values* the surrogate repo
 :::
 
 ### The two pictures
-
 ::: widget two-failures
 Left, the dataset does not determine $f$ off the data: ==every one of those dashed continuations fits $D$ equally well==, and the fitted surrogate is whichever one the architecture happens to prefer. Right, the valid inputs are a small disc inside a large space; ascent starting inside it leaves almost immediately, and the returned designs are not molecules at all.
 :::
@@ -271,32 +198,55 @@ The optimiser correctly solves $\argmax_x\hat f(x)$ and chooses B. Its predicted
 ==The optimisation can be correct while the decision is poor.== The missing guarantee is that a high surrogate score means a high true score at the selected input.
 :::
 
-### The optimiser is an adversary
+### Temperature thread — compare predicted gain with real gain
+{sub: shared teaching example · predict before revealing the calculation}
 
-Gradient ascent on $f_\theta$ does not merely stumble into the bad region. It ==searches for it==, because the bad region is where $f_\theta$ is highest.
+Use score $f=-[(-2+u)^2+u^2]$, hidden from the offline learner. Candidate A uses $u=1$ and B uses $u=2$. Their surrogate scores are −2.1 and −1.0.
 
-::: reveal
-::: block The mechanism has a name | Goodfellow, Shlens & Szegedy, 2014
-A photograph classified "panda" at 57.7 % confidence, plus $0.007$ times a crafted noise field, is classified **"gibbon" at 99.3 % confidence**. Nothing about the image changed that a person could see; the perturbation was simply chosen by ascending the model's own gradient.
-
-Gradient ascent on a learned $f_\theta$ is ==the identical mechanism==, pointed at a regression head instead of a classifier: it manufactures inputs the model rates highly and the world does not.
-:::
-:::
+**Predict:** Which command will maximizing the surrogate select? Compute its predicted gain over A before revealing the true scores.
 
 ::: reveal
+**Calculate and check.** The learner selects **B**, with predicted gain $-1-(-2.1)=\mathbf{1.1}$. The simulator gives A score −2 and B score −4, so the actual change is **−2**.
+:::
+
 ::: keypoint
-The optimiser is not a user of the surrogate. It is ==an adversarial attack on it.==
+Searching the learned score accurately does not establish that the selected action has a high real score.
 :::
+
+### Try it — the largest error is no longer the selected action
+{sub: work independently · reveal only after writing an answer}
+
+Keep true scores A = −2 and B = −4. Change the surrogate errors to 0 for A and +1 for B. Find the predicted scores, the selected command and the location of the largest error.
+
+::: reveal
+**Check your answer.** Predicted scores are A = **−2**, B = **−3**. The optimizer chooses **A**, even though B has the largest error. It maximizes true score plus error, not error alone.
+:::
+
+::: keypoint
+Optimizer exploitation is a possible failure mechanism. It is not a theorem that every stronger optimizer finds the largest model error.
+:::
+
+### The optimiser is an adversary
+The optimizer searches for a high **predicted score**. If optimistic model errors occur in poorly covered regions, that search can select a design with a disappointing true score.
+
+::: reveal
+::: block A useful analogy | Goodfellow, Shlens & Szegedy, 2014
+Adversarial examples are deliberately chosen inputs that expose a classifier's errors. Surrogate optimization can also select inputs that expose a model's errors, even though its goal is to improve a regression score.
+
+The analogy explains a risk. It does not prove that the optimizer always finds the largest error or that every selected design fails.
+:::
+:::
+
+::: keypoint
+Evaluate the selected design, not just average prediction accuracy. Conservative models and restrictions on the search region address different parts of the risk.
 :::
 
 ### Watch it happen
-
 ::: widget surrogate-exploit {"seed":17}
 The surrogate fits the fifteen data points to an RMSE of $0.058$ and then, off the data, keeps climbing. Ascent from the best design in $D$ improves the true value for about five steps — and then spends the next thirty walking downhill in reality while the surrogate reports steady progress. ==The returned design scores $-0.14$ where the surrogate promised $4.31$== , and is worse than the design we already had.
 :::
 
 ### The cure is not a better optimiser
-
 ::: lede
 Two repairs suggest themselves before the right one, and both fail for the same reason: they treat the search as the problem.
 :::
@@ -323,12 +273,12 @@ The trade-off is between evidence and novelty.
 ### Check — the shape of the failure
 {q: 2}
 
-::: quiz Why does the failure of the naive pipeline get *worse*, not better, as the optimiser gets stronger?
-- A stronger optimiser overfits the training data more heavily
-- =Because it searches harder for the maximum of $\hat{f}$, and the maximum of the *error* is what it finds
-- It does not — a stronger optimiser reduces the gap
-- Because stronger optimisers require larger surrogates, which generalise worse
-This is the uncomfortable part. Every improvement in the optimiser is an improvement in its ability to locate the surrogate's weakest point. The problem cannot be fixed downstream of the model, which is why the answer is to change the **model** — train it so that it actively pushes its own predictions down off the data, rather than leaving them free to soar.
+::: quiz In the example where a surrogate recommends a poor design, why can searching the surrogate harder make the recommendation worse?
+- A stronger optimizer necessarily increases the surrogate's training error
+- =It can find a poorly covered candidate whose optimistic prediction exceeds the supported candidates' scores
+- It must select the candidate with the largest error, regardless of its true score
+- Searching harder always improves the real objective
+The optimizer maximizes $\hat f=f+\epsilon$, not $\epsilon$ alone. The failure is possible when optimistic errors change the ranking. We can address it through the model, the allowed search region, or additional measurements when available. This chapter studies conservative models; the next studies a learned design distribution.
 :::
 
 ## Act 3 — conservative objective models
@@ -364,7 +314,6 @@ Because $f_\theta$ changes at every training step, $\mu$ is regenerated as train
 :::
 
 ### The loss, term by term
-
 $$L(\theta) = \underbrace{\tfrac12\,\E_{(x,y)\sim D}\big[(f_\theta(x)-y)^2\big]}_{\text{(i) fit the data}} \;+\; \alpha\Big(\underbrace{\E_{x\sim\mu(x)}[f_\theta(x)]}_{\hl{\text{(ii) push the adversaries down}}} \;-\; \underbrace{\E_{x\sim D}[f_\theta(x)]}_{\hl{\text{(iii) hold the data up}}}\Big)$$
 
 - **(i)** ordinary regression — be right about the designs we actually measured;
@@ -402,13 +351,11 @@ Gradient descent decreases $v$, reducing the unsupported high prediction.
 :::
 
 ### Turning the dial
-
 ::: widget conservative-coms {"seed":17}
 The same dataset, the same optimiser, the same fifteen points — only the training loss differs. At $\alpha = 0$ the search runs to the boundary and returns a design worth $-0.14$. At $\alpha=0.3$, the returned **input** is about $x=6.20$, near the true maximising input $x=6.04$. Watch the readout: past $\alpha \approx 0.15$ the surrogate's prediction at $x^*$ falls *below* the truth. ==At this returned design the prediction is below the true value== — and then, at $\alpha = 1.3$, so conservative that it will not leave the data at all.
 :::
 
 ### Why it works — a learned lower bound
-
 ::: block Proposition 1 *(informal)* | Trabucco et al., 2021
 Under regularity assumptions, if $\alpha$ is large enough then the converged conservative model, evaluated at the designs its own optimiser produces, satisfies
 
@@ -420,7 +367,6 @@ Read the expectation carefully. This is an average statement under the theorem's
 :::
 
 ### An average lower bound is not a guarantee for every design
-
 Consider two equally likely candidate designs:
 
 | Candidate | Conservative prediction | True score |
@@ -531,7 +477,6 @@ They are not rivals so much as three readings of the same sentence: ==the surrog
 :::
 
 ### How much of each method to learn
-
 | Reading level | What you should be able to explain |
 |---|---|
 | **Core — COMs** | Fit the observed labels, then penalize the surrogate's optimism on designs found by its own optimizer. Calculate the two terms in one loss. |
@@ -543,7 +488,6 @@ The common question is **what prevents a search from exploiting prediction error
 :::
 
 ### But surely an ensemble would have caught it?
-
 ::: widget ensemble-alarm {"seed":17}
 Ten surrogates, each fitted to a bootstrap resample of the same fifteen points. Out of distribution their spread does widen — by about six times. Their actual error grows ==thirty-seven times==. At the design their own averaged optimiser returns, the truth sits eighteen standard deviations outside the band they agree on. The alarm fires; it is simply far too quiet, because the members share an architecture and so extrapolate wrongly *together*.
 :::
@@ -589,7 +533,6 @@ State it once and it explains three separate lectures. A policy maximising a lea
 A forward model, searched. Lecture 6 inverts every word of that.
 
 ### It is already in production
-
 ::: cols
 ::: col PRIME — hardware accelerators {p}(ICLR 2022)
 A conservative surrogate in the COMs shape, trained over *contexts* (target workloads) and given infeasible layouts as extra negatives:
@@ -612,7 +555,6 @@ Read the second one twice. A generative model supplies the coordinates; a conser
 :::
 
 ### Where we are — a forward model, then a search
-
 ::: table center
 |   | **the model** | **the decision** |
 |---|---|---|
@@ -644,6 +586,19 @@ Two things to carry out of here. **The optimiser is an adversary** — you will 
 {short: APPENDIX}
 
 Complete statements, kept out of the narrative.
+
+### Reading guide — one failure, one main corrective objective
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Trabucco et al., *Conservative Objective Models for Effective Offline Model-Based Optimization* (ICML 2021)](https://proceedings.mlr.press/v139/trabucco21a.html) | How can fitting an accurate average predictor still produce a bad design? |
+| **Compare** | NEMO's resistance to optimistic model updates and RoMA's local robustness; detailed losses are in the appendix | What different modelling bias does each method add? |
+| **Apply** | The source Design-Bench comparisons, PRIME and crystal-design cases | Does the returned design improve measured performance, not just predicted score? |
+
+::: keypoint
+Explain the signs of the COMs loss using two candidate designs. NEMO and RoMA are comparison readings; their detailed derivations and full benchmark table remain available as research extensions.
+:::
 
 ### Backup 1 — offline MBO against Bayesian optimisation
 {fill: top}
@@ -701,7 +656,6 @@ Note where Algorithm 2 starts. Ascent is initialised at the ==best design in the
 :::
 
 ### Backup 3 — the COMs loss and the scope of its guarantee
-
 $$L(\theta)=\tfrac12\mathbb E_D[(f_\theta(x)-y)^2]+\alpha\left(\mathbb E_{\mu_\theta}[f_\theta(x)]-\mathbb E_D[f_\theta(x)]\right).$$
 
 **Fit:** the squared loss anchors predictions at measured inputs. **Penalise:** the additional term lowers the adversarial-versus-data prediction gap.
@@ -741,7 +695,6 @@ Quantisation flattens the landscape and kills the gradient, so NEMO's head outpu
 :::
 
 ### NEMO — how easily could the model have been talked into it?
-
 The conditional NML distribution is the estimator closest to maximum likelihood ==when the test label is chosen adversarially==:
 
 $$p_{\text{NML}}(y\mid x) = \frac{p\big(y \mid x;\ \hat\theta_{D\cup(x,y)}\big)}{\displaystyle\int p\big(y' \mid x;\ \hat\theta_{D\cup(x,y')}\big)\,dy'}$$
@@ -762,7 +715,6 @@ Far from the data, *every* candidate label can be accommodated almost perfectly 
 :::
 
 ### RoMA — flatten the surface the optimiser is standing on
-
 RoMA targets sensitivity of predictions and gradients near candidate inputs. A jagged surrogate can create spurious peaks; even a smooth surrogate can extrapolate incorrectly. Smoothness is a useful modelling bias, not a sufficient condition for accuracy.
 
 ::: reveal
@@ -806,4 +758,21 @@ The source figure says it in two panels: without the prior, a jagged surrogate's
 
 ::: small
 Naive gradient ascent is not useless — it has the lowest aggregate score among the six methods shown, and on HopperController it returns less than the best trajectory already in the dataset. Every method that beats it does so by ==adding a constraint on what the surrogate is allowed to believe==, not by searching harder.
+:::
+
+### Five ways to optimise a black box, and what every one of them needs
+{sub: what the source lecture spends fifteen slides establishing}
+
+| method | what it does | what it costs |
+|---|---|---|
+| **Gradient ascent on a proxy** | fit $f_\theta$ to the data so far, step $x_{t+1} = x_t + \eta\nabla_x f_\theta(x_t)$, evaluate | one query per step |
+| **Genetic algorithms** | population, truncation selection of the top $E$, crossover, mutation | $N$ queries per generation |
+| **CMA-ES** | sample from an adaptive Gaussian $\mathcal N(\mathbf m_t,\sigma_t^2 C_t)$; update mean, covariance and step size | $n$ queries per generation |
+| **Bayesian optimisation** *(Lec 4)* | GP posterior, then $x_{t+1} = \argmax_x A_t(x)$ | one query per round |
+| **Policy gradient** | learn $\pi_\theta(x)$ by $\nabla_\theta\E_{x\sim\pi_\theta}[f(x)] = \E[\nabla_\theta\log\pi_\theta(x)\,f(x)]$ | $n$ queries per round |
+
+::: reveal
+::: keypoint
+Every one of the five is a loop, and every loop closes through ==an evaluation of the real $f$.==
+:::
 :::

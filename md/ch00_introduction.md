@@ -24,39 +24,25 @@ handoff: the three-axis cube, and the route through it (Lecture 1)
 Every lecture this term is the same question, asked again with one more thing made harder.
 
 ### Learning route — identify the decision before naming the method
+**Bring:** No algorithm knowledge is assumed here.
 
-**No algorithm derivations are required today.** Use this lecture to recognize the problem each later chapter solves.
-
-::: flow
-- **Decision** | what can we choose?
-- **Information** | what is known or measured?
-- **Time** | choose once or respond repeatedly?
-- !**Evidence** | how will we judge the result?
-:::
-
-The wind-farm, traffic, and furnace cases are **motivation**. Read each by its decision, objective, available data, and validation. Their network architectures and research extensions will make more sense after the corresponding lectures.
-
-### Reading guide — learn a solver, then recognise the real decision
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Kool, van Hoof & Welling, *Attention, Learn to Solve Routing Problems!* (ICLR 2019)](https://arxiv.org/abs/1803.08475) | How can a policy construct a route one choice at a time? |
-| **Compare** | A conventional routing heuristic and the NCO role table later in this lecture | What is learned: the solution, an improvement step, or a solver component? |
-| **Apply** | The original wind-farm, traffic, furnace and routing cases | Which objective, constraints and evaluation budget define success? |
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | Decision → information → one choice or a sequence → evidence |
+| **Work without the solution** | Identify the action, objective and available feedback in the temperature example. |
+| **Return later** | The detailed industry architectures and research outlook are reference cases. |
 
 ::: keypoint
-First identify the decision. Read the routing paper for its construction loop and experiment design; detailed network architecture is optional. The engineering cases show where this pattern must meet physical and operational constraints.
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
 ### What this course is about — in one sentence
-
 ::: keypoint
 How do we make ==good decisions under uncertainty?==
 :::
 
 ::: reveal
-That is the entire course. Every lecture is this question, asked again with one more thing taken away — the model made uncertain, the dynamics unknown, and eventually the right to collect new data withdrawn. Multi-agent games are a preview of IE579.
+That is the entire course. We ask it under changing assumptions: a known objective, an uncertain model, decisions through time, and eventually a fixed dataset. Known-model chapters establish tools before we learn from experience. Multi-agent games are a preview of IE579.
 :::
 
 ::: reveal
@@ -65,39 +51,50 @@ Two disciplines answer it differently, and this course lives where they meet —
 :::
 :::
 
-### AI, decision making, and what joins them
+### Temperature thread — name the decision before choosing a method
+{sub: shared teaching example · predict before revealing the calculation}
 
+A room is at 20°C and the target is 22°C. Let $x=T-22=-2$. A normalized heater command $u\in[0,2]$ gives $x'=x+u$; the one-step cost is $c=(x')^2+u^2$. This is a small teaching model, not calibrated building physics.
+
+**Predict:** Does the largest heating command necessarily give the best decision?
+
+::: reveal
+**Calculate and check.**
+
+| Command | Next temperature | Comfort error + effort |
+|---|---|---|
+| $u=0$ | 20°C | $4+0=4$ |
+| $u=1$ | 21°C | $1+1=2$ |
+| $u=2$ | 22°C | $0+4=4$ |
+:::
+
+::: keypoint
+The decision is the heater command; the measured temperature is information. A target temperature alone does not specify how to trade comfort against effort.
+:::
+
+### Try it — the temperature response is unknown
+{sub: work independently · reveal only after writing an answer}
+
+Keep the same goal and heater, but suppose the relation between command and next temperature is unknown. Name what you would measure, what you would learn, and how you would evaluate a decision.
+
+::: reveal
+**Check your answer.** Measure command–temperature transitions and their cost. Learn a response model or learn a value/policy from experience. Evaluate the resulting comfort–effort cost on new allowed trials. If trials are unavailable, evaluation must use the existing log and explicit assumptions.
+:::
+
+::: keypoint
+Across the course, keep asking what is known, what is learned and whether another experiment is allowed.
+:::
+
+### AI, decision making, and what joins them
 ::: widget ai-vs-decision
 :::
 
 ### From a real system to a solved problem
-
 ::: widget modeling-loop
 Formulation and solution are two different arrows, policed by two different questions. ==Data helps on the left arrow too== — a model fitted to data represents the world more faithfully, not merely faster.
 :::
 
-### Engineering is all about decision making
-{sub: p. 7 of the source deck — the zoo, and the two questions that organise it, fill: center}
-
-::: cols wide-l
-::: col The methods you will meet under one name or another
-Machine learning · artificial intelligence · optimisation · optimal control · planning · Markov decision process · influence diagram · decision tree · dynamic control · **game theory** · search · stochastic programming · dynamic programming · reinforcement learning · the bandit problem · …
-:::
-::: col.accent Two questions
-What are the ==differences== between these strategies?
-
-What are the ==common aspects==?
-:::
-:::
-
-::: reveal
-::: keypoint
-A course that answers only the first question is a catalogue. ==This one answers the second first.==
-:::
-:::
-
 ### Two kinds of uncertainty — name them once
-
 ::: lede
 Everything we model is uncertain in one of two ways. The distinction recurs all term.
 :::
@@ -151,7 +148,6 @@ Criterion 1 is where the two uncertainties live: epistemic uncertainty is exactl
 :::
 
 ### One familiar decision, three versions — stocking a shop
-
 Suppose selling one item earns 5, ordering it costs 2, and unsold items have no value. Profit is $5\min(q,D)-2q$.
 
 | setting | what must be decided | what is needed |
@@ -165,7 +161,6 @@ The product is the same. Changing **information and time** changes the decision 
 :::
 
 ### Three criteria make a cube
-
 ::: widget course-cube
 The origin is plain optimisation. Step through the numbered route — ==step ④ is the one to watch==, where the data-driven axis is crossed a second time and the count of unknowns doubles.
 :::
@@ -193,7 +188,6 @@ This is a teaching map. In standard RL terminology, **model-based RL can itself 
 :::
 
 ### Criterion 2 — static becomes dynamic
-
 ::: table center
 |   | Single agent | Multi agent |
 |---|---|---|
@@ -214,7 +208,6 @@ The single optimisation splits into time — and ==the value function is born.==
 :::
 
 ### Criterion 3 — one decision maker becomes many
-
 ::: table center
 |   | Optimisation | Game |
 |---|---|---|
@@ -258,7 +251,7 @@ The rest of this lecture walks the four categories — and shows, for each, ==a 
 - Discrete or continuous · linear or non-linear · convex or non-convex
 - Deterministic or stochastic · finite or infinite horizon · one agent or many
 - Supervised, unsupervised, or reinforcement · online or offline · tabular or approximate
-Stages, model, and agents. Every lecture in this course is one position on that cube, and the course as a whole is a **route** through it: each lecture takes one more given away. Knowing which corner you are standing in is what tells you which method applies.
+Stages, model, and agents. Every lecture in this course is one position on that cube, and the course as a whole is a **route** through it: the chapters compare different assumptions. The location helps identify candidate methods; the details of the task determine which are appropriate.
 :::
 
 ## Categories ① and ② — the static half
@@ -314,53 +307,6 @@ A research extension is ==offline meta optimisation with online adaptation== —
 The decision is $\mathbf{x}$, the turbine positions. The obstacle is that power $P_i(\mathbf{x};\theta, U)$ has no closed form: turbines sit in each other's ==wake==, so the objective couples every pair.
 :::
 
-### The farm is a graph, so the model should be one
-
-::: cols
-::: col The representation
-::: figure windfarm-graph
-:::
-:::
-::: col.accent Why a graph network
-Nodes are turbines and carry free-flow wind speed; edges carry the ==down-stream wake distance $d$ and radial distance $r$==; the global feature is the wind itself.
-
-An appropriate graph readout is permutation-invariant, while node outputs are equivariant. It can accept different graph sizes; accurate transfer from five to twenty turbines still needs validation.
-:::
-:::
-
-### Physics-induced graph network — do not learn what you already know
-
-::: figure pgnn-model | 900
-Four trainable modules and three aggregators, stacked. The edge update is where the physics enters: $\mathbf{e}'_{ij} = f_w(\mathbf{e}_{ij}) \times f_e(\cdot)$, with $f_w$ a ==wake weight== rather than a free function.
-:::
-
-### Let the network learn $\alpha, \kappa, R_0$
-
-::: figure physics-weight | 900
-The classical wake model gives the deficit $\delta u(d,r)$ in closed form, but its constants were ==hand-tuned to observed data==. Keep the functional form, and learn the constants. This is the whole idea of an inductive bias, in one figure.
-:::
-
-### Does it work — and then, does it decide?
-
-::: cols
-::: col Prediction
-::: figure windfarm-accuracy
-:::
-==1.5% MAPE== on farm power.
-:::
-::: col.accent Decision
-::: figure windfarm-layout-opt
-:::
-Total power ==7.5 → 20.0== over the optimisation, by gradient — because the surrogate is differentiable.
-:::
-:::
-
-::: reveal
-::: small
-This is Lecture 5's thesis arriving early: a surrogate is worth building when it turns a problem you could only *simulate* into one you can *differentiate*. The warning that comes with it — that the optimiser will exploit the surrogate wherever it is wrong — is Lecture 5's other half.
-:::
-:::
-
 ### Case B · Traffic signal split
 {sub: Application Example 2 — offline meta data-driven optimisation}
 
@@ -368,27 +314,15 @@ This is Lecture 5's thesis arriving early: a surrogate is worth building when it
 The same decision — the green split at every intersection — in Hangzhou, Manhattan and two synthetic districts. ==Every intersection is a new task==, and you cannot run a thousand trials on a live junction.
 :::
 
-### Why *meta* Bayesian optimisation
-
-::: figure bo-vs-metabo | 900
-Ordinary BO can use an informative prior, but does not automatically transfer experience across intersections. ==Meta-BO pre-trains $f_\theta$ on a buffer of past tasks==, then adapts online — so the first trial on a new junction is already informed.
-:::
-
-### The result
-
-::: figure traffic-results | 900
-Average number of waiting vehicles. Ours is best on every column, and the gain is largest where trials are scarcest — ==395.5 vs 408.5 in Hangzhou, 859.7 vs 920.1 in Manhattan.==
-:::
-
 ### Check — what makes a decision problem hard
 {q: 2}
 
-::: quiz What distinguishes a *decision* problem from a prediction problem?
-- Decision problems always involve more data
-- =A prediction is scored against a truth that exists whatever you do; a decision changes the world it is scored in, and you never see what the alternatives would have given
-- Prediction problems are convex and decision problems are not
-- Decision problems require neural networks; prediction problems do not
-Predict tomorrow's demand and tomorrow arrives to grade you. Choose tomorrow's inventory and you learn only what your own choice produced — the counterfactual is gone. That missing feedback is why decision making needs its own theory, and it is what makes exploration, off-policy evaluation, and the whole of Lecture 12 necessary.
+::: quiz What extra question does a decision problem ask beyond predicting an outcome?
+- How can we guarantee that more data always improves every decision?
+- =Which allowed action best serves the objective, given its consequences and the information available?
+- Why must every decision problem be nonconvex?
+- Which neural network is required for every decision?
+A demand prediction is an input to an inventory decision. Choosing inventory also requires costs, constraints and a model or evidence about consequences. In logged interaction data, only the chosen action's outcome is observed; a simulator or known model may provide additional information about alternatives.
 :::
 
 ## Categories ③ and ④ — the dynamic half
@@ -436,7 +370,6 @@ For this course’s main examples, deleting the given model leads to the methods
 :::
 
 ### ④ The doubling — why the second crossing is not the first again
-
 ::: cols
 ::: col First crossing · Lecture 1 → 2
 The static world. In our first examples, the objective is the main unknown:
@@ -461,7 +394,6 @@ This is why RL is not merely ==optimisation done with data.==
 :::
 
 ### Three answers to the same doubling
-
 ::: flow
 - !**Value-based** | Ch 8 · learn $Q$ from samples — $r$ and $P$ are *fused* and neither is modelled
 - **Policy-based** | Ch 10 · output the action — the dynamics *cancel* in the gradient
@@ -487,44 +419,15 @@ The balance the professor's own slide names: *model expressivity* against *optim
 :::
 :::
 
-### Case C · the result
-
-::: figure furnace-results | 900
-==2.03 °C average error at a 100-step prediction horizon==, and stable over 900 steps — enough that the overshoot region, the part an operator actually worries about, is predicted rather than merely tracked.
-:::
-
-### Extension toward practical RL
-{sub: pp. 59 and 66 of the source — the professor's own roadmap}
-
-Many benchmark RL experiments allow extensive simulator interaction. The MDP formalism itself does not require a simulator or unlimited queries. Three extensions close the gap to a real plant, and this course takes two of them.
-
-::: flow
-- **1 · Model-based RL** | learn the dynamics, then plan *(Lecture 11)*
-- **2 · Meta RL** | one policy across tasks whose dynamics and objectives change
-- !**3 · Offline RL** | learn from a log, with no interaction at all *(Lecture 12)*
-:::
-
-::: reveal
-::: block Why offline RL — in the source deck's own words
-"Industrial systems typically do not have simulators, and it can be prohibitive to learn a policy by directly interacting with the real system. ==Deriving a policy using previously collected data (offline data) is preferable.=="
-:::
-:::
-
-### Case D · Offline meta policy learning, then online adaptation
-
-::: figure offline-meta | 900
-Collect operation data across many tasks; train a general controller offline — the encoder, the critic and the actor share a buffer per task; then adapt on the target task with ==a handful of interactions, not a million==. Offline pretraining connects to Lecture 12. The later online adaptation is an extension beyond its fixed-data learning setting.
-:::
-
-### Check — the four unknowns, taken one at a time
+### Check — follow the changing assumptions
 {q: 3}
 
-::: quiz The course is described as removing one given at a time. In what order are they removed?
-- The state, then the action, then the reward
-- The data, then the model, then the objective
-- =First the objective $f$ becomes uncertain, then the problem becomes sequential, then the dynamics are unknown, and finally the right to interact is withdrawn
-- First the dynamics, then the objective, then the horizon
-Lecture 1 has everything: a known $f$ and known constraints. Lectures 2–6 make $f$ uncertain. Lecture 7 makes the decision a sequence. Lectures 8 and 10 delete the model — and now there are **two** unknowns at once, which is why RL is harder than everything before it. Lecture 12 takes the last given, the ability to experiment.
+::: quiz Which sequence describes the main learning route of this course?
+- First remove the state, then the action, then the reward
+- First remove the data, then the model, then the objective
+- =Learn about uncertain objectives, extend decisions through time, learn values/policies/models from experience, then work with a fixed log
+- First remove the dynamics, then the objective, then the horizon
+This is a route through different assumptions, not a claim that every chapter removes exactly one assumption. Lectures 7 and 9 restore a known model to teach sequential decision making. Lectures 8, 10 and 11 use experience; Lecture 12 removes new interaction during training.
 :::
 
 ## The single spine
@@ -533,7 +436,6 @@ Lecture 1 has everything: a known $f$ and known constraints. Lectures 2–6 make
 Read the whole course as a slow stripping-away of what you were handed.
 
 ### Each chapter removes one given
-
 ::: widget given-ledger
 Walk the lectures and watch the ledger empty. The counter on the right is the argument of the previous act: it reads **1** for the whole static half, and **2** from Lecture 8 onward.
 :::
@@ -559,7 +461,6 @@ These are source-deck case studies, including simulations and reported applicati
 :::
 
 ### The course, as a route through the map
-
 - **Part I — the given world.** Ch 1: classical optimisation, the atom of every later method.
 - **Part II — the uncertain world.** Ch 2 Bayesian statistics (belief as a distribution) → Ch 3 Bayesian networks (structured belief, plus decisions) → Ch 4 Bayesian optimisation (act on an unknown function).
 - **Part III — design from data alone.** Ch 5–6 data-driven design optimisation: surrogate (forward) and generative (inverse).
@@ -609,7 +510,6 @@ The source deck's own phrase for where this goes: ==“ChatGPT for Optimization 
 :::
 
 ### Neural combinatorial optimisation, defined
-
 ::: figure nco-definition | 900
 Learn a ==solver==, not a solution: $f_\theta: \mathcal{X}\to\mathcal{Y}$, trained over a *distribution* of instances $x \sim g(\cdot)$ with the aim of generalizing to $x'\sim g'(\cdot)$; a changed instance distribution must be tested. Because the training signal spans tasks, ==learning an NCO solver is inherently multi-task learning== — which is why the meta-learning of Case B returns here.
 :::
@@ -631,7 +531,6 @@ Ask **which decision the network makes inside the solver**. A learned heuristic'
 :::
 
 ### Two ways to train it
-
 ::: figure nco-rl-vs-il | 880
 **Imitation learning** fits solver-provided solutions. **Reinforcement learning** uses reward or objective feedback. Their sample efficiency, solution quality, and generalization depend on the training setup; neither has a universal advantage. The choice is Lecture 8 and Lecture 10 arriving in a new domain.
 :::
@@ -650,6 +549,161 @@ For unit-square cities, the perimeter tour costs **4**; the crossing tour costs 
 ::: keypoint
 The policy learns **how to construct** a solution; the objective still evaluates the resulting tour. Compare feasibility, tour length and computational budget with a conventional solver. [Attention, Learn to Solve Routing Problems!](https://arxiv.org/abs/1803.08475)
 :::
+
+### Your class project
+{fill: top}
+
+::: lede
+Carry an industrial decision from its context to a tested prototype. Choose one appropriate core method and a baseline; explain the evidence for the resulting decision.
+:::
+
+::: table center
+| part | what you hand in | the gate it must pass |
+|---|---|---|
+| **1 · Business context** | the decision as it is made today, and what a better one is worth | a reader can state the scope in one paragraph |
+| **2 · Problem definition** | objective, variables, hard and soft constraints, and the data contract | report feasibility checks and compare the KPI with the incumbent under the same conditions |
+| **3 · Product & delivery** | the surface an operator would actually use | someone else can run it end to end |
+:::
+
+::: reveal
+::: small
+Every method in Lectures 1–12 is a candidate for part 2. The point of the gate is that ==the choice of method is not the deliverable== — a validated decision is.
+:::
+:::
+
+### Check — two views of sequential decisions
+{q: 4}
+
+::: quiz Why does this course compare dynamic programming with optimal control?
+- They solve unrelated problems and share no mathematical tools
+- One can use values, while the other is forbidden to use them
+- Removing a model guarantees that a learned policy remains optimal
+- =They provide complementary ways to reason about sequential decisions, which help explain value-based and policy-based learning
+Both traditions use values, policies and Bellman reasoning. Lectures 7–10 organize the comparison as known-model methods followed by learning from experience. The columns are a teaching map, not disjoint historical categories.
+:::
+
+## Closing
+{num: 07}
+
+One story, told in chapters — and a map to keep in view for the rest of the term.
+
+### One question — decide well under uncertainty — asked along three criteria, answered by two lineages.
+{layout: standout}
+
+Keep the decision, information and evaluation rule explicit as the assumptions change.
+
+### Let us begin — Lecture 1.
+{layout: standout}
+
+Start with a known objective and constraints. Each chapter will connect a previous skill to a new question, with a small calculation to try.
+
+## Appendix — examples, readings and derivations
+{short: APPENDIX}
+
+Reference material for a second pass. The main teaching route ends before this section.
+
+### Reading guide — learn a solver, then recognise the real decision
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Kool, van Hoof & Welling, *Attention, Learn to Solve Routing Problems!* (ICLR 2019)](https://arxiv.org/abs/1803.08475) | How can a policy construct a route one choice at a time? |
+| **Compare** | A conventional routing heuristic and the NCO role table later in this lecture | What is learned: the solution, an improvement step, or a solver component? |
+| **Apply** | The original wind-farm, traffic, furnace and routing cases | Which objective, constraints and evaluation budget define success? |
+
+::: keypoint
+First identify the decision. Read the routing paper for its construction loop and experiment design; detailed network architecture is optional. The engineering cases show where this pattern must meet physical and operational constraints.
+:::
+
+## Case studies — engineering models and measured results
+{short: EXTENSION}
+
+Read after completing the main route.
+
+### The farm is a graph, so the model should be one
+::: cols
+::: col The representation
+::: figure windfarm-graph
+:::
+:::
+::: col.accent Why a graph network
+Nodes are turbines and carry free-flow wind speed; edges carry the ==down-stream wake distance $d$ and radial distance $r$==; the global feature is the wind itself.
+
+An appropriate graph readout is permutation-invariant, while node outputs are equivariant. It can accept different graph sizes; accurate transfer from five to twenty turbines still needs validation.
+:::
+:::
+
+### Physics-induced graph network — do not learn what you already know
+::: figure pgnn-model | 900
+Four trainable modules and three aggregators, stacked. The edge update is where the physics enters: $\mathbf{e}'_{ij} = f_w(\mathbf{e}_{ij}) \times f_e(\cdot)$, with $f_w$ a ==wake weight== rather than a free function.
+:::
+
+### Let the network learn $\alpha, \kappa, R_0$
+::: figure physics-weight | 900
+The classical wake model gives the deficit $\delta u(d,r)$ in closed form, but its constants were ==hand-tuned to observed data==. Keep the functional form, and learn the constants. This is the whole idea of an inductive bias, in one figure.
+:::
+
+### Does it work — and then, does it decide?
+::: cols
+::: col Prediction
+::: figure windfarm-accuracy
+:::
+==1.5% MAPE== on farm power.
+:::
+::: col.accent Decision
+::: figure windfarm-layout-opt
+:::
+Total power ==7.5 → 20.0== over the optimisation, by gradient — because the surrogate is differentiable.
+:::
+:::
+
+::: reveal
+::: small
+This is Lecture 5's thesis arriving early: a surrogate is worth building when it turns a problem you could only *simulate* into one you can *differentiate*. The warning that comes with it — that optimization can select optimistic surrogate errors — is Lecture 5's other half.
+:::
+:::
+
+### Why *meta* Bayesian optimisation
+::: figure bo-vs-metabo | 900
+Ordinary BO can use an informative prior, but does not automatically transfer experience across intersections. ==Meta-BO pre-trains $f_\theta$ on a buffer of past tasks==, then adapts online — so the first trial on a new junction is already informed.
+:::
+
+### The result
+::: figure traffic-results | 900
+Average number of waiting vehicles. Ours is best on every column, and the gain is largest where trials are scarcest — ==395.5 vs 408.5 in Hangzhou, 859.7 vs 920.1 in Manhattan.==
+:::
+
+### Case C · the result
+::: figure furnace-results | 900
+==2.03 °C average error at a 100-step prediction horizon==, and stable over 900 steps — enough that the overshoot region, the part an operator actually worries about, is predicted rather than merely tracked.
+:::
+
+### Extension toward practical RL
+{sub: pp. 59 and 66 of the source — the professor's own roadmap}
+
+Many benchmark RL experiments allow extensive simulator interaction. The MDP formalism itself does not require a simulator or unlimited queries. Three extensions close the gap to a real plant, and this course takes two of them.
+
+::: flow
+- **1 · Model-based RL** | learn the dynamics, then plan *(Lecture 11)*
+- **2 · Meta RL** | one policy across tasks whose dynamics and objectives change
+- !**3 · Offline RL** | learn from a log, with no interaction at all *(Lecture 12)*
+:::
+
+::: reveal
+::: block Why offline RL — in the source deck's own words
+"Industrial systems typically do not have simulators, and it can be prohibitive to learn a policy by directly interacting with the real system. ==Deriving a policy using previously collected data (offline data) is preferable.=="
+:::
+:::
+
+### Case D · Offline meta policy learning, then online adaptation
+::: figure offline-meta | 900
+Collect operation data across many tasks; train a general controller offline — the encoder, the critic and the actor share a buffer per task; then adapt on the target task with ==a handful of interactions, not a million==. Offline pretraining connects to Lecture 12. The later online adaptation is an extension beyond its fixed-data learning setting.
+:::
+
+## Research outlook — systems and applications
+{short: EXTENSION}
+
+Read after completing the main route.
 
 ### One engine, three domains — ① Vehicle routing
 {sub: Case 1 of 3 · in production — generation, then test-time improvement search}
@@ -769,7 +823,6 @@ A request in words ($l$) is turned by the **Formulator** into an instance $x = (
 :::
 
 ### The knowledge that makes the translation possible
-
 ::: widget opt-ontology
 An ontology over ==objective, constraints, data and parameters== is what turns a sentence into a structured formulation, while exposing missing information and ambiguities that still need resolution. Supply it once per problem class, and every later run inherits it.
 :::
@@ -786,50 +839,3 @@ Three gated loops — business context, problem definition, product and delivery
 Each part is finished only when ==the next role can act on it==. Part 2 is done when another person — or a model — could rebuild a working solver from it alone.
 :::
 :::
-
-### Your class project
-{fill: top}
-
-::: lede
-You will run one pass of the OI Factory on a problem of your own choosing. The deliverable is not a notebook — it is the three parts, gated.
-:::
-
-::: table center
-| part | what you hand in | the gate it must pass |
-|---|---|---|
-| **1 · Business context** | the decision as it is made today, and what a better one is worth | a reader can state the scope in one paragraph |
-| **2 · Problem definition** | objective, variables, hard and soft constraints, and the data contract | ==zero hard-constraint violations, and a KPI at or above the incumbent== |
-| **3 · Product & delivery** | the surface an operator would actually use | someone else can run it end to end |
-:::
-
-::: reveal
-::: small
-Every method in Lectures 1–12 is a candidate for part 2. The point of the gate is that ==the choice of method is not the deliverable== — a validated decision is.
-:::
-:::
-
-### Check — two inventions of the same idea
-{q: 4}
-
-::: quiz Sequential decision making was invented twice. Which two traditions, and what happens when each loses its model?
-- Statistics and computer science; both become supervised learning
-- Economics and control theory; both become game theory
-- Physics and operations research; both become stochastic optimisation
-- =Operations research as dynamic programming and control theory as optimal control — delete the model from either and reinforcement learning comes out
-Bellman's dynamic programming and Pontryagin's optimal control describe the same object in different vocabularies. Delete $P$ and $R$ from the first and you get value-based RL (Lecture 8); delete the dynamics $f$ from the second and you get policy-based RL (Lecture 10). The second half of this course runs the two stories in parallel precisely so the symmetry is visible.
-:::
-
-## Closing
-{num: 07}
-
-One story, told in chapters — and a map to keep in view for the rest of the term.
-
-### One question — decide well under uncertainty — asked along three criteria, answered by two lineages.
-{layout: standout}
-
-And unfolded by removing, one at a time, everything you were given.
-
-### Let us begin — Lecture 1.
-{layout: standout}
-
-Keep the three-axis map in mind: at the start of every lecture we mark exactly where we stand on it, and which assumption we are about to give up.

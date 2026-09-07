@@ -6,10 +6,10 @@ touching anything.
 ## What the three sources are for
 
 ```
-IE437_Course_Narrative_Spine.md   the narrative: cube position, the four crossings,
+IE437_Course_Narrative_Spine.md   the narrative: core learning route, common example,
                                   the two lineages, the handoff chain
-tex/LectureNN_*.tex               the act structure, the chapter's central thesis,
-                                  and every equation, already re-typed correctly
+tex/LectureNN_*.tex               historical structure and re-typed equations;
+                                  verify mathematical assumptions independently
 lecture_slides/*.pdf              the lecture as actually taught: the worked examples,
                                   the derivations the tex compressed away, and the figures
 ```
@@ -18,8 +18,7 @@ lecture_slides/*.pdf              the lecture as actually taught: the worked exa
 a compressed re-authoring of the PDF — Lecture 1 is 50 PDF pages condensed into 16 frames — so the
 tex tells you the skeleton and the PDF tells you what was cut. Restore what was cut.
 
-`md/_CHAIN.md` fixes the exact wording of your chapter's `inherits:` and `handoff:`. Do not
-paraphrase it.
+`md/_CHAIN.md` defines prerequisite concepts and handoffs. Keep their meaning consistent; concise paraphrases are encouraged. Keep the current core/appendix boundary and update source traceability when content moves.
 
 ## What you produce
 
@@ -39,11 +38,11 @@ instead of making it — those files are shared and edits to them collide.
 - **`md/_SCHEMA.md`** — the markdown schema and the widget contract.
 - **`md/ch02_bayesian_statistics.md`** — the reference specimen. Read it end to end before writing a
   line. It shows the density, the voice, how a PDF's worked example becomes a slide, and how the
-  four acts carry a question strip. Match it.
+  sections carry a question strip. Match the clarity, not a fixed section count.
 
-Chapters 0–5 and 8 are already built. If your chapter sits next to one of them in the chain, read
-that neighbour's markdown too and make the join actually work — the sentence you hand off in must
-be the sentence the next chapter says it received.
+All 14 decks are already built. If your chapter sits next to one of them in the chain, read
+that neighbour's markdown too and make the join actually work — the skill you hand off must be
+available before the next chapter uses it.
 
 Also skim `deck/widgets/bayes-update.js` and `deck/widgets/ridge-lasso-prior.js` — they show the
 widget conventions in practice.

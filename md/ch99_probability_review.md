@@ -22,70 +22,16 @@ institute: KAIST
 Use this as a refresher before a lecture or return to it when a probability step moves too quickly. Each topic points to where it is used.
 
 ### Learning route — four tools to calculate, not memorize
+**Bring:** Algebra, sums and the notation for a conditional probability.
 
-::: flow
-- **Average** | expectation and conditional expectation
-- **Update** | Bayes' rule
-- **Condition** | a Gaussian after an observation
-- !**Estimate** | sample averages and importance weights
-:::
-
-You should be able to check a weighted average, split variance into two parts, and update a two-variable Gaussian. Start with the numerical examples, then read the general formulas.
-
-**Notation:** $\mathcal N(\mu,\sigma^2)$ uses **variance** as its second argument. Matrix inverses in the Gaussian density require a positive-definite covariance.
-
-### Reading guide — read the tool where the course first needs it
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Murphy, *Probabilistic Machine Learning: An Introduction* (2022): probability and Gaussian sections](https://probml.github.io/pml-book/book1.html) | Which random variable and conditioning information appear in each expectation? |
-| **Compare** | [Sutton & Barto, *Reinforcement Learning: An Introduction* (2018): returns and sampled estimates](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) | What changes when an expectation is approximated from trajectories? |
-| **Apply** | Coin prediction, GP conditioning and policy-gradient baselines | Which identity justifies the calculation, and what assumptions does it need? |
-
-::: keypoint
-This is a reference toolbox, not a survey of new papers. Work the small examples and return to the relevant lecture; no separate research-paper assignment is required.
-:::
-
-### Why an appendix — the few facts everything rested on
-
-::: lede
-Every method this term leaned on a handful of probability facts. Eight rows, and ==a pointer to where each one carried the weight.==
-:::
-
-| Tool | Where it carried the weight |
+| First pass | What to do |
 |---|---|
-| expectation, and linearity | every return and value (Ch 7–11); expected improvement (Ch 4) |
-| law of total expectation | *the prior mean averages every posterior mean* (Ch 2); Bellman (Ch 7) |
-| law of total variance | *the posterior is on average tighter* (Ch 2); baselines (Ch 10) |
-| Bayes' rule | the whole of belief updating (Ch 2–4); CbAS's target (Ch 6) |
-| the multivariate Gaussian | the weight posterior (Ch 2); GP conditioning (Ch 4); LQR noise (Ch 9) |
-| Monte Carlo estimation | every sampled Bellman backup (Ch 8); REINFORCE (Ch 10) |
-| importance sampling | the CbAS ladder (Ch 6); off-policy evaluation (Ch 12) |
-| KL divergence, entropy | the VAE's regulariser (Ch 6); TRPO's trust region (Ch 10) |
+| **Follow the idea** | Expectation → conditioning → Gaussian calculations → sampling |
+| **Work without the solution** | Decompose predictive variance and identify which uncertainty more measurements can reduce. |
+| **Return later** | Use this chapter when a calculation in Lectures 2–12 needs a probability identity. |
 
-### Model to data, and the arrow inference runs backward
-{fill: center}
-
-::: flow | 
-- **Model** | $\theta$ — the characteristics that generate
-- **Data** | $y=(y_1,\dots,y_n)$ — the observed consequence
-:::
-
-::: center
-==Statistics infers model properties from observed data; causal claims require additional assumptions.== The arrow runs left to right in the world, and right to left in inference.
-:::
-
-::: reveal
-::: small
-Chapter 2 opened on exactly this picture and never left it: a coin's bias generates a sequence of tosses; the tosses are what we see. Chapter 3 gave $\theta$ a graph, Chapter 4 made it an entire function, and Chapters 7–12 made it a transition kernel. The arrow never changed direction — only the size of the thing at its tail.
-:::
-:::
-
-::: reveal
 ::: keypoint
-Each tool below is one line of algebra with an outsized payoff. ==The pointer beside it is the point of the appendix.==
-:::
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
 ## Expectation and its laws
@@ -94,7 +40,6 @@ Each tool below is one line of algebra with an outsized payoff. ==The pointer be
 Almost every objective in this course is an expectation. Two laws about *conditioning* do most of the work.
 
 ### Mean, variance, and the mean of a function
-
 For a random variable $U$ with density $p$, and any $g:\R\to\R$:
 
 $$\E[U] = \int u\,p(u)\,du, \qquad \E[g(U)] = \int g(u)\,p(u)\,du, \qquad \mathrm{var}(U) = \E\big[(U-\E[U])^2\big] = \E[U^2]-\E[U]^2$$
@@ -112,7 +57,6 @@ It is why a return can be split term by term, why subtracting a baseline can be 
 :::
 
 ### The two laws that recur
-
 ::: block Law of total expectation | average the conditional averages
 $$\E[U] \;=\; \E_V\big[\,\E[U\mid V]\,\big]$$
 :::
@@ -128,7 +72,6 @@ Both say the same thing from two heights: conditional means average back to the 
 :::
 
 ### Total variance with numbers — within groups and between groups
-
 Two equally likely groups have means **1 and 3**, and both have variance **1**.
 
 $$\E[U]=0.5(1)+0.5(3)=2.$$
@@ -143,8 +86,35 @@ $$\E[U]=0.5(1)+0.5(3)=2.$$
 Learning the group removes the uncertainty about **which mean applies**. There is still variation inside that group. This is the same decomposition used in posterior prediction.
 :::
 
-### Total expectation, read in three chapters
+### Temperature thread — separate temperature uncertainty from sensor noise
+{sub: shared teaching example · predict before revealing the calculation}
 
+Given data D, the unknown temperature has posterior mean 21.6 and variance 0.8. A new reading is $Y=\theta+\epsilon$, with independent zero-mean sensor noise of variance 1.
+
+**Predict:** Which variance belongs to the temperature, and which belongs to the next sensor reading?
+
+::: reveal
+**Calculate and check.** $\mathbb E[Y\mid D]=\mathbf{21.6}$. Total variance gives $\operatorname{Var}(Y\mid D)=\mathbb E[\operatorname{Var}(Y\mid\theta,D)\mid D]+\operatorname{Var}(\mathbb E[Y\mid\theta,D]\mid D)=1+0.8=\mathbf{1.8}$.
+:::
+
+::: keypoint
+The first term is sensor variability conditional on temperature; the second is uncertainty about the temperature itself.
+:::
+
+### Try it — the temperature becomes known exactly
+{sub: work independently · reveal only after writing an answer}
+
+Keep the sensor noise model, but imagine that θ is now known exactly. What happens to the variance of a new sensor reading? Explain without treating the observation as noise-free.
+
+::: reveal
+**Check your answer.** Parameter uncertainty becomes zero, while the new-reading variance remains **1**. Knowing the temperature exactly does not eliminate the specified sensor noise.
+:::
+
+::: keypoint
+Always name the random variable and the conditioning information before using an uncertainty statement.
+:::
+
+### Total expectation, read in three chapters
 ::: cols c3
 ::: col Ch 2 — the prior mean
 $$\E[\theta] = \E\big[\,\E[\theta\mid y]\,\big]$$
@@ -177,7 +147,6 @@ A Beta$(\alpha,\beta)$ prior and $n$ coin tosses, with *every* dataset enumerate
 :::
 
 ### The three places that split mattered
-
 ::: cols c3
 ::: col Ch 2 — the posterior tightens
 $\E_y[\mathrm{var}(\theta\mid y)]$ equals prior variance minus the variance of posterior means. A particular dataset can still increase posterior variance. Chapter 2 stated it as ==data cannot, on average, make you less certain== — which is this identity read as an inequality.
@@ -197,7 +166,6 @@ Total variance explains the first two readings: *how much did I learn* and *what
 :::
 
 ### Check — the tower property
-
 ::: quiz The law of total expectation says $\mathbb{E}[X] = \mathbb{E}\big[\mathbb{E}[X \mid Y]\big]$. Where does this course lean on it hardest?
 - =In every Bellman equation — conditioning on the next state and averaging over it is exactly this identity
 - In proving that the sample mean is unbiased
@@ -212,7 +180,6 @@ Writing $V(s) = \mathbb{E}[r + \gamma V(s')]$ is the tower property with the con
 One line of algebra that turns a belief and a measurement into a new belief — and two interpretations of probability and uncertainty.
 
 ### Bayes' rule — the whole of inference on one line
-
 $$p(\theta\mid \text{data}) = \frac{p(\text{data}\mid\theta)\,p(\theta)}{p(\text{data})} \;\propto\; \underbrace{p(\text{data}\mid\theta)}_{\text{likelihood}}\,\underbrace{p(\theta)}_{\text{prior}}$$
 
 ::: reveal
@@ -236,7 +203,6 @@ Belief in $=$ prior; belief out $=$ posterior; ==the data does the turning.==
 :::
 
 ### Frequentist and Bayesian — two readings of the same data
-
 ::: table center
 | | Frequentist | Bayesian |
 |---|---|---|
@@ -253,13 +219,11 @@ The distinction is not pedantry. It is the MLE-versus-MAP, point-versus-distribu
 :::
 
 ### Both say 95%, and they are different claims
-
 ::: widget ci-vs-cr
 Left, the frequentist picture: $\theta$ is a fixed vertical line and the *intervals* are what move — run the experiment 26 times and about 95% of them cover it. Right, the Bayesian picture: one dataset, and the *parameter* is what is spread. Chapter 2 ran this widget for the same reason.
 :::
 
 ### The other two views — aleatoric and epistemic
-
 ::: cols
 ::: col Aleatoric — irreducible
 The world is genuinely stochastic. Repeating the experiment gives a different answer, and no amount of data removes it. All you can do is *characterise* it, as a distribution.
@@ -280,7 +244,6 @@ Lecture 0 named the pair on the slide *Two kinds of uncertainty — name them on
 :::
 
 ### Check — the estimator's wall
-
 ::: quiz A Monte Carlo estimate from $n$ samples has standard error $\sigma/\sqrt{n}$. To halve the error, you must:
 - Double the number of samples
 - =Quadruple the number of samples
@@ -295,7 +258,6 @@ The $\sqrt{n}$ is a wall, not a slope: each additional digit of accuracy costs a
 The single most-used distribution in the course. Four properties, and each one buys a chapter.
 
 ### The multivariate normal — definition
-
 A nonsingular jointly Gaussian vector $Y=(Y_1,\dots,Y_k)$ has density
 
 $$p(y) = \mathcal N(y\mid\mu,\Sigma) = \frac{1}{\sqrt{(2\pi)^k|\Sigma|}}\exp\!\Big(-\tfrac12 (y-\mu)^\top\Sigma^{-1}(y-\mu)\Big)$$
@@ -315,7 +277,6 @@ Each is a one-line fact. Together they are why so much of the course can carry u
 :::
 
 ### Property 1 — for Gaussians, uncorrelated means independent
-
 Setting $\Sigma_{ij}=0$ for $i\ne j$ makes $\Sigma$ and $\Sigma^{-1}$ diagonal, so the joint density factors:
 
 $$\Sigma \text{ diagonal} \;\Longrightarrow\; p(y)=\prod_i \mathcal N(y_i\mid\mu_i,\sigma_{ii})$$
@@ -337,7 +298,6 @@ Zero correlation is a statement about ==second moments only.== ==The Gaussian is
 :::
 
 ### Property 2 — a linear map of a Gaussian is Gaussian
-
 $$Z = AY \;\sim\; \mathcal N\big(A\mu,\; A\Sigma A^\top\big)$$
 
 Both moments are just linearity: $\E[AY]=A\mu$ and $\mathrm{cov}(AY)=A\Sigma A^\top$. No integral is needed, and ==the family is closed under the operation== — which is the property that makes Gaussians tractable everywhere they appear.
@@ -349,7 +309,6 @@ Both moments are just linearity: $\E[AY]=A\mu$ and $\mathrm{cov}(AY)=A\Sigma A^\
 :::
 
 ### Properties 3 and 4 — marginals and conditionals stay Gaussian
-
 **Property 3 — marginals are Gaussian.** Any sub-vector of a Gaussian is Gaussian; read off the matching blocks of $\mu$ and $\Sigma$ and ignore the rest. (It is Property 2 with a selector matrix.)
 
 ::: reveal
@@ -367,7 +326,6 @@ Read the two braces. The mean moves by ==how far the observation fell from its o
 :::
 
 ### Gaussian conditioning — read one observation across a correlation
-
 Let $Y_1,Y_2$ have means 0, variances 1, and correlation **0.8**. Observe $Y_1=1$.
 
 $$\E[Y_2\mid Y_1=1]=0+0.8(1)=0.8,$$
@@ -381,13 +339,11 @@ Correlation transmits information: the mean shifts toward the observation, and u
 :::
 
 ### Conditioning, in your hands
-
 ::: widget gaussian-four {"seed":11}
 Drag the mean, reshape $\Sigma$ with the correlation and scale controls, then drag the conditioning line $y_1=c$. The blue slice is the exact conditional: its mean slides along the regression line $\mu_2+\rho\frac{\sigma_2}{\sigma_1}(c-\mu_1)$ and its width shrinks to $\sigma_2\sqrt{1-\rho^2}$ — ==a factor that depends on the correlation and on nothing else.== The two presets are Chapter 4's own numbers.
 :::
 
 ### Where Property 4 did the work
-
 ::: cols c3
 ::: col Ch 4 — the GP posterior
 Take $Y_1=\mathbf y_{1:n}$ and $Y_2=f(x)$, so $\Sigma_{11}=\mathbf K+\sigma_\epsilon^2\mathbf I$, $\Sigma_{21}=\mathbf k^\top$, $\Sigma_{22}=k(x,x)$:
@@ -420,7 +376,6 @@ Chapter 4 quantified this at two correlations from its own kernel. At $\mathrm{c
 :::
 
 ### Check — the property everything rests on
-
 ::: quiz Which property of the multivariate Gaussian is used most often in this course?
 - That it maximises entropy for a given mean and covariance
 - That the sum of independent Gaussians is Gaussian
@@ -435,7 +390,6 @@ Gaussian conditioning **is** the Gaussian process posterior, and the GP posterio
 What to do when the integral has no closed form — and how to say that one distribution is far from another.
 
 ### Monte Carlo — when the integral is intractable
-
 When an expectation has no closed form, ==estimate it by sampling:==
 
 $$\E_{x\sim p}[g(x)] \;\approx\; \hat\mu_N = \frac1N\sum_{i=1}^N g(x_i), \qquad x_i\sim p$$
@@ -455,7 +409,6 @@ For an i.i.d. average the rate $1/\sqrt N$ is fixed by the central limit theorem
 :::
 
 ### Importance sampling — sample here, answer about there
-
 $$\E_{x\sim p}[g(x)] = \E_{x\sim q}\Big[\underbrace{\tfrac{p(x)}{q(x)}}_{\text{weight } w(x)}g(x)\Big] \qquad\text{for any } q \text{ with } q>0 \text{ wherever } pg\ne0$$
 
 ::: reveal
@@ -476,13 +429,11 @@ Unbiased for *any* legal $q$. The catch is entirely in the variance: $\mathrm{va
 :::
 
 ### The rate is fixed; the proposal sets the constant
-
 ::: widget mc-estimator {"seed":12345}
 Estimating $\Pr(X>3)=1.35\times10^{-3}$ for $X\sim\mathcal N(0,1)$. Both clouds of points fall as $1/\sqrt N$ and sit on their own exact $\sigma/\sqrt N$ line: the rate is not negotiable. What moves is the constant — a proposal aimed at the event needs ==339 samples for 10% accuracy, plain sampling needs 74,000, and one aimed the wrong way needs 3.4 million== and returns a confident zero until it does not.
 :::
 
 ### KL divergence and entropy — comparing distributions
-
 $$\mathrm{KL}(p\,\|\,q) = \E_{x\sim p}\Big[\log\tfrac{p(x)}{q(x)}\Big] \;\ge\; 0, \qquad =0 \iff p=q$$
 
 Not symmetric, and not a metric — but the natural *information cost* of using $q$ where $p$ is true. For Gaussians it is closed form, which is why it can sit inside a loss: $\mathrm{KL}\big(\mathcal N(0,1)\|\mathcal N(0,4)\big)=0.318$ while the reverse is $0.807$.
@@ -500,7 +451,6 @@ Not symmetric, and not a metric — but the natural *information cost* of using 
 :::
 
 ### Check — which divergence, and why it is asymmetric
-
 ::: quiz The KL divergence $\mathrm{KL}(q \Vert p)$ is not symmetric. In variational inference, minimising it over $q$ produces what behaviour?
 - $q$ spreads out to cover every mode of $p$
 - The asymmetry has no practical consequence for the fitted $q$
@@ -552,3 +502,21 @@ Keep this appendix beside the main lectures. Whenever a derivation moves quickly
 {layout: standout}
 
 Update them, estimate them, or bound the gap between them — that is the course.
+
+## Appendix — examples, readings and derivations
+{short: APPENDIX}
+
+Reference material for a second pass. The main teaching route ends before this section.
+
+### Reading guide — read the tool where the course first needs it
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Murphy, *Probabilistic Machine Learning: An Introduction* (2022): probability and Gaussian sections](https://probml.github.io/pml-book/book1.html) | Which random variable and conditioning information appear in each expectation? |
+| **Compare** | [Sutton & Barto, *Reinforcement Learning: An Introduction* (2018): returns and sampled estimates](https://mitpress.mit.edu/9780262039246/reinforcement-learning/) | What changes when an expectation is approximated from trajectories? |
+| **Apply** | Coin prediction, GP conditioning and policy-gradient baselines | Which identity justifies the calculation, and what assumptions does it need? |
+
+::: keypoint
+This is a reference toolbox, not a survey of new papers. Work the small examples and return to the relevant lecture; no separate research-paper assignment is required.
+:::

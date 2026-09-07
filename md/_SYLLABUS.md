@@ -11,7 +11,7 @@
 term: 2025 Fall
 heading: How the term runs
 lede: >
-  A graduate-level course on data-driven decision making, taught twice a week.
+  An upper-undergraduate course on data-driven decision making, with research extensions.
   Everything you need is on this page — the fourteen chapters below are the
   material, and there is no textbook to buy.
 
@@ -32,7 +32,7 @@ facts:
   Term: 2025 Fall
   Lectures: Mon & Wed · 14:30 – 15:45
   Location: "(E2-2) Industrial Engineering & Management Bldg. #1501"
-  Prerequisites: None
+  Expected preparation: Calculus, linear algebra, basic probability, and Python
   Textbook: None — these lecture notes are the material
   Language: English
 
@@ -101,8 +101,9 @@ project:
       body: >
         Translate the situation into something computable — the objective, the levers,
         the constraints, and the part you do not know — then build the decision algorithm
-        from the methods of this course. Verification is the graded half: bound it, test
-        it against held-out reality, and show it beats the baseline you named.
+        using an appropriate core method from this course. Compare it with the baseline
+        under the same conditions, test against held-out evidence, and explain where it
+        improves or fails. The project does not require implementing every research paper.
     - n: "03"
       name: Application
       tone: plum

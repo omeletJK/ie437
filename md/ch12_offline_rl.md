@@ -26,59 +26,36 @@ questions:
 ### Offline Reinforcement Learning
 {layout: title}
 
-## The handoff — the right to try, withdrawn
-{short: HANDOFF}
-
-Lecture 11 closed by naming the last luxury: *the right to try something and see what happens.* This lecture gives it up, and keeps everything else.
-
 ### Where we are — the last thing taken away
+| Previous step | This chapter's question |
+|---|---|
+| Lectures 8–11 could collect new transitions during learning. | Now the training log is fixed. |
 
-::: tracker
-:::
+Lecture 5 already showed how optimizing a learned score can exploit error. Here unsupported action values also enter repeated Bellman targets.
 
-::: table center
-|   | Model-based | Data-driven |
-|---|---|---|
-| **Dynamic, single** | MDP / DP *(Lec 7)* · optimal control *(Lec 9)* | value *(Lec 8)* · policy *(Lec 10)* · model *(Lec 11)* · ==offline *(Lec 12)*== |
-:::
-
-The cube position has not moved since Lecture 8: ==dynamic, data-driven, single agent==. What changes is not an axis but a permission. Every method of Part IV — $\varepsilon$-greedy exploration, a replay buffer that keeps filling, a policy gradient estimated from fresh rollouts, Dyna's imagined steps checked against real ones — assumed that the agent could ==put its current policy into the world and find out==.
-
-::: reveal
-::: small
-Now it cannot. A fixed dataset $D$ of logged transitions is all there will ever be: six months of a plant's control logs, a hospital's treatment records, a fleet's driving data. The reason is rarely computational. It is that a bad action costs a patient, a batch, or a vehicle — and no one will authorise an $\varepsilon$-greedy step to find out how bad.
-:::
+::: keypoint
+Estimate a heater policy's return from a log and identify an unsupported action.
 :::
 
-### The course has crossed this line once already
-{sub: the static half answered this question five lectures ago}
+### Learning route — improve a policy using only the log
+**Bring:** TD3, Bellman fitting and a basic probability ratio.
 
-```
-static:    Lec 4  Bayesian optimisation   may query    →   Lec 5–6   a fixed dataset
-dynamic:   Lec 8 · 10 · 11  RL            may interact →   Lec 12    a fixed dataset
-```
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | Diagnose missing support → TD3+BC → CQL/IQL → evaluate |
+| **Work without the solution** | Estimate a heater policy's return from a log and identify an unsupported action. |
+| **Return later** | Full CQL guarantees, model/sequence alternatives and advanced OPE estimators are references. |
 
-Lecture 0's `given-ledger` has a row called ==the right to query==. It goes dark at Lecture 5 and stays dark through Lecture 6 — and then, for the whole dynamic half, it comes back on. Lectures 8 through 11 could all interact. **This is the lecture where that row goes dark for good.**
-
-::: reveal
-::: cols
-::: col Lecture 5 said
-A surrogate fitted to a fixed dataset will be ==exploited by the optimiser== in exactly the region where it is wrong, because that is where it promises most.
-:::
-::: col.accent Lecture 12 says
-A $Q$-function fitted to a fixed dataset will be ==exploited by the $\max$== in exactly the region where it is wrong, because that is where it promises most.
-:::
-:::
+::: keypoint
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
-::: reveal
-::: small
-The same sentence, one axis over. That is not a coincidence to be noticed at the end; it is the structure of the argument, so the answers rhyme too — and Lecture 5's answer was ==conservatism==.
-:::
-:::
+## Act 1 — what breaks: distributional shift
+{short: ACT 1, num: Act 1}
+
+**Q1.** Nothing in the update changes. Only the guarantee that someone will check.
 
 ### The setting, and the sentence that breaks
-
 We are handed $D = \{(s_i, a_i, r_i, s_i')\}_{i=1}^{N}$, collected by some **behaviour policy** $\beta$ that may be a human operator, an old controller, or a mixture of several. No more data will arrive. Run Lecture 8's update on it, unchanged:
 
 $$y \;=\; r + \gamma \max_{a'} Q(s', a')$$
@@ -92,51 +69,6 @@ The $\max$ ranges over ==every== action, including actions $\beta$ never took at
 Every algorithm in Part IV assumed it could try something. Take that away and an estimated Bellman target becomes unreliable — because the one term it needs is evaluated ==at actions nobody ever took.==
 :::
 :::
-
-### The roadmap — four questions
-
-::: qstrip 0
-:::
-
-- **Q1 — What actually breaks?** ==Distributional shift==: the policy queries $Q$ where $\beta$ never went, and nothing corrects it. This is Lecture 8's deadly triad with the escape hatch removed.
-- **Q2 — Can we constrain the policy?** Keep $\pi$ near $\beta$ — ==BCQ, BEAR, TD3+BC== — and trade freedom to improve against closeness to the data.
-- **Q3 — Can we constrain the value instead?** CQL makes values conservative; IQL uses in-data value fitting to avoid maximizing over unseen actions.
-- **Q4 — How would you know it worked?** ==Off-policy evaluation== — the question a practitioner asks first, and the one this course has not yet addressed.
-
-### Learning route — improve a policy using only the log
-
-**Bring:** Q-learning targets, actor–critic, model error, and basic importance sampling. The probability appendix supplies the last tool if needed.
-
-::: flow
-- **Diagnose** | find the unobserved action in a target
-- **Restrict / penalize** | compare policy and value methods
-- **Recombine** | use good transitions across trajectories
-- !**Evaluate** | check what the fixed data can support
-:::
-
-By the end, calculate an inflated Q target, a two-action expectile, and an importance-weighted estimate. **CQL's theorem and the OPE estimator catalogue are the advanced layer.**
-
-::: keypoint
-Offline means **no new environment interaction during learning**. Off-policy describes a difference between the data policy and the target policy; it does not necessarily mean offline.
-:::
-
-### Reading guide — three main responses to a fixed dataset
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Kumar et al., *Conservative Q-Learning for Offline Reinforcement Learning* (NeurIPS 2020)](https://arxiv.org/abs/2006.04779) | How can the critic discourage actions unsupported by the data? |
-| **Compare** | [Fujimoto & Gu, *A Minimalist Approach to Offline Reinforcement Learning* (NeurIPS 2021)](https://arxiv.org/abs/2106.06860) and [Kostrikov et al., IQL (ICLR 2022)](https://arxiv.org/abs/2110.06169) | What is constrained: the actor update, the value, or the action queries? |
-| **Apply** | The logged-route stitching example and off-policy evaluation calculations | Can measured evidence support the claimed improvement? |
-
-::: keypoint
-TD3+BC, CQL and IQL form the main method comparison. BCQ/BEAR/BRAC are a compact family map; sequence models and learned-model methods extend the picture. Evaluation is part of the main lesson.
-:::
-
-## Act 1 — what breaks: distributional shift
-{short: ACT 1, num: Act 1}
-
-**Q1.** Nothing in the update changes. Only the guarantee that someone will check.
 
 ### The one term nobody measured
 {q: 1}
@@ -163,7 +95,6 @@ Call the gap $\epsilon(s',a') = Q(s',a') - Q^*(s',a')$. Three properties make it
 :::
 
 ### Online, the environment answers back. Offline, nothing does.
-
 ::: lede
 Off-policy learning has always been hard. What follows is not that difficulty; it is the removal of the thing that made it survivable.
 :::
@@ -194,7 +125,6 @@ This is Lecture 4 against Lecture 5 again, in the dynamic world. There, uncertai
 :::
 
 ### The deadly triad, with the escape hatch removed
-
 Lecture 8's Act 4 named three ingredients — function approximation, bootstrapping, off-policy data — whose combination can cause divergence. Standard bootstrapped offline value learning has all three: the data is not merely off-policy, it comes from a policy we did not choose and cannot re-run. And what online RL had, the ability to go and visit the state–action pair it is wrong about, is precisely what has been withdrawn.
 
 ::: widget deadly-triad {"seed":5}
@@ -202,13 +132,11 @@ Lecture 8's counterexample, unchanged. Read the third switch again — *update $
 :::
 
 ### Watch it happen
-
 ::: widget offline-divergence {"seed":11}
 A machine on a ten-step track. The action $a\in[-1,1]$ is how hard you push: bigger jumps further, and within the data bigger is genuinely better — until $|a|>0.5$, where the machine breaks. The operator who logged $D$ never pushed past $0.3$. Run Lecture 8's backup unchanged and $\hat V(s_0)=\max_a Q$ climbs from $0.21$ to ==$990.7$== in fifty sweeps — a factor of $1.21$ per sweep, without bound — while the greedy policy it implies scores ==$-1.00$== in the real machine, every single sweep. Then restrict the $\max$ to the five actions in $D$: the same code settles at $0.788$ and returns $0.767$, the best any in-support policy can do.
 :::
 
 ### A target can grow without one new observation
-
 The log contains a transition with reward **1** to state B. At B, action **stay** was observed and has estimated value 2; action **jump** was never observed but the network predicts 20. Let $\gamma=0.9$.
 
 | backup | continuation used | target |
@@ -251,7 +179,7 @@ Fit the data · push down what the optimiser would chase · hold up what the dat
 
 ::: reveal
 ::: small
-Lecture 5 promised this slide would return with a policy in place of an optimiser and a $Q$-function in place of a surrogate. It has. The translation is exactly $x \mapsto (s,a)$ — everything else, including the counter-term that stops the whole surface collapsing, is unchanged. Act 3 builds it.
+Lecture 5 promised this slide would return with a policy in place of an optimiser and a $Q$-function in place of a surrogate. It has. The analogy replaces a design $x$ by a state–action pair $(s,a)$. CQL also includes a Bellman target and a specific action-distribution penalty, so it is not simply COMs with renamed variables. Act 3 develops the loss.
 :::
 :::
 
@@ -296,7 +224,6 @@ So the offline problem is not "imitate the data" but ==seek better expected retu
 :::
 
 ### Stitching, run
-
 ::: widget offline-stitch {"seed":3}
 Two logged routes from **S** to **G**, crossing at **M**. One is cheap early and expensive late; the other is expensive early and cheap late. Both cost ==7==. Behaviour cloning reproduces them and costs ==7== too, whether it copies the modal action or samples the whole distribution. Tabular $Q$-learning on the *same twenty transitions* returns $S\to A_1\to M\to B_2\to G$ at a cost of ==4== — a route no one ever drove, assembled entirely from steps that were.
 :::
@@ -323,7 +250,6 @@ A tight distribution constraint can limit improvement. A support constraint can 
 :::
 
 ### Three ways to say "stay close"
-
 ::: table center
 | method | what it constrains | the mechanism |
 |---|---|---|
@@ -376,29 +302,7 @@ The policy may still maximise freely. It will simply find that ==the peaks it us
 :::
 :::
 
-### What the CQL lower-bound statement actually covers
-
-The theoretical result concerns a **policy value**, averaged over that policy's actions:
-
-$$\hat V^\pi(s)=\E_{a\sim\pi}[\hat Q(s,a)]\le V^\pi(s).$$
-
-It requires the theorem's coverage, estimation-error, update, and sufficiently large penalty assumptions. The practical neural-network loss does not automatically certify those assumptions.
-
-::: cols
-::: col What it can say
-Under the stated assumptions, the estimated value of the evaluated policy is conservative.
-:::
-::: col.accent What it does not say
-Every action value is a lower bound; any extracted policy is safe; or every trained network has the guarantee.
-:::
-:::
-
-::: keypoint
-Keep **theoretical scope**, **training objective**, and **measured performance** distinct, just as we did for COMs in Lecture 5. {p}(Kumar et al., 2020, Theorem 3.2)
-:::
-
 ### Turning the dial
-
 ::: widget conservative-cql {"seed":11}
 The same machine, the same logs, the same fifty sweeps — only $\alpha$ changes. At $\alpha=0$ the value reaches $990.7$ against a truth of $-1.00$: ==over-promised by 991.7==. At $\alpha=0.01$ it reports $0.653$ and the policy actually earns ==$0.767$== — an honest under-promise, and the best return any in-support policy can reach, against the operator's own $0.443$. Keep turning: by $\alpha=0.3$ the argmax has been squeezed back onto $\beta$'s single most common action and earns $0.361$ — ==worse than the logs it was learned from.==
 :::
@@ -427,7 +331,6 @@ The policy is then extracted separately by advantage-weighted regression, $\;\pi
 :::
 
 ### Expectile regression — two observed actions are enough to see it
-
 At one state, suppose the log contains the two actions equally often, with Q values **2 and 6**. For an expectile $m$ between them:
 
 $$\tau(6-m)=(1-\tau)(m-2).$$
@@ -466,7 +369,6 @@ CQL's Lagrangian variant turns the penalty into a constraint with a budget. TD3+
 :::
 
 ### One offline problem, three different interventions
-
 All three start with a fixed log and face the same risk: the learned policy may prefer actions whose value is poorly supported by that log.
 
 | Main method | What is changed? | Question to ask when reading its loss |
@@ -482,72 +384,21 @@ These are different responses to **unsupported improvement**. None creates missi
 ### Check — the quotation from Lecture 5
 {q: 3}
 
-::: quiz CQL adds a term that pushes $Q$ *down* on actions not in the data. Which earlier idea is this, exactly?
+::: quiz CQL adds a term that pushes $Q$ *down* on actions not in the data. Which earlier method has a closely related motivation?
 - The trust region of Lecture 1 and Lecture 10
 - The $\varepsilon$-greedy exploration tax of Lecture 8
 - =The conservative objective model of Lecture 5 — penalize unsupported high predictions while fitting the data, reducing the incentive to exploit estimation error
 - The target network of Lecture 8
-The static half and the dynamic half of this course meet the identical failure and answer it with the identical instrument. There, an optimiser exploited a surrogate $\hat{f}$ off the data; here, a policy exploits a learned $Q$ on unseen actions. Both are cured by training the model to be **pessimistic in proportion to its ignorance** — and both come with the same over-conservatism at the far end of the dial.
+Both chapters study optimization with imperfect models and limited data. COMs regularizes a design surrogate; CQL regularizes action values inside Bellman learning. Their conservative objectives are related, but their guarantees and assumptions differ. Excessive conservatism can suppress useful improvements.
 :::
 
-## Act 4 — the other two routes, and how you would know
+## Act 4 — evaluate a policy using the fixed log
 {short: ACT 4, num: Act 4}
 
-**Q4.** Policy and value are two of the three things you can be conservative about. Then: the question a practitioner asks before any of it.
-
-### Policy, value — and model
-{q: 4}
-
-::: qstrip
-:::
-
-Lecture 11 handed us a learned dynamics model $\hat P$. Offline, its bias becomes acute for the same reason everything else does: a rollout that leaves the data is never contradicted. So penalise the reward by the model's own uncertainty and plan in the penalised MDP:
-
-$$\tilde r(s,a) \;=\; r(s,a) \;-\; \hl{\lambda\, u(s,a)}$$
-
-::: reveal
-::: cols
-::: col MOPO {p}(Yu et al., 2020)
-$u(s,a)$ is the maximum standard deviation across a bootstrapped ensemble of dynamics models — Lecture 5's `ensemble-alarm`, now measuring disagreement about *where you will end up* rather than about *how good it is*. A theoretical lower bound requires a valid model-error bound; empirical ensemble uncertainty is a proxy, not an automatic certificate.
-:::
-::: col MOReL {p}(Kidambi et al., 2020)
-Harder-edged: an *unknown state–action detector* partitions the space, and every pair it flags is routed to an absorbing state with the worst possible reward. Planning then avoids the unknown region because the model says it is a cliff.
-:::
-:::
-:::
-
-::: reveal
-::: keypoint
-Constrain the policy · constrain the value · constrain the model. Three places to put the same instinct — ==do not trust a model where the data is thin== — and the set is now complete.
-:::
-:::
-
-### Or drop the Bellman equation entirely
-
-::: lede
-Every method so far has kept Bellman and defended it. The last family does not keep it.
-:::
-
-::: cols
-::: col Decision Transformer {p}(Chen et al., 2021)
-Model the trajectory as a sequence: $\;\hat R_1, s_1, a_1, \hat R_2, s_2, a_2, \dots$, where $\hat R_t=\sum_{t'\ge t} r_{t'}$ is the **return-to-go**. Train a causal transformer to predict $a_t$. At test time, *condition* on the return you want and let it autoregress.
-
-It avoids Bellman bootstrapping and its particular feedback loop; training and generalization can still fail. The failure mode moves instead: ask for a return the data never achieved and it will confabulate.
-:::
-::: col.accent Diffuser {p}(Janner et al., 2022)
-Go further: learn a diffusion model over ==whole trajectories== and generate one, guided by a reward gradient. Planning becomes sampling; the learned distribution guides the proposal, but feasibility and dynamics consistency are not guaranteed for free.
-:::
-:::
-
-::: reveal
-::: small
-This is Lecture 6 arriving in the dynamic world. There, *search a forward model* (Lec 5) sat opposite *sample an inverse model* (Lec 6), and the spine promised the pair would return as value against policy. Here it returns a third time, in its sharpest form: ==learn $Q$ and search it, or learn $p(\tau \mid \text{return})$ and draw from it.== Conditioning on a desired outcome and sampling a design is exactly what Lecture 6's `condition-shift` did — including the way the samples thin out as the condition leaves the data.
-:::
-:::
+**Q4.** What evidence in the log supports a claim of improvement?
 
 ### Off-policy evaluation — the question that comes first
-
-You have a candidate policy $\pi$. You cannot deploy it to find out whether it is good, because deploying it *is* the thing you were forbidden. Estimate $V^\pi$ from $D$ alone.
+You have a candidate policy $\pi$ and a fixed log $D$. If new evaluation trials are unavailable, estimate $V^\pi$ using the log and explicit coverage assumptions. Offline RL restricts interaction during training; it does not by definition prohibit every later deployment.
 
 ::: cols
 ::: col Importance sampling
@@ -564,12 +415,11 @@ A reward at step $t$ cannot depend on later actions, so it should not be reweigh
 
 ::: reveal
 ::: small
-In the independent, identical-step example below, let $\E_\beta[\rho^2]=q$. Then $\E[W^2]=q^H$ and $\mathrm{Var}(W)=q^H-1$, so the estimator's standard error grows like ==$q^{H/2}$== — geometric in the horizon, with a base fixed by how far $\pi$ has moved from $\beta$. This is the wall, and no amount of data of a fixed size climbs it.
+In the independent, identical-step example below, let $\E_\beta[\rho^2]=q$. Then $\E[W^2]=q^H$ and $\mathrm{Var}(W)=q^H-1$, so the estimator's standard error grows like ==$q^{H/2}$== — geometric in the horizon, with a base fixed by how far $\pi$ has moved from $\beta$. For a fixed dataset, this can make the estimate too uncertain to compare policies reliably.
 :::
 :::
 
 ### Importance sampling — change frequencies, not rewards
-
 One decision, two actions. The behavior policy uses probabilities **(0.5, 0.5)**; the target policy uses **(0.8, 0.2)**. Rewards are **(1, 0)**.
 
 | logged action | target / behavior weight | weighted reward |
@@ -583,39 +433,49 @@ With one observation of each, IS gives $(1.6+0)/2=0.8$, matching the target's tr
 If behavior never chooses A, its ratio is undefined and the log cannot identify A's reward without additional assumptions. **No estimator repairs missing support by arithmetic alone.**
 :::
 
-### The variance, measured
+### Temperature thread — evaluate the heater policy from a log
+{sub: shared teaching example · predict before revealing the calculation}
 
+Use only this one-step log; the learner has no simulator formula. Behavior chooses off/heat with probabilities (0.5, 0.5). The log contains one off reward −4 and one heat reward −2. The proposed policy uses probabilities (0.2, 0.8).
+
+**Predict:** Should giving the lower-cost action more probability improve the estimated return?
+
+::: reveal
+**Calculate and check.** Weights are $0.2/0.5=0.4$ and $0.8/0.5=1.6$. The IS estimate is $[0.4(-4)+1.6(-2)]/2=\mathbf{-2.4}$, compared with logged mean −3. This exact calculation uses the balanced sample shown.
+:::
+
+::: keypoint
+Weight observed outcomes by how their probability changes. Do not substitute the critic score for a measured reward.
+:::
+
+### Try it — the log contains no heating actions
+{sub: work independently · reveal only after writing an answer}
+
+Suppose behavior always chose off, but the proposed policy still heats with probability 0.8. Can the existing log identify its value without extra assumptions about heating outcomes?
+
+::: reveal
+**Check your answer.** No. The heating probability ratio has zero behavior probability in its denominator, and no heating rewards were observed. Many different heating outcomes are compatible with the same all-off log.
+:::
+
+::: keypoint
+Model predictions can add assumptions, but arithmetic cannot create missing evidence. Coverage is part of the evaluation question.
+:::
+
+### The variance, measured
 ::: widget ope-variance {"seed":9}
 $H$ decisions, two actions, $\beta$ a coin flip and $\pi$ choosing the good action nine times in ten, so $q = 1.64$ and $V^\pi = 0.9H$. With $n=200$ logged trajectories, ordinary IS has a root-mean-square error of $0.069$ at $H=1$ and ==$636$ at $H=24$== — where the quantity being estimated is $21.6$. Doubly robust with a 5 % reward-model error runs a decade and a half below it, ==and parallel to it==: it scales the exponential down, it does not remove it. Self-normalized and fitted estimators look steadier in this example; that does not guarantee accurate evaluation at long horizons in general.
 :::
 
-### What a practitioner actually runs
+### What evidence supports the recommendation?
+| Check | What to report |
+|---|---|
+| Coverage | Does the log include actions the proposed policy could choose? |
+| Estimated return | State the estimator, behavior probabilities and assumptions. |
+| Stability | Inspect large importance weights and sensitivity to the evaluation data. |
+| Comparison | Compare with the logged policy and a simple baseline under the same protocol. |
 
-::: cols
-::: col Doubly robust {p}(Jiang & Li, 2016; Thomas & Brunskill, 2016)
-$$\begin{aligned}
-W_t&=\textstyle\prod_{t'\le t}\rho_{t'},\\
-\delta_t&=r_t+\gamma\hat V(s_{t+1})-\hat Q(s_t,a_t),\\
-\hat V_{\mathrm{DR}}&=\hat V(s_1)+\sum_t\gamma^{t-1}W_t\delta_t.
-\end{aligned}$$
-
-With support and appropriate independent fitting, DR is unbiased if the ratios are correct or the relevant Q model is exact. Weights multiply ==Bellman residuals==; an accurate model can reduce their variance.
-:::
-::: col Fitted Q evaluation {p}(Le, Voloshin & Yue, 2019)
-Regress $Q^\pi$ directly: $\;Q \leftarrow r + \gamma\, \E_{a'\sim\pi}[Q(s',a')]$, fitted on $D$. FQE avoids products of trajectory ratios, but its error still depends on horizon, coverage, function approximation, and fitting. More data can reduce estimation error; misspecification or missing support can leave irreducible error.
-:::
-:::
-
-::: reveal
-::: block The honest verdict | and the reason to report more than one number
-Compare estimators and inspect coverage and importance weights. Their **disagreement is a diagnostic, not a confidence interval**. Any reported uncertainty interval needs an explicit construction and its assumptions; agreement alone cannot establish accuracy.
-:::
-:::
-
-::: reveal
-::: small
-In an industrial deployment this act comes *first*. Before anyone asks whether to use CQL or IQL, someone asks: if we hand you six months of logs and a proposed controller, ==can you tell us whether it is better than the one we are running?== The course has not addressed that question until now, and it is the question that gates the rest.
-:::
+::: keypoint
+A high fitted Q value is a prediction. A defensible improvement claim needs **evaluation evidence and its limits**. FQE, doubly robust estimators and model-based alternatives are retained in the appendix.
 :::
 
 ### Check — the axis left uncrossed
@@ -634,38 +494,28 @@ Our main optimization and RL methods use one decision maker's objective. With se
 
 One failure, three answers — and then the whole map, stood back up.
 
-### Where we are — three constraints, one instinct
-
-::: table center
-| | what is made conservative | the cost |
+### Where we are — policy, value and evaluation
+| Question | Core tools | What still needs checking |
 |---|---|---|
-| **Policy** — BCQ · BEAR · TD3+BC | *where $\pi$ may look* | can restrict improvement where it binds |
-| **Value** — CQL · IQL | *what $Q$ may promise* | $\alpha$, $\tau$ tuned blind, and both ends fail |
-| **Model** — MOPO · MOReL | *what $\hat P$ may claim* | needs calibrated uncertainty, which is hard |
-:::
+| Which actions should the policy prefer? | TD3+BC and behavior restrictions | The trade-off between staying near the data and improving on it. |
+| How should values guide improvement? | CQL and IQL | Their different objectives and the effect of conservatism. |
+| Does the new policy perform better? | Off-policy evaluation | Coverage, behavior probabilities and estimation uncertainty. |
 
-::: reveal
 ::: keypoint
-All three are Lecture 5's instinct, promoted to the dynamic world: ==do not trust a model where the data is thin.== The only thing that changed is what the model is *of*.
-:::
+Learning and evaluation answer different questions. A high predicted value alone does not establish an improvement over the behavior policy.
 :::
 
-::: reveal
-::: small
-And what this lecture hands on is ==the course's last move== — conservative values and policies, off-policy evaluation, and the one axis left uncrossed.
-:::
-:::
+Model-based alternatives and sequence models remain in the appendix. Each adds its own modeling assumptions; none creates missing observations.
 
 ### The tour, complete — and the face we did not visit
-
 ::: widget course-cube {"step":5}
 Lecture 0's cube, walked to its last cell: ⑤ ==the interaction withdrawn==. Step once more and no badge lights — **multi agents** is the crossing this course never makes.
 :::
 
-### Every algorithm in Part IV assumed it could try something.
+### Offline training learns from the actions already logged.
 {layout: standout}
 
-Take that away and estimated Bellman targets become unreliable — because the term it needs is evaluated at actions nobody ever took. The cure is not a better optimiser. It is a model taught to doubt itself exactly where it will be attacked.
+Use the fixed data carefully: distinguish supported actions from extrapolation, explain the learning objective, and evaluate the policy under stated assumptions. Additional model predictions are not additional measurements.
 
 ### Questions?
 {layout: standout}
@@ -676,6 +526,19 @@ The map has three axes. We studied static versus dynamic decisions and given ver
 {short: APPENDIX}
 
 Complete statements, kept out of the narrative.
+
+### Reading guide — three main responses to a fixed dataset
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Kumar et al., *Conservative Q-Learning for Offline Reinforcement Learning* (NeurIPS 2020)](https://arxiv.org/abs/2006.04779) | How can the critic discourage actions unsupported by the data? |
+| **Compare** | [Fujimoto & Gu, *A Minimalist Approach to Offline Reinforcement Learning* (NeurIPS 2021)](https://arxiv.org/abs/2106.06860) and [Kostrikov et al., IQL (ICLR 2022)](https://arxiv.org/abs/2110.06169) | What is constrained: the actor update, the value, or the action queries? |
+| **Apply** | The logged-route stitching example and off-policy evaluation calculations | Can measured evidence support the claimed improvement? |
+
+::: keypoint
+TD3+BC, CQL and IQL form the main method comparison. BCQ/BEAR/BRAC are a compact family map; sequence models and learned-model methods extend the picture. Evaluation is part of the main lesson.
+:::
 
 ### Backup 1 — three regimes, one algorithm
 {fill: top}
@@ -751,3 +614,102 @@ Estimated behavior probabilities add error. Rare large weights may be absent fro
 :::
 
 WIS stays within the observed return range when its denominator is positive; that does not imply closeness to the true policy value. Detailed IS, PDIS, and DR formulas are in Act 4.
+
+## Extensions — guarantees, alternative models and OPE estimators
+{short: EXTENSION}
+
+Read after completing the main route.
+
+### What the CQL lower-bound statement actually covers
+The theoretical result concerns a **policy value**, averaged over that policy's actions:
+
+$$\hat V^\pi(s)=\E_{a\sim\pi}[\hat Q(s,a)]\le V^\pi(s).$$
+
+It requires the theorem's coverage, estimation-error, update, and sufficiently large penalty assumptions. The practical neural-network loss does not automatically certify those assumptions.
+
+::: cols
+::: col What it can say
+Under the stated assumptions, the estimated value of the evaluated policy is conservative.
+:::
+::: col.accent What it does not say
+Every action value is a lower bound; any extracted policy is safe; or every trained network has the guarantee.
+:::
+:::
+
+::: keypoint
+Keep **theoretical scope**, **training objective**, and **measured performance** distinct, just as we did for COMs in Lecture 5. {p}(Kumar et al., 2020, Theorem 3.2)
+:::
+
+### Policy, value — and model
+{q: 4}
+
+Lecture 11 handed us a learned dynamics model $\hat P$. Offline, its bias becomes acute for the same reason everything else does: a rollout that leaves the data is never contradicted. So penalise the reward by the model's own uncertainty and plan in the penalised MDP:
+
+$$\tilde r(s,a) \;=\; r(s,a) \;-\; \hl{\lambda\, u(s,a)}$$
+
+::: reveal
+::: cols
+::: col MOPO {p}(Yu et al., 2020)
+$u(s,a)$ is the maximum standard deviation across a bootstrapped ensemble of dynamics models — Lecture 5's `ensemble-alarm`, now measuring disagreement about *where you will end up* rather than about *how good it is*. A theoretical lower bound requires a valid model-error bound; empirical ensemble uncertainty is a proxy, not an automatic certificate.
+:::
+::: col MOReL {p}(Kidambi et al., 2020)
+Harder-edged: an *unknown state–action detector* partitions the space, and every pair it flags is routed to an absorbing state with the worst possible reward. Planning then avoids the unknown region because the model says it is a cliff.
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+Constrain the policy · constrain the value · constrain the model. Three places to put the same instinct — ==do not trust a model where the data is thin== — and the set is now complete.
+:::
+:::
+
+### Or drop the Bellman equation entirely
+::: lede
+Every method so far has kept Bellman and defended it. The last family does not keep it.
+:::
+
+::: cols
+::: col Decision Transformer {p}(Chen et al., 2021)
+Model the trajectory as a sequence: $\;\hat R_1, s_1, a_1, \hat R_2, s_2, a_2, \dots$, where $\hat R_t=\sum_{t'\ge t} r_{t'}$ is the **return-to-go**. Train a causal transformer to predict $a_t$. At test time, *condition* on the return you want and let it autoregress.
+
+It avoids Bellman bootstrapping and its particular feedback loop; training and generalization can still fail. The failure mode moves instead: ask for a return the data never achieved and it will confabulate.
+:::
+::: col.accent Diffuser {p}(Janner et al., 2022)
+Go further: learn a diffusion model over ==whole trajectories== and generate one, guided by a reward gradient. Planning becomes sampling; the learned distribution guides the proposal, but feasibility and dynamics consistency are not guaranteed for free.
+:::
+:::
+
+::: reveal
+::: small
+This is Lecture 6 arriving in the dynamic world. There, *search a forward model* (Lec 5) sat opposite *sample an inverse model* (Lec 6), and the spine promised the pair would return as value against policy. Here it returns a third time, in its sharpest form: ==learn $Q$ and search it, or learn $p(\tau \mid \text{return})$ and draw from it.== Conditioning on a desired outcome and sampling a design is exactly what Lecture 6's `condition-shift` did — including the way the samples thin out as the condition leaves the data.
+:::
+:::
+
+### What a practitioner actually runs
+::: cols
+::: col Doubly robust {p}(Jiang & Li, 2016; Thomas & Brunskill, 2016)
+$$\begin{aligned}
+W_t&=\textstyle\prod_{t'\le t}\rho_{t'},\\
+\delta_t&=r_t+\gamma\hat V(s_{t+1})-\hat Q(s_t,a_t),\\
+\hat V_{\mathrm{DR}}&=\hat V(s_1)+\sum_t\gamma^{t-1}W_t\delta_t.
+\end{aligned}$$
+
+With support and appropriate independent fitting, DR is unbiased if the ratios are correct or the relevant Q model is exact. Weights multiply ==Bellman residuals==; an accurate model can reduce their variance.
+:::
+::: col Fitted Q evaluation {p}(Le, Voloshin & Yue, 2019)
+Regress $Q^\pi$ directly: $\;Q \leftarrow r + \gamma\, \E_{a'\sim\pi}[Q(s',a')]$, fitted on $D$. FQE avoids products of trajectory ratios, but its error still depends on horizon, coverage, function approximation, and fitting. More data can reduce estimation error; misspecification or missing support can leave irreducible error.
+:::
+:::
+
+::: reveal
+::: block The honest verdict | and the reason to report more than one number
+Compare estimators and inspect coverage and importance weights. Their **disagreement is a diagnostic, not a confidence interval**. Any reported uncertainty interval needs an explicit construction and its assumptions; agreement alone cannot establish accuracy.
+:::
+:::
+
+::: reveal
+::: small
+In an industrial deployment this act comes *first*. Before anyone asks whether to use CQL or IQL, someone asks: if we hand you six months of logs and a proposed controller, ==can you tell us whether it is better than the one we are running?== The course has not addressed that question until now, and it is the question that gates the rest.
+:::
+:::

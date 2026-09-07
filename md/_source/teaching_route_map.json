@@ -1,0 +1,766 @@
+{
+  "review_date": "2026-09-08",
+  "baseline_commit": "3fa48fd5d33a4c51ecfe9037ae924cf977d5eddb",
+  "decks": {
+    "ch00_introduction": {
+      "previous_slides": 67,
+      "previous_core_slides": 67,
+      "slides": 71,
+      "core_slides": 49,
+      "appendix_start": 50,
+      "first_topic_slide": null,
+      "widgets": [
+        "ai-vs-decision",
+        "modeling-loop",
+        "two-uncertainties",
+        "course-cube",
+        "given-ledger",
+        "opt-ontology"
+      ],
+      "worked_slide": 5,
+      "transfer_slide": 6,
+      "changed_slides": [
+        3,
+        4,
+        5,
+        6,
+        19,
+        26,
+        33,
+        45,
+        46,
+        48,
+        49,
+        50,
+        52,
+        56,
+        62
+      ],
+      "moved_to_appendix": [
+        51,
+        53,
+        54,
+        55,
+        57,
+        58,
+        59,
+        60,
+        61,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71
+      ]
+    },
+    "ch01_optimization_modeling": {
+      "previous_slides": 90,
+      "previous_core_slides": 86,
+      "slides": 93,
+      "core_slides": 52,
+      "appendix_start": 53,
+      "first_topic_slide": 4,
+      "widgets": [
+        "formulation-balance",
+        "convex-set",
+        "convex-watershed",
+        "first-order-proof",
+        "first-order-proof",
+        "first-order-proof",
+        "kkt-point",
+        "kkt-wall",
+        "kkt-wall",
+        "trust-region"
+      ],
+      "worked_slide": 36,
+      "transfer_slide": 37,
+      "changed_slides": [
+        2,
+        3,
+        36,
+        37,
+        47,
+        58,
+        74,
+        87
+      ],
+      "moved_to_appendix": [
+        54,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93
+      ]
+    },
+    "ch02_bayesian_statistics": {
+      "previous_slides": 87,
+      "previous_core_slides": 76,
+      "slides": 88,
+      "core_slides": 76,
+      "appendix_start": 77,
+      "first_topic_slide": 2,
+      "widgets": [
+        "bayes-anatomy",
+        "ch02-experiments",
+        "ci-vs-cr",
+        "bayes-update",
+        "bayes-predictive",
+        "ch02-experiments",
+        "ch02-experiments",
+        "bayes-predictive",
+        "ch02-experiments",
+        "ch02-experiments",
+        "bayes-regression",
+        "ch02-experiments",
+        "ridge-lasso-prior"
+      ],
+      "worked_slide": 45,
+      "transfer_slide": 46,
+      "changed_slides": [
+        3,
+        6,
+        45,
+        46,
+        80
+      ],
+      "moved_to_appendix": [
+        78
+      ]
+    },
+    "ch03_bayesian_network": {
+      "previous_slides": 67,
+      "previous_core_slides": 61,
+      "slides": 69,
+      "core_slides": 58,
+      "appendix_start": 59,
+      "first_topic_slide": 4,
+      "widgets": [
+        "factor-count",
+        "d-separation",
+        "inference-cost",
+        "influence-diagram"
+      ],
+      "worked_slide": 39,
+      "transfer_slide": 40,
+      "changed_slides": [
+        2,
+        3,
+        30,
+        32,
+        39,
+        40,
+        66
+      ],
+      "moved_to_appendix": [
+        60,
+        67,
+        68,
+        69
+      ]
+    },
+    "ch04_bayesian_optimization": {
+      "previous_slides": 61,
+      "previous_core_slides": 52,
+      "slides": 61,
+      "core_slides": 47,
+      "appendix_start": 48,
+      "first_topic_slide": 4,
+      "widgets": [
+        "gp-posterior",
+        "acquisition-zoo",
+        "bo-run",
+        "explore-regret"
+      ],
+      "worked_slide": 25,
+      "transfer_slide": 26,
+      "changed_slides": [
+        2,
+        3,
+        25,
+        26,
+        58
+      ],
+      "moved_to_appendix": [
+        49,
+        59,
+        60,
+        61
+      ]
+    },
+    "ch05_surrogate_design_optimization": {
+      "previous_slides": 50,
+      "previous_core_slides": 42,
+      "slides": 49,
+      "core_slides": 39,
+      "appendix_start": 40,
+      "first_topic_slide": 4,
+      "widgets": [
+        "two-failures",
+        "surrogate-exploit",
+        "conservative-coms",
+        "ensemble-alarm"
+      ],
+      "worked_slide": 13,
+      "transfer_slide": 14,
+      "changed_slides": [
+        2,
+        3,
+        8,
+        13,
+        14,
+        15,
+        18
+      ],
+      "moved_to_appendix": [
+        41,
+        49
+      ]
+    },
+    "ch06_generative_design_optimization": {
+      "previous_slides": 66,
+      "previous_core_slides": 55,
+      "slides": 67,
+      "core_slides": 54,
+      "appendix_start": 55,
+      "first_topic_slide": 4,
+      "widgets": [
+        "forward-inverse",
+        "latent-beta",
+        "cbas-ladder",
+        "condition-shift"
+      ],
+      "worked_slide": 36,
+      "transfer_slide": 37,
+      "changed_slides": [
+        2,
+        3,
+        5,
+        11,
+        19,
+        20,
+        36,
+        37,
+        67
+      ],
+      "moved_to_appendix": [
+        56
+      ]
+    },
+    "ch07_mdp_dp": {
+      "previous_slides": 56,
+      "previous_core_slides": 51,
+      "slides": 55,
+      "core_slides": 48,
+      "appendix_start": 49,
+      "first_topic_slide": 4,
+      "widgets": [
+        "discount-dial",
+        "value-propagation",
+        "dp-schedules",
+        "contraction-rate"
+      ],
+      "worked_slide": 19,
+      "transfer_slide": 20,
+      "changed_slides": [
+        2,
+        3,
+        12,
+        19,
+        20,
+        39,
+        43
+      ],
+      "moved_to_appendix": [
+        50,
+        55
+      ]
+    },
+    "ch08_value_based_rl": {
+      "previous_slides": 57,
+      "previous_core_slides": 52,
+      "slides": 56,
+      "core_slides": 48,
+      "appendix_start": 49,
+      "first_topic_slide": 4,
+      "widgets": [
+        "mc-vs-td",
+        "gpi-explore",
+        "cliff-walk",
+        "deadly-triad"
+      ],
+      "worked_slide": 26,
+      "transfer_slide": 27,
+      "changed_slides": [
+        2,
+        3,
+        26,
+        27
+      ],
+      "moved_to_appendix": [
+        50,
+        55,
+        56
+      ]
+    },
+    "ch09_optimal_control": {
+      "previous_slides": 52,
+      "previous_core_slides": 47,
+      "slides": 55,
+      "core_slides": 40,
+      "appendix_start": 41,
+      "first_topic_slide": 4,
+      "widgets": [
+        "control-grid",
+        "lqr-riccati",
+        "dt-to-hjb",
+        "pontryagin"
+      ],
+      "worked_slide": 10,
+      "transfer_slide": 11,
+      "changed_slides": [
+        2,
+        3,
+        10,
+        11,
+        12,
+        14,
+        15,
+        16,
+        19,
+        20,
+        21,
+        22,
+        26,
+        30,
+        37,
+        38,
+        48,
+        50,
+        54,
+        55
+      ],
+      "moved_to_appendix": [
+        42,
+        47,
+        49,
+        51,
+        52,
+        53
+      ]
+    },
+    "ch10_policy_based_rl": {
+      "previous_slides": 62,
+      "previous_core_slides": 54,
+      "slides": 61,
+      "core_slides": 50,
+      "appendix_start": 51,
+      "first_topic_slide": 4,
+      "widgets": [
+        "policy-gradient",
+        "baseline-variance",
+        "continuous-argmax",
+        "ppo-clip"
+      ],
+      "worked_slide": 16,
+      "transfer_slide": 17,
+      "changed_slides": [
+        2,
+        3,
+        16,
+        17,
+        19
+      ],
+      "moved_to_appendix": [
+        52,
+        60,
+        61
+      ]
+    },
+    "ch11_model_based_rl": {
+      "previous_slides": 69,
+      "previous_core_slides": 60,
+      "slides": 67,
+      "core_slides": 43,
+      "appendix_start": 44,
+      "first_topic_slide": 4,
+      "widgets": [
+        "model-use-ladder",
+        "rollout-drift",
+        "dyna-imagination",
+        "task-vs-prediction"
+      ],
+      "worked_slide": 16,
+      "transfer_slide": 17,
+      "changed_slides": [
+        2,
+        3,
+        8,
+        9,
+        12,
+        16,
+        17,
+        24,
+        25,
+        30,
+        31,
+        38,
+        41,
+        43,
+        47,
+        50,
+        51,
+        54,
+        55,
+        61,
+        62,
+        67
+      ],
+      "moved_to_appendix": [
+        45,
+        56,
+        57,
+        58,
+        59,
+        60,
+        63,
+        64,
+        65,
+        66
+      ]
+    },
+    "ch12_offline_rl": {
+      "previous_slides": 49,
+      "previous_core_slides": 44,
+      "slides": 50,
+      "core_slides": 39,
+      "appendix_start": 40,
+      "first_topic_slide": 4,
+      "widgets": [
+        "deadly-triad",
+        "offline-divergence",
+        "offline-stitch",
+        "conservative-cql",
+        "ope-variance",
+        "course-cube"
+      ],
+      "worked_slide": 30,
+      "transfer_slide": 31,
+      "changed_slides": [
+        2,
+        3,
+        11,
+        26,
+        27,
+        28,
+        30,
+        31,
+        33,
+        36,
+        38,
+        46,
+        48
+      ],
+      "moved_to_appendix": [
+        41,
+        47,
+        49,
+        50
+      ]
+    },
+    "ch99_probability_review": {
+      "previous_slides": 39,
+      "previous_core_slides": 39,
+      "slides": 40,
+      "core_slides": 38,
+      "appendix_start": 39,
+      "first_topic_slide": null,
+      "widgets": [
+        "variance-split",
+        "ci-vs-cr",
+        "gaussian-four",
+        "mc-estimator"
+      ],
+      "worked_slide": 8,
+      "transfer_slide": 9,
+      "changed_slides": [
+        3,
+        8,
+        9,
+        39
+      ],
+      "moved_to_appendix": [
+        40
+      ]
+    }
+  },
+  "heading_merges_and_renames": {
+    "ch01_optimization_modeling": {
+      "The handoff — the purest decision": {
+        "target": "Where we are — the simplest cell of the map",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — formulate, solve, and certify",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The thesis — formulation precedes solution": {
+        "target": "Learning route — formulate, solve, and certify",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch02_bayesian_statistics": {
+      "Learning goals — one repeatable Bayesian calculation": {
+        "target": "The lecture route — keep each example together",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch03_bayesian_network": {
+      "The handoff — belief over a whole system": {
+        "target": "Where we are — one unknown becomes many",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — from a joint probability to a decision",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The thesis — two claims, and the second is the quiet one": {
+        "target": "Learning route — from a joint probability to a decision",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch04_bayesian_optimization": {
+      "The handoff — belief that acts": {
+        "target": "Where we are — belief stops observing and starts choosing",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — predict, choose, pay for one measurement",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The thesis — model the unknown, then act on the model": {
+        "target": "Learning route — predict, choose, pay for one measurement",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch05_surrogate_design_optimization": {
+      "The handoff — optimisation with no oracle": {
+        "target": "Where we are — the query is taken away",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — separate prediction quality from design quality",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The thesis — the surrogate's blind spots are where you will be sent": {
+        "target": "Learning route — separate prediction quality from design quality",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch06_generative_design_optimization": {
+      "The handoff — the same problem, read backwards": {
+        "target": "Where we are — the sentence Lecture 5 handed over",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — represent several answers, then favour good ones",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Act 3 — the VAE": {
+        "target": "Act 3 — VAE and diffusion",
+        "reason": "renamed"
+      }
+    },
+    "ch07_mdp_dp": {
+      "The handoff — one choice becomes a sequence": {
+        "target": "Where we are — the deepest crossing",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — one backup before a whole algorithm",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Two inheritances — Lecture 1 stretched, Lecture 3 unrolled": {
+        "target": "Where we are — the deepest crossing",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch08_value_based_rl": {
+      "The handoff — what Lecture 7 left us": {
+        "target": "Where we are — the OR lineage, made data-driven",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — change the target, then change the representation",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "What we keep, and what we lose": {
+        "target": "Where we are — the OR lineage, made data-driven",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch09_optimal_control": {
+      "The handoff — the second parent": {
+        "target": "Where we are — the other column of the map",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — solve a small control problem first",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Act 3 — the one closed form": {
+        "target": "Act 2 — compute linear-quadratic feedback",
+        "reason": "renamed"
+      },
+      "Act 2 — Bellman made infinitesimal": {
+        "target": "Act 3 — interpret continuous-time Bellman reasoning",
+        "reason": "renamed"
+      },
+      "LQR — the harmonic oscillator of control": {
+        "target": "LQR — quadratic cost, linear feedback",
+        "reason": "renamed"
+      }
+    },
+    "ch10_policy_based_rl": {
+      "The handoff — delete the dynamics": {
+        "target": "Where we are — the control lineage, made data-driven",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — make a good action more likely",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "What we keep, and what we lose": {
+        "target": "Where we are — the control lineage, made data-driven",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch11_model_based_rl": {
+      "The handoff — the model returns": {
+        "target": "Where we are — both lineages, each missing its model",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — use a learned model, then check what it changes",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "What each of the four gave up, and what it cost": {
+        "target": "Where we are — both lineages, each missing its model",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The thesis — learn the dynamics, and both parents come back": {
+        "target": "Where we are — both lineages, each missing its model",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The unknowns doubled — and this is the third answer": {
+        "target": "Where we are — both lineages, each missing its model",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Lecture 8 promised this lecture, in three lines": {
+        "target": "Where we are — both lineages, each missing its model",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Act 3 — differentiable control": {
+        "target": "Act 3 — learn from short simulated experience",
+        "reason": "renamed"
+      },
+      "Act 4 — the lineages teach each other": {
+        "target": "Act 4 — learn in latent imagination",
+        "reason": "renamed"
+      },
+      "The price, named — the model is only right where the data was": {
+        "target": "The price, named — model errors can change the plan",
+        "reason": "renamed"
+      }
+    },
+    "ch12_offline_rl": {
+      "The handoff — the right to try, withdrawn": {
+        "target": "Where we are — the last thing taken away",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The roadmap — four questions": {
+        "target": "Learning route — improve a policy using only the log",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "The course has crossed this line once already": {
+        "target": "Where we are — the last thing taken away",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Act 4 — the other two routes, and how you would know": {
+        "target": "Act 4 — evaluate a policy using the fixed log",
+        "reason": "renamed"
+      },
+      "Where we are — three constraints, one instinct": {
+        "target": "Where we are — policy, value and evaluation",
+        "reason": "renamed"
+      },
+      "Every algorithm in Part IV assumed it could try something.": {
+        "target": "Offline training learns from the actions already logged.",
+        "reason": "renamed"
+      }
+    },
+    "ch99_probability_review": {
+      "Why an appendix — the few facts everything rested on": {
+        "target": "Learning route — four tools to calculate, not memorize",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Model to data, and the arrow inference runs backward": {
+        "target": "Learning route — four tools to calculate, not memorize",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      }
+    },
+    "ch00_introduction": {
+      "Engineering is all about decision making": {
+        "target": "What this course is about — in one sentence",
+        "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
+      },
+      "Check — the four unknowns, taken one at a time": {
+        "target": "Check — follow the changing assumptions",
+        "reason": "renamed"
+      },
+      "Check — two inventions of the same idea": {
+        "target": "Check — two views of sequential decisions",
+        "reason": "renamed"
+      }
+    }
+  },
+  "shared_example": {
+    "temperature_target": 22,
+    "initial_error": -2,
+    "transition": "next_error = error + command",
+    "cost": "next_error^2 + command^2",
+    "interpretation": "Normalized teaching model; each chapter states changed assumptions."
+  }
+}

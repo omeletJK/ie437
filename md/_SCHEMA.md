@@ -155,16 +155,17 @@ already has its own frame.
 ### Quizzes
 
 One question, a few options, and the reason revealed the moment a guess is made. The convention
-in this course is **one per Act**, on its own slide at the Act's close, so the check happens while
-the argument is still fresh.
+in this course is **four milestone quizzes per deck**, each after the concepts needed to answer it.
+Place a quiz on its own slide. Additional worked and transfer problems use `::: reveal`, so students
+can predict or calculate before seeing the solution. Do not force a fixed number of conceptual sections.
 
 ```markdown
-::: quiz An $\varepsilon$-greedy agent runs with $\varepsilon$ fixed forever. What happens?
-- It converges to the optimal policy
-- =$Q$ converges to $Q^*$, but it keeps acting randomly one time in ten
-- Neither converges
-Q-learning is **off-policy**, so a fixed $\varepsilon$ costs nothing in the estimate. What it
-costs is the return earned along the way.
+::: quiz In finite tabular Q-learning, assume coverage, bounded rewards, $\gamma<1$ and suitable step sizes. With fixed $\varepsilon=0.1$, what happens?
+- The behavior policy eventually stops exploring
+- =$Q$ converges to $Q^*$, while the behavior policy keeps its exploration branch
+- Exploration prevents convergence under these assumptions
+Q-learning is **off-policy**: its greedy target differs from its exploratory behavior.
+The convergence claim depends on the assumptions stated in the question.
 :::
 ```
 

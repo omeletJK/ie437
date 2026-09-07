@@ -1,5 +1,7 @@
 # 전체 강의의 논리 흐름과 원본 충실도 검토
 
+> 이전 개편 시점의 검토 기록입니다. 현재 페이지 번호·본문/심화 위치·검증 결과는 [학습 경로 개편 검토](teaching_structure_review.md)와 [원문 대응표](source_fidelity_traceability.md)를 따릅니다.
+
 **이 문서는 838쪽 단계의 원본 대조 기록이다.** 이후 [대표 논문·본문/심화 개편](paper_selection_review.md)으로 872쪽이 되었다. 아래의 개별 쪽 번호는 당시 기준이며, [원본 대응표](source_fidelity_traceability.md)는 최신 위치로 갱신된다.
 
 검토일: 2026-09-07 · 대상: HTML 14개 강의, 원본 PDF 13개/1,102쪽, 추가 PPTX 2개, 확률 appendix TeX, Offline RL 작성 명세.

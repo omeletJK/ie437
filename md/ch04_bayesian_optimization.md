@@ -27,32 +27,36 @@ questions:
 ### Bayesian Optimization
 {layout: title}
 
-## The handoff — belief that acts
-{short: HANDOFF}
-
-Lectures 2 and 3 built a belief and reasoned inside it — passively. Now the belief has to choose.
-
 ### Where we are — belief stops observing and starts choosing
+| Previous step | This chapter's question |
+|---|---|
+| Lectures 2–3 supplied probability models and conditional updates. | Now choose the next expensive measurement. |
 
-::: tracker
+An unknown objective can be observed at selected inputs. Fit a GP, choose with an acquisition rule, measure and update.
+
+::: keypoint
+Choose a heater experiment using a stated acquisition and evaluate the budget trade-off.
 :::
 
-::: table center
-|   | Model-based | Data-driven |
-|---|---|---|
-| **Static, single** | optimisation *(Lec 1)* | Bayesian statistics · network *(Lec 2–3)* → ==Bayesian optimisation *(Lec 4)*== |
+### Learning route — predict, choose, pay for one measurement
+**Bring:** Gaussian conditioning and regression from Lectures 2–3.
+
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | GP update → acquisition choice → evaluate → update again |
+| **Work without the solution** | Choose a heater experiment using a stated acquisition and evaluate the budget trade-off. |
+| **Return later** | Multi-output kernels, constrained/multiobjective extensions and solver details are references. |
+
+::: keypoint
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
-Nothing on the cube moves this lecture. We stay in the static, data-driven, single-agent cell and ==go deeper into it==: the belief we built in Lectures 2 and 3 stops being a report on the world and starts being the thing that decides what to do next.
+## Act 1 — a belief over an unknown function
+{short: ACT 1, num: Act 1}
 
-::: reveal
-::: small
-The loop closes. Use the belief to choose a query, observe the answer, update the belief, repeat. That is a different kind of object from anything in Part I — not an answer but a ==rule for producing answers==, which is what the rest of the course will call a *policy*.
-:::
-:::
+**Q1.** You cannot afford to probe $f$ everywhere. So carry a distribution over the functions it might be.
 
 ### The setting — unknown, expensive, and every query counts
-
 ::: lede
 Lecture 1 assumed we could evaluate the objective and use its mathematical structure. Here a new evaluation is expensive, and a formula or gradient for the true objective is unavailable.
 :::
@@ -73,69 +77,6 @@ One evaluation is a wet-lab experiment, a multi-hour CFD run, a clinical trial, 
 The setting makes an adaptive loop useful: spend the next expensive evaluation using what earlier evaluations taught us. A fixed experimental design is another option; BO uses feedback to target promising or informative regions. Lecture 5 considers the separate restriction that no new evaluations are allowed.
 :::
 :::
-
-### The thesis — model the unknown, then act on the model
-{fill: center}
-
-::: keypoint
-Build a belief over the unknown function, then choose where to look by ==balancing learning against winning.==
-:::
-
-::: reveal
-::: flow | | 
-- **1 · Learn** | fit a Gaussian process to the data so far — a posterior over $f$
-- **2 · Optimise** | maximise an ==acquisition function== over that posterior to pick $x_{\text{next}}$
-- !**3 · Observe** | pay for one evaluation $f(x_{\text{next}})$, add it to the data, return to 1
-:::
-:::
-
-::: reveal
-::: small
-Three earlier lectures fused into one turn of a crank: step 1 is Lecture 2's Bayesian update, now over a whole function; step 2 is Lecture 1's optimisation, now over a *cheap* surrogate; step 3 is the single expensive query we are trying to spend wisely.
-:::
-:::
-
-### The roadmap — four questions
-
-::: qstrip 0
-:::
-
-- **Q1 — How do we model a function we have never seen?** A probabilistic ==surrogate==: not one fitted curve but a distribution over the curves consistent with the data.
-- **Q2 — What is that model, concretely?** The ==Gaussian process== — and its one real assumption, the kernel.
-- **Q3 — Where do we look next?** The ==acquisition function==, which fuses "probably good" with "worth learning" into one optimisable score.
-- **Q4 — What lies beyond?** Contextual BO, and the ==bandit-to-RL== bridge.
-
-### Learning route — predict, choose, pay for one measurement
-
-**Start with:** Bayes' rule, Gaussian means and covariances, and maximising a function.
-
-::: flow
-- **Predict** | a GP gives a mean and uncertainty at each candidate input
-- **Choose** | an acquisition rule scores those candidates
-- **Measure** | evaluate the real system once, then update the GP
-:::
-
-::: keypoint
-You should be able to ==calculate a small GP update and explain why two acquisition rules choose different points.== Matrix derivations and the bandit toolkit remain in the appendix.
-:::
-
-### Reading guide — from an expensive experiment to the next measurement
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Frazier, *A Tutorial on Bayesian Optimization* (2018)](https://arxiv.org/abs/1807.02811) | How do GP regression and an acquisition rule form one loop? |
-| **Compare** | [Jones, Schonlau & Welch, *Efficient Global Optimization of Expensive Black-Box Functions* (1998)](https://doi.org/10.1023/A:1008306431147) | Why evaluate expected improvement instead of only the predicted optimum? |
-| **Apply** | [Snoek, Larochelle & Adams, *Practical Bayesian Optimization of Machine Learning Algorithms* (NeurIPS 2012)](https://proceedings.neurips.cc/paper/2012/hash/05311655a15b75fab86956663e1819cd-Abstract.html) | How does the same loop select expensive model-training hyperparameters? |
-
-::: keypoint
-Understand one GP update and one acquisition choice first. The original traffic and wind cases then add context; multi-output, constrained and multiobjective BO extend the same loop.
-:::
-
-## Act 1 — a belief over an unknown function
-{short: ACT 1, num: Act 1}
-
-**Q1.** You cannot afford to probe $f$ everywhere. So carry a distribution over the functions it might be.
 
 ### The surrogate — a distribution, not a fitted curve
 {q: 1}
@@ -184,7 +125,6 @@ The only thing wrong with this is the *independence*: it says knowing $f(x_1)$ t
 :::
 
 ### Lecture 2's posterior, with the parameter replaced by a function
-
 The handoff from Chapter 2 is not an analogy. It is the *same five steps*, with one symbol swapped.
 
 | step | Lecture 2 — belief over $\theta$ | Lecture 4 — belief over $f$ |
@@ -243,7 +183,6 @@ A function drawn from a GP prior is, in the source's own phrase, *an extremely h
 :::
 
 ### Conditioning is the whole of it
-
 Draw $\mathbf f=[f_1,\dots,f_{25}]\sim\mathcal N(0,\mathbf K)$ and plot the 25 numbers in order: they look like a smooth curve, because $\mathbf K$ made neighbouring entries nearly identical. Read two entries of $\mathbf K$ off the diagonal band:
 
 ::: cols
@@ -284,7 +223,6 @@ $$\mathbb E[f_2\mid f_1]=\rho(-0.313),\qquad\operatorname{Var}(f_2\mid f_1)=1-\r
 :::
 
 ### GP regression — mean and uncertainty, in closed form
-
 Observe $\mathcal D=\{(x_i,y_i)\}_{i=1}^n$ with $y_i=f_i+\epsilon_i$, $\epsilon_i\sim\mathcal N(0,\sigma_\epsilon^2)$. Prior and likelihood are Gaussian, so the joint of the data and the value at any new $x$ is Gaussian:
 
 $$\begin{bmatrix}\mathbf y_{1:n}\\ f\end{bmatrix}\sim\mathcal N\!\left(\mathbf 0,\begin{bmatrix}\mathbf K+\sigma_\epsilon^2\mathbf I & \mathbf k\\ \mathbf k^\top & k(x,x)\end{bmatrix}\right)$$
@@ -306,7 +244,6 @@ Read the two formulas. The mean is a **linear combination of the observed $y$'s*
 :::
 
 ### Read the GP formula — what each object means
-
 For $n$ observations and one query input $x$, $\mathbf K$ is an $n\times n$ matrix with $K_{ij}=k(x_i,x_j)$; $\mathbf k$ is a length-$n$ vector with $k_i=k(x_i,x)$.
 
 ::: cols c2
@@ -331,7 +268,6 @@ $$\sigma_y^2(x)=0.488+0.25=0.738.$$
 :::
 
 ### The kernel is the assumption — and the data can pick it
-
 ::: cols c2
 ::: col A small vocabulary
 - **Squared exponential** $k=\sigma_0^2\exp\!\big[-\tfrac12\big(\tfrac{x-x'}{\lambda}\big)^2\big]$ — stationary, infinitely differentiable, *very* smooth. $\lambda$ is the length scale, $\sigma_0$ the amplitude.
@@ -353,7 +289,6 @@ The first term rewards explaining the data, the second rewards a *rigid* model. 
 :::
 
 ### Turn the dial and watch the assumption move
-
 ::: widget gp-posterior
 The same seven observations, one kernel, one knob. Short length scale: the posterior spikes at each datum and falls back to the prior between them — the model believes nothing carries. Long length scale: a near-straight line that cannot bend to the data. The right panel is the marginal likelihood split into its two terms, and ==the total peaks where neither term is happy== — that is the Occam balance, drawn.
 :::
@@ -369,42 +304,6 @@ The line is the posterior mean. The band is **latent-function mean ± 2 standard
 
 ::: keypoint
 Regression answers **what might the function be?** The next act adds the separate decision: **which input should we measure next?**
-:::
-
-### More than one output — share information through a latent function
-{sub: original PDF pp. 46–59 · intrinsic coregionalisation}
-
-Suppose one design has two measured responses. A simple shared latent model is $u\sim\mathcal{GP}(0,k)$, $f_1(x)=u(x)$ and $f_2(x)=2u(x)$.
-
-$$\operatorname{cov}\!\left(\begin{bmatrix}f_1(x)\\f_2(x)\end{bmatrix},\begin{bmatrix}f_1(x')\\f_2(x')\end{bmatrix}\right)=\underbrace{\begin{bmatrix}1&2\\2&4\end{bmatrix}}_{B}\,k(x,x').$$
-
-| Object | What it relates |
-|---|---|
-| Scalar kernel $k(x,x')$ | different input locations |
-| Output matrix $B$ | different responses |
-| Independent observation noise | uncertainty in each measurement; added separately |
-
-::: keypoint
-Measuring one response can inform another **if the cross-output covariance model is appropriate**. Predicting several outputs is distinct from deciding how to trade off several objectives.
-:::
-
-### ICM, SLFM and LMC — change which latent patterns are shared
-{sub: original PDF pp. 54–68 · retain the model hierarchy}
-
-Write each output as a linear combination of independent latent GPs. Their covariance always has the form
-
-$$\operatorname{cov}(f_d(x),f_{d'}(x'))=\sum_q (B_q)_{dd'}\,k_q(x,x').$$
-
-| Model | Restriction | What the extra freedom buys |
-|---|---|---|
-| **ICM** | one shared input kernel, $B\,k(x,x')$ | all output relationships share one spatial pattern |
-| **SLFM** | several kernels, each $B_q=a_qa_q^\top$ | each latent factor can have its own length scale |
-| **LMC** | several kernels and PSD matrices $B_q$ | several shared factors can use each kernel |
-
-For $D$ outputs, every $B_q$ is **$D\times D$**. With $R_q$ latent factors, $B_q=A_qA_q^\top$ has rank at most $\min(D,R_q)$.
-
-::: keypoint
-The source's many covariance derivations implement one rule: **independent latent contributions add their covariances**. The appendix gives the stacked matrix.
 :::
 
 ### Check — what the length scale controls
@@ -455,7 +354,6 @@ This is the explore–exploit dilemma — the same one inside every reinforcemen
 :::
 
 ### Three scores
-
 | | rule | reads as | leans |
 |---|---|---|---|
 | **Probability of improvement** | $\mathrm{PI}(x)=\Phi\!\big(\frac{\mu(x)-f^{+}-\xi}{\sigma(x)}\big)$ | *how likely* is any improvement at all | exploit |
@@ -489,9 +387,36 @@ A offers a likely small gain. B offers a less certain but potentially larger gai
 :::
 
 ### The three rules, disagreeing
-
 ::: widget acquisition-zoo
 One posterior, five observations, three scores drawn underneath it, each with its own $\argmax$ marked. At $\xi=0$, PI points at $x=0.630$ — hard against the incumbent at $0.65$, buying a near-certain sliver. EI points at $x=0.470$, into the wide-uncertainty valley where the true maximum actually is. Turn $\xi$ up and PI walks out to meet EI; turn $\kappa$ down and UCB collapses onto the greedy mean. ==The knob is the same knob in all three.==
+:::
+
+### Temperature thread — choose an informative heater experiment
+{sub: shared teaching example · predict before revealing the calculation}
+
+The simulator's cost formula is hidden from the BO learner. Maximize score $f=-c$. A GP gives candidate A ($u=0.8$) mean −1.9, standard deviation 0.1; candidate B ($u=1.6$) mean −2.2, standard deviation 0.5. Use UCB $a(u)=\mu(u)+\kappa\sigma(u)$.
+
+**Predict:** At κ = 1, can the worse predicted mean still lead to the selected experiment?
+
+::: reveal
+**Calculate and check.** A has acquisition $-1.9+0.1=\mathbf{-1.8}$; B has $-2.2+0.5=\mathbf{-1.7}$. UCB selects **B**. In the teaching simulator its measured score is $-[(-2+1.6)^2+1.6^2]=\mathbf{-2.72}$.
+:::
+
+::: keypoint
+Acquisition value is not predicted reward or measured reward. A disappointing experiment can still provide useful information.
+:::
+
+### Try it — the exploration weight becomes zero
+{sub: work independently · reveal only after writing an answer}
+
+Keep both GP predictions, but set κ = 0. Which candidate is selected? Does this establish that the resulting policy is better over an entire experimental budget?
+
+::: reveal
+**Check your answer.** A is selected because −1.9 exceeds −2.2. This establishes only the next choice. Comparing strategies requires repeating the loop with the same initial data, budget and evaluation rules.
+:::
+
+::: keypoint
+Distinguish a calculation about one acquisition choice from evidence about a whole optimization strategy.
 :::
 
 ### Optimise the acquisition — spend computation before spending an experiment
@@ -648,13 +573,11 @@ $$Q_4(A)=Q_3(A)+\tfrac14(0-Q_3(A))=\tfrac12.$$
 A constant step size tracks changing rewards by forgetting old observations; $1/k$ computes a sample average in a stationary problem. Preference and pursuit updates are in the appendix.
 
 ### How much exploration is the right amount?
-
 ::: widget explore-regret {"seed":21}
 Ten arms, unknown payout probabilities, a thousand pulls, cumulative regret on the vertical axis. Pure greed ($\varepsilon=0$) locks onto whichever arm happened to pay first and never recovers. Constant thrashing ($\varepsilon=0.5$) pays a fixed toll on every round. ==Compare the fixed exploration rates with UCB in this simulated run== — because it explores where the uncertainty actually is, rather than at random. That is the whole argument for $\mu+\kappa\sigma$, made without a Gaussian process anywhere in sight.
 :::
 
 ### From a function to a context
-
 Often the right action depends on a **context** $c$ revealed just before each decision — the best price given the season, the best treatment given the patient, the best yaw angles given the wind direction. The object we want is no longer a point but a map:
 
 $$x^* = \pi^*(c) = \argmax_x f(x;c)$$
@@ -744,25 +667,6 @@ Neither A nor B is the single best design. Choosing one finally requires a prefe
 :::
 :::
 
-### Expected hypervolume improvement — EI for a set of trade-offs
-{sub: original PDF pp. 190–208 · distinguish probability, amount, and approximation}
-
-Let $P$ be the current Pareto set and $r$ a fixed reference point worse than the outcomes of interest.
-
-$$\operatorname{EHVI}(x)=\mathbb E\!\left[\operatorname{HV}(P\cup\{\mathbf f(x)\};r)-\operatorname{HV}(P;r)\mid D\right].$$
-
-| Acquisition | What is averaged? |
-|---|---|
-| Probability of hypervolume improvement | whether the new point adds any dominated volume |
-| **EHVI** | how much new volume it adds |
-| Source's HVPI heuristic | improvement at the posterior mean × probability of improvement; generally **not equal** to EHVI |
-
-Estimate EHVI by drawing possible output vectors from the posterior, computing each added volume, and averaging. Cross-output dependence belongs in those joint draws.
-
-::: keypoint
-**Contextual multiobjective BO** adds the observed context $c$ to this same model and acquisition. Multiple outputs describe what is predicted; multiple objectives describe what is valued.
-:::
-
 ### Two different scaling limits — data count and input dimension
 {sub: original PDF pp. 209–225 · why the original lecture continues beyond standard BO}
 
@@ -779,7 +683,6 @@ There is no universal “BO works in any dimension” guarantee. **Representatio
 :::
 
 ### The bridge — one table, four lectures
-
 ::: table center
 |   | **Model known** — only exploitation | **Model unknown** — explore vs exploit |
 |---|---|---|
@@ -814,7 +717,6 @@ BO earns its sample efficiency by choosing where to look — it needs an **oracl
 Part II is complete: belief built, belief structured, belief put to work.
 
 ### Where we are — Part II complete
-
 ::: table center
 |   | Model-based | Data-driven |
 |---|---|---|
@@ -849,8 +751,20 @@ The acquisition function is a policy over a belief state. Everything Part IV doe
 
 Derivations and the bandit toolkit, kept out of the narrative.
 
-### Backup 1 — the GP posterior, from one Gaussian fact
+### Reading guide — from an expensive experiment to the next measurement
+{sub: one main idea to explain, one comparison, one application}
 
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Frazier, *A Tutorial on Bayesian Optimization* (2018)](https://arxiv.org/abs/1807.02811) | How do GP regression and an acquisition rule form one loop? |
+| **Compare** | [Jones, Schonlau & Welch, *Efficient Global Optimization of Expensive Black-Box Functions* (1998)](https://doi.org/10.1023/A:1008306431147) | Why evaluate expected improvement instead of only the predicted optimum? |
+| **Apply** | [Snoek, Larochelle & Adams, *Practical Bayesian Optimization of Machine Learning Algorithms* (NeurIPS 2012)](https://proceedings.neurips.cc/paper/2012/hash/05311655a15b75fab86956663e1819cd-Abstract.html) | How does the same loop select expensive model-training hyperparameters? |
+
+::: keypoint
+Understand one GP update and one acquisition choice first. The original traffic and wind cases then add context; multi-output, constrained and multiobjective BO extend the same loop.
+:::
+
+### Backup 1 — the GP posterior, from one Gaussian fact
 **The fact.** If $\begin{bmatrix}Y_1\\Y_2\end{bmatrix}\sim\mathcal N\!\left(\begin{bmatrix}\mu_1\\\mu_2\end{bmatrix},\begin{bmatrix}\Sigma_{11}&\Sigma_{12}\\\Sigma_{21}&\Sigma_{22}\end{bmatrix}\right)$, then
 
 $$Y_2\mid Y_1 = y \sim \mathcal N\big(\mu_2 + \Sigma_{21}\Sigma_{11}^{-1}(y-\mu_1),\; \Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\big)$$
@@ -864,7 +778,6 @@ Three readings. The mean is a **linear combination** of observed $y$ values; its
 :::
 
 ### Backup 2 — kernels, and hyperparameters by marginal likelihood
-
 **Squared exponential.** $k(x,x')=\sigma_0^2\exp\!\big(-\tfrac12\|x-x'\|^2/\lambda^2\big)$ — stationary, infinitely differentiable. **Matérn $\tfrac32$:** $\alpha(1+\sqrt3 r)e^{-\sqrt3 r}$; **Matérn $\tfrac52$:** $\alpha(1+\sqrt5 r+\tfrac53 r^2)e^{-\sqrt5 r}$, with $r=\|x-x'\|_2/l$ — finitely differentiable, rougher, usually more realistic. **ARD:** one $\lambda_d$ per dimension, $k=\sigma_0^2\exp\!\big[-\tfrac12\sum_d ((x_d-x_d')/\lambda_d)^2\big]$, and a large $\lambda_d$ means slow variation along dimension $d$ on the studied range. **Algebra:** $k_1+k_2$ is the covariance of a sum of independent GPs; $k_1k_2$ is a valid covariance, but multiplying GP sample paths does not generally produce a GP — so Lin $+$ Per is *periodic with a trend*, Lin $\times$ Per is *growing amplitude*.
 
 **Fitting $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$.** Marginalise the latent $\mathbf f$ away and maximise what is left:
@@ -876,7 +789,6 @@ The two terms pull opposite ways as the length scale grows. On the seven-point e
 :::
 
 ### Backup 3 — Expected Improvement, in closed form
-
 With $f(x)\sim\mathcal N(\mu,\sigma^2)$ and incumbent $f^{+}$, define $I=\max(0,f(x)-f^{+})$. Integrate:
 
 $$\mathrm{EI}(x)=\int_{f^{+}}^{\infty}\big(f-f^{+}\big)\,p(f\mid\mathcal D)\,df = \sigma(x)\Big[\,\underbrace{\tfrac{\mu-f^{+}}{\sigma}\,\Phi(z)}_{\text{exploit}} + \underbrace{\phi(z)}_{\text{explore}}\,\Big], \qquad z=\frac{\mu-f^{+}}{\sigma}$$
@@ -888,7 +800,6 @@ with $\Phi,\phi$ the standard normal CDF and PDF. Adding a margin $\xi$ gives th
 :::
 
 ### Backup 4 — the bandit toolkit, three lectures early
-
 The source lecture develops the finite-armed bandit in full before reaching BO. Every rule below reappears in Part IV.
 
 | rule | form | reappears as |
@@ -903,7 +814,6 @@ The source lecture develops the finite-armed bandit in full before reaching BO. 
 ::: small
 For a stationary finite bandit with sufficient sampling, sample averages converge to action means. Under uniform fixed-$\varepsilon$ exploration and a unique best arm, its selection probability approaches $1-\varepsilon+\varepsilon/|A|$, so exploration still incurs a continuing cost.
 :::
-
 
 ### Backup — the multi-output covariance, with dimensions visible
 {sub: original PDF pp. 56–68 · Kronecker product and the latent-factor construction}
@@ -969,4 +879,64 @@ The source also connects variational autoencoders to latent GP models and low-di
 
 ::: keypoint
 “Uses a neural network” does not specify the uncertainty model. Ask what is random, what is fitted, and which posterior calculation is exact or approximate.
+:::
+
+## Extensions — shared outputs and hypervolume acquisition
+{short: EXTENSION}
+
+Read after completing the main route.
+
+### More than one output — share information through a latent function
+{sub: original PDF pp. 46–59 · intrinsic coregionalisation}
+
+Suppose one design has two measured responses. A simple shared latent model is $u\sim\mathcal{GP}(0,k)$, $f_1(x)=u(x)$ and $f_2(x)=2u(x)$.
+
+$$\operatorname{cov}\!\left(\begin{bmatrix}f_1(x)\\f_2(x)\end{bmatrix},\begin{bmatrix}f_1(x')\\f_2(x')\end{bmatrix}\right)=\underbrace{\begin{bmatrix}1&2\\2&4\end{bmatrix}}_{B}\,k(x,x').$$
+
+| Object | What it relates |
+|---|---|
+| Scalar kernel $k(x,x')$ | different input locations |
+| Output matrix $B$ | different responses |
+| Independent observation noise | uncertainty in each measurement; added separately |
+
+::: keypoint
+Measuring one response can inform another **if the cross-output covariance model is appropriate**. Predicting several outputs is distinct from deciding how to trade off several objectives.
+:::
+
+### ICM, SLFM and LMC — change which latent patterns are shared
+{sub: original PDF pp. 54–68 · retain the model hierarchy}
+
+Write each output as a linear combination of independent latent GPs. Their covariance always has the form
+
+$$\operatorname{cov}(f_d(x),f_{d'}(x'))=\sum_q (B_q)_{dd'}\,k_q(x,x').$$
+
+| Model | Restriction | What the extra freedom buys |
+|---|---|---|
+| **ICM** | one shared input kernel, $B\,k(x,x')$ | all output relationships share one spatial pattern |
+| **SLFM** | several kernels, each $B_q=a_qa_q^\top$ | each latent factor can have its own length scale |
+| **LMC** | several kernels and PSD matrices $B_q$ | several shared factors can use each kernel |
+
+For $D$ outputs, every $B_q$ is **$D\times D$**. With $R_q$ latent factors, $B_q=A_qA_q^\top$ has rank at most $\min(D,R_q)$.
+
+::: keypoint
+The source's many covariance derivations implement one rule: **independent latent contributions add their covariances**. The appendix gives the stacked matrix.
+:::
+
+### Expected hypervolume improvement — EI for a set of trade-offs
+{sub: original PDF pp. 190–208 · distinguish probability, amount, and approximation}
+
+Let $P$ be the current Pareto set and $r$ a fixed reference point worse than the outcomes of interest.
+
+$$\operatorname{EHVI}(x)=\mathbb E\!\left[\operatorname{HV}(P\cup\{\mathbf f(x)\};r)-\operatorname{HV}(P;r)\mid D\right].$$
+
+| Acquisition | What is averaged? |
+|---|---|
+| Probability of hypervolume improvement | whether the new point adds any dominated volume |
+| **EHVI** | how much new volume it adds |
+| Source's HVPI heuristic | improvement at the posterior mean × probability of improvement; generally **not equal** to EHVI |
+
+Estimate EHVI by drawing possible output vectors from the posterior, computing each added volume, and averaging. Cross-output dependence belongs in those joint draws.
+
+::: keypoint
+**Contextual multiobjective BO** adds the observed context $c$ to this same model and acquisition. Multiple outputs describe what is predicted; multiple objectives describe what is valued.
 :::

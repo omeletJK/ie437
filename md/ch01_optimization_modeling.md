@@ -27,97 +27,28 @@ questions:
 ### Optimization Problem Modeling
 {layout: title}
 
-## The handoff — the purest decision
-{short: HANDOFF}
-
-Lecture 0 drew the map. We start at the corner where nothing has been taken away yet.
-
 ### Where we are — the simplest cell of the map
+| Previous step | This chapter's question |
+|---|---|
+| Lecture 0 identified a decision and its evidence. | Now make the objective and constraints explicit. |
 
-::: tracker
-:::
-
-::: table center
-|   | Model-based | Data-driven |
-|---|---|---|
-| **Static, single** | ==optimisation *(Lec 1)*== | Bayesian / learned opt. *(Lec 2–6)* |
-| **Dynamic, single** | MDP / optimal control *(Lec 7, 9)* | reinforcement learning *(Lec 8, 10, 11)* |
-:::
-
-We begin at the ==simplest cell==: one decision, a known objective, no time, no rivals. This is classical mathematical optimisation.
-
-::: reveal
-::: small
-Why start here when the course is about *data-driven* decisions? Because this is the ==atom==. Every later method — Bayesian optimisation, value iteration, policy gradient, trust-region RL — is this template with something made uncertain, sequential or sampled. Master the atom and the molecules become legible.
-:::
-:::
-
-### The thesis — formulation precedes solution
+We begin with a known one-step model. Convexity will tell us when a local condition certifies a global answer.
 
 ::: keypoint
-Before you can ==learn== a decision, you must be able to ==state== one.
-:::
-
-::: reveal
-A decision problem becomes mathematics through three ingredients — and naming them is half the work:
-
-- an **objective** $f(x)$ — what "good" means, as a number to minimise;
-- **decision variables** $x$ — the levers you may pull;
-- **constraints** $g(x)\le 0,\; h(x)=0$ — what is allowed.
-:::
-
-::: reveal
-::: small
-Get this right and the rest is method. Get it wrong — the wrong objective, a missing constraint — and no solver, classical or learned, can save you. The hardest and most consequential step in applied decision making is the ==modelling==, not the solving.
-:::
-:::
-
-### Formulation is a balance
-
-::: widget formulation-balance
-A model that keeps every detail of the world cannot be solved; a model a solver loves may no longer be the problem you had. ==Formulation is the act of balancing the two== — and it is where most of the real difficulty of applied decision making lives.
-:::
-
-### The roadmap — four questions
-
-::: qstrip 0
-:::
-
-- **Q1 — How do we state a decision mathematically?** The ==standard form==.
-- **Q2 — When does a local solution settle the global question?** ==Convexity==.
-- **Q3 — How do we *know* a solution is optimal?** Optimality conditions and ==KKT==.
-- **Q4 — What about the non-convex ones?** ==Successive convexification== and trust regions.
-
-::: small
-Prerequisites: derivatives, dot products and basic matrix algebra. We introduce convexity and KKT here; the later implicit-differentiation derivation is an advanced extension.
+Solve the bounded heater problem and check its KKT conditions.
 :::
 
 ### Learning route — formulate, solve, and certify
+**Bring:** Derivatives, vectors and basic algebra.
 
-**Bring:** gradients, matrix multiplication, and inequalities. Probability is needed only for the stochastic examples.
-
-::: flow
-- **Formulate** | variables, objective, feasible set
-- **Recognize structure** | convexity and useful rewrites
-- **Certify** | first-order and KKT conditions
-- !**Approximate locally** | trust regions for nonconvex problems
-:::
-
-**Core goal:** formulate the production example, explain necessary versus sufficient, and check all four KKT conditions. Keep the production problem and the one-dimensional wall example in view as each new concept arrives.
-
-**Advanced applications:** optimization layers, bilevel design, and wind-farm subproblems show where the tools lead; their research details need not be mastered before the core examples.
-
-### Reading guide — certify an optimum, then differentiate a decision
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Boyd & Vandenberghe, *Convex Optimization* (2004), §§3.1, 4.1, 5.5](https://web.stanford.edu/~boyd/cvxbook/) | Which assumptions make first-order or KKT conditions a certificate? |
-| **Compare** | [Amos & Kolter, *OptNet: Differentiable Optimization as a Layer in Neural Networks* (ICML 2017)](https://proceedings.mlr.press/v70/amos17a.html) | How does changing a QP input change its optimal decision? |
-| **Apply** | The production example, followed by the original heater and wind-farm cases | What remains convex, and what requires an approximation? |
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | Formulate → recognize convexity → state and check optimality → inspect a local approximation |
+| **Work without the solution** | Solve the bounded heater problem and check its KKT conditions. |
+| **Return later** | Optimization layers, detailed heater/wind-farm studies and full sensitivity derivations follow the main route. |
 
 ::: keypoint
-KKT conditions and a small worked example come before optimization layers. OptNet is the advanced application of sensitivity analysis; ICNN describes a different choice: how to parameterize a convex function.
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
 ## Act 1 — the standard form
@@ -166,8 +97,12 @@ B earns 2 per unit of machine time; A earns only 1.5. Thus $x^{*}=(0,4)$ earns 8
 :::
 :::
 
-### Equivalent problems — four rewrites worth knowing
+### Formulation is a balance
+::: widget formulation-balance
+A model that keeps every detail of the world cannot be solved; a model a solver loves may no longer be the problem you had. ==Formulation is the act of balancing the two== — and it is where most of the real difficulty of applied decision making lives.
+:::
 
+### Equivalent problems — four rewrites worth knowing
 ::: lede
 The standard form is a shape, and most problems must be *put into* it. Four transformations do almost all of that work, and each leaves the optimal value unchanged.
 :::
@@ -231,7 +166,6 @@ Convexity alone does not guarantee existence or convergence. The convex function
 :::
 
 ### Convex sets — the segment test
-
 ::: lede
 Non-convex problems enjoy none of those guarantees for free, so much of practical optimisation is the art of ==getting a convex problem== — or a sequence of them. And both halves of one are the same test.
 :::
@@ -261,13 +195,11 @@ $$f(y)\;\ge\;f(x^{*})+0\;=\;f(x^{*})$$
 :::
 
 ### The watershed, run twice
-
 ::: widget convex-watershed
 The same descent rule, the same twelve starting points, two objectives. For this strictly convex quadratic and this stable step size, the walkers approach the same minimiser. On the non-convex objective they can settle in different basins. The example isolates the effect of geometry; it does not make algorithm settings irrelevant.
 :::
 
 ### The convex family — LP, QP, QCQP
-
 ::: lede
 Named convex forms, in order of generality.
 :::
@@ -313,68 +245,6 @@ If a finite optimum exists, an optimal basic feasible diet can be chosen: it use
 Stigler posed this in 1945 and narrowed it by hand; Dantzig's simplex method settled it a few years later. The optimal diet was cheap, adequate, and close to inedible — a first lesson in what a model leaves out.
 :::
 
-### Piecewise-linear — the epigraph earns its keep
-{sub: Example 1.3}
-
-::: lede
-A maximum of affine pieces is not linear. Its *epigraph* is, and that turns out to be enough.
-:::
-
-::: cols c2
-::: col The problem
-Minimise the largest of several affine pieces:
-
-$$\min_x\ \max_i\ (a_i^\top x + b_i)$$
-
-The objective is convex — a maximum of affine functions always is — but it is not itself a linear objective. Rewrite it before passing it to an LP solver.
-:::
-::: col.accent The rewrite
-Give the maximum a name, then push it down:
-
-$$\min_{x,t}\ t \qquad \text{s.t.}\quad a_i^\top x + b_i \le t$$
-
-One new variable, one constraint per piece, and it is an LP.
-:::
-:::
-
-::: reveal
-Why it is sound: nothing in the objective rewards a large $t$, so at the optimum $t$ is squeezed down until it meets the largest piece. Minimising over the epigraph $\{(x,t) : t \ge f(x)\}$ therefore returns exactly $\min_x f(x)$.
-:::
-
-::: reveal
-::: keypoint
-The move is general — ==any convex objective can be traded for a linear one== over its epigraph. It returns in Act 3, and again as the surrogate in Lecture 10.
-:::
-:::
-
-### Chebyshev centre — an infinity of constraints, collapsed
-{sub: Example 1.4}
-
-::: lede
-Where inside a polyhedron can you put the largest ball? The unknowns are its centre $x_c$ and its radius $r$.
-:::
-
-Let $\mathcal{P}=\{x: a_i^\top x\le b_i\}$. The ball of radius $r$ about $x_c$ lies inside $\mathcal{P}$ exactly when *every* point of it satisfies *every* face:
-
-$$\sup_{\lVert u\rVert_2\le r}\ a_i^\top (x_c+u)\ \le\ b_i \qquad \forall i$$
-
-::: reveal
-As written that is one constraint for every $u$ in a ball — infinitely many. But the supremum is available in closed form: $a_i^\top u$ is largest when $u$ points along $a_i$, so it equals $r\lVert a_i\rVert_2$ by Cauchy–Schwarz. The infinity collapses to ==one linear constraint per face==:
-
-$$\max_{x_c,\,r\ge0}\ r \qquad \text{s.t.}\quad a_i^\top x_c + r\lVert a_i\rVert_2 \le b_i\quad\forall i$$
-:::
-
-::: reveal
-::: keypoint
-$\lVert a_i\rVert_2$ is ==data, not a variable== — so the constraint is linear in $(x_c, r)$, which is all an LP asks.
-:::
-:::
-
-### None of the three looked linear when it was stated
-{layout: standout}
-
-Diet was already an LP and only had to be written down. The piecewise-linear objective needed a new variable. The Chebyshev centre needed an infinite family of constraints reduced by an inequality. ==Modelling is the act of finding the rewrite== — and it is where the expertise lives, because the solver is a commodity.
-
 ### Least squares with bounds — nothing to check
 {sub: a quadratic programme that is convex for every $\mathbf{A}$}
 
@@ -395,71 +265,6 @@ A squared length cannot be negative, so $\mathbf{A}^\top\mathbf{A}\succeq0$ for 
 ::: reveal
 ::: keypoint
 Convexity here is ==structural, not conditional==. There is no assumption to verify and no data that could break it.
-:::
-:::
-
-### A linear programme with random cost
-{sub: a non-negative variance penalty preserves convexity}
-
-The cost vector $c$ is not known, only its mean $\bar c$ and covariance $\Sigma$. The objective $c^\top x$ is then itself a random number:
-
-$$\E[c^\top x] = \bar c^\top x, \qquad \operatorname{Var}(c^\top x) = x^\top\Sigma x .$$
-
-Minimising a random number is not yet a decision, so you must say what its spread is worth. Charge for it linearly:
-
-::: reveal
-$$\min_x\ \bar c^\top x + \hl{\gamma\, x^\top \Sigma x}$$
-:::
-
-::: reveal
-$\gamma$ is the first risk parameter of the course — the price, in units of expected cost, that you put on variance. A covariance matrix is positive semidefinite by construction, since $v^\top\Sigma v = \operatorname{Var}(c^\top v)\ge0$ for every $v$. Scaling a convex quadratic by a non-negative number keeps it convex and by a negative one flips it, so $\gamma\ge0$ ==guarantees convexity==. If $\gamma<0$ and $\Sigma\ne0$, the objective is not convex on the full space; a zero covariance or a restricted feasible subspace can be a degenerate exception.
-:::
-
-::: reveal
-::: keypoint
-$\gamma>0$ is risk-averse and $\gamma=0$ risk-neutral, returning the plain LP; risk-*seeking* $\gamma<0$ produces a concave quadratic objective, generally making its minimisation non-convex. The condition is a modelling decision, not a technicality.
-:::
-:::
-
-### Robust LP — the worst case is convex for free
-{sub: deterministic — the constraint must hold for every $g_i$ in a set $\mathcal{E}_i$}
-
-::: lede
-Now the *constraint* is the uncertain thing rather than the objective. Lecture 0's split between deterministic and stochastic uncertainty gives two honest formulations of it, and the two do not fare alike.
-:::
-
-Demand that the constraint survive every outcome in an uncertainty set $\mathcal{E}_i$:
-
-$$g_i^\top x \le h_i \qquad \forall\, g_i\in\mathcal{E}_i$$
-
-::: reveal
-This is not one constraint but one per element of $\mathcal{E}_i$ — infinitely many of them when $\mathcal{E}_i$ is a continuum. Every one is a half-space in $x$, and an intersection of half-spaces is convex however many there are. The feasible set is therefore convex for ==any $\mathcal{E}_i$ whatever==, a nonconvex or disconnected one included.
-:::
-
-::: reveal
-What the shape of $\mathcal{E}_i$ decides is *tractability*, not convexity. An ellipsoidal $\mathcal{E}_i$ collapses that infinite family into a single second-order cone constraint, $\bar g_i^\top x + \lVert P_i^\top x\rVert_2 \le h_i$; a polyhedral one collapses by duality into finitely many linear constraints.
-:::
-
-### Robust LP — the chance constraint is not
-{sub: stochastic — the constraint need hold only with probability $\eta$}
-
-Ask instead that the constraint hold merely often enough:
-
-$$\mathbf{P}\big(g_i^\top x \le h_i\big) \ge \eta$$
-
-For a general distribution that set is ==not necessarily convex==. Take $g_i$ Gaussian, though, and it can be written out: $g_i^\top x$ is then a scalar Gaussian with mean $\bar g_i^\top x$ and standard deviation $\lVert\Sigma_i^{1/2}x\rVert_2$, so standardising the requirement gives
-
-::: reveal
-$$\bar g_i^\top x + \Phi^{-1}(\eta)\,\lVert\Sigma_i^{1/2}x\rVert_2 \le h_i .$$
-:::
-
-::: reveal
-The norm is convex, so the whole is a second-order cone constraint — but only if the number multiplying it is non-negative, and $\Phi^{-1}(\eta)\ge0$ exactly when ==$\eta\ge\tfrac12$==. Below even odds the sign flips, so this convexity guarantee is lost; special or degenerate instances can still have a convex feasible set.
-:::
-
-::: reveal
-::: small
-Not "the usual choices", then, but three conditions: $\gamma\ge0$, any $\mathcal{E}_i$ at all, and $\eta\ge\tfrac12$. ==These are structural convexity guarantees; particular instances may have additional structure.== Lecture 2 takes the stochastic reading much further; Lecture 5 meets the worst-case one again when a surrogate must be trusted only where the data supports it.
 :::
 :::
 
@@ -722,7 +527,6 @@ Step 2 needs no convexity of $f$; ==optimality $\Longleftrightarrow\nabla f=0$ a
 :::
 
 ### The condition, made draggable
-
 ::: widget kkt-point
 Minimise $\lVert x-c\rVert^2$ over the polygon. Drag the point: the red arrow shows a feasible decrease. At the optimum, $-\nabla f$ points outside the allowed set. The gradient need not be zero when constraints block descent.
 :::
@@ -939,6 +743,34 @@ $\lambda^{*}=(2,0,1,0)\ge0$. The point is feasible, every $\lambda_i^{*}g_i(x^{*
 The machine-time multiplier is 2. An extra unit of machine capacity is worth 2 units of profit in this model.
 :::
 
+### Temperature thread — solve the one-step heater problem
+{sub: shared teaching example · predict before revealing the calculation}
+
+Use $x=-2$, $x'=x+u$ and $c(u)=(-2+u)^2+u^2$, with $0\le u\le2$. The dynamics and cost are known in this chapter.
+
+**Predict:** Will the optimum use zero, half, or all of the maximum command?
+
+::: reveal
+**Calculate and check.** $c'(u)=4u-4=0$ gives $u^*=1$. It is feasible and $c''(u)=4>0$, so it is the unique global minimizer. Both bound multipliers are zero; the resulting cost is **2**.
+:::
+
+::: keypoint
+The command stops short of reaching 22°C because the objective also charges for effort.
+:::
+
+### Try it — the heater limit becomes 0.5
+{sub: work independently · reveal only after writing an answer}
+
+Replace only the upper bound by $u\le0.5$. Find the optimal command and the multiplier for $u-0.5\le0$. Check feasibility, multiplier sign, stationarity and complementary slackness.
+
+::: reveal
+**Check your answer.** $u^*=0.5$, $c=2.5$. The lower-bound multiplier is zero. Stationarity gives $(4u-4)+\lambda=0$, so $\lambda=2$. The upper constraint binds and $\lambda(u-0.5)=0$.
+:::
+
+::: keypoint
+A constrained optimum can have a nonzero objective gradient. The constraint multiplier balances it.
+:::
+
 ### Why KKT certifies a *global* optimum
 {sub: reuse the zero-gradient result we already proved}
 
@@ -1002,7 +834,6 @@ $\lambda$ is the **shadow price**: how much the best cost improves per small uni
 :::
 
 ### Duality — a lower bound you get for free
-
 The proof used a function below the feasible cost. Now fix **any** $\lambda\ge0,\nu$ and minimise that function over all $x$, even infeasible ones:
 
 $$d(\lambda,\nu)\;=\;\inf_x\,L(x,\lambda,\nu)$$
@@ -1062,6 +893,209 @@ $$p^{*}\ge1.$$
 Since $g(x^{*})<0$, the equation $\lambda g(x^{*})=0$ forces $\lambda=0$. The converse is false: zero multiplier does not prove that a constraint is slack. Under suitable sensitivity assumptions, zero multiplier means no first-order change in the optimal value; it does not generally guarantee an unchanged optimizer after a finite relaxation.
 :::
 
+## Act 4 — when the problem is not convex
+{short: ACT 4, num: Act 4}
+
+**Q4.** Real problems are not convex. Do we give up the guarantees, or manufacture them?
+
+### Successive convexification — solve a sequence of easy problems
+{q: 4}
+
+::: qstrip
+:::
+
+Real engineering problems are usually non-convex — non-convex objective, non-convex constraints. One useful strategy is to ==solve a sequence of local convex approximations==, then evaluate each proposed step in the original problem.
+
+::: reveal
+At the current iterate $x^{(k)}$, choose $B^{(k)}\succeq0$ and build a local convex model for minimisation
+
+$$\tilde f(x) = f(x^{(k)}) + \nabla f(x^{(k)})^\top (x - x^{(k)}) + \tfrac12 (x-x^{(k)})^\top B^{(k)} (x-x^{(k)})$$
+
+construct suitable constraint approximations, and add a ==trust region== $\lVert x - x^{(k)}\rVert \le \rho^{(k)}$ so the model stays trustworthy.
+:::
+
+::: reveal
+::: keypoint
+The trust region is the key idea: ==only trust the approximation nearby.==
+:::
+
+::: small
+Accept a feasible candidate only when actual improvement agrees sufficiently with predicted improvement. Shrink after rejection; expand after strong agreement at the boundary. General constraint linearisations need a feasibility or merit-function strategy. Convergence, when obtained under suitable assumptions, is usually to a stationary point rather than a global optimum.
+:::
+:::
+
+### The trust region, iterated
+::: widget trust-region
+Watch the ratio of actual to predicted decrease. Poor agreement rejects a step; strong agreement at the boundary can enlarge the interval. The boxed problem uses a projected-gradient stopping test, so a boundary optimum is recognised. Lecture 10 applies the same idea of limiting an update through a KL constraint in TRPO, with a different step-selection procedure.
+:::
+
+### Wind-farm layout — the wakes make it a joint decision
+::: cols c2
+::: col
+::: figure windfarm-wakes | 510
+Visible wakes behind offshore turbines. Photograph reproduced from original PowerPoint, slide 43, which credits WindAction.
+:::
+:::
+::: col The decision in the photograph
+A turbine extracts energy from the wind and leaves slower, more turbulent air behind it. Downstream turbines therefore see a different inflow from the undisturbed wind.
+
+**Variables:** the turbine coordinates $l=(l_1,\ldots,l_N)$.
+
+**Objective:** expected total farm power, accounting for wake interactions.
+
+**Constraints:** installation boundaries and a prescribed minimum separation $d_{\min}$.
+
+::: reveal
+Moving one turbine changes several turbines' power. ==Optimise the layout as a system.==
+:::
+:::
+:::
+
+### Read the engineering case using the same four questions
+| Question | Wind-farm decision |
+|---|---|
+| What do we choose? | Turbine locations, subject to site and separation constraints. |
+| What do we value? | Predicted power over stated wind scenarios. |
+| Why is it difficult? | Moving one turbine changes wakes and other turbines' outputs. |
+| What does the algorithm check? | A local convex subproblem proposes a step; the original model evaluates whether the step deserves trust. |
+
+::: keypoint
+The full wake model, figures and optimization results are retained in the case-study appendix. First explain the **decision, objective, constraints and validation** without the network architecture.
+:::
+
+### Check — what a trust region is for
+{q: 4}
+
+::: quiz Why does a trust-region method bound the size of its step?
+- To keep the iterate inside the feasible set
+- To guarantee the objective decreases monotonically
+- To make each iteration cheaper to compute
+- =Because the local model is only a good approximation nearby, so the step must stay where the model can be believed
+The method builds a simple model — usually quadratic — of a complicated $f$ around the current point. That model is **only trustworthy in a neighbourhood**, so the step is capped at a radius that is grown or shrunk according to how well the model just predicted reality. Lecture 10 uses the same principle to limit a policy update with a KL constraint; its step-selection procedure differs.
+:::
+
+## Closing
+{short: CLOSING}
+
+We can state a decision and, when it is convex, prove we have solved it. Now the assumption we drop.
+
+### Where we are — and the assumption we now drop
+::: table center
+|   | Model-based | Data-driven |
+|---|---|---|
+| **Static, single** | ==optimisation *(Lec 1 ✓)*== | Bayesian / learned opt. *(Lec 2–6 →)* |
+:::
+
+::: reveal
+We can now state a decision, certify a convex optimum, and use convex subproblems to improve a non-convex problem. The research cases already fitted models and used wind distributions, but each optimisation treated those inputs as fixed:
+
+::: keypoint
+the chosen model and its coefficients defined ==one optimisation problem.==
+:::
+:::
+
+::: reveal
+::: small
+We hand off the template `min f s.t. g ≤ 0`. Now ask what data tells us about its unknown parameters. A fixed surrogate or one fitted distribution hides uncertainty about that fit; Lecture 2 represents this uncertainty as a belief and updates it with observations.
+:::
+:::
+
+### Optimization is how a decision becomes mathematics — and, when the problem is convex, an answer we can not only find but *prove*.
+{layout: standout}
+
+An objective to minimise, levers to pull, limits to respect.
+
+### Questions?
+{layout: standout}
+
+Hold onto two pieces: the standard form — it is the skeleton of every objective to come — and the trust region, which returns in surrogate optimisation and again in trust-region RL. Everything else this term is this atom, perturbed by uncertainty.
+
+## Appendix — backup slides
+{short: APPENDIX}
+
+Complete statements, kept out of the narrative.
+
+### Reading guide — certify an optimum, then differentiate a decision
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Boyd & Vandenberghe, *Convex Optimization* (2004), §§3.1, 4.1, 5.5](https://web.stanford.edu/~boyd/cvxbook/) | Which assumptions make first-order or KKT conditions a certificate? |
+| **Compare** | [Amos & Kolter, *OptNet: Differentiable Optimization as a Layer in Neural Networks* (ICML 2017)](https://proceedings.mlr.press/v70/amos17a.html) | How does changing a QP input change its optimal decision? |
+| **Apply** | The production example, followed by the original heater and wind-farm cases | What remains convex, and what requires an approximation? |
+
+::: keypoint
+KKT conditions and a small worked example come before optimization layers. OptNet is the advanced application of sensitivity analysis; ICNN describes a different choice: how to parameterize a convex function.
+:::
+
+### Backup — the successive convex programming loop
+**Algorithm — trust-region SCP.**
+
+1. Start from a feasible $x^{(0)}$, radius $\rho_0>0$ and tolerance $\epsilon>0$.
+2. Check feasibility and a suitable first-order residual; stop only when both meet their tolerances. For a box, use $\lVert x-\Pi_D(x-\nabla f(x))\rVert$.
+3. Build a model with $B_k\succeq0$ and a feasible inner constraint approximation. Solve it inside the trust region to get $\hat x$.
+4. Set $\mathrm{pred}=m_k(x^{(k)})-m_k(\hat x)$. If it is not meaningfully positive, check stationarity or report stalling; do not divide by zero.
+5. Set $r_k=[f(x^{(k)})-f(\hat x)]/\mathrm{pred}$. Accept a feasible candidate if $r_k\ge\eta$; otherwise keep $x^{(k+1)}=x^{(k)}$ and shrink the radius.
+6. Grow the radius only after strong agreement at the boundary. Return to step 2. A rejected step is never, by itself, evidence of convergence.
+
+::: small
+**Why the ratio test.** It measures whether the convex model can be trusted at the proposed step. Trust grows where the model predicts well and shrinks where it does not — the same modelling principle that motivates the KL-constrained update in TRPO, though TRPO uses a different step-selection procedure.
+:::
+
+### Backup — the general Lagrangian and KKT conditions
+{math: compact}
+
+For $\min_x f(x)$ subject to $g_i(x)\le0$ and $h_j(x)=0$, combine all constraints:
+
+$$L(x,\lambda,\nu)=f(x)+\sum_i\lambda_i g_i(x)+\sum_j\nu_j h_j(x).$$
+
+::: cols c2
+::: col Allowed point and inward reactions
+**Primal feasibility:**
+
+$$g_i(x^{*})\le0,\qquad h_j(x^{*})=0.$$
+
+**Dual feasibility:** $\lambda_i^{*}\ge0$. Equality multipliers $\nu_j^{*}$ are free in sign: an equality has no allowed side.
+:::
+::: col No unused reaction and balanced forces
+**Complementary slackness:**
+
+$$\lambda_i^{*}g_i(x^{*})=0 \qquad \forall i.$$
+
+**Stationarity:**
+
+$$\nabla f(x^{*})+\sum_i\lambda_i^{*}\nabla g_i(x^{*})+\sum_j\nu_j^{*}\nabla h_j(x^{*})=0.$$
+:::
+:::
+
+::: small
+For differentiable convex $f,g_i$ and affine $h_j$, these four conditions are **sufficient** for global optimality. A constraint qualification such as Slater's makes them **necessary** as well. Without convexity, they are generally not sufficient. A slack inequality must have zero multiplier; a tight inequality can have either zero or a positive multiplier.
+:::
+
+### Backup — KKT sufficiency, expanded gradient proof
+{sub: proof of the sufficient direction stated in the KKT theorem}
+
+Let $f$ and every $g_i$ be differentiable and convex, every $h_j$ affine, and suppose $(x^{*},\lambda^{*},\nu^{*})$ satisfies the stated KKT conditions. Take **any** feasible $y$:
+
+$$\begin{aligned}
+f(y) &\;\ge\; f(x^{*}) + \nabla f(x^{*})^\top(y-x^{*}) && \dm{\text{convexity of } f}\\[2pt]
+&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,\nabla g_i(x^{*})^\top(y-x^{*}) && \dm{\text{stationarity; the } h_j \text{ terms vanish}}\\[2pt]
+&\;\ge\; f(x^{*}) - \sum_i \lambda_i^{*}\big(g_i(y)-g_i(x^{*})\big) && \dm{\text{convexity of } g_i,\ \lambda_i^{*}\ge0}\\[2pt]
+&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,g_i(y) && \dm{\text{complementary slackness}}\\[2pt]
+&\;\ge\; f(x^{*}) && \dm{\lambda_i^{*}\ge0,\ g_i(y)\le0}
+\end{aligned}$$
+
+::: reveal
+::: small
+The $h_j$ terms vanish because an affine $h_j$ has $\nabla h_j^\top(y-x^{*}) = h_j(y)-h_j(x^{*}) = 0$ for feasible $y$. So $f(y)\ge f(x^{*})$ for *every* feasible $y$: ==not a local claim but a global one.== This proves the sufficient direction: a KKT certificate gives global optimality for the stated convex problem. The converse requires the constraint qualification stated in the theorem.
+:::
+:::
+
+## Research extension — optimization layers and joint design/control
+{short: EXTENSION}
+
+Read after completing the main route.
+
 ### An LP inside a policy — LPMARL
 {sub: application preview — follow how an optimisation output becomes a decision}
 
@@ -1083,7 +1117,6 @@ Each row of $z$ sums to one, but it can split across tasks. Here $k_j$ bounds a 
 :::
 
 ### An allocation LP need not return a matching
-
 One agent, two tasks: let $c=(2,1)$ and $k=(1,1)$. The weighted-capacity model becomes
 
 $$\max\ 2z_1+z_2\qquad\text{s.t.}\quad z_1+z_2=1,\quad 2z_1\le1,\quad z_2\le1,\quad z\ge0.$$
@@ -1149,7 +1182,6 @@ A stable local minimum of a non-convex problem can also have a correct local sen
 :::
 
 ### Convexity can be imposed on a learned model
-
 **Input Convex Neural Networks (ICNNs)** constrain a network to be convex in selected inputs while remaining flexible in its parameters. **OptNet** and differentiable convex layers make an optimisation problem part of a trainable network. {p}(Amos, Xu & Kolter, 2017; Amos & Kolter, 2017; Agrawal et al., 2019)
 
 ::: reveal
@@ -1178,7 +1210,6 @@ We observe temperatures at a few sensor locations rather than the whole field. T
 :::
 
 ### Design is chosen once; heating is chosen repeatedly
-
 ::: cols c2
 ::: col
 ::: figure heater-sensor-layout | 330
@@ -1220,7 +1251,6 @@ Convex inner problems make global operation optima certifiable. The outer design
 :::
 
 ### The graph separates operation inputs from geometry
-
 ::: figure icgnn-architecture | 1030
 Sensor and heater histories feed a graph model. Geometry enters through a separate path; selected operation inputs pass through convex subnetworks. Source: original PowerPoint, slide 27.
 :::
@@ -1232,7 +1262,6 @@ Holding the layout fixed defines the inner problem. For that problem, verify con
 :::
 
 ### A design update combines several control solves
-
 ::: figure icgnn-procedure | 880
 Build the layout graph, solve $K$ operating scenarios and use their implicit sensitivities to update the heater positions. Source: original PowerPoint, slide 27.
 :::
@@ -1244,7 +1273,6 @@ This separates optimisation over operations from optimisation over geometry. A v
 :::
 
 ### What convexity certifies in the inner problem
-
 ::: figure icgnn-compare | 970
 The source compares a joint search, an implicit solve with a general GNN and an implicit solve with an input-convex model. Source: original PowerPoint, slide 25.
 :::
@@ -1256,7 +1284,6 @@ Read the last row narrowly: KKT is sufficient for global optimality of a differe
 :::
 
 ### A lower predicted cost can hide a worse design
-
 ::: figure icgnn-results | 770
 Predicted cost and true cost, with the heater layouts reached by each model. Source: original PowerPoint, slide 28.
 :::
@@ -1268,7 +1295,6 @@ The linear surrogate's predicted cost falls, but its reported true cost rises fr
 :::
 
 ### Compare surrogates using the same optimisation method
-
 ::: figure heater-surrogate-comparison | 1060
 Compare Linear, GNN and ICGNN, all using implicit differentiation. Source: original PowerPoint, slide 28.
 :::
@@ -1284,7 +1310,6 @@ Holding the optimiser fixed helps isolate the contribution of the ==learned surr
 :::
 
 ### Compare optimisers using the same surrogate
-
 ::: figure heater-optimizer-comparison | 1060
 Compare CMA-ES, joint single-level search and implicit differentiation, all using ICGNN. Source: original PowerPoint, slide 28.
 :::
@@ -1299,68 +1324,12 @@ The optimiser can exploit a surrogate's errors. ==Evaluate the decision on the s
 :::
 :::
 
-## Act 4 — when the problem is not convex
-{short: ACT 4, num: Act 4}
+## Case study — the full wind-farm optimization
+{short: EXTENSION}
 
-**Q4.** Real problems are not convex. Do we give up the guarantees, or manufacture them?
-
-### Successive convexification — solve a sequence of easy problems
-{q: 4}
-
-::: qstrip
-:::
-
-Real engineering problems are usually non-convex — non-convex objective, non-convex constraints. One useful strategy is to ==solve a sequence of local convex approximations==, then evaluate each proposed step in the original problem.
-
-::: reveal
-At the current iterate $x^{(k)}$, choose $B^{(k)}\succeq0$ and build a local convex model for minimisation
-
-$$\tilde f(x) = f(x^{(k)}) + \nabla f(x^{(k)})^\top (x - x^{(k)}) + \tfrac12 (x-x^{(k)})^\top B^{(k)} (x-x^{(k)})$$
-
-construct suitable constraint approximations, and add a ==trust region== $\lVert x - x^{(k)}\rVert \le \rho^{(k)}$ so the model stays trustworthy.
-:::
-
-::: reveal
-::: keypoint
-The trust region is the key idea: ==only trust the approximation nearby.==
-:::
-
-::: small
-Accept a feasible candidate only when actual improvement agrees sufficiently with predicted improvement. Shrink after rejection; expand after strong agreement at the boundary. General constraint linearisations need a feasibility or merit-function strategy. Convergence, when obtained under suitable assumptions, is usually to a stationary point rather than a global optimum.
-:::
-:::
-
-### The trust region, iterated
-
-::: widget trust-region
-Watch the ratio of actual to predicted decrease. Poor agreement rejects a step; strong agreement at the boundary can enlarge the interval. The boxed problem uses a projected-gradient stopping test, so a boundary optimum is recognised. Lecture 10 applies the same idea of limiting an update through a KL constraint in TRPO, with a different step-selection procedure.
-:::
-
-### Wind-farm layout — the wakes make it a joint decision
-
-::: cols c2
-::: col
-::: figure windfarm-wakes | 510
-Visible wakes behind offshore turbines. Photograph reproduced from original PowerPoint, slide 43, which credits WindAction.
-:::
-:::
-::: col The decision in the photograph
-A turbine extracts energy from the wind and leaves slower, more turbulent air behind it. Downstream turbines therefore see a different inflow from the undisturbed wind.
-
-**Variables:** the turbine coordinates $l=(l_1,\ldots,l_N)$.
-
-**Objective:** expected total farm power, accounting for wake interactions.
-
-**Constraints:** installation boundaries and a prescribed minimum separation $d_{\min}$.
-
-::: reveal
-Moving one turbine changes several turbines' power. ==Optimise the layout as a system.==
-:::
-:::
-:::
+Read after completing the main route.
 
 ### A wake model turns geometry into a power prediction
-
 ::: cols c2
 ::: col
 ::: figure wake-cross-section | 455
@@ -1381,7 +1350,6 @@ Increasing $d$ spreads and weakens this wake; increasing $|r|$ moves a turbine a
 :::
 
 ### Recovering from one wake does not remove the others
-
 ::: cols wide-l
 ::: col Wake recovery with distance
 ::: figure wake-recovery | 620
@@ -1404,7 +1372,6 @@ The power function $P_i(l;U,\theta)$ depends on the ==whole layout and the wind 
 :::
 
 ### Wind direction and speed determine the scenario weights
-
 ::: cols c2
 ::: col How often does each direction occur?
 ::: figure wind-rose | 325
@@ -1423,7 +1390,6 @@ The wind rose and the conditional speed distributions play different roles. A di
 :::
 
 ### An expectation is a weighted collection of wind scenarios
-
 ::: figure wind-joint-distribution | 830
 Joint wind direction–speed distribution. Integrate the plotted density over each bin to obtain its probability mass. Source: original PowerPoint, slide 45.
 :::
@@ -1456,7 +1422,6 @@ A known expectation is still an ordinary objective function. Here the challenge 
 :::
 
 ### A convex inner region keeps turbines out of exclusion zones
-
 ::: figure wind-spacing-convexification | 760
 Pink discs exclude positions too close to neighbours. The green polygon is a conservative convex region; blue boxes restrict movement. Source: original PowerPoint, slide 49.
 :::
@@ -1527,7 +1492,6 @@ A rejected step changes no coordinates. ==Zero movement after rejection is not c
 :::
 
 ### The optimised layout breaks repeated wake alignments
-
 ::: cols c2
 ::: col
 ::: figure wind-layout-result | 510
@@ -1550,7 +1514,6 @@ These are the source study's reported layouts, not a new simulation. The general
 :::
 
 ### The reported efficiency improves, then levels off
-
 ::: cols c2
 ::: col
 ::: figure wind-efficiency-history | 510
@@ -1567,7 +1530,6 @@ The curve demonstrates improvement in this modelled case. A plateau alone does n
 :::
 
 ### Better average power does not mean better in every direction
-
 ::: figure wind-direction-efficiency | 1080
 Efficiency by wind direction: initial layout in blue, optimised layout in red. Source: original PowerPoint, slide 50.
 :::
@@ -1582,119 +1544,134 @@ The case closes the modelling loop: ==state the decision, preserve feasibility, 
 :::
 :::
 
-### Check — what a trust region is for
-{q: 4}
+## Modelling extensions — alternative convex formulations
+{short: EXTENSION}
 
-::: quiz Why does a trust-region method bound the size of its step?
-- To keep the iterate inside the feasible set
-- To guarantee the objective decreases monotonically
-- To make each iteration cheaper to compute
-- =Because the local model is only a good approximation nearby, so the step must stay where the model can be believed
-The method builds a simple model — usually quadratic — of a complicated $f$ around the current point. That model is **only trustworthy in a neighbourhood**, so the step is capped at a radius that is grown or shrunk according to how well the model just predicted reality. Lecture 10 uses the same principle to limit a policy update with a KL constraint; its step-selection procedure differs.
+Read after completing the main route.
+
+### Piecewise-linear — the epigraph earns its keep
+{sub: Example 1.3}
+
+::: lede
+A maximum of affine pieces is not linear. Its *epigraph* is, and that turns out to be enough.
 :::
-
-## Closing
-{short: CLOSING}
-
-We can state a decision and, when it is convex, prove we have solved it. Now the assumption we drop.
-
-### Where we are — and the assumption we now drop
-
-::: table center
-|   | Model-based | Data-driven |
-|---|---|---|
-| **Static, single** | ==optimisation *(Lec 1 ✓)*== | Bayesian / learned opt. *(Lec 2–6 →)* |
-:::
-
-::: reveal
-We can now state a decision, certify a convex optimum, and use convex subproblems to improve a non-convex problem. The research cases already fitted models and used wind distributions, but each optimisation treated those inputs as fixed:
-
-::: keypoint
-the chosen model and its coefficients defined ==one optimisation problem.==
-:::
-:::
-
-::: reveal
-::: small
-We hand off the template `min f s.t. g ≤ 0`. Now ask what data tells us about its unknown parameters. A fixed surrogate or one fitted distribution hides uncertainty about that fit; Lecture 2 represents this uncertainty as a belief and updates it with observations.
-:::
-:::
-
-### Optimization is how a decision becomes mathematics — and, when the problem is convex, an answer we can not only find but *prove*.
-{layout: standout}
-
-An objective to minimise, levers to pull, limits to respect.
-
-### Questions?
-{layout: standout}
-
-Hold onto two pieces: the standard form — it is the skeleton of every objective to come — and the trust region, which returns in surrogate optimisation and again in trust-region RL. Everything else this term is this atom, perturbed by uncertainty.
-
-## Appendix — backup slides
-{short: APPENDIX}
-
-Complete statements, kept out of the narrative.
-
-### Backup — the successive convex programming loop
-
-**Algorithm — trust-region SCP.**
-
-1. Start from a feasible $x^{(0)}$, radius $\rho_0>0$ and tolerance $\epsilon>0$.
-2. Check feasibility and a suitable first-order residual; stop only when both meet their tolerances. For a box, use $\lVert x-\Pi_D(x-\nabla f(x))\rVert$.
-3. Build a model with $B_k\succeq0$ and a feasible inner constraint approximation. Solve it inside the trust region to get $\hat x$.
-4. Set $\mathrm{pred}=m_k(x^{(k)})-m_k(\hat x)$. If it is not meaningfully positive, check stationarity or report stalling; do not divide by zero.
-5. Set $r_k=[f(x^{(k)})-f(\hat x)]/\mathrm{pred}$. Accept a feasible candidate if $r_k\ge\eta$; otherwise keep $x^{(k+1)}=x^{(k)}$ and shrink the radius.
-6. Grow the radius only after strong agreement at the boundary. Return to step 2. A rejected step is never, by itself, evidence of convergence.
-
-::: small
-**Why the ratio test.** It measures whether the convex model can be trusted at the proposed step. Trust grows where the model predicts well and shrinks where it does not — the same modelling principle that motivates the KL-constrained update in TRPO, though TRPO uses a different step-selection procedure.
-:::
-
-### Backup — the general Lagrangian and KKT conditions
-{math: compact}
-
-For $\min_x f(x)$ subject to $g_i(x)\le0$ and $h_j(x)=0$, combine all constraints:
-
-$$L(x,\lambda,\nu)=f(x)+\sum_i\lambda_i g_i(x)+\sum_j\nu_j h_j(x).$$
 
 ::: cols c2
-::: col Allowed point and inward reactions
-**Primal feasibility:**
+::: col The problem
+Minimise the largest of several affine pieces:
 
-$$g_i(x^{*})\le0,\qquad h_j(x^{*})=0.$$
+$$\min_x\ \max_i\ (a_i^\top x + b_i)$$
 
-**Dual feasibility:** $\lambda_i^{*}\ge0$. Equality multipliers $\nu_j^{*}$ are free in sign: an equality has no allowed side.
+The objective is convex — a maximum of affine functions always is — but it is not itself a linear objective. Rewrite it before passing it to an LP solver.
 :::
-::: col No unused reaction and balanced forces
-**Complementary slackness:**
+::: col.accent The rewrite
+Give the maximum a name, then push it down:
 
-$$\lambda_i^{*}g_i(x^{*})=0 \qquad \forall i.$$
+$$\min_{x,t}\ t \qquad \text{s.t.}\quad a_i^\top x + b_i \le t$$
 
-**Stationarity:**
-
-$$\nabla f(x^{*})+\sum_i\lambda_i^{*}\nabla g_i(x^{*})+\sum_j\nu_j^{*}\nabla h_j(x^{*})=0.$$
+One new variable, one constraint per piece, and it is an LP.
 :::
 :::
 
-::: small
-For differentiable convex $f,g_i$ and affine $h_j$, these four conditions are **sufficient** for global optimality. A constraint qualification such as Slater's makes them **necessary** as well. Without convexity, they are generally not sufficient. A slack inequality must have zero multiplier; a tight inequality can have either zero or a positive multiplier.
+::: reveal
+Why it is sound: nothing in the objective rewards a large $t$, so at the optimum $t$ is squeezed down until it meets the largest piece. Minimising over the epigraph $\{(x,t) : t \ge f(x)\}$ therefore returns exactly $\min_x f(x)$.
 :::
 
-### Backup — KKT sufficiency, expanded gradient proof
-{sub: proof of the sufficient direction stated in the KKT theorem}
+::: reveal
+::: keypoint
+The move is general — ==any convex objective can be traded for a linear one== over its epigraph. It returns in Act 3, and again as the surrogate in Lecture 10.
+:::
+:::
 
-Let $f$ and every $g_i$ be differentiable and convex, every $h_j$ affine, and suppose $(x^{*},\lambda^{*},\nu^{*})$ satisfies the stated KKT conditions. Take **any** feasible $y$:
+### Chebyshev centre — an infinity of constraints, collapsed
+{sub: Example 1.4}
 
-$$\begin{aligned}
-f(y) &\;\ge\; f(x^{*}) + \nabla f(x^{*})^\top(y-x^{*}) && \dm{\text{convexity of } f}\\[2pt]
-&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,\nabla g_i(x^{*})^\top(y-x^{*}) && \dm{\text{stationarity; the } h_j \text{ terms vanish}}\\[2pt]
-&\;\ge\; f(x^{*}) - \sum_i \lambda_i^{*}\big(g_i(y)-g_i(x^{*})\big) && \dm{\text{convexity of } g_i,\ \lambda_i^{*}\ge0}\\[2pt]
-&\;=\; f(x^{*}) - \sum_i \lambda_i^{*}\,g_i(y) && \dm{\text{complementary slackness}}\\[2pt]
-&\;\ge\; f(x^{*}) && \dm{\lambda_i^{*}\ge0,\ g_i(y)\le0}
-\end{aligned}$$
+::: lede
+Where inside a polyhedron can you put the largest ball? The unknowns are its centre $x_c$ and its radius $r$.
+:::
+
+Let $\mathcal{P}=\{x: a_i^\top x\le b_i\}$. The ball of radius $r$ about $x_c$ lies inside $\mathcal{P}$ exactly when *every* point of it satisfies *every* face:
+
+$$\sup_{\lVert u\rVert_2\le r}\ a_i^\top (x_c+u)\ \le\ b_i \qquad \forall i$$
+
+::: reveal
+As written that is one constraint for every $u$ in a ball — infinitely many. But the supremum is available in closed form: $a_i^\top u$ is largest when $u$ points along $a_i$, so it equals $r\lVert a_i\rVert_2$ by Cauchy–Schwarz. The infinity collapses to ==one linear constraint per face==:
+
+$$\max_{x_c,\,r\ge0}\ r \qquad \text{s.t.}\quad a_i^\top x_c + r\lVert a_i\rVert_2 \le b_i\quad\forall i$$
+:::
+
+::: reveal
+::: keypoint
+$\lVert a_i\rVert_2$ is ==data, not a variable== — so the constraint is linear in $(x_c, r)$, which is all an LP asks.
+:::
+:::
+
+### None of the three looked linear when it was stated
+{layout: standout}
+
+Diet was already an LP and only had to be written down. The piecewise-linear objective needed a new variable. The Chebyshev centre needed an infinite family of constraints reduced by an inequality. ==Modelling is the act of finding the rewrite== — and it is where the expertise lives, because the solver is a commodity.
+
+### A linear programme with random cost
+{sub: a non-negative variance penalty preserves convexity}
+
+The cost vector $c$ is not known, only its mean $\bar c$ and covariance $\Sigma$. The objective $c^\top x$ is then itself a random number:
+
+$$\E[c^\top x] = \bar c^\top x, \qquad \operatorname{Var}(c^\top x) = x^\top\Sigma x .$$
+
+Minimising a random number is not yet a decision, so you must say what its spread is worth. Charge for it linearly:
+
+::: reveal
+$$\min_x\ \bar c^\top x + \hl{\gamma\, x^\top \Sigma x}$$
+:::
+
+::: reveal
+$\gamma$ is the first risk parameter of the course — the price, in units of expected cost, that you put on variance. A covariance matrix is positive semidefinite by construction, since $v^\top\Sigma v = \operatorname{Var}(c^\top v)\ge0$ for every $v$. Scaling a convex quadratic by a non-negative number keeps it convex and by a negative one flips it, so $\gamma\ge0$ ==guarantees convexity==. If $\gamma<0$ and $\Sigma\ne0$, the objective is not convex on the full space; a zero covariance or a restricted feasible subspace can be a degenerate exception.
+:::
+
+::: reveal
+::: keypoint
+$\gamma>0$ is risk-averse and $\gamma=0$ risk-neutral, returning the plain LP; risk-*seeking* $\gamma<0$ produces a concave quadratic objective, generally making its minimisation non-convex. The condition is a modelling decision, not a technicality.
+:::
+:::
+
+### Robust LP — the worst case is convex for free
+{sub: deterministic — the constraint must hold for every $g_i$ in a set $\mathcal{E}_i$}
+
+::: lede
+Now the *constraint* is the uncertain thing rather than the objective. Lecture 0's split between deterministic and stochastic uncertainty gives two honest formulations of it, and the two do not fare alike.
+:::
+
+Demand that the constraint survive every outcome in an uncertainty set $\mathcal{E}_i$:
+
+$$g_i^\top x \le h_i \qquad \forall\, g_i\in\mathcal{E}_i$$
+
+::: reveal
+This is not one constraint but one per element of $\mathcal{E}_i$ — infinitely many of them when $\mathcal{E}_i$ is a continuum. Every one is a half-space in $x$, and an intersection of half-spaces is convex however many there are. The feasible set is therefore convex for ==any $\mathcal{E}_i$ whatever==, a nonconvex or disconnected one included.
+:::
+
+::: reveal
+What the shape of $\mathcal{E}_i$ decides is *tractability*, not convexity. An ellipsoidal $\mathcal{E}_i$ collapses that infinite family into a single second-order cone constraint, $\bar g_i^\top x + \lVert P_i^\top x\rVert_2 \le h_i$; a polyhedral one collapses by duality into finitely many linear constraints.
+:::
+
+### Robust LP — the chance constraint is not
+{sub: stochastic — the constraint need hold only with probability $\eta$}
+
+Ask instead that the constraint hold merely often enough:
+
+$$\mathbf{P}\big(g_i^\top x \le h_i\big) \ge \eta$$
+
+For a general distribution that set is ==not necessarily convex==. Take $g_i$ Gaussian, though, and it can be written out: $g_i^\top x$ is then a scalar Gaussian with mean $\bar g_i^\top x$ and standard deviation $\lVert\Sigma_i^{1/2}x\rVert_2$, so standardising the requirement gives
+
+::: reveal
+$$\bar g_i^\top x + \Phi^{-1}(\eta)\,\lVert\Sigma_i^{1/2}x\rVert_2 \le h_i .$$
+:::
+
+::: reveal
+The norm is convex, so the whole is a second-order cone constraint — but only if the number multiplying it is non-negative, and $\Phi^{-1}(\eta)\ge0$ exactly when ==$\eta\ge\tfrac12$==. Below even odds the sign flips, so this convexity guarantee is lost; special or degenerate instances can still have a convex feasible set.
+:::
 
 ::: reveal
 ::: small
-The $h_j$ terms vanish because an affine $h_j$ has $\nabla h_j^\top(y-x^{*}) = h_j(y)-h_j(x^{*}) = 0$ for feasible $y$. So $f(y)\ge f(x^{*})$ for *every* feasible $y$: ==not a local claim but a global one.== This proves the sufficient direction: a KKT certificate gives global optimality for the stated convex problem. The converse requires the constraint qualification stated in the theorem.
+Not "the usual choices", then, but three conditions: $\gamma\ge0$, any $\mathcal{E}_i$ at all, and $\eta\ge\tfrac12$. ==These are structural convexity guarantees; particular instances may have additional structure.== Lecture 2 takes the stochastic reading much further; Lecture 5 meets the worst-case one again when a surrogate must be trusted only where the data supports it.
 :::
 :::

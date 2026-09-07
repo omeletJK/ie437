@@ -1,3 +1,5 @@
+> Historical production plan. For the current teaching order and counts, use `_CHAIN.md` and `_source/teaching_structure_review.md`. The old fixed Act counts and historical method descriptions below are not current authoring requirements.
+
 # IE437 — build plan for the full lecture series
 
 The spine ([`../IE437_Course_Narrative_Spine.md`](../IE437_Course_Narrative_Spine.md)) fixes the

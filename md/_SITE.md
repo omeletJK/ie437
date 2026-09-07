@@ -14,8 +14,8 @@ title_lines:                 # the hero, one line each; *word* is set in teal
 eyebrow: IE437 · KAIST Industrial & Systems Engineering
 thesis: One question — how do we decide well under uncertainty? — asked along three axes, answered by two lineages.
 lede: >
-  Every lecture this term is the same question, asked again with one more thing taken away:
-  the model made uncertain, then the dynamics unknown, and finally the right to act at all.
+  Follow a decision from a known model to learning from experience and from a fixed log.
+  Each chapter includes a core learning route, a worked example, and a short problem to try.
   These are the **interactive lecture notes** — fourteen chapters you can open in a browser,
   step through, and run the algorithms inside.
 chips:
@@ -33,8 +33,8 @@ contact:                      # e.g. jinkyoo.park@kaist.ac.kr
 course_heading: One question, three axes, two lineages
 materials_intro: >
   Each chapter is a complete interactive deck and a downloadable PDF of the same slides.
-  They are meant to be read in order — every chapter opens by naming what the previous one
-  left behind.
+  Start with the learning route, work through the main examples, and try the questions
+  before revealing their answers. Research readings and detailed derivations follow in appendices.
 
 # How the chapter list is grouped. Every chapter in md/ must appear
 # exactly once; site.mjs warns if one is missing.
@@ -70,8 +70,8 @@ not know about it, and then learn the missing part from data.
 ### One question
 
 How do we make **good decisions under uncertainty**? That is the entire course. Every lecture
-asks it again with one more given removed — first the objective, then the dynamics, then the
-opportunity to experiment at all. What survives each removal is the method worth learning.
+examines it under explicit assumptions: known models, uncertain quantities, sequential actions,
+and training from a fixed log. A shared temperature-control example connects the calculations.
 
 ### Three axes
 
@@ -82,7 +82,6 @@ along it.
 
 ### Two lineages
 
-Sequential decision making was invented twice — once by operations research as dynamic
-programming, once by control theory as optimal control. The second half of the course runs both
-traditions in parallel, deletes the model from each, and shows that what comes out the other
-side is reinforcement learning either way.
+Dynamic programming and optimal control provide complementary views of sequential decisions.
+Both use values, policies and Bellman reasoning. The course uses this comparison to connect
+known-model calculations with value-based, policy-based and model-based learning.

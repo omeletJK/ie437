@@ -34,30 +34,17 @@ questions:
 Start with the original coin question: what is its probability of heads? Compare statistical viewpoints, then learn the update rule.
 
 ### Where we are — the coefficients must be learned
+| Previous step | This chapter's question |
+|---|---|
+| Lecture 1 optimized a specified model. | Now represent an unknown parameter using a distribution. |
 
-::: tracker
-:::
+Keep the likelihood, posterior and prediction target separate. The temperature example will distinguish an unknown mean from measurement noise.
 
-::: table center
-|   | Model-based | Data-driven |
-|---|---|---|
-| **Static, single** | optimisation *(Lec 1)* | ==Bayesian statistics *(Lec 2)*== |
-:::
-
-Lecture 1 treated the chosen model and its coefficients as given while solving it. Now suppose the objective is $f(x;\theta)$ and $\theta$ must be learned from noisy observations.
-
-::: reveal
 ::: keypoint
-Before asking **which decision is best**, ask ==how well we know the model that makes it best.==
-:::
-:::
-
-::: note
-Source alignment: original Lecture 2 PDF 3–7.
+Update a temperature mean and distinguish parameter uncertainty from a new noisy reading.
 :::
 
 ### Statistics works backwards from data to a model
-
 ::: flow
 - **Model** | $\theta$: probability of heads
 - **Data** | $D=(H,H,T)$: observed tosses
@@ -83,7 +70,6 @@ Source alignment: original Lecture 2 PDF 3.
 :::
 
 ### Two approaches, both able to quantify uncertainty
-
 ::: cols c2
 ::: col Frequentist
 $\theta$ is fixed but unknown. Evaluate an estimator or interval over repeated datasets from the model.
@@ -111,53 +97,20 @@ The distinction is ==what the probability statement describes==, not whether unc
 Source alignment: original Lecture 2 PDF 4–7.
 :::
 
-### Learning goals — one repeatable Bayesian calculation
-
-**Bring:** sums, derivatives, and elementary probability. Use the probability appendix for expectation and Gaussian conditioning.
-
-::: flow
-- **Specify** | what is unknown, what is observed?
-- **Update** | prior × likelihood, then normalize
-- **Predict** | average over posterior uncertainty
-- !**Check** | compare predictions with data
-:::
-
-By the end, update a coin probability, an event rate, and a Normal mean; then explain how the same logic becomes regression and regularization.
-
-In each experiment: **predict what will change → move one control → explain the result**. Read the main worked examples first; the appendix preserves the longer integrations and completing-the-square derivations.
-
 ### The lecture route — keep each example together
+**Bring:** Conditional probability, sums and a Gaussian distribution.
 
-::: flow
-- **1 · Foundations** | coin model → viewpoints → Bayes’ rule → MLE
-- !**2 · Bayesian coin** | Beta prior → posterior → intervals → prediction
-- **3 · Conjugate models** | Poisson–Gamma → Normal–Normal → Dirichlet
-- **4 · Regression** | least squares → MLE → full Bayes → regularisation
-:::
-
-::: keypoint
-For each model: ==define it, calculate the update, run an experiment, then explain the prediction.==
-:::
-
-::: note
-Source alignment: original Lecture 2 PDF 3–69.
-:::
-
-### Reading guide — one Bayesian calculation, several observation models
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Murphy, *Probabilistic Machine Learning: An Introduction* (2022): probability, Bayesian statistics and linear regression sections](https://probml.github.io/pml-book/book1.html) | What distribution is specified, updated, and used for prediction? |
-| **Compare** | MLE, MAP and full Bayes on the same coin or regression data | Which answer is a point estimate, and which carries uncertainty? |
-| **Apply** | The original Pokémon district counts and housing-price example | How does the observation model affect the estimate and prediction? |
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | Specify → update → predict → check; repeat for coins, counts and regression |
+| **Work without the solution** | Update a temperature mean and distinguish parameter uncertainty from a new noisy reading. |
+| **Return later** | Complete-square derivations and additional conjugate calculations are in the appendix. |
 
 ::: keypoint
-Use selected sections as a reference, not the entire book as an assignment. For each example write the likelihood, prior, posterior and predictive target before doing algebra.
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
 ### Bayes' rule — name each part before using it
-
 ::: qstrip
 :::
 
@@ -175,7 +128,6 @@ Source alignment: original Lecture 2 PDF 8–9.
 :::
 
 ### Why Bayes' rule works
-
 The same joint probability can be factored in two orders:
 
 $$p(\theta,D)=p(D\mid\theta)p(\theta)=p(\theta\mid D)p(D).$$
@@ -221,7 +173,6 @@ Source alignment: original Lecture 2 PDF 8–10.
 :::
 
 ### Likelihood scores the candidate parameters
-
 For the observed sequence $D=(H,H,T)$, conditional independence gives
 
 $$L(\theta;D)=p(D\mid\theta)=\theta\cdot\theta\cdot(1-\theta)=\theta^2(1-\theta).$$
@@ -244,7 +195,6 @@ Source alignment: original Lecture 2 PDF 10–11.
 :::
 
 ### One toss, a sequence, and a count
-
 ::: qstrip
 :::
 
@@ -267,7 +217,6 @@ Source alignment: original Lecture 2 PDF 11.
 :::
 
 ### The coin MLE — maximise the log likelihood
-
 For $0<S<n$, taking logs turns the product into a sum:
 
 $$\ell(\theta)=S\log\theta+(n-S)\log(1-\theta)+\text{constant}.$$
@@ -291,7 +240,6 @@ Source alignment: original Lecture 2 PDF 12.
 :::
 
 ### Experiment 1 — repeat the coin experiment
-
 ::: widget ch02-experiments {"mode":"sampling"}
 **Predict:** will 100 tosses vary less than 5? **Try:** change tosses per experiment, then repeat the 200 experiments. **Explain:** the coin stays fixed; the datasets and their estimates change.
 :::
@@ -301,7 +249,6 @@ Source alignment: original Lecture 2 PDF 4–7, 11–12.
 :::
 
 ### The Bayesian move — carry a distribution
-
 ::: table
 | Object | Question it answers | Coin example |
 |---|---|---|
@@ -322,7 +269,6 @@ Source alignment: original Lecture 2 PDF 13.
 :::
 
 ### Prior, posterior, predictive — keep the target clear
-
 ::: qstrip
 :::
 
@@ -344,7 +290,6 @@ Source alignment: original Lecture 2 PDF 14.
 :::
 
 ### Check — what the distribution is over
-
 ::: quiz A Bayesian writes $p(\theta)$ for a physical constant with one true, fixed value. What does the distribution describe?
 - =Our uncertainty about the fixed unknown
 - The constant changing on every measurement
@@ -363,7 +308,6 @@ Source alignment: original Lecture 2 PDF 13–14.
 Keep the same coin: choose a Beta prior, observe heads and tails, quantify uncertainty, and predict the next tosses.
 
 ### A Beta prior — location and strength
-
 Use a density supported on the possible coin biases, $0<\theta<1$:
 
 $$p(\theta)=\frac{1}{B(\alpha,\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1},\qquad \alpha,\beta>0.$$
@@ -388,7 +332,6 @@ Source alignment: original Lecture 2 PDF 15–17.
 :::
 
 ### Derive the posterior by collecting powers
-
 Start with a Beta prior and observe $S$ heads in $n$ tosses:
 
 $$\begin{aligned}
@@ -412,7 +355,6 @@ Source alignment: original Lecture 2 PDF 18.
 :::
 
 ### Sequential updating — do not count old data twice
-
 The posterior after one batch becomes the prior before the next batch:
 
 ::: flow
@@ -438,7 +380,6 @@ Source alignment: original Lecture 2 PDF 18–19.
 :::
 
 ### Bayesian coin updating — the first five tosses
-
 ::: figure coin-update-early | 1000
 Redrawn from original p. 19, retaining all six early states. Start from Beta(1,1): each head adds 1 to α and each tail adds 1 to β. The dashed line marks θ = 0.5.
 :::
@@ -452,7 +393,6 @@ Source alignment: original Lecture 2 PDF 19.
 :::
 
 ### Bayesian coin updating — from 8 to 500 tosses
-
 ::: figure coin-update-late | 900
 Redrawn from original p. 19 with its exact counts: 5/8, 9/15, 26/50 and 259/500. Every curve has area 1; the vertical density scales differ.
 :::
@@ -466,7 +406,6 @@ Source alignment: original Lecture 2 PDF 19.
 :::
 
 ### What does Beta(4,3) actually tell us?
-
 The same HHT dataset and $\mathrm{Beta}(2,2)$ prior give several useful summaries:
 
 ::: table
@@ -489,7 +428,6 @@ Source alignment: original Lecture 2 PDF 18–21.
 :::
 
 ### Experiment 2 — repeat an interval procedure
-
 ::: widget ci-vs-cr
 **Predict:** must all 26 intervals cover the true value? **Try:** run the repeated experiments. **Explain:** compare the long-run coverage statement on the left with posterior probability for the observed dataset on the right.
 :::
@@ -499,7 +437,6 @@ Source alignment: original Lecture 2 PDF 20–21.
 :::
 
 ### Read the two 95% statements carefully
-
 ::: cols c2
 ::: col Confidence interval
 Before drawing data, the random interval $C(D)$ covers a fixed parameter in 95% of repeated experiments:
@@ -526,7 +463,6 @@ Source alignment: original Lecture 2 PDF 20–21.
 :::
 
 ### The posterior mean is a balance — in numbers
-
 For the coin model,
 
 $$\E[\theta\mid D]=\frac{\alpha+S}{\alpha+\beta+n}
@@ -550,7 +486,6 @@ Source alignment: original Lecture 2 PDF 22.
 :::
 
 ### Experiment 3 — change the prior, keep the data
-
 ::: widget bayes-update {"preset":"HHT"}
 **Predict:** which prior resists HHT most? **Try:** load HHT, switch the prior, then simulate more tosses. **Explain:** compare the displayed prior/data weights. H and T record hypothetical outcomes; simulated tosses use a fixed bias of 0.62.
 :::
@@ -560,7 +495,6 @@ Source alignment: original Lecture 2 PDF 18–23.
 :::
 
 ### Does more data always make a posterior narrower?
-
 **On average, yes**, in the following precise sense. The average is over possible datasets under the joint model:
 
 $$\mathrm{Var}(\theta)=\E_D[\mathrm{Var}(\theta\mid D)]+\mathrm{Var}_D(\E[\theta\mid D]).$$
@@ -580,7 +514,6 @@ Source alignment: original Lecture 2 PDF 23.
 :::
 
 ### From estimating the coin to predicting its next toss
-
 The posterior answers **which coin biases are plausible**. A prediction asks **what might happen next**.
 
 $$p(\tilde y\mid D)=\int p(\tilde y\mid\theta)\,p(\theta\mid D)\,d\theta.$$
@@ -600,7 +533,6 @@ Source alignment: original Lecture 2 PDF 14, 24.
 :::
 
 ### Predicting a batch — one uncertain coin is shared
-
 Let $K$ count heads in **$m$ future tosses**. All tosses use the same unknown $\theta$.
 
 ::: cols c2
@@ -629,7 +561,6 @@ Source alignment: original Lecture 2 PDF 24, 29–31.
 :::
 
 ### Experiment 4 — predict one toss, then a batch
-
 ::: widget bayes-predictive {"mode":"coin"}
 **Predict:** do the two predictions agree for one toss? **Try:** set future tosses to 1, then 10, then 30. **Explain:** the posterior stays Beta(4,3); more future tosses share the same uncertain bias.
 :::
@@ -639,7 +570,6 @@ Source alignment: original Lecture 2 PDF 24, 31.
 :::
 
 ### Three steps in Bayesian approaches
-
 ::: flow
 - **1 · Modelling** | specify the sampling model and a prior
 - !**2 · Inference** | condition on data to obtain the posterior
@@ -657,7 +587,6 @@ Source alignment: original Lecture 2 PDF 25.
 :::
 
 ### Check — who wins as the data piles up?
-
 ::: quiz With a fixed $\mathrm{Beta}(\alpha,\beta)$ prior and independent Bernoulli observations, what happens to the prior weight in the posterior mean as $n$ grows?
 - It stays fixed because the prior was chosen first
 - =It tends to zero: $(\alpha+\beta)/(\alpha+\beta+n)\to0$
@@ -676,7 +605,6 @@ Source alignment: original Lecture 2 PDF 22–25.
 Repeat the coin workflow in the original order: counts with Poisson–Gamma, measurements with Normal–Normal, and categories with Multinomial–Dirichlet.
 
 ### Conjugacy — recognise the same family after updating
-
 A prior is **conjugate** to a likelihood when the posterior stays in the prior's family. We can recognise and normalise the result analytically.
 
 ::: table
@@ -699,7 +627,6 @@ Source alignment: original Lecture 2 PDF 26–28.
 :::
 
 ### Binomial–Beta recap — our template for the next models
-
 ::: table
 | Step | Coin calculation |
 |---|---|
@@ -718,7 +645,6 @@ Source alignment: original Lecture 2 PDF 29–32.
 :::
 
 ### Counting events — why Poisson and Gamma?
-
 Let $Y_i$ count events in equal observation windows, with a common unknown rate $\lambda$:
 
 ::: cols c2
@@ -743,7 +669,6 @@ Source alignment: original Lecture 2 PDF 33.
 :::
 
 ### Poisson–Gamma updating — counts and exposure add
-
 For conditionally independent, equal-exposure counts,
 
 $$\begin{aligned}
@@ -765,7 +690,6 @@ Source alignment: original Lecture 2 PDF 34–35.
 :::
 
 ### The original example — Pokémon counts in 20 districts
-
 ::: cols c2
 ::: col
 ::: figure pokemon-map-source | 370
@@ -795,7 +719,6 @@ Source alignment: original Lecture 2 PDF 36.
 :::
 
 ### The count estimate — calculate, then interpret
-
 $$\lambda\mid D\sim\mathrm{Gamma}(4+211,\ 0.2+20)=\mathrm{Gamma}(215,20.2).$$
 
 ::: cols c2
@@ -820,7 +743,6 @@ Source alignment: original Lecture 2 PDF 35–37.
 :::
 
 ### Experiment 5 — observe the districts one by one
-
 ::: widget ch02-experiments {"mode":"poisson"}
 **Predict:** will 20 districts outweigh the original prior? **Try:** move from 0 to 1 to 20 districts; then increase prior exposure while keeping its mean fixed. **Explain:** distinguish uncertainty in the rate from variability in a new district.
 :::
@@ -830,7 +752,6 @@ Source alignment: original Lecture 2 PDF 35–37.
 :::
 
 ### Predict one new district — rate uncertainty is not count noise
-
 Return to $\lambda\mid D\sim\mathrm{Gamma}(215,20.2)$. For one comparable new district, $\tilde Y\mid\lambda\sim\mathrm{Poisson}(\lambda)$.
 
 ::: reveal
@@ -857,7 +778,6 @@ Source alignment: original Lecture 2 PDF 37.
 :::
 
 ### Normal observations — combine information by precision
-
 Let $Y_i\mid\theta\sim\mathcal N(\theta,\sigma^2)$ independently, with known noise variance, and $\theta\sim\mathcal N(\mu_0,\tau_0^2)$.
 
 ::: cols c2
@@ -885,7 +805,6 @@ Source alignment: original Lecture 2 PDF 38–42.
 :::
 
 ### Four temperature readings — calculate the update
-
 Prior: the unknown temperature is $\theta\sim\mathcal N(20,2^2)$. Measurement noise has standard deviation 3. Four readings have average 23.
 
 ::: table
@@ -908,8 +827,35 @@ The readings pull the estimate upward. They do not erase the prior after only fo
 Source alignment: original Lecture 2 PDF 40–42.
 :::
 
-### Experiment 6 — vary precision with the same average
+### Temperature thread — update an uncertain temperature
+{sub: shared teaching example · predict before revealing the calculation}
 
+The true temperature $\theta$ has prior $\mathcal N(20,4)$. One sensor reading is $y=22$, with $y\mid\theta\sim\mathcal N(\theta,1)$. The second parameter here is variance.
+
+**Predict:** Will the posterior mean be closer to 20 or to 22? Will its variance equal the variance of a new reading?
+
+::: reveal
+**Calculate and check.** The gain is $K=4/(4+1)=0.8$. The posterior mean is $20+0.8(22-20)=\mathbf{21.6}$ and variance is $(1-0.8)4=\mathbf{0.8}$. A new reading with independent sensor noise has predictive variance $0.8+1=\mathbf{1.8}$.
+:::
+
+::: keypoint
+Learning the unknown temperature and predicting another noisy measurement are different questions.
+:::
+
+### Try it — the sensor variance rises to 4
+{sub: work independently · reveal only after writing an answer}
+
+Keep the prior and the observed value 22. Change the sensor variance from 1 to 4, for both this and the next reading. Find the posterior mean, posterior variance and predictive variance.
+
+::: reveal
+**Check your answer.** $K=4/(4+4)=0.5$, posterior mean **21**, posterior variance **2**, predictive variance **6**. The less precise reading pulls the posterior less strongly.
+:::
+
+::: keypoint
+State which distribution each variance belongs to before adding or comparing numbers.
+:::
+
+### Experiment 6 — vary precision with the same average
 ::: widget ch02-experiments {"mode":"normal"}
 **Predict:** does noisier data move the estimate closer to 20 or 23? **Try:** change noise SD, prior SD, and the number of readings. **Explain:** the average stays at 23; precision determines its weight. The grey likelihood is normalised for plotting.
 :::
@@ -919,7 +865,6 @@ Source alignment: original Lecture 2 PDF 39–42.
 :::
 
 ### Normal prediction — restore the observation noise
-
 The updated mean parameter is $\theta\mid D\sim\mathcal N(\mu_1,\tau_1^2)$. A new reading is $\tilde Y=\theta+\epsilon$, with independent $\epsilon\sim\mathcal N(0,\sigma^2)$.
 
 $$\tilde Y\mid D\sim\mathcal N(\mu_1,\ \tau_1^2+\sigma^2).$$
@@ -940,7 +885,6 @@ Source alignment: original Lecture 2 PDF 43–44.
 :::
 
 ### Experiment 7 — compare the mean and the next reading
-
 ::: widget bayes-predictive {"mode":"normal"}
 **Predict:** which curve keeps a noise floor? **Try:** increase readings from 1 to 100. **Explain:** posterior parameter variance shrinks, while predictive variance remains 9 plus that variance. Here noise SD is fixed at 3 and prior SD at 2.
 :::
@@ -972,7 +916,6 @@ Source alignment: original Lecture 2 PDF 45–46.
 :::
 
 ### An unseen category need not get zero probability
-
 Start from $\mathrm{Dirichlet}(1,1,1)$ and observe ten requests: **6 deliveries, 4 pickups, 0 returns**.
 
 ::: table
@@ -996,7 +939,6 @@ Source alignment: original Lecture 2 PDF 46–47.
 :::
 
 ### Experiment 8 — observe a previously unseen category
-
 ::: widget ch02-experiments {"mode":"categories"}
 **Predict:** is a return impossible after zero observed returns? **Try:** add Return, change the prior strength, then clear the data. **Explain:** posterior parameters are prior pseudo-counts plus observed counts; divide by their sum to predict one request.
 :::
@@ -1026,7 +968,6 @@ Source alignment: original Lecture 2 PDF 43–47.
 Follow the original regression route: formulate the task, solve least squares, interpret MLE, keep a Bayesian posterior, then motivate and interpret regularisation.
 
 ### Problem solving — estimate a housing price
-
 ::: figure housing-model-flow | 1080
 Redrawn from the task → model → algorithm structure of original p. 50. The two house-price observations are illustrative, not an empirical housing dataset.
 :::
@@ -1040,7 +981,6 @@ Source alignment: original Lecture 2 PDF 49–51.
 :::
 
 ### Regression roadmap — the same model from several views
-
 We keep $y_i=x_i^\top w+\epsilon_i$ throughout.
 
 ::: flow
@@ -1059,7 +999,6 @@ Source alignment: original Lecture 2 PDF 52.
 :::
 
 ### Put a line into matrix form
-
 Include the intercept by adding a constant feature 1. For the illustrative data $(x,y)=(0,1),(1,2),(2,2)$,
 
 $$X=\begin{pmatrix}1&0\\1&1\\1&2\end{pmatrix},\qquad
@@ -1082,7 +1021,6 @@ Source alignment: original Lecture 2 PDF 53–54.
 :::
 
 ### Least squares — use Lecture 1's optimality condition
-
 Choose weights to minimise squared residuals:
 
 $$J(w)=\frac12\lVert y-Xw\rVert^2,\qquad \nabla J(w)=X^\top(Xw-y).$$
@@ -1106,7 +1044,6 @@ Source alignment: original Lecture 2 PDF 55–56.
 :::
 
 ### Solve the three-point regression by hand
-
 For the previous three observations,
 
 $$X^\top X=\begin{pmatrix}3&3\\3&5\end{pmatrix},\qquad X^\top y=\begin{pmatrix}5\\6\end{pmatrix}.$$
@@ -1130,7 +1067,6 @@ Source alignment: original Lecture 2 PDF 55–56.
 :::
 
 ### Why Gaussian noise turns MLE into least squares
-
 Assume independent noise $\epsilon_i\sim\mathcal N(0,\sigma^2)$, with known $\sigma^2>0$:
 
 $$p(y\mid X,w)=\prod_{i=1}^n\frac{1}{\sqrt{2\pi\sigma^2}}
@@ -1152,7 +1088,6 @@ Source alignment: original Lecture 2 PDF 57–58.
 :::
 
 ### Experiment 9 — move the line and watch its residuals
-
 ::: widget ch02-experiments {"mode":"residuals"}
 **Predict:** does making one residual zero minimise the total error? **Try:** adjust intercept and slope, then select Fit least squares. **Explain:** the same minimiser gives SSE = 1/6 and maximises the displayed Gaussian likelihood.
 :::
@@ -1162,7 +1097,6 @@ Source alignment: original Lecture 2 PDF 53–58.
 :::
 
 ### From MLE to Bayesian regression
-
 ::: cols c2
 ::: col MLE: choose one weight vector
 $$\hat w_{\rm ML}=\argmax_w p(y\mid X,w).$$
@@ -1185,7 +1119,6 @@ Source alignment: original Lecture 2 PDF 59–61.
 :::
 
 ### Full Bayes keeps the distribution over weights
-
 With independent noise $\epsilon_i\sim\mathcal N(0,\sigma^2)$ and prior $w\sim\mathcal N(0,\tau^2I)$, the posterior is also Gaussian:
 
 $$w\mid X,y\sim\mathcal N(\mu_w,\Sigma_w).$$
@@ -1212,7 +1145,6 @@ Source alignment: original Lecture 2 PDF 60–61.
 :::
 
 ### Bayesian regression — one posterior in two spaces
-
 ::: figure regression-posterior-grid | 950
 Original p. 62’s two-row, three-column layout, recomputed with nested simulated datasets (n = 2, 10, 100). Blue: MLE; green: posterior mean/MAP and sampled lines; ×: true weights. Corresponding axes use common scales.
 :::
@@ -1226,7 +1158,6 @@ Source alignment: original Lecture 2 PDF 62.
 :::
 
 ### Experiment 10 — change data, watch the posterior over a line
-
 ::: widget bayes-regression
 **Predict:** which fit is most unstable with two cases? **Try:** compare 2, 10, and 100 nested cases, then draw new data. **Explain:** the left panel shows sampled mean functions; the right shows the same uncertainty in coefficient space.
 :::
@@ -1236,7 +1167,6 @@ Source alignment: original Lecture 2 PDF 59–62.
 :::
 
 ### Regression prediction — a line and a noisy observation
-
 At a new feature vector $x_*$, the fitted mean is $f_*=x_*^\top w$. Since $w\mid D\sim\mathcal N(\mu_w,\Sigma_w)$,
 
 $$f_*\mid D\sim\mathcal N\!\left(x_*^\top\mu_w,\ x_*^\top\Sigma_w x_*\right).$$
@@ -1257,7 +1187,6 @@ Source alignment: original Lecture 2 PDF 62.
 :::
 
 ### When the integral is hard — simulate the two stages
-
 For $s=1,\dots,M$:
 
 ::: flow
@@ -1279,7 +1208,6 @@ Source alignment: original Lecture 2 PDF 62.
 :::
 
 ### Why regularise a regression?
-
 The original goal is to predict **new observations**, not only to fit the training cases.
 
 ::: cols c2
@@ -1302,7 +1230,6 @@ Source alignment: original Lecture 2 PDF 63–65.
 :::
 
 ### Why shrinkage helps — and what it changes
-
 Ridge changes the normal equation to
 
 $$\big(X^\top X+\lambda_2 I\big)\hat w=X^\top y.$$
@@ -1329,7 +1256,6 @@ Source alignment: original Lecture 2 PDF 64–65.
 :::
 
 ### Experiment 11 — compare training fit with validation error
-
 ::: widget ch02-experiments {"mode":"regularisation"}
 **Predict:** must the best training fit predict best? **Try:** sweep λ on one fixed dataset, then change its size or draw new training data. **Explain:** polynomial features keep the model linear in its weights; validation data stays separate and fixed.
 :::
@@ -1339,7 +1265,6 @@ Source alignment: original Lecture 2 PDF 63–66.
 :::
 
 ### Add a Gaussian prior — derive ridge, not just name it
-
 Let $w\sim\mathcal N(0,\tau^2I)$ with known $\tau^2>0$. The negative log posterior is
 
 $$-\log p(w\mid X,y)=\frac{1}{2\sigma^2}\lVert y-Xw\rVert^2
@@ -1361,7 +1286,6 @@ Source alignment: original Lecture 2 PDF 67–68.
 :::
 
 ### Lasso — a different prior changes the penalty
-
 Independent Laplace priors with scale $b_L>0$ have
 
 $$p(w)=\prod_j\frac{1}{2b_L}e^{-|w_j|/b_L}.$$
@@ -1382,7 +1306,6 @@ Source alignment: original Lecture 2 PDF 66, 69.
 :::
 
 ### Experiment 12 — see why ridge shrinks and lasso can select
-
 ::: widget ridge-lasso-prior
 **Predict:** which constraint has corners on the axes? **Try:** change λ and switch between ridge and lasso. **Explain:** the contact point is the fitted weight vector. Priors are scaled to peak height 1 to compare shapes; this illustration uses noise variance 1.
 :::
@@ -1407,7 +1330,6 @@ Source alignment: original Lecture 2 PDF 67–69.
 :::
 
 ### What we can now calculate
-
 ::: table
 | Task | Calculation | Example |
 |---|---|---|
@@ -1441,6 +1363,19 @@ Source alignment: original Lecture 2 PDF 70.
 
 Optional details for questions and self-study; the main lecture has completed the original route.
 
+### Reading guide — one Bayesian calculation, several observation models
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Murphy, *Probabilistic Machine Learning: An Introduction* (2022): probability, Bayesian statistics and linear regression sections](https://probml.github.io/pml-book/book1.html) | What distribution is specified, updated, and used for prediction? |
+| **Compare** | MLE, MAP and full Bayes on the same coin or regression data | Which answer is a point estimate, and which carries uncertainty? |
+| **Apply** | The original Pokémon district counts and housing-price example | How does the observation model affect the estimate and prediction? |
+
+::: keypoint
+Use selected sections as a reference, not the entire book as an assignment. For each example write the likelihood, prior, posterior and predictive target before doing algebra.
+:::
+
 ### Backup — integrate the Beta–Binomial prediction
 {math: compact}
 
@@ -1465,10 +1400,6 @@ Source alignment: original Lecture 2 PDF 24, 31.
 :::
 
 ### Backup — MLE, MAP and posterior mean
-
-::: qstrip
-:::
-
 ::: table
 | Estimate | Definition | Beta(2,2) prior + HHT |
 |---|---|---|
@@ -1486,7 +1417,6 @@ The posterior mode depends on the parameterisation. With abundant informative da
 :::
 
 ### Backup — when does prior influence fade?
-
 In the Beta–Binomial model, for a fixed proper Beta prior,
 
 $$\text{prior weight}=\frac{\alpha+\beta}{\alpha+\beta+n}\longrightarrow0.$$
@@ -1504,7 +1434,6 @@ Check prior sensitivity when data is limited. ==More data is not a substitute fo
 :::
 
 ### Backup — checking a fitted probability model
-
 ::: cols c2
 ::: col Before fitting: prior predictive check
 Draw parameters from the prior, then simulate data. Do plausible parameters produce plausible counts, prices or temperatures?
@@ -1623,7 +1552,6 @@ Positive noise and prior variances make the precision positive definite even if 
 :::
 
 ### Backup — why Lasso can select an exact zero
-
 For one coordinate, write the objective, up to a constant, as
 
 $$q(w_j)=a_jw_j^2-2r_jw_j+\lambda_1|w_j|,\qquad a_j>0.$$

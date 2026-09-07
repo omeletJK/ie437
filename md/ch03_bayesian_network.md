@@ -27,101 +27,28 @@ questions:
 ### Bayesian Networks
 {layout: title}
 
-## The handoff — belief over a whole system
-{short: HANDOFF}
-
-Lecture 2 carried a belief over *one* parameter. Real systems have many, and they interact.
-
 ### Where we are — one unknown becomes many
+| Previous step | This chapter's question |
+|---|---|
+| Lecture 2 updated beliefs about parameters. | Now factor beliefs over interacting variables and use them to decide. |
 
-::: tracker
-:::
+Conditional independence can reduce representation cost. Inference, learning and choosing an action are separate tasks.
 
-::: table center
-|   | Model-based | Data-driven |
-|---|---|---|
-| **Static, single** | optimisation *(Lec 1)* | Bayesian statistics *(Lec 2)* → ==Bayesian networks *(Lec 3)*== |
-:::
-
-Lecture 2 held a distribution over a coin's bias, a rate, a weight vector. But a satellite does not fail one parameter at a time: a ==battery failure raises the chance of an electrical failure==, which raises the chance of a trajectory deviation and of a communication loss.
-
-::: reveal
-::: small
-This chapter does not cross an axis. It stays in the same cell of the cube — static, data-driven, one agent — and ==deepens it==: belief over a *system* rather than a parameter, and then, in Act 4, belief with an action attached.
-:::
-:::
-
-### The wall — a joint distribution is exponentially large
-{fill: center}
-
-For $n$ binary variables the joint $p(x_1,\dots,x_n)$ is a table of $2^n$ rows, so specifying it takes
-
-$$2^n - 1 \quad\text{independent numbers} \qquad (M^n - 1 \text{ if each variable has } M \text{ values})$$
-
-::: reveal
-Five binary variables need 31 numbers. Twenty need 1 048 575. Thirty need over a billion. ==Too many to store, far too many to estimate from data, and hopeless to sum over.==
-:::
-
-::: reveal
 ::: keypoint
-The escape is structure: ==a belief about many things is a graph.==
+Compute a posterior, one filtering update and an expected-utility choice.
 :::
-:::
-
-### The thesis — two claims, and the second is the quiet one
-{fill: center}
-
-::: block Claim one | Acts 1–3
-Conditional independence, drawn as a directed graph, turns one exponential table into ==a product of small local tables== — and makes belief over a system storable, learnable, and computable.
-:::
-
-::: reveal
-::: block.accent Claim two | Act 4
-Add a **decision node** and a **utility node** to that graph and you have belief, action, and value in one object for the first time in this course. That object — the ==decision network== — is a single-shot decision under uncertainty. Repeat decisions through time, specify a Markov state and the available information, and we reach the models of Lecture 7.
-:::
-:::
-
-::: reveal
-::: small
-So far the course has *modelled* (Ch 1–2). Here modelling and deciding are joined, in miniature, before time enters the picture. Lecture 7 will reach back to this slide by name.
-:::
-:::
-
-### The roadmap — four questions
-
-::: qstrip 0
-:::
-
-- **Q1 — Why represent a joint as a graph?** The factorisation $p(x)=\prod_i p(x_i\mid \mathrm{pa}_i)$, and the collapse in parameter count it buys.
-- **Q2 — What does the graph actually encode?** ==Conditional independence== — read off missing edges, and subtler than it looks.
-- **Q3 — How do we answer questions with it?** ==Inference==: enumeration, variable elimination, sampling; and the same machinery run through time.
-- **Q4 — How do we add *decisions*?** ==Decision networks==, maximum expected utility, and the seed of the MDP.
 
 ### Learning route — from a joint probability to a decision
+**Bring:** Bayes' rule and marginalization from Lecture 2.
 
-**Start with:** conditional probability, Bayes' rule and sums over discrete outcomes (Lecture 2).
-
-::: flow
-- **Represent** | multiply local probability tables to get a joint probability
-- **Infer** | fix the evidence, sum hidden cases, then normalise
-- **Decide** | average each action's utility, then choose the best action
-:::
-
-::: keypoint
-By the end, you should be able to ==compute a small posterior, explain a collider, and choose an action from expected utilities.== The full elimination and sequential-decision derivations are backup material.
-:::
-
-### Reading guide — representation, inference, learning and decisions
-{sub: one main idea to explain, one comparison, one application}
-
-| Role | Read or revisit | Question to answer |
-|---|---|---|
-| **Core** | [Koller & Friedman, *Probabilistic Graphical Models* (2009): selected sections on Bayesian networks and inference](https://mitpress.mit.edu/9780262013192/probabilistic-graphical-models/) | What factorization and independence claims does a graph encode? |
-| **Compare** | Discrete HMM filtering versus the linear Gaussian Kalman update | Which quantities change when a state becomes continuous? |
-| **Apply** | The original alarm, aircraft and PhD-decision examples | Which question asks for a probability, a learned model, or an action? |
+| First pass | What to do |
+|---|---|
+| **Follow the idea** | Represent → infer → learn local tables → track a hidden state → choose by utility |
+| **Work without the solution** | Compute a posterior, one filtering update and an expected-utility choice. |
+| **Return later** | Structure search, hybrid/time-series extensions and full elimination derivations are references. |
 
 ::: keypoint
-The book is a reference for selected concepts. The core exercise is a small factorization and one predict–observe–update step; structure search and advanced time-series models are second-pass reading.
+For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
 :::
 
 ## Act 1 — the joint as a graph
@@ -160,7 +87,6 @@ A graph can say it. That is the whole content of this act.
 :::
 
 ### A directed acyclic graph, and the words for reading one
-
 A **graph** is nodes and edges; a **directed** graph puts an arrow on each edge; a **directed acyclic graph (DAG)** is one in which no path following the arrows ever returns to where it started.
 
 ::: cols
@@ -183,7 +109,6 @@ A DAG can be stored as an edge list or an adjacency matrix, but neither is how y
 :::
 
 ### The factorisation — one joint, written locally
-
 A **Bayesian network** is a distribution of the form $\ p(x_1,\dots,x_n) = \prod_{i=1}^{n} p\big(x_i \mid \hl{\mathrm{pa}_{x_i}}\big)$, drawn as a DAG in which each node is a variable and each arrow runs from a parent to a child.
 
 ::: cols
@@ -231,8 +156,24 @@ $$P(F\mid A)=\frac{P(F,A)}{P(A)}=\frac{0.08}{0.26}\approx0.308.$$
 The joint's cost is $2^n-1$ whatever you do. With a fixed upper bound on the number of parents, each binary node needs a bounded-size table. ==The network then grows linearly in the number of nodes== while the full joint grows exponentially. Slide $n$ and watch the gap open; the satellite sits at $n=5$, where 31 becomes 10.
 :::
 
-### Every distribution is a Bayesian network — and that is the catch
+### The wall — a joint distribution is exponentially large
+{fill: center}
 
+For $n$ binary variables the joint $p(x_1,\dots,x_n)$ is a table of $2^n$ rows, so specifying it takes
+
+$$2^n - 1 \quad\text{independent numbers} \qquad (M^n - 1 \text{ if each variable has } M \text{ values})$$
+
+::: reveal
+Five binary variables need 31 numbers. Twenty need 1 048 575. Thirty need over a billion. ==Too many to store, far too many to estimate from data, and hopeless to sum over.==
+:::
+
+::: reveal
+::: keypoint
+The escape is structure: ==a belief about many things is a graph.==
+:::
+:::
+
+### Every distribution is a Bayesian network — and that is the catch
 The chain rule already writes any joint as a product of conditionals:
 
 $$p(x_1,\dots,x_n) = p(x_n\mid x_1,\dots,x_{n-1})\,p(x_{n-1}\mid x_1,\dots,x_{n-2})\cdots p(x_1)$$
@@ -297,7 +238,6 @@ That single sentence is what the missing edges $B \to C$ and $S \to D$ mean. Thi
 :::
 
 ### Three structures, three verdicts
-
 Chain any two variables through a third and there are only three shapes. Whether $X$ and $Y$ are independent depends on the shape *and* on whether the middle node is observed.
 
 ::: table center
@@ -402,7 +342,6 @@ $R$ is not connected to $B$ by any edge, and the two are marginally independent.
 :::
 
 ### What the missing edges buy
-
 ::: flow | | 
 - **Storage** | $2^n-1$ numbers collapse to a sum of small local tables
 - **Learning** | far fewer parameters, so far less data to estimate them from
@@ -460,7 +399,6 @@ Every question a Bayesian network can answer has this shape. Diagnosis runs the 
 :::
 
 ### Exact inference — and why it hurts
-
 Marginalise the joint over the hidden variables and normalise:
 
 $$P(b^1\mid d^1,c^1) \;\propto\; \sum_{s}\sum_{e} P(b^1)P(s)P(e\mid b^1,s)P(d^1\mid e)P(c^1\mid e)$$
@@ -476,7 +414,6 @@ Storing the joint cheaply is not the same as ==summing over it cheaply.==
 :::
 
 ### Variable elimination — push each sum past what it cannot touch
-
 $P(b^1)$ does not depend on $s$ or $e$. $P(s)$ does not depend on $e$. So slide each sum inward until it meets a factor that actually mentions its variable:
 
 $$P(b^1\mid d^1,c^1) \;\propto\; P(b^1)\sum_{e} P(d^1\mid e)P(c^1\mid e)\hl{\sum_{s} P(s)P(e\mid b^1,s)}$$
@@ -501,7 +438,6 @@ Both columns compute the identical number. On the left, enumeration: one term pe
 :::
 
 ### When exact inference is hopeless — sample
-
 ::: cols
 ::: col Direct sampling, with rejection
 Walk the DAG in topological order, drawing each variable from $p(x_i \mid \mathrm{pa}_i)$; keep only the runs that happen to match the evidence, and count.
@@ -524,22 +460,15 @@ The cure is to stop sampling variables independently: **Gibbs sampling** sweeps 
 :::
 :::
 
-### Hybrid networks — a table is not the only local model
-{sub: original PDF pp. 39–42 · the aircraft example}
+### Check — cheap to store, cheap to use?
+{q: 3}
 
-The source network mixes **wing span** $W$ (continuous), **military type** $M$ (binary), **radar cross section** $C$ (continuous), and **detection** $D$ (binary).
-
-$$p(w,m,c,d)=p(w)\,p(m)\,p(c\mid w,m)\,p(d\mid c).$$
-
-| Node | A possible local model | Meaning |
-|---|---|---|
-| $W$ | $\mathcal N(\mu_W,\sigma_W^2)$ | distribution of wing spans |
-| $M$ | Bernoulli probability $\theta$ | frequency of the aircraft type |
-| $C\mid W,M=m$ | $\mathcal N(a_mW+b_m,\sigma_m^2)$ | each type has its own regression |
-| $D\mid C$ | $P(D=1\mid C)=1/(1+e^{-(C-c_0)/b})$, $b>0$ | detection becomes more likely as the cross section grows |
-
-::: keypoint
-The **graph factorisation stays the same**. Sum discrete hidden variables and integrate continuous ones. Non-Gaussian factors can require approximate inference.
+::: quiz A network is sparse: every node has at most three parents, so the whole model is a few hundred numbers. What does that guarantee about the cost of exact inference?
+- It is linear in the number of nodes
+- It is at worst quadratic in the number of nodes
+- =Nothing in general — exact inference can still be intractable; the cost follows the elimination order, not the storage
+- Inference is always cheaper than storage, since it never builds the full joint
+Storing the joint cheaply and **summing over it** cheaply are different problems. Exact inference is NP-hard in general, and its real cost is governed by how large the intermediate factors grow as variables are eliminated — the treewidth — which a sparse-looking graph can still make enormous. This is why the chapter has to talk about elimination order at all.
 :::
 
 ### Naive Bayes — classification is posterior inference
@@ -562,6 +491,11 @@ Thus $P(A\mid o_1,o_2)=0.16/0.22\approx0.727$. Choose $A$ under equal misclassif
 “Naive” describes the **conditional-independence assumption**. It does not mean that the observed features must be marginally independent.
 :::
 
+## Learning a model from data
+{short: LEARNING}
+
+Inference assumes the local tables are given. Learning estimates those tables from observations.
+
 ### Learning the tables — reuse Lecture 2 locally
 {sub: original PDF p. 44 · parameter learning, with the graph fixed}
 
@@ -580,27 +514,12 @@ In the illustrative fault model, suppose 8 of 10 faulty machines and 18 of 90 he
 A Bayesian network gives **many small estimation problems**. Missing or latent variables require inference as part of learning; counting observed rows alone is then insufficient.
 :::
 
-### Learning the graph — compare explanations, not just fitted tables
-{sub: original PDF p. 45 · structure learning}
+## Tracking a hidden state through time
+{short: FILTERING}
 
-If the arrows are unknown, the candidate model is the graph $G$ as well as its parameters $\theta$:
-
-$$P(G\mid D)\propto P(G)\underbrace{\int p(D\mid\theta,G)p(\theta\mid G)\,d\theta}_{p(D\mid G)\text{, the model evidence}}.$$
-
-::: flow
-- **Propose a graph** | add, remove, or reverse an edge while keeping a DAG
-- **Score it** | combine prior preference and fit averaged over parameters
-- **Compare** | keep a better candidate and continue the search
-:::
-
-Exhaustively checking every DAG is usually impractical. Search can stop at a local solution, and different graphs may encode the same observational independences.
-
-::: keypoint
-**Inference:** unknown variables in a fixed model. **Parameter learning:** unknown tables. **Structure learning:** unknown arrows. An observational graph alone does not establish causality.
-:::
+Use the transition model to predict, then use a new observation to update.
 
 ### The same graph, unrolled through time
-
 Nothing so far said the variables were simultaneous. Index them by time and the identical machinery becomes a model of a system evolving.
 
 $$P(S_1,\dots,S_T) = P(S_1)\prod_{t=2}^{T} P(S_t \mid S_{1:t-1}) \quad\xrightarrow{\ \text{two assumptions}\ }\quad P(S_1)\prod_{t=2}^{T}P(S_t\mid S_{t-1})$$
@@ -669,7 +588,6 @@ The state $X_t$ evolves; the sensor reveals $Y_t$. Filtering does not observe $X
 | Sequence likelihood / best hidden path | $p(y_{1:T})$ / $\argmax_{x_{1:T}}p(x_{1:T}\mid y_{1:T})$ | model comparison / Viterbi decoding |
 
 ### Filtering — Bayes' rule, once per time step
-
 Hide the state and observe an emission — $X_t \to Y_t$ over a chain $X_{t-1}\to X_t$ — and you have a **hidden Markov model**. The standard query is *filtering*, the belief about now given everything seen so far:
 
 $$P(x_t\mid y_{1:t}) \;\propto\; \underbrace{P(y_t\mid x_t)}_{\hl{\text{corrector}}}\sum_{x_{t-1}} \underbrace{P(x_t\mid x_{t-1})\,P(x_{t-1}\mid y_{1:t-1})}_{\hl{\text{predictor}}}$$
@@ -703,23 +621,34 @@ $$P(F_t\mid A_t)=\frac{0.9(0.24)}{0.9(0.24)+0.1(0.76)}\approx0.740.$$
 The transition changes 0.20 to 0.24; the measurement changes 0.24 to 0.74. ==The corrected belief becomes the starting belief at the next time step.==
 :::
 
-### Continuous time-series data — regression becomes a transition model
-{sub: original PDF pp. 63–67 · time is still discrete; the state is continuous}
+### Temperature thread — infer a hidden heater mode
+{sub: shared teaching example · predict before revealing the calculation}
 
-An autoregressive model of order $L$ predicts a scalar from its last $L$ values:
+In a two-mode variant, the heater is good ($G$) or weak ($W$). Initially $P(G)=0.6$. Next-step probabilities are $P(G'\mid G)=0.9$ and $P(G'\mid W)=0.3$. A warm reading has likelihood 0.8 under $G'$ and 0.2 under $W'$.
 
-$$x_t=a^\top h_t+\epsilon_t,\qquad h_t=[x_{t-1},\ldots,x_{t-L}]^\top,\quad\epsilon_t\sim\mathcal N(0,\sigma^2).$$
+**Predict:** First predict the next mode without the reading. Then decide whether a warm reading should raise or lower its good-mode probability.
 
-| Same regression, different role | Interpretation |
-|---|---|
-| Lecture 2 | features $h_t$ predict an output $x_t$ |
-| This lecture | lagged observations define $p(x_t\mid h_t)$ |
-| Gaussian MLE | minimise $\sum_t(x_t-a^\top h_t)^2$ |
+::: reveal
+**Calculate and check.** $P(G')=0.9(0.6)+0.3(0.4)=0.66$. After a warm reading,
 
-An AR(2) process is not generally first-order Markov in $x_t$ alone. It **is** first-order Markov in the augmented state $[x_t,x_{t-1}]$.
+$$P(G'\mid\text{warm})=\frac{0.8(0.66)}{0.8(0.66)+0.2(0.34)}=\frac{132}{149}\approx0.886.$$
+:::
 
 ::: keypoint
-The choice of state is part of modelling. This is the step behind Lecture 7's requirement that the state contain the information needed to predict the next step.
+Prediction uses the transition table; updating uses the observation likelihood. The two tables have different jobs.
+:::
+
+### Try it — the next reading is cool
+{sub: work independently · reveal only after writing an answer}
+
+Keep the same predicted probabilities (0.66, 0.34). Instead observe “cool,” the complement of “warm.” Its likelihoods are therefore 0.2 under $G'$ and 0.8 under $W'$. Calculate the new posterior.
+
+::: reveal
+**Check your answer.** $P(G'\mid\text{cool})=0.132/(0.132+0.272)=33/101\approx\mathbf{0.327}$. Do not start from the posterior of the warm-reading example; these are alternative observations.
+:::
+
+::: keypoint
+When changing a condition, identify exactly which factors change. Do not reuse evidence from a different scenario.
 :::
 
 ### Linear Gaussian state space — the Kalman version of the same update
@@ -739,17 +668,6 @@ A scalar example with $m^-=10$, $P^-=4$, $C=1$, $R=1$, and $y=12$ gives $K=0.8$,
 
 ::: keypoint
 The Kalman filter is **predict → observe → update**, just like the discrete fault example. Gaussian conditioning makes those steps closed form.
-:::
-
-### Check — cheap to store, cheap to use?
-{q: 3}
-
-::: quiz A network is sparse: every node has at most three parents, so the whole model is a few hundred numbers. What does that guarantee about the cost of exact inference?
-- It is linear in the number of nodes
-- It is at worst quadratic in the number of nodes
-- =Nothing in general — exact inference can still be intractable; the cost follows the elimination order, not the storage
-- Inference is always cheaper than storage, since it never builds the full joint
-Storing the joint cheaply and **summing over it** cheaply are different problems. Exact inference is NP-hard in general, and its real cost is governed by how large the intermediate factors grow as variables are eliminated — the treewidth — which a sparse-looking graph can still make enormous. This is why the chapter has to talk about elimination order at all.
 :::
 
 ## Act 4 — from belief to decision
@@ -790,7 +708,6 @@ A worked example throughout: $T$ *treat?*, $D$ *disease?*, and $O^1,O^2,O^3$ *di
 :::
 
 ### Utility — a number for comparing outcomes
-
 Probabilities describe **how likely** outcomes are. Utilities describe **how desirable** those outcomes are to the decision maker.
 
 ::: cols c2
@@ -848,7 +765,6 @@ Probability factorisation makes beliefs manageable. Utility factorisation can ma
 :::
 
 ### Maximum expected utility
-
 For an action $a$ taken after seeing $o$, average the utility of the outcome over the belief the network gives you:
 
 $$\mathrm{EU}(a\mid o) = \sum_{s'} \underbrace{P(s'\mid o,a)}_{\hl{\text{the Bayesian network}}}\; \underbrace{U(s')}_{\hl{\text{the utility node}}}, \qquad a^{*} = \argmax_{a}\ \mathrm{EU}(a\mid o)$$
@@ -922,7 +838,6 @@ The income distribution now depends on start-up choice rather than education. Th
 :::
 
 ### The value of information
-
 If the decision can wait, it may pay to observe something first. Let $\mathrm{EU}^{*}(o) = \max_a \mathrm{EU}(a\mid o)$ be the value of deciding well given what is known. Then observing a new variable is worth
 
 $$\mathrm{VOI}(O^{\text{new}}\mid o) = \Big(\sum_{o^{\text{new}}} P(o^{\text{new}}\mid o)\,\mathrm{EU}^{*}(o^{\text{new}}, o)\Big) \;-\; \mathrm{EU}^{*}(o)$$
@@ -963,7 +878,6 @@ The information is worth $8-2=\mathbf6$ before paying for the test.
 :::
 
 ### From an influence diagram to an MDP — state the extra assumptions
-
 A sequential influence diagram records **what is known before each decision**. For additive utility, let $h_t$ contain the observed history and define the best remaining value by
 
 $$V_t(h_t)=\max_{a_t}\mathbb E\big[r_{t+1}+V_{t+1}(h_{t+1})\mid h_t,a_t\big],\qquad V_T=0.$$
@@ -998,7 +912,6 @@ You **average** over what you cannot control and **maximise** over what you can,
 Belief structured, and action attached. Two roads lead out of here, and they are the rest of the course.
 
 ### Where we are — the graph, and the seed
-
 ::: table center
 |   | Model-based | Data-driven |
 |---|---|---|
@@ -1036,6 +949,19 @@ Remember the decision network. It is the static, one-shot ancestor of the MDP, o
 {short: APPENDIX}
 
 The complete arguments, kept out of the narrative.
+
+### Reading guide — representation, inference, learning and decisions
+{sub: one main idea to explain, one comparison, one application}
+
+| Role | Read or revisit | Question to answer |
+|---|---|---|
+| **Core** | [Koller & Friedman, *Probabilistic Graphical Models* (2009): selected sections on Bayesian networks and inference](https://mitpress.mit.edu/9780262013192/probabilistic-graphical-models/) | What factorization and independence claims does a graph encode? |
+| **Compare** | Discrete HMM filtering versus the linear Gaussian Kalman update | Which quantities change when a state becomes continuous? |
+| **Apply** | The original alarm, aircraft and PhD-decision examples | Which question asks for a probability, a learned model, or an action? |
+
+::: keypoint
+The book is a reference for selected concepts. The core exercise is a small factorization and one predict–observe–update step; structure search and advanced time-series models are second-pass reading.
+:::
 
 ### Backup 1 — variable elimination, step by step
 {fill: top}
@@ -1106,7 +1032,6 @@ with $\mathcal{L}$ the chance variables and $\mathcal{T}$ the utility variables.
 **The translation.** Let each decision move a state, $p(x_{t+1}\mid x_t,d_t)$; let utility accumulate as a per-step reward, $\sum_t u(x_t)$. Then $\mathrm{MEU}$ becomes the value function $V^{*}$, the alternating $\sum\max$ becomes the dynamic-programming recursion, and $\argmax_d \mathrm{EU}$ becomes the Bellman optimality operator. Lecture 7 adds a discount factor $\gamma$ and an infinite horizon; Lecture 8 removes $p$ and estimates the expectation from samples. The object itself was built here.
 :::
 
-
 ### Backup — when the time-series model itself changes
 {sub: original PDF pp. 68–70 · extensions to the AR model}
 
@@ -1120,4 +1045,65 @@ Use $\omega>0$ and nonnegative variance coefficients; stationarity requires addi
 
 ::: keypoint
 These are extensions of the same graphical model. Bayesian updating estimates the quantities the model allows to vary; it does not make a fixed model automatically adapt to every kind of change.
+:::
+
+## Extensions — model classes and structure learning
+{short: EXTENSION}
+
+Read after completing the main route.
+
+### Hybrid networks — a table is not the only local model
+{sub: original PDF pp. 39–42 · the aircraft example}
+
+The source network mixes **wing span** $W$ (continuous), **military type** $M$ (binary), **radar cross section** $C$ (continuous), and **detection** $D$ (binary).
+
+$$p(w,m,c,d)=p(w)\,p(m)\,p(c\mid w,m)\,p(d\mid c).$$
+
+| Node | A possible local model | Meaning |
+|---|---|---|
+| $W$ | $\mathcal N(\mu_W,\sigma_W^2)$ | distribution of wing spans |
+| $M$ | Bernoulli probability $\theta$ | frequency of the aircraft type |
+| $C\mid W,M=m$ | $\mathcal N(a_mW+b_m,\sigma_m^2)$ | each type has its own regression |
+| $D\mid C$ | $P(D=1\mid C)=1/(1+e^{-(C-c_0)/b})$, $b>0$ | detection becomes more likely as the cross section grows |
+
+::: keypoint
+The **graph factorisation stays the same**. Sum discrete hidden variables and integrate continuous ones. Non-Gaussian factors can require approximate inference.
+:::
+
+### Learning the graph — compare explanations, not just fitted tables
+{sub: original PDF p. 45 · structure learning}
+
+If the arrows are unknown, the candidate model is the graph $G$ as well as its parameters $\theta$:
+
+$$P(G\mid D)\propto P(G)\underbrace{\int p(D\mid\theta,G)p(\theta\mid G)\,d\theta}_{p(D\mid G)\text{, the model evidence}}.$$
+
+::: flow
+- **Propose a graph** | add, remove, or reverse an edge while keeping a DAG
+- **Score it** | combine prior preference and fit averaged over parameters
+- **Compare** | keep a better candidate and continue the search
+:::
+
+Exhaustively checking every DAG is usually impractical. Search can stop at a local solution, and different graphs may encode the same observational independences.
+
+::: keypoint
+**Inference:** unknown variables in a fixed model. **Parameter learning:** unknown tables. **Structure learning:** unknown arrows. An observational graph alone does not establish causality.
+:::
+
+### Continuous time-series data — regression becomes a transition model
+{sub: original PDF pp. 63–67 · time is still discrete; the state is continuous}
+
+An autoregressive model of order $L$ predicts a scalar from its last $L$ values:
+
+$$x_t=a^\top h_t+\epsilon_t,\qquad h_t=[x_{t-1},\ldots,x_{t-L}]^\top,\quad\epsilon_t\sim\mathcal N(0,\sigma^2).$$
+
+| Same regression, different role | Interpretation |
+|---|---|
+| Lecture 2 | features $h_t$ predict an output $x_t$ |
+| This lecture | lagged observations define $p(x_t\mid h_t)$ |
+| Gaussian MLE | minimise $\sum_t(x_t-a^\top h_t)^2$ |
+
+An AR(2) process is not generally first-order Markov in $x_t$ alone. It **is** first-order Markov in the augmented state $[x_t,x_{t-1}]$.
+
+::: keypoint
+The choice of state is part of modelling. This is the step behind Lecture 7's requirement that the state contain the information needed to predict the next step.
 :::

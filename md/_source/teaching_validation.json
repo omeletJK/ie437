@@ -1,0 +1,1749 @@
+{
+  "review_date": "2026-09-08",
+  "scope": "Local final HTML/PDF; full course QA with four changed decks rechecked after final corrections. Deployment and public checks are separate. This is not a student learning-outcome study.",
+  "slides": 882,
+  "decks": [
+    {
+      "file": "ch00_introduction.html",
+      "slides": 71,
+      "quizzes": 4,
+      "widgets": 6,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "7af5e6f0de9f7e3fba81f75b790a8b3ed1a77b1342061ace61df6d361a9a4601",
+      "pdf_pages": 71
+    },
+    {
+      "file": "ch01_optimization_modeling.html",
+      "slides": 93,
+      "quizzes": 4,
+      "widgets": 10,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "cf413e8ca1cdab3ad269e74ef9baafa8032cd0becc5301a27bcbd0495b98fbe2",
+      "pdf_pages": 93
+    },
+    {
+      "file": "ch02_bayesian_statistics.html",
+      "slides": 88,
+      "quizzes": 4,
+      "widgets": 13,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "458998ff4d3e8eaa0ec466af8b8266be8402109265511489574ae3519ff9939d",
+      "pdf_pages": 88
+    },
+    {
+      "file": "ch03_bayesian_network.html",
+      "slides": 69,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "4ffcd56e5bb105484aca1a9bf3f88ccad0546cf05cd21aaa229662808cfa8196",
+      "pdf_pages": 69
+    },
+    {
+      "file": "ch04_bayesian_optimization.html",
+      "slides": 61,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "bdb8aa1fd9e8f7cd3c76c093d19e08c6f4670693a5de5efba82de0c06bab99de",
+      "pdf_pages": 61
+    },
+    {
+      "file": "ch05_surrogate_design_optimization.html",
+      "slides": 49,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "c16e94aee40bb1a5a20b00f43b2e77f1d0b3c5b037dfec84d24437dc38bbb244",
+      "pdf_pages": 49
+    },
+    {
+      "file": "ch06_generative_design_optimization.html",
+      "slides": 67,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "e00ae9fff83e9198f1f0749344c7816c12029aac705572a963c591d14d0a50b0",
+      "pdf_pages": 67
+    },
+    {
+      "file": "ch07_mdp_dp.html",
+      "slides": 55,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "9bff3f12a5dce03f1fba0a5feda37c6149b279b762f412e82f8119499a8a06ac",
+      "pdf_pages": 55
+    },
+    {
+      "file": "ch08_value_based_rl.html",
+      "slides": 56,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "c6d529f9cd58d0b168ff0c3836aa21891a59cbf4f6dad3ca984aaa17b6b6198f",
+      "pdf_pages": 56
+    },
+    {
+      "file": "ch09_optimal_control.html",
+      "slides": 55,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "14af894160fec78f61f555bd3bc4edf0b0012386ac4cd07ebb2824d2cb6c6491",
+      "pdf_pages": 55
+    },
+    {
+      "file": "ch10_policy_based_rl.html",
+      "slides": 61,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "d77b1ddccee862435cf60984371ecad9419f7dc22271dc1e1fa7ce2d20d25a81",
+      "pdf_pages": 61
+    },
+    {
+      "file": "ch11_model_based_rl.html",
+      "slides": 67,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "0b91c8dc391512dcf1cb4494277a32d4dad941fcbb46a0947f72151214b37738",
+      "pdf_pages": 67
+    },
+    {
+      "file": "ch12_offline_rl.html",
+      "slides": 50,
+      "quizzes": 4,
+      "widgets": 6,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "bec4cee82ecfb5576603b77849984fe726cef40019e3058e1d63592177622769",
+      "pdf_pages": 50
+    },
+    {
+      "file": "ch99_probability_review.html",
+      "slides": 40,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0,
+      "markdown_sha256": "b4b737601fc19cf0263aa808c8e3220ed4437061b1881d71a0f105fed43743ac",
+      "pdf_pages": 40
+    }
+  ],
+  "quizzes": 56,
+  "widget_instances": 75,
+  "numerical_checks": 77,
+  "math_suites": [
+    {
+      "suite": "source",
+      "sourcePDFs": 13,
+      "pages": 1102,
+      "topicBlocks": 123,
+      "slideReferences": 528,
+      "numericalChecks": 25,
+      "checks": [
+        {
+          "name": "Naive Bayes posterior",
+          "actual": 0.7272727272727273,
+          "expected": 0.7272727272727273
+        },
+        {
+          "name": "BN alarm row: Beta posterior",
+          "actual": 0.75,
+          "expected": 0.75
+        },
+        {
+          "name": "BN healthy row: Beta posterior",
+          "actual": 0.20652173913043478,
+          "expected": 0.20652173913043478
+        },
+        {
+          "name": "Transition fit A to A",
+          "actual": 0.3333333333333333,
+          "expected": 0.3333333333333333
+        },
+        {
+          "name": "Transition fit B to A",
+          "actual": 0.5,
+          "expected": 0.5
+        },
+        {
+          "name": "Stationary mass of A",
+          "actual": 0.6666666666666666,
+          "expected": 0.6666666666666666
+        },
+        {
+          "name": "Kalman gain",
+          "actual": 0.8,
+          "expected": 0.8
+        },
+        {
+          "name": "Kalman posterior mean",
+          "actual": 11.6,
+          "expected": 11.6
+        },
+        {
+          "name": "Kalman posterior variance",
+          "actual": 0.7999999999999998,
+          "expected": 0.8
+        },
+        {
+          "name": "Constrained EI: candidate A",
+          "actual": 0.4,
+          "expected": 0.4
+        },
+        {
+          "name": "Constrained EI: candidate B",
+          "actual": 0.9,
+          "expected": 0.9
+        },
+        {
+          "name": "Pareto hypervolume",
+          "actual": 5,
+          "expected": 5
+        },
+        {
+          "name": "Added hypervolume",
+          "actual": 1,
+          "expected": 1
+        },
+        {
+          "name": "DDPM noisy sample",
+          "actual": 2.2,
+          "expected": 2.2
+        },
+        {
+          "name": "DDPM noise-prediction loss",
+          "actual": 0.25,
+          "expected": 0.25
+        },
+        {
+          "name": "First-visit MC return",
+          "actual": 6,
+          "expected": 6
+        },
+        {
+          "name": "Every-visit MC mean",
+          "actual": 4.5,
+          "expected": 4.5
+        },
+        {
+          "name": "Room B to terminal F, first update",
+          "actual": 50,
+          "expected": 50
+        },
+        {
+          "name": "Room D to B",
+          "actual": 20,
+          "expected": 20
+        },
+        {
+          "name": "Room B to terminal F, second update",
+          "actual": 75,
+          "expected": 75
+        },
+        {
+          "name": "Terminal room fixed point",
+          "actual": 100,
+          "expected": 100
+        },
+        {
+          "name": "Continuing rewarded room fixed point",
+          "actual": 500.0000000000001,
+          "expected": 500
+        },
+        {
+          "name": "E of nonlinear dynamics",
+          "actual": 1,
+          "expected": 1
+        },
+        {
+          "name": "Dynamics of expected state",
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "Epsilon-soft greedy probability",
+          "actual": 0.8500000000000001,
+          "expected": 0.85
+        }
+      ]
+    },
+    {
+      "suite": "paper",
+      "decks": 14,
+      "numericalChecks": 16,
+      "checks": [
+        {
+          "name": "Square perimeter",
+          "actual": 4,
+          "expected": 4
+        },
+        {
+          "name": "Crossing square tour",
+          "actual": 4.82842712474619,
+          "expected": 4.82842712474619
+        },
+        {
+          "name": "QP sensitivity at -1",
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "QP sensitivity at 2",
+          "actual": 1.0000000000065512,
+          "expected": 1
+        },
+        {
+          "name": "Decision-loss gradient",
+          "actual": -1.0000000000065512,
+          "expected": -1
+        },
+        {
+          "name": "Decision loss after update",
+          "actual": 0.4049999999999999,
+          "expected": 0.405
+        },
+        {
+          "name": "DQN target",
+          "actual": 6.4,
+          "expected": 6.4
+        },
+        {
+          "name": "Double DQN target",
+          "actual": 4.6,
+          "expected": 4.6
+        },
+        {
+          "name": "Stabilizing scalar LQR total cost",
+          "actual": 3.9999999933325863,
+          "expected": 4
+        },
+        {
+          "name": "TD3 smoothed action",
+          "actual": 0.6,
+          "expected": 0.6
+        },
+        {
+          "name": "TD3 twin-critic target",
+          "actual": 6.4,
+          "expected": 6.4
+        },
+        {
+          "name": "TD3 terminal target",
+          "actual": 1,
+          "expected": 1
+        },
+        {
+          "name": "Single-critic target for comparison",
+          "actual": 8.2,
+          "expected": 8.2
+        },
+        {
+          "name": "Deterministic entropy",
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "Mixture reward plus entropy",
+          "actual": 2.2465735902799726,
+          "expected": 2.2465735902799726
+        },
+        {
+          "name": "Two-step imagined return",
+          "actual": 6.140000000000001,
+          "expected": 6.14
+        }
+      ]
+    },
+    {
+      "suite": "teaching",
+      "decks": 14,
+      "numericalChecks": 36,
+      "checks": [
+        {
+          "name": "Heater cost u=0",
+          "actual": 4,
+          "expected": 4
+        },
+        {
+          "name": "Heater cost u=1",
+          "actual": 2,
+          "expected": 2
+        },
+        {
+          "name": "Heater cost u=2",
+          "actual": 4,
+          "expected": 4
+        },
+        {
+          "name": "Unrestricted feasible command",
+          "actual": 1,
+          "expected": 1
+        },
+        {
+          "name": "Capped command",
+          "actual": 0.5,
+          "expected": 0.5
+        },
+        {
+          "name": "Active upper-bound multiplier",
+          "actual": 2.0000000000131024,
+          "expected": 2
+        },
+        {
+          "name": "Capped cost",
+          "actual": 2.5,
+          "expected": 2.5
+        },
+        {
+          "name": "Temperature posterior mean, sensor variance 1",
+          "actual": 21.599999999999902,
+          "expected": 21.6
+        },
+        {
+          "name": "Posterior variance 1",
+          "actual": 0.7999999999994998,
+          "expected": 0.8
+        },
+        {
+          "name": "Predictive variance 1",
+          "actual": 1.7999999999994998,
+          "expected": 1.8
+        },
+        {
+          "name": "Temperature posterior mean, sensor variance 4",
+          "actual": 21.00000000000017,
+          "expected": 21
+        },
+        {
+          "name": "Posterior variance 4",
+          "actual": 1.9999999999959073,
+          "expected": 2
+        },
+        {
+          "name": "Predictive variance 4",
+          "actual": 5.999999999995907,
+          "expected": 6
+        },
+        {
+          "name": "Predicted good heater mode",
+          "actual": 0.66,
+          "expected": 0.66
+        },
+        {
+          "name": "Warm evidence posterior",
+          "actual": 0.8859060402684564,
+          "expected": 0.8859060402684564
+        },
+        {
+          "name": "Cool alternative posterior",
+          "actual": 0.32673267326732675,
+          "expected": 0.32673267326732675
+        },
+        {
+          "name": "Measured UCB candidate score",
+          "actual": -2.7200000000000006,
+          "expected": -2.72
+        },
+        {
+          "name": "Surrogate predicted gain",
+          "actual": 1.1,
+          "expected": 1.1
+        },
+        {
+          "name": "Real gain",
+          "actual": -2,
+          "expected": -2
+        },
+        {
+          "name": "Conditional design probability, balanced prior",
+          "actual": 0.8,
+          "expected": 0.8
+        },
+        {
+          "name": "Conditional design probability, shifted prior",
+          "actual": 0.5,
+          "expected": 0.5
+        },
+        {
+          "name": "Off Bellman target",
+          "actual": -6.7,
+          "expected": -6.7
+        },
+        {
+          "name": "Heat Bellman target",
+          "actual": -2.9,
+          "expected": -2.9
+        },
+        {
+          "name": "Weak heater expected target",
+          "actual": -6.74,
+          "expected": -6.74
+        },
+        {
+          "name": "Successful Q update",
+          "actual": -3.45,
+          "expected": -3.45
+        },
+        {
+          "name": "Failed Q update",
+          "actual": -5.85,
+          "expected": -5.85
+        },
+        {
+          "name": "Feedback after measured disturbance",
+          "actual": 0.75,
+          "expected": 0.75
+        },
+        {
+          "name": "Policy gradient by finite differences",
+          "actual": 0.9499999999995622,
+          "expected": 0.95
+        },
+        {
+          "name": "Policy gradient after reward shift",
+          "actual": 0.9499999990225659,
+          "expected": 0.95
+        },
+        {
+          "name": "Baseline at equal probabilities",
+          "actual": -4.8,
+          "expected": -4.8
+        },
+        {
+          "name": "Refit weak-model optimum",
+          "actual": 0.6,
+          "expected": 0.6
+        },
+        {
+          "name": "Refit optimum cost",
+          "actual": 1.7999999999999998,
+          "expected": 1.8
+        },
+        {
+          "name": "Importance-weighted one-step estimate",
+          "actual": -2.4000000000000004,
+          "expected": -2.4
+        },
+        {
+          "name": "Logged behavior sample mean",
+          "actual": -3,
+          "expected": -3
+        },
+        {
+          "name": "Total predictive variance",
+          "actual": 1.8,
+          "expected": 1.8
+        },
+        {
+          "name": "Known temperature predictive variance",
+          "actual": 1,
+          "expected": 1
+        }
+      ]
+    }
+  ],
+  "pdf_visual_review": {
+    "reviewed_pages": 160,
+    "selection": "Every new or edited slide plus relocated original visual/widget slides; full-deck geometry checks cover all 882 slides. Initial 145 pages inspected in 25 contact sheets, then 38 changed/new renders inspected in 7 follow-up contacts; union 160 pages.",
+    "findings_resolved": [
+      "LQR result and elementary scalar calculation precede HJB derivations.",
+      "Costate equation and prose separated into readable blocks.",
+      "Remaining old section references and core/appendix question strips corrected.",
+      "LQR page 15 lower margin corrected and final screen/print checks passed."
+    ],
+    "pages": [
+      {
+        "deck": "ch00_introduction",
+        "slide": 3,
+        "heading": "Learning route — identify the decision before naming the method",
+        "reason": "new or edited",
+        "file": "ch00-03.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 4,
+        "heading": "What this course is about — in one sentence",
+        "reason": "new or edited",
+        "file": "ch00-04.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 5,
+        "heading": "Temperature thread — name the decision before choosing a method",
+        "reason": "new or edited",
+        "file": "ch00-05.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 6,
+        "heading": "Try it — the temperature response is unknown",
+        "reason": "new or edited",
+        "file": "ch00-06.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 19,
+        "heading": "Check — reading the cube",
+        "reason": "new or edited",
+        "file": "ch00-19.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 26,
+        "heading": "Check — what makes a decision problem hard",
+        "reason": "new or edited",
+        "file": "ch00-26.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 33,
+        "heading": "Check — follow the changing assumptions",
+        "reason": "new or edited",
+        "file": "ch00-33.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 45,
+        "heading": "Your class project",
+        "reason": "new or edited",
+        "file": "ch00-45.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 46,
+        "heading": "Check — two views of sequential decisions",
+        "reason": "new or edited",
+        "file": "ch00-46.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 48,
+        "heading": "One question — decide well under uncertainty — asked along three criteria, answered by two lineages.",
+        "reason": "new or edited",
+        "file": "ch00-48.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 49,
+        "heading": "Let us begin — Lecture 1.",
+        "reason": "new or edited",
+        "file": "ch00-49.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 50,
+        "heading": "Appendix — examples, readings and derivations",
+        "reason": "new or edited",
+        "file": "ch00-50.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 52,
+        "heading": "Case studies — engineering models and measured results",
+        "reason": "new or edited",
+        "file": "ch00-52.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 53,
+        "heading": "The farm is a graph, so the model should be one",
+        "reason": "moved original visual",
+        "file": "ch00-53.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 54,
+        "heading": "Physics-induced graph network — do not learn what you already know",
+        "reason": "moved original visual",
+        "file": "ch00-54.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 55,
+        "heading": "Let the network learn $\\alpha, \\kappa, R_0$",
+        "reason": "moved original visual",
+        "file": "ch00-55.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 56,
+        "heading": "Does it work — and then, does it decide?",
+        "reason": "new or edited",
+        "file": "ch00-56.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 57,
+        "heading": "Why *meta* Bayesian optimisation",
+        "reason": "moved original visual",
+        "file": "ch00-57.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 58,
+        "heading": "The result",
+        "reason": "moved original visual",
+        "file": "ch00-58.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 59,
+        "heading": "Case C · the result",
+        "reason": "moved original visual",
+        "file": "ch00-59.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 61,
+        "heading": "Case D · Offline meta policy learning, then online adaptation",
+        "reason": "moved original visual",
+        "file": "ch00-61.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 62,
+        "heading": "Research outlook — systems and applications",
+        "reason": "new or edited",
+        "file": "ch00-62.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 65,
+        "heading": "③ Chip placement and routing",
+        "reason": "moved original visual",
+        "file": "ch00-65.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 66,
+        "heading": "The same engine, compared with a solver baseline",
+        "reason": "moved original visual",
+        "file": "ch00-66.png"
+      },
+      {
+        "deck": "ch00_introduction",
+        "slide": 70,
+        "heading": "The knowledge that makes the translation possible",
+        "reason": "moved original visual",
+        "file": "ch00-70.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 2,
+        "heading": "Where we are — the simplest cell of the map",
+        "reason": "new or edited",
+        "file": "ch01-02.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 3,
+        "heading": "Learning route — formulate, solve, and certify",
+        "reason": "new or edited",
+        "file": "ch01-03.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 36,
+        "heading": "Temperature thread — solve the one-step heater problem",
+        "reason": "new or edited",
+        "file": "ch01-36.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 37,
+        "heading": "Try it — the heater limit becomes 0.5",
+        "reason": "new or edited",
+        "file": "ch01-37.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 47,
+        "heading": "Read the engineering case using the same four questions",
+        "reason": "new or edited",
+        "file": "ch01-47.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 58,
+        "heading": "Research extension — optimization layers and joint design/control",
+        "reason": "new or edited",
+        "file": "ch01-58.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 59,
+        "heading": "An LP inside a policy — LPMARL",
+        "reason": "moved original visual",
+        "file": "ch01-59.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 61,
+        "heading": "Training through an optimisation layer",
+        "reason": "moved original visual",
+        "file": "ch01-61.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 65,
+        "heading": "Heater placement changes the control problem",
+        "reason": "moved original visual",
+        "file": "ch01-65.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 66,
+        "heading": "Design is chosen once; heating is chosen repeatedly",
+        "reason": "moved original visual",
+        "file": "ch01-66.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 68,
+        "heading": "The graph separates operation inputs from geometry",
+        "reason": "moved original visual",
+        "file": "ch01-68.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 69,
+        "heading": "A design update combines several control solves",
+        "reason": "moved original visual",
+        "file": "ch01-69.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 70,
+        "heading": "What convexity certifies in the inner problem",
+        "reason": "moved original visual",
+        "file": "ch01-70.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 71,
+        "heading": "A lower predicted cost can hide a worse design",
+        "reason": "moved original visual",
+        "file": "ch01-71.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 72,
+        "heading": "Compare surrogates using the same optimisation method",
+        "reason": "moved original visual",
+        "file": "ch01-72.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 73,
+        "heading": "Compare optimisers using the same surrogate",
+        "reason": "moved original visual",
+        "file": "ch01-73.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 74,
+        "heading": "Case study — the full wind-farm optimization",
+        "reason": "new or edited",
+        "file": "ch01-74.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 75,
+        "heading": "A wake model turns geometry into a power prediction",
+        "reason": "moved original visual",
+        "file": "ch01-75.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 76,
+        "heading": "Recovering from one wake does not remove the others",
+        "reason": "moved original visual",
+        "file": "ch01-76.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 77,
+        "heading": "Wind direction and speed determine the scenario weights",
+        "reason": "moved original visual",
+        "file": "ch01-77.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 78,
+        "heading": "An expectation is a weighted collection of wind scenarios",
+        "reason": "moved original visual",
+        "file": "ch01-78.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 80,
+        "heading": "A convex inner region keeps turbines out of exclusion zones",
+        "reason": "moved original visual",
+        "file": "ch01-80.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 84,
+        "heading": "The optimised layout breaks repeated wake alignments",
+        "reason": "moved original visual",
+        "file": "ch01-84.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 85,
+        "heading": "The reported efficiency improves, then levels off",
+        "reason": "moved original visual",
+        "file": "ch01-85.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 86,
+        "heading": "Better average power does not mean better in every direction",
+        "reason": "moved original visual",
+        "file": "ch01-86.png"
+      },
+      {
+        "deck": "ch01_optimization_modeling",
+        "slide": 87,
+        "heading": "Modelling extensions — alternative convex formulations",
+        "reason": "new or edited",
+        "file": "ch01-87.png"
+      },
+      {
+        "deck": "ch02_bayesian_statistics",
+        "slide": 3,
+        "heading": "Where we are — the coefficients must be learned",
+        "reason": "new or edited",
+        "file": "ch02-03.png"
+      },
+      {
+        "deck": "ch02_bayesian_statistics",
+        "slide": 6,
+        "heading": "The lecture route — keep each example together",
+        "reason": "new or edited",
+        "file": "ch02-06.png"
+      },
+      {
+        "deck": "ch02_bayesian_statistics",
+        "slide": 45,
+        "heading": "Temperature thread — update an uncertain temperature",
+        "reason": "new or edited",
+        "file": "ch02-45.png"
+      },
+      {
+        "deck": "ch02_bayesian_statistics",
+        "slide": 46,
+        "heading": "Try it — the sensor variance rises to 4",
+        "reason": "new or edited",
+        "file": "ch02-46.png"
+      },
+      {
+        "deck": "ch02_bayesian_statistics",
+        "slide": 80,
+        "heading": "Backup — MLE, MAP and posterior mean",
+        "reason": "new or edited",
+        "file": "ch02-80.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 2,
+        "heading": "Where we are — one unknown becomes many",
+        "reason": "new or edited",
+        "file": "ch03-02.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 3,
+        "heading": "Learning route — from a joint probability to a decision",
+        "reason": "new or edited",
+        "file": "ch03-03.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 30,
+        "heading": "Learning a model from data",
+        "reason": "new or edited",
+        "file": "ch03-30.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 32,
+        "heading": "Tracking a hidden state through time",
+        "reason": "new or edited",
+        "file": "ch03-32.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 39,
+        "heading": "Temperature thread — infer a hidden heater mode",
+        "reason": "new or edited",
+        "file": "ch03-39.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 40,
+        "heading": "Try it — the next reading is cool",
+        "reason": "new or edited",
+        "file": "ch03-40.png"
+      },
+      {
+        "deck": "ch03_bayesian_network",
+        "slide": 66,
+        "heading": "Extensions — model classes and structure learning",
+        "reason": "new or edited",
+        "file": "ch03-66.png"
+      },
+      {
+        "deck": "ch04_bayesian_optimization",
+        "slide": 2,
+        "heading": "Where we are — belief stops observing and starts choosing",
+        "reason": "new or edited",
+        "file": "ch04-02.png"
+      },
+      {
+        "deck": "ch04_bayesian_optimization",
+        "slide": 3,
+        "heading": "Learning route — predict, choose, pay for one measurement",
+        "reason": "new or edited",
+        "file": "ch04-03.png"
+      },
+      {
+        "deck": "ch04_bayesian_optimization",
+        "slide": 25,
+        "heading": "Temperature thread — choose an informative heater experiment",
+        "reason": "new or edited",
+        "file": "ch04-25.png"
+      },
+      {
+        "deck": "ch04_bayesian_optimization",
+        "slide": 26,
+        "heading": "Try it — the exploration weight becomes zero",
+        "reason": "new or edited",
+        "file": "ch04-26.png"
+      },
+      {
+        "deck": "ch04_bayesian_optimization",
+        "slide": 58,
+        "heading": "Extensions — shared outputs and hypervolume acquisition",
+        "reason": "new or edited",
+        "file": "ch04-58.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 2,
+        "heading": "Where we are — the query is taken away",
+        "reason": "new or edited",
+        "file": "ch05-02.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 3,
+        "heading": "Learning route — separate prediction quality from design quality",
+        "reason": "new or edited",
+        "file": "ch05-03.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 8,
+        "heading": "Check — the naive pipeline",
+        "reason": "new or edited",
+        "file": "ch05-08.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 13,
+        "heading": "Temperature thread — compare predicted gain with real gain",
+        "reason": "new or edited",
+        "file": "ch05-13.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 14,
+        "heading": "Try it — the largest error is no longer the selected action",
+        "reason": "new or edited",
+        "file": "ch05-14.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 15,
+        "heading": "The optimiser is an adversary",
+        "reason": "new or edited",
+        "file": "ch05-15.png"
+      },
+      {
+        "deck": "ch05_surrogate_design_optimization",
+        "slide": 18,
+        "heading": "Check — the shape of the failure",
+        "reason": "new or edited",
+        "file": "ch05-18.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 2,
+        "heading": "Where we are — the sentence Lecture 5 handed over",
+        "reason": "new or edited",
+        "file": "ch06-02.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 3,
+        "heading": "Learning route — represent several answers, then favour good ones",
+        "reason": "new or edited",
+        "file": "ch06-03.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 5,
+        "heading": "The problem, unchanged — and the route not taken",
+        "reason": "new or edited",
+        "file": "ch06-05.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 11,
+        "heading": "What is still missing — a model that knows what a valid $x$ looks like",
+        "reason": "new or edited",
+        "file": "ch06-11.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 19,
+        "heading": "Act 3 — VAE and diffusion",
+        "reason": "new or edited",
+        "file": "ch06-19.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 20,
+        "heading": "The evidence is intractable — so bound it",
+        "reason": "new or edited",
+        "file": "ch06-20.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 36,
+        "heading": "Temperature thread — condition a distribution over heater designs",
+        "reason": "new or edited",
+        "file": "ch06-36.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 37,
+        "heading": "Try it — the generator initially favors the right heater",
+        "reason": "new or edited",
+        "file": "ch06-37.png"
+      },
+      {
+        "deck": "ch06_generative_design_optimization",
+        "slide": 67,
+        "heading": "Derivation — why the ELBO is a lower bound",
+        "reason": "new or edited",
+        "file": "ch06-67.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 2,
+        "heading": "Where we are — the deepest crossing",
+        "reason": "new or edited",
+        "file": "ch07-02.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 3,
+        "heading": "Learning route — one backup before a whole algorithm",
+        "reason": "new or edited",
+        "file": "ch07-03.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 12,
+        "heading": "Check — why the state has to be Markov",
+        "reason": "new or edited",
+        "file": "ch07-12.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 19,
+        "heading": "Temperature thread — calculate a temperature-control backup",
+        "reason": "new or edited",
+        "file": "ch07-19.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 20,
+        "heading": "Try it — heating succeeds only 20 percent of the time",
+        "reason": "new or edited",
+        "file": "ch07-20.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 39,
+        "heading": "Check — what value iteration is really doing",
+        "reason": "new or edited",
+        "file": "ch07-39.png"
+      },
+      {
+        "deck": "ch07_mdp_dp",
+        "slide": 43,
+        "heading": "Check — what is still being assumed",
+        "reason": "new or edited",
+        "file": "ch07-43.png"
+      },
+      {
+        "deck": "ch08_value_based_rl",
+        "slide": 2,
+        "heading": "Where we are — the OR lineage, made data-driven",
+        "reason": "new or edited",
+        "file": "ch08-02.png"
+      },
+      {
+        "deck": "ch08_value_based_rl",
+        "slide": 3,
+        "heading": "Learning route — change the target, then change the representation",
+        "reason": "new or edited",
+        "file": "ch08-03.png"
+      },
+      {
+        "deck": "ch08_value_based_rl",
+        "slide": 26,
+        "heading": "Temperature thread — learn from one measured transition",
+        "reason": "new or edited",
+        "file": "ch08-26.png"
+      },
+      {
+        "deck": "ch08_value_based_rl",
+        "slide": 27,
+        "heading": "Try it — the observed heating step fails",
+        "reason": "new or edited",
+        "file": "ch08-27.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 2,
+        "heading": "Where we are — the other column of the map",
+        "reason": "new or edited",
+        "file": "ch09-02.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 3,
+        "heading": "Learning route — solve a small control problem first",
+        "reason": "new or edited",
+        "file": "ch09-03.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 10,
+        "heading": "Temperature thread — derive a feedback command",
+        "reason": "new or edited",
+        "file": "ch09-10.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 11,
+        "heading": "Try it — the measured error differs from the planned error",
+        "reason": "new or edited",
+        "file": "ch09-11.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 12,
+        "heading": "The key computational difference — optimize over a continuum",
+        "reason": "new or edited",
+        "file": "ch09-12.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 14,
+        "heading": "Act 2 — compute linear-quadratic feedback",
+        "reason": "new or edited",
+        "file": "ch09-14.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 15,
+        "heading": "LQR — quadratic cost, linear feedback",
+        "reason": "new or edited",
+        "file": "ch09-15.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 16,
+        "heading": "Read the gain with numbers — a scalar infinite-horizon example",
+        "reason": "new or edited",
+        "file": "ch09-16.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 19,
+        "heading": "Why LQR is the cornerstone",
+        "reason": "new or edited",
+        "file": "ch09-19.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 20,
+        "heading": "Check — why LQR is the exception that matters",
+        "reason": "new or edited",
+        "file": "ch09-20.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 21,
+        "heading": "Act 3 — interpret continuous-time Bellman reasoning",
+        "reason": "new or edited",
+        "file": "ch09-21.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 22,
+        "heading": "Continuous time — the problem, and the cost-to-go",
+        "reason": "new or edited",
+        "file": "ch09-22.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 26,
+        "heading": "Check — what happens to Bellman in continuous time",
+        "reason": "new or edited",
+        "file": "ch09-26.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 30,
+        "heading": "What the costate actually is",
+        "reason": "new or edited",
+        "file": "ch09-30.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 37,
+        "heading": "Where we are — three tools, different guarantees",
+        "reason": "new or edited",
+        "file": "ch09-37.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 38,
+        "heading": "What we hand on",
+        "reason": "new or edited",
+        "file": "ch09-38.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 48,
+        "heading": "One wall Lecture 8 left, and where it actually lands",
+        "reason": "new or edited",
+        "file": "ch09-48.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 50,
+        "heading": "Derivations — HJB and Riccati in detail",
+        "reason": "new or edited",
+        "file": "ch09-50.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 54,
+        "heading": "Derivation — LQR from the HJB equation",
+        "reason": "new or edited",
+        "file": "ch09-54.png"
+      },
+      {
+        "deck": "ch09_optimal_control",
+        "slide": 55,
+        "heading": "Derivation — the scalar LQR Bellman equation",
+        "reason": "new or edited",
+        "file": "ch09-55.png"
+      },
+      {
+        "deck": "ch10_policy_based_rl",
+        "slide": 2,
+        "heading": "Where we are — the control lineage, made data-driven",
+        "reason": "new or edited",
+        "file": "ch10-02.png"
+      },
+      {
+        "deck": "ch10_policy_based_rl",
+        "slide": 3,
+        "heading": "Learning route — make a good action more likely",
+        "reason": "new or edited",
+        "file": "ch10-03.png"
+      },
+      {
+        "deck": "ch10_policy_based_rl",
+        "slide": 16,
+        "heading": "Temperature thread — make the better heater action more likely",
+        "reason": "new or edited",
+        "file": "ch10-16.png"
+      },
+      {
+        "deck": "ch10_policy_based_rl",
+        "slide": 17,
+        "heading": "Try it — both action values shift down by 100",
+        "reason": "new or edited",
+        "file": "ch10-17.png"
+      },
+      {
+        "deck": "ch10_policy_based_rl",
+        "slide": 19,
+        "heading": "Fix 3 — the advantage, and the actor–critic",
+        "reason": "new or edited",
+        "file": "ch10-19.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 2,
+        "heading": "Where we are — both lineages, each missing its model",
+        "reason": "new or edited",
+        "file": "ch11-02.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 3,
+        "heading": "Learning route — use a learned model, then check what it changes",
+        "reason": "new or edited",
+        "file": "ch11-03.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 8,
+        "heading": "The price, named — model errors can change the plan",
+        "reason": "new or edited",
+        "file": "ch11-08.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 9,
+        "heading": "Check — what a model buys",
+        "reason": "new or edited",
+        "file": "ch11-09.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 12,
+        "heading": "What system identification actually offers",
+        "reason": "new or edited",
+        "file": "ch11-12.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 16,
+        "heading": "Temperature thread — re-plan after a model error",
+        "reason": "new or edited",
+        "file": "ch11-16.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 17,
+        "heading": "Try it — the response model is refitted",
+        "reason": "new or edited",
+        "file": "ch11-17.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 24,
+        "heading": "Check — why imagined rollouts stay short",
+        "reason": "new or edited",
+        "file": "ch11-24.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 25,
+        "heading": "Act 3 — learn from short simulated experience",
+        "reason": "new or edited",
+        "file": "ch11-25.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 30,
+        "heading": "Check — accurate is not the same as useful",
+        "reason": "new or edited",
+        "file": "ch11-30.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 31,
+        "heading": "Act 4 — learn in latent imagination",
+        "reason": "new or edited",
+        "file": "ch11-31.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 38,
+        "heading": "Check — what is left to take away",
+        "reason": "new or edited",
+        "file": "ch11-38.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 41,
+        "heading": "What we hand on",
+        "reason": "new or edited",
+        "file": "ch11-41.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 43,
+        "heading": "Questions?",
+        "reason": "new or edited",
+        "file": "ch11-43.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 47,
+        "heading": "Backup 2 — guided policy search, the constrained program",
+        "reason": "new or edited",
+        "file": "ch11-47.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 50,
+        "heading": "Backup 4b — the five mitigations, and where each appeared",
+        "reason": "new or edited",
+        "file": "ch11-50.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 51,
+        "heading": "Guided policy search — solve it by alternation",
+        "reason": "new or edited",
+        "file": "ch11-51.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 54,
+        "heading": "Advanced bridge — differentiating a model-based controller",
+        "reason": "new or edited",
+        "file": "ch11-54.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 55,
+        "heading": "Treat the planner as a policy class",
+        "reason": "new or edited",
+        "file": "ch11-55.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 58,
+        "heading": "A model fitted to be wrong in the right places",
+        "reason": "moved original visual",
+        "file": "ch11-58.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 61,
+        "heading": "Further model uses — direct gradients, teachers and design",
+        "reason": "new or edited",
+        "file": "ch11-61.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 62,
+        "heading": "Three routes from a model to a policy",
+        "reason": "new or edited",
+        "file": "ch11-62.png"
+      },
+      {
+        "deck": "ch11_model_based_rl",
+        "slide": 67,
+        "heading": "And design optimisation returns — bilevel",
+        "reason": "new or edited",
+        "file": "ch11-67.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 2,
+        "heading": "Where we are — the last thing taken away",
+        "reason": "new or edited",
+        "file": "ch12-02.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 3,
+        "heading": "Learning route — improve a policy using only the log",
+        "reason": "new or edited",
+        "file": "ch12-03.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 11,
+        "heading": "The same disease, one rung up the course",
+        "reason": "new or edited",
+        "file": "ch12-11.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 26,
+        "heading": "Check — the quotation from Lecture 5",
+        "reason": "new or edited",
+        "file": "ch12-26.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 27,
+        "heading": "Act 4 — evaluate a policy using the fixed log",
+        "reason": "new or edited",
+        "file": "ch12-27.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 28,
+        "heading": "Off-policy evaluation — the question that comes first",
+        "reason": "new or edited",
+        "file": "ch12-28.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 30,
+        "heading": "Temperature thread — evaluate the heater policy from a log",
+        "reason": "new or edited",
+        "file": "ch12-30.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 31,
+        "heading": "Try it — the log contains no heating actions",
+        "reason": "new or edited",
+        "file": "ch12-31.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 33,
+        "heading": "What evidence supports the recommendation?",
+        "reason": "new or edited",
+        "file": "ch12-33.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 36,
+        "heading": "Where we are — policy, value and evaluation",
+        "reason": "new or edited",
+        "file": "ch12-36.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 38,
+        "heading": "Offline training learns from the actions already logged.",
+        "reason": "new or edited",
+        "file": "ch12-38.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 46,
+        "heading": "Extensions — guarantees, alternative models and OPE estimators",
+        "reason": "new or edited",
+        "file": "ch12-46.png"
+      },
+      {
+        "deck": "ch12_offline_rl",
+        "slide": 48,
+        "heading": "Policy, value — and model",
+        "reason": "new or edited",
+        "file": "ch12-48.png"
+      },
+      {
+        "deck": "ch99_probability_review",
+        "slide": 3,
+        "heading": "Learning route — four tools to calculate, not memorize",
+        "reason": "new or edited",
+        "file": "ch99-03.png"
+      },
+      {
+        "deck": "ch99_probability_review",
+        "slide": 8,
+        "heading": "Temperature thread — separate temperature uncertainty from sensor noise",
+        "reason": "new or edited",
+        "file": "ch99-08.png"
+      },
+      {
+        "deck": "ch99_probability_review",
+        "slide": 9,
+        "heading": "Try it — the temperature becomes known exactly",
+        "reason": "new or edited",
+        "file": "ch99-09.png"
+      },
+      {
+        "deck": "ch99_probability_review",
+        "slide": 39,
+        "heading": "Appendix — examples, readings and derivations",
+        "reason": "new or edited",
+        "file": "ch99-39.png"
+      }
+    ]
+  }
+}
