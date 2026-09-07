@@ -163,9 +163,9 @@
     "ch03_bayesian_network": {
       "previous_slides": 67,
       "previous_core_slides": 61,
-      "slides": 69,
-      "core_slides": 58,
-      "appendix_start": 59,
+      "slides": 109,
+      "core_slides": 92,
+      "appendix_start": 93,
       "first_topic_slide": 4,
       "widgets": [
         "factor-count",
@@ -173,23 +173,31 @@
         "inference-cost",
         "influence-diagram"
       ],
-      "worked_slide": 39,
-      "transfer_slide": 40,
+      "worked_slide": 63,
+      "transfer_slide": 64,
       "changed_slides": [
         2,
         3,
-        30,
-        32,
-        39,
-        40,
-        66
+        46,
+        48,
+        63,
+        64,
+        102
       ],
       "moved_to_appendix": [
-        60,
-        67,
-        68,
-        69
-      ]
+        94,
+        103,
+        108,
+        109
+      ],
+      "visual_restoration": {
+        "date": "2026-09-08",
+        "baseline_commit": "d9e6dfaab4366f4236c130a074305303aa452db9",
+        "slides_before": 69,
+        "core_slides_before": 58,
+        "restored_assets": 51,
+        "report": "ch03_visual_restoration.md"
+      }
     },
     "ch04_bayesian_optimization": {
       "previous_slides": 61,

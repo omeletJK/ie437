@@ -1,3 +1,5 @@
+> 후속 개정: [Bayesian Network 원본 그림 복원](ch03_visual_restoration.md). 아래 882장 검증은 전체 강의 구조 개편 당시의 기록이며, 현재 Lecture 3는 109장, 전체는 922장이다. 최신 페이지 번호는 teaching_route_map.json과 source_fidelity_traceability.md를 따른다.
+
 # 전체 강의 학습 경로 개편 검토
 
 2026-09-08 · 기준 커밋 `3fa48fd` 이후의 HTML 강의 개편. 대상은 0–12장과 확률 복습, 총 14개 덱이다.

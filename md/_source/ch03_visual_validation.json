@@ -1,0 +1,241 @@
+{
+  "review_date": "2026-09-08",
+  "baseline_commit": "d9e6dfaab4366f4236c130a074305303aa452db9",
+  "markdown_sha256": "107189abd92d325c0b80db8e1a8648a021a309ea2be1129b1e805a29cdf4f8b2",
+  "local_pdf_sha256": "7786ca58a63d26b5c591e2468b2d965f00763196552212febb91b888d8835eec",
+  "source_pdf_pages_visually_reviewed": 94,
+  "restored_assets": 51,
+  "changed_pdf_pages_visually_reviewed": [
+    {
+      "slide": 2,
+      "heading": "Where we are — one unknown becomes many"
+    },
+    {
+      "slide": 6,
+      "heading": "First read the arrows — directed and undirected graphs"
+    },
+    {
+      "slide": 7,
+      "heading": "A directed acyclic graph, and the words for reading one"
+    },
+    {
+      "slide": 8,
+      "heading": "Read one graph three ways — nodes, edges and a matrix"
+    },
+    {
+      "slide": 9,
+      "heading": "A satellite — two causes and two visible symptoms"
+    },
+    {
+      "slide": 10,
+      "heading": "The factorisation — one joint, written locally"
+    },
+    {
+      "slide": 18,
+      "heading": "See why the collider is different"
+    },
+    {
+      "slide": 20,
+      "heading": "Marginalize or condition — watch the connection change"
+    },
+    {
+      "slide": 21,
+      "heading": "Explaining away — the collider, in words"
+    },
+    {
+      "slide": 22,
+      "heading": "Wet grass — the graph and its probability tables"
+    },
+    {
+      "slide": 25,
+      "heading": "Burglar alarm — two competing explanations"
+    },
+    {
+      "slide": 30,
+      "heading": "The query, and three kinds of variable"
+    },
+    {
+      "slide": 32,
+      "heading": "A factor covers the variables in one local table"
+    },
+    {
+      "slide": 35,
+      "heading": "Generate one sample — 1/5 · Draw the battery"
+    },
+    {
+      "slide": 36,
+      "heading": "Generate one sample — 2/5 · Draw the solar panel"
+    },
+    {
+      "slide": 37,
+      "heading": "Generate one sample — 3/5 · Draw the electrical state"
+    },
+    {
+      "slide": 38,
+      "heading": "Generate one sample — 4/5 · Draw the trajectory"
+    },
+    {
+      "slide": 39,
+      "heading": "Generate one sample — 5/5 · Draw communication"
+    },
+    {
+      "slide": 40,
+      "heading": "Reject rows that disagree with the evidence"
+    },
+    {
+      "slide": 41,
+      "heading": "Weight the evidence instead of rejecting a row"
+    },
+    {
+      "slide": 42,
+      "heading": "Rare causes — why weighting can still struggle"
+    },
+    {
+      "slide": 43,
+      "heading": "When exact inference is hopeless — sample"
+    },
+    {
+      "slide": 45,
+      "heading": "Naive Bayes — classification is posterior inference"
+    },
+    {
+      "slide": 49,
+      "heading": "A dynamic Bayesian network — repeat the same local structure"
+    },
+    {
+      "slide": 51,
+      "heading": "Markov order — how far back do the arrows reach?"
+    },
+    {
+      "slide": 52,
+      "heading": "Fit a transition matrix — count where each state goes"
+    },
+    {
+      "slide": 53,
+      "heading": "Predict a marginal — collect probability from every predecessor"
+    },
+    {
+      "slide": 55,
+      "heading": "State transitions — a graph of possible next states"
+    },
+    {
+      "slide": 56,
+      "heading": "Hidden Markov models — name the question before computing"
+    },
+    {
+      "slide": 57,
+      "heading": "Filtering — locate the present"
+    },
+    {
+      "slide": 58,
+      "heading": "Prediction — look beyond the observations"
+    },
+    {
+      "slide": 59,
+      "heading": "Smoothing — use later evidence to revise the past"
+    },
+    {
+      "slide": 60,
+      "heading": "Decoding — choose a whole hidden path"
+    },
+    {
+      "slide": 61,
+      "heading": "Filtering — Bayes' rule, once per time step"
+    },
+    {
+      "slide": 65,
+      "heading": "Add an input — the original IOHMM"
+    },
+    {
+      "slide": 66,
+      "heading": "A continuous hidden state — the same two-row picture"
+    },
+    {
+      "slide": 67,
+      "heading": "Kalman filtering — carry the mean and covariance forward"
+    },
+    {
+      "slide": 70,
+      "heading": "Bayesian network $+$ decision $+$ utility"
+    },
+    {
+      "slide": 72,
+      "heading": "Utility curves — the same money can have different value"
+    },
+    {
+      "slide": 74,
+      "heading": "Utility factorisation — one large function or several small ones"
+    },
+    {
+      "slide": 76,
+      "heading": "Collision avoidance — safety and alarm cost in one picture"
+    },
+    {
+      "slide": 77,
+      "heading": "Maximum expected utility"
+    },
+    {
+      "slide": 78,
+      "heading": "Read the treatment diagram — compare two actions"
+    },
+    {
+      "slide": 79,
+      "heading": "The PhD decision — follow cost and benefit through the graph"
+    },
+    {
+      "slide": 82,
+      "heading": "A later start-up decision — the information arrow matters"
+    },
+    {
+      "slide": 86,
+      "heading": "Sequential decisions — average, observe, then choose again"
+    },
+    {
+      "slide": 99,
+      "heading": "Changing coefficients — a hidden process above the observations"
+    },
+    {
+      "slide": 101,
+      "heading": "Changing variance — ARCH and GARCH side by side"
+    },
+    {
+      "slide": 104,
+      "heading": "A continuous root — wing span"
+    },
+    {
+      "slide": 105,
+      "heading": "A discrete root — aircraft type"
+    },
+    {
+      "slide": 106,
+      "heading": "A conditional Gaussian — radar cross section"
+    },
+    {
+      "slide": 107,
+      "heading": "A binary observation — detection probability"
+    },
+    {
+      "slide": 109,
+      "heading": "Continuous time-series data — regression becomes a transition model"
+    }
+  ],
+  "rendering": [
+    {
+      "file": "ch03_bayesian_network.html",
+      "slides": 109,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    }
+  ],
+  "source_fidelity_test": "pass: 13 PDFs, 1102 pages, 123 topic blocks, 571 current slide references, 25 numerical checks",
+  "teaching_route_test": "pass: 14 decks, retained prerequisites, 36 numerical checks",
+  "paper_selection_test": "pass: 14 reading guides, 16 numerical checks",
+  "original_visuals_test": "pass: 51 artwork hashes, placement and source numerical examples",
+  "reextraction": "all 51 asset hashes reproduced by scripts/restore-ch03-figures.py"
+}

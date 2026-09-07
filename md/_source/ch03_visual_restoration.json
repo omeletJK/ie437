@@ -1,0 +1,1074 @@
+{
+  "review_date": "2026-09-08",
+  "baseline_commit": "d9e6dfaab4366f4236c130a074305303aa452db9",
+  "source": {
+    "path": "lecture_slides/3. Bayesian Network.pdf",
+    "pages": 94,
+    "sha256": "2033924eebd9e4661d29d3369c68679a2e16283073eb0db0dd60be43eea1628d"
+  },
+  "method": "Crop the original PDF into SVG with glyph outlines. Retain viewBox geometry, node positions, colours, tables and embedded source pictures; set intrinsic width 1600 for readable display sizing. Only listed patches change visible content.",
+  "svg_intrinsic_width": 1600,
+  "slides_before": 69,
+  "slides_after": 109,
+  "core_slides": 92,
+  "appendix_start": 93,
+  "assets": [
+    {
+      "asset": "assets/ch03/original-system-modeling.svg",
+      "source_page": 3,
+      "crop_points": [
+        215,
+        123,
+        730,
+        440
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Where we are — one unknown becomes many",
+          "slide": 2
+        }
+      ],
+      "sha256": "36ff3da797a184ab9416aa5d2bf5dabd25f20b4e259f6ce22cc90a15ad461835"
+    },
+    {
+      "asset": "assets/ch03/original-directed-undirected.svg",
+      "source_page": 6,
+      "crop_points": [
+        145,
+        150,
+        710,
+        425
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "First read the arrows — directed and undirected graphs",
+          "slide": 6
+        }
+      ],
+      "sha256": "09f71094337e327502ba1115ab4ad49414c95b6789ba31a2aaf7a1ccbed46e96"
+    },
+    {
+      "asset": "assets/ch03/original-cycle-dag.svg",
+      "source_page": 7,
+      "crop_points": [
+        245,
+        155,
+        720,
+        355
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A directed acyclic graph, and the words for reading one",
+          "slide": 7
+        }
+      ],
+      "sha256": "d5f2da319d2706e926c326adc144f32e0d17ac498cfb5612fc14d6d590fbc616"
+    },
+    {
+      "asset": "assets/ch03/original-graph-vocabulary.svg",
+      "source_page": 8,
+      "crop_points": [
+        120,
+        205,
+        875,
+        520
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Read one graph three ways — nodes, edges and a matrix",
+          "slide": 8
+        }
+      ],
+      "sha256": "0cebe8da4c67539796f34965052b4fe5fd3a0e529e5314afa021ac917e5fca4c"
+    },
+    {
+      "asset": "assets/ch03/original-satellite.svg",
+      "source_page": 11,
+      "crop_points": [
+        220,
+        85,
+        706,
+        301
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A satellite — two causes and two visible symptoms",
+          "slide": 9
+        }
+      ],
+      "sha256": "798861c8d042c3a0abfbbed58b7dfa408a6fe5a3ab4484f0c7271fd07dfda05f"
+    },
+    {
+      "asset": "assets/ch03/original-satellite-tables.svg",
+      "source_page": 13,
+      "crop_points": [
+        135,
+        82,
+        802,
+        382
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "The factorisation — one joint, written locally",
+          "slide": 10
+        }
+      ],
+      "sha256": "3d3ad6e2ef7a6fdd0f2aa174e635788e494928af81329e6f95738a491965eea3"
+    },
+    {
+      "asset": "assets/ch03/original-three-structures.svg",
+      "source_page": 16,
+      "crop_points": [
+        119,
+        51,
+        823,
+        535
+      ],
+      "patches": [
+        [
+          [
+            662,
+            422,
+            785,
+            455
+          ],
+          [
+            0,
+            0
+          ],
+          "",
+          "helv",
+          12
+        ],
+        [
+          [
+            481,
+            494,
+            807,
+            516
+          ],
+          [
+            484,
+            507
+          ],
+          "Dependence can appear given z.",
+          "helv",
+          16
+        ]
+      ],
+      "corrections": [
+        "Remove an overstrong inequality; explain in live text.",
+        "Dependence can appear given z."
+      ],
+      "targets": [
+        {
+          "heading": "See why the collider is different",
+          "slide": 18
+        }
+      ],
+      "sha256": "f98e264902da2b6783a3a191ada92bf1159953542b23e0303b863b12f01fee03"
+    },
+    {
+      "asset": "assets/ch03/original-marginalize-condition.svg",
+      "source_page": 17,
+      "crop_points": [
+        121,
+        63,
+        923,
+        501
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Marginalize or condition — watch the connection change",
+          "slide": 20
+        }
+      ],
+      "sha256": "72495a89f8ff6c92b76219b99aaa122a095ff548b322aaf1628aa78c9740db87"
+    },
+    {
+      "asset": "assets/ch03/original-wet-grass.svg",
+      "source_page": 19,
+      "crop_points": [
+        140,
+        121,
+        751,
+        475
+      ],
+      "patches": [
+        [
+          [
+            222,
+            298,
+            302,
+            325
+          ],
+          [
+            226,
+            319
+          ],
+          "p(T | R, S)",
+          "tiit",
+          18
+        ]
+      ],
+      "corrections": [
+        "p(T | R, S)"
+      ],
+      "targets": [
+        {
+          "heading": "Wet grass — the graph and its probability tables",
+          "slide": 22
+        }
+      ],
+      "sha256": "7db4b29c946ebc6779aeaf63508056a28327f46b0f616671546808700c845699"
+    },
+    {
+      "asset": "assets/ch03/original-alarm.svg",
+      "source_page": 21,
+      "crop_points": [
+        177,
+        85,
+        798,
+        397
+      ],
+      "patches": [
+        [
+          [
+            611,
+            247,
+            791,
+            275
+          ],
+          [
+            614,
+            267
+          ],
+          "p(B = 1) = 0.01",
+          "tiit",
+          18
+        ]
+      ],
+      "corrections": [
+        "p(B = 1) = 0.01"
+      ],
+      "targets": [
+        {
+          "heading": "Burglar alarm — two competing explanations",
+          "slide": 25
+        }
+      ],
+      "sha256": "090d3fcb0271071ccdba496155bb246d9da6fbdd0f3fb49bd8494938c55ed244"
+    },
+    {
+      "asset": "assets/ch03/original-satellite-observed.svg",
+      "source_page": 24,
+      "crop_points": [
+        220,
+        90,
+        700,
+        282
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Explaining away — the collider, in words",
+          "slide": 21
+        }
+      ],
+      "sha256": "522089195deb9353742ce3123782d9e8a10318bb80fd0819bee42da3ba27f855"
+    },
+    {
+      "asset": "assets/ch03/original-query-evidence.svg",
+      "source_page": 25,
+      "crop_points": [
+        220,
+        135,
+        701,
+        324
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "The query, and three kinds of variable",
+          "slide": 30
+        }
+      ],
+      "sha256": "2a03241ad27544bd0c76fd5f42040a153f7e70199a55ea832b0c6867e1bc3bf8"
+    },
+    {
+      "asset": "assets/ch03/original-elimination-factors.svg",
+      "source_page": 27,
+      "crop_points": [
+        452,
+        86,
+        610,
+        222
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A factor covers the variables in one local table",
+          "slide": 32
+        }
+      ],
+      "sha256": "b1cd35733f1915306d670d7bd700089b7eec08d4b21a9b7a505917b50edbb1a3"
+    },
+    {
+      "asset": "assets/ch03/original-sample-1.svg",
+      "source_page": 28,
+      "crop_points": [
+        175,
+        165,
+        785,
+        412
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Generate one sample — 1/5 · Draw the battery",
+          "slide": 35
+        }
+      ],
+      "sha256": "5f507e5108df9f6446ae0fc0b59b6507a878139e6362e9163a27e235a572a482"
+    },
+    {
+      "asset": "assets/ch03/original-sample-2.svg",
+      "source_page": 29,
+      "crop_points": [
+        175,
+        165,
+        785,
+        412
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Generate one sample — 2/5 · Draw the solar panel",
+          "slide": 36
+        }
+      ],
+      "sha256": "90c3338688d42a1bdfa674402c3dc55db268483012902cc4b0e802304333f302"
+    },
+    {
+      "asset": "assets/ch03/original-sample-3.svg",
+      "source_page": 30,
+      "crop_points": [
+        175,
+        165,
+        785,
+        412
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Generate one sample — 3/5 · Draw the electrical state",
+          "slide": 37
+        }
+      ],
+      "sha256": "2d17004a12fa388c8fa3cd671b17978e31c41a3fcd068a61dab24c5bb138340b"
+    },
+    {
+      "asset": "assets/ch03/original-sample-4.svg",
+      "source_page": 31,
+      "crop_points": [
+        175,
+        165,
+        785,
+        412
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Generate one sample — 4/5 · Draw the trajectory",
+          "slide": 38
+        }
+      ],
+      "sha256": "82a7b3dc625d1fa79d2774239c5043d55e341859f0fa73bb1ed02acf86f6a056"
+    },
+    {
+      "asset": "assets/ch03/original-sample-5.svg",
+      "source_page": 32,
+      "crop_points": [
+        175,
+        165,
+        785,
+        412
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Generate one sample — 5/5 · Draw communication",
+          "slide": 39
+        }
+      ],
+      "sha256": "cdadab58ef0b538cce6af7c438037090a98718fb032913230e178a96294963d6"
+    },
+    {
+      "asset": "assets/ch03/original-rejection-samples.svg",
+      "source_page": 34,
+      "crop_points": [
+        205,
+        132,
+        838,
+        482
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Reject rows that disagree with the evidence",
+          "slide": 40
+        }
+      ],
+      "sha256": "cc824dc0b113dc769d0844e450830901fe6c8a8e86286a2ec08b9b434e2e25ae"
+    },
+    {
+      "asset": "assets/ch03/original-naive-bayes.svg",
+      "source_page": 43,
+      "crop_points": [
+        330,
+        89,
+        544,
+        222
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Naive Bayes — classification is posterior inference",
+          "slide": 45
+        }
+      ],
+      "sha256": "c6bb370daceb6a11a66a1f47c949cc7e48b4395a093f6f94ecda1927f13025bc"
+    },
+    {
+      "asset": "assets/ch03/original-dynamic-network.svg",
+      "source_page": 47,
+      "crop_points": [
+        251,
+        225,
+        704,
+        446
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A dynamic Bayesian network — repeat the same local structure",
+          "slide": 49
+        }
+      ],
+      "sha256": "7c310a39b235c1a2e8c08c731b4bf1b01b0714aab2d91d5913e30f9a3c291737"
+    },
+    {
+      "asset": "assets/ch03/original-full-history.svg",
+      "source_page": 49,
+      "crop_points": [
+        297,
+        190,
+        660,
+        334
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Markov order — how far back do the arrows reach?",
+          "slide": 51
+        }
+      ],
+      "sha256": "dc090751fa3bcafe2222d07c955b1e2abd100933d8e76f2ba0a2f127a80a84d9"
+    },
+    {
+      "asset": "assets/ch03/original-markov-orders.svg",
+      "source_page": 50,
+      "crop_points": [
+        115,
+        431,
+        841,
+        531
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Markov order — how far back do the arrows reach?",
+          "slide": 51
+        }
+      ],
+      "sha256": "2ee89d43e2ab6475fca75e5d7125d09cf291718bfb7c8bbe9ad611dcc5723cc2"
+    },
+    {
+      "asset": "assets/ch03/original-transition-counts.svg",
+      "source_page": 53,
+      "crop_points": [
+        138,
+        413,
+        809,
+        490
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Fit a transition matrix — count where each state goes",
+          "slide": 52
+        }
+      ],
+      "sha256": "04b262d132cf1cb6162eac25c2dac01928a22009d25185feed715c1db88bee2d"
+    },
+    {
+      "asset": "assets/ch03/original-state-transition.svg",
+      "source_page": 55,
+      "crop_points": [
+        280,
+        194,
+        806,
+        376
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "State transitions — a graph of possible next states",
+          "slide": 55
+        }
+      ],
+      "sha256": "cd39cd78bebce9294272ab719ef471abd134ce44cd68a4eedd9559296a9bda53"
+    },
+    {
+      "asset": "assets/ch03/original-hmm.svg",
+      "source_page": 54,
+      "crop_points": [
+        266,
+        120,
+        686,
+        250
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Hidden Markov models — name the question before computing",
+          "slide": 56
+        }
+      ],
+      "sha256": "0f6827e1456a1052ba58abb2c765f40d00a1500738e61378016d8b2008766669"
+    },
+    {
+      "asset": "assets/ch03/original-hmm-filtering.svg",
+      "source_page": 56,
+      "crop_points": [
+        250,
+        320,
+        670,
+        520
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Filtering — locate the present",
+          "slide": 57
+        }
+      ],
+      "sha256": "f92fac56da799ad4f292dde2f28b24d14b70912b92c4a01bf3c0848726491fce"
+    },
+    {
+      "asset": "assets/ch03/original-hmm-prediction.svg",
+      "source_page": 57,
+      "crop_points": [
+        250,
+        320,
+        670,
+        520
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Prediction — look beyond the observations",
+          "slide": 58
+        }
+      ],
+      "sha256": "ffd3b836ff8e91f2f9b9f2396f7e2688a465080483cf0a5bf556858e579edf29"
+    },
+    {
+      "asset": "assets/ch03/original-hmm-smoothing.svg",
+      "source_page": 58,
+      "crop_points": [
+        250,
+        320,
+        670,
+        520
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Smoothing — use later evidence to revise the past",
+          "slide": 59
+        }
+      ],
+      "sha256": "b0633218e9b212667798dc7d5d71ed60009cbfbcd8ebe8a5cdf6882b84f179e4"
+    },
+    {
+      "asset": "assets/ch03/original-hmm-viterbi.svg",
+      "source_page": 60,
+      "crop_points": [
+        250,
+        320,
+        670,
+        520
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Decoding — choose a whole hidden path",
+          "slide": 60
+        }
+      ],
+      "sha256": "34d36670e2283dae1d7ebedac9c8c38149bc1955e4e280f32ed8d7b5b6dc7920"
+    },
+    {
+      "asset": "assets/ch03/original-iohmm.svg",
+      "source_page": 62,
+      "crop_points": [
+        190,
+        100,
+        693,
+        435
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Add an input — the original IOHMM",
+          "slide": 65
+        }
+      ],
+      "sha256": "088d1636355f671ed2106be35637b3fc37abf58c9594e73b9a9c916195d41810"
+    },
+    {
+      "asset": "assets/ch03/original-kalman-model.svg",
+      "source_page": 71,
+      "crop_points": [
+        170,
+        193,
+        744,
+        399
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A continuous hidden state — the same two-row picture",
+          "slide": 66
+        }
+      ],
+      "sha256": "169ce23e7a0e70108d736b641d240397620833e269bbbdc822cdf553c730e463"
+    },
+    {
+      "asset": "assets/ch03/original-utility-curves.svg",
+      "source_page": 80,
+      "crop_points": [
+        165,
+        199,
+        780,
+        418
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Utility curves — the same money can have different value",
+          "slide": 72
+        }
+      ],
+      "sha256": "dd97c2836c00d380949fa2200a86b18dbddd66a3e8bd048bd4a2555cd00fc4df"
+    },
+    {
+      "asset": "assets/ch03/original-additive-utility.svg",
+      "source_page": 81,
+      "crop_points": [
+        74,
+        112,
+        886,
+        433
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Utility factorisation — one large function or several small ones",
+          "slide": 74
+        }
+      ],
+      "sha256": "83a7fe4233515fc7d41dbcc020e8524bf3453aac777f8653500c99abad03bfca"
+    },
+    {
+      "asset": "assets/ch03/original-collision-utility.svg",
+      "source_page": 82,
+      "crop_points": [
+        178,
+        104,
+        860,
+        453
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Collision avoidance — safety and alarm cost in one picture",
+          "slide": 76
+        }
+      ],
+      "sha256": "78b2393b980d299589dbc605d64d4f95711334e4e5607578d87c35e38fd2579c"
+    },
+    {
+      "asset": "assets/ch03/original-decision-network.svg",
+      "source_page": 83,
+      "crop_points": [
+        135,
+        119,
+        729,
+        519
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Bayesian network $+$ decision $+$ utility",
+          "slide": 70
+        }
+      ],
+      "sha256": "426c5766d4d2e105f1a3c1dfd489a8195600bd75c1441db5b62395e18fa362a3"
+    },
+    {
+      "asset": "assets/ch03/original-phd-network.svg",
+      "source_page": 91,
+      "crop_points": [
+        137,
+        82,
+        831,
+        327
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "The PhD decision — follow cost and benefit through the graph",
+          "slide": 79
+        }
+      ],
+      "sha256": "5acad480adf13738597eab44290e8c18c65143aa34cdb9b5bc9d2d1dc389dd1e"
+    },
+    {
+      "asset": "assets/ch03/original-startup-network.svg",
+      "source_page": 93,
+      "crop_points": [
+        141,
+        82,
+        839,
+        333
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A later start-up decision — the information arrow matters",
+          "slide": 82
+        }
+      ],
+      "sha256": "d360847ea32cf552ef522b6cb7811f12d6752aca1b2f5bfb8a8f24135f1e2924"
+    },
+    {
+      "asset": "assets/ch03/original-sequential-decisions.svg",
+      "source_page": 87,
+      "crop_points": [
+        307,
+        49,
+        620,
+        232
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Sequential decisions — average, observe, then choose again",
+          "slide": 86
+        }
+      ],
+      "sha256": "b68f8e087a38ee10b3867319c54b9c7a3339706b5bddec18107906f6f8ae9bd6"
+    },
+    {
+      "asset": "assets/ch03/original-hybrid-wing.svg",
+      "source_page": 39,
+      "crop_points": [
+        137,
+        120,
+        855,
+        383
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A continuous root — wing span",
+          "slide": 104
+        }
+      ],
+      "sha256": "107c495c5a37172f4b9d5974679b825ed6407c74e91f68edb07fe899c195400a"
+    },
+    {
+      "asset": "assets/ch03/original-hybrid-type.svg",
+      "source_page": 40,
+      "crop_points": [
+        137,
+        120,
+        855,
+        383
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A discrete root — aircraft type",
+          "slide": 105
+        }
+      ],
+      "sha256": "6409c21d181c4342aac6de44dfea5090fad900168081697c0d18716733c5f4ef"
+    },
+    {
+      "asset": "assets/ch03/original-hybrid-radar.svg",
+      "source_page": 41,
+      "crop_points": [
+        137,
+        120,
+        855,
+        383
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A conditional Gaussian — radar cross section",
+          "slide": 106
+        }
+      ],
+      "sha256": "370cd7fb9576a1c14b05af4b6605620c2ca9f9235bcce02e1607c04bd0d51616"
+    },
+    {
+      "asset": "assets/ch03/original-hybrid-detection.svg",
+      "source_page": 42,
+      "crop_points": [
+        137,
+        120,
+        855,
+        539
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "A binary observation — detection probability",
+          "slide": 107
+        }
+      ],
+      "sha256": "000bf277b8a6f210fa588ccf5d0486e013231c857e5933a391419e28dc0fb628"
+    },
+    {
+      "asset": "assets/ch03/original-ar-graph.svg",
+      "source_page": 66,
+      "crop_points": [
+        300,
+        55,
+        635,
+        125
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Continuous time-series data — regression becomes a transition model",
+          "slide": 109
+        }
+      ],
+      "sha256": "d0e6a320a783afa43f7d51cf3cbd069eeb7cc1f1e1737db98574f15fa7339157"
+    },
+    {
+      "asset": "assets/ch03/original-varying-coefficients.svg",
+      "source_page": 68,
+      "crop_points": [
+        300,
+        350,
+        637,
+        491
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Changing coefficients — a hidden process above the observations",
+          "slide": 99
+        }
+      ],
+      "sha256": "e1ebe49a39972b8d964491c713c7c54c9b0d93cb1902a6869cd31acc105e537e"
+    },
+    {
+      "asset": "assets/ch03/original-arch-garch.svg",
+      "source_page": 70,
+      "crop_points": [
+        120,
+        283,
+        862,
+        438
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Changing variance — ARCH and GARCH side by side",
+          "slide": 101
+        }
+      ],
+      "sha256": "952551fa13821d261c53ccba911f651af554824eb1b72f95d8e04845a15faf02"
+    },
+    {
+      "asset": "assets/ch03/original-weighted-samples.svg",
+      "source_page": 35,
+      "crop_points": [
+        454,
+        315,
+        765,
+        449
+      ],
+      "patches": [
+        [
+          [
+            450,
+            315,
+            467.8,
+            449
+          ],
+          [
+            0,
+            0
+          ],
+          "",
+          "helv",
+          12
+        ]
+      ],
+      "corrections": [
+        "Hide incoming arrow fragments from the adjacent rejection table; the retained table illustrates fresh clamped weighted samples."
+      ],
+      "targets": [
+        {
+          "heading": "Weight the evidence instead of rejecting a row",
+          "slide": 41
+        }
+      ],
+      "sha256": "578de85f871ea8747758a610e610377f1576f95a01bf8fc0c6ed1ca6a0af3771"
+    },
+    {
+      "asset": "assets/ch03/original-rare-cause.svg",
+      "source_page": 36,
+      "crop_points": [
+        160,
+        153,
+        744,
+        326
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Rare causes — why weighting can still struggle",
+          "slide": 42
+        }
+      ],
+      "sha256": "e89385eb765f8d9d6424a5cc0204f337394d0e0f1d4cbcdbb3b7f7c872de71a2"
+    },
+    {
+      "asset": "assets/ch03/original-markov-marginal.svg",
+      "source_page": 52,
+      "crop_points": [
+        259,
+        194,
+        664,
+        365
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Predict a marginal — collect probability from every predecessor",
+          "slide": 53
+        }
+      ],
+      "sha256": "813cd18ff364fcb32e046495d7942811265b6538ee232a9e919cbc361ef021ad"
+    },
+    {
+      "asset": "assets/ch03/original-kalman-update.svg",
+      "source_page": 73,
+      "crop_points": [
+        145,
+        422,
+        794,
+        537
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Kalman filtering — carry the mean and covariance forward",
+          "slide": 67
+        }
+      ],
+      "sha256": "e0075387511858c3931e6dd0fde045c7ee1415cc886e97660e8ca6a1a61a6317"
+    },
+    {
+      "asset": "assets/ch03/original-expected-utility.svg",
+      "source_page": 79,
+      "crop_points": [
+        334,
+        129,
+        712,
+        308
+      ],
+      "patches": [],
+      "corrections": [],
+      "targets": [
+        {
+          "heading": "Maximum expected utility",
+          "slide": 77
+        }
+      ],
+      "sha256": "d07bbaf1c5097b8a2775dda9154e8e6752224a72070fedfae7ea61de70ea5eca"
+    }
+  ]
+}

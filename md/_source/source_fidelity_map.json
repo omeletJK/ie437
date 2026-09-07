@@ -1283,7 +1283,7 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "The wall — a joint distribution is exponentially large",
-              "slide_at_review": 10,
+              "slide_at_review": 13,
               "placement_at_review": "main"
             },
             {
@@ -1295,35 +1295,66 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "A directed acyclic graph, and the words for reading one",
-              "slide_at_review": 6,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "The factorisation — one joint, written locally",
               "slide_at_review": 7,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
+              "heading": "The factorisation — one joint, written locally",
+              "slide_at_review": 10,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
               "heading": "Multiply first, then sum — a two-node calculation",
-              "slide_at_review": 8,
+              "slide_at_review": 11,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "The collapse, in numbers",
-              "slide_at_review": 9,
+              "slide_at_review": 12,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Every distribution is a Bayesian network — and that is the catch",
-              "slide_at_review": 11,
+              "slide_at_review": 14,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Where we are — one unknown becomes many",
+              "slide_at_review": 2,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "First read the arrows — directed and undirected graphs",
+              "slide_at_review": 6,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Read one graph three ways — nodes, edges and a matrix",
+              "slide_at_review": 8,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A satellite — two causes and two visible symptoms",
+              "slide_at_review": 9,
               "placement_at_review": "main"
             }
           ],
-          "note": "효율적인 저장과 효율적인 추론은 구분."
+          "note": "효율적인 저장과 효율적인 추론은 구분. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-system-modeling.svg",
+            "assets/ch03/original-directed-undirected.svg",
+            "assets/ch03/original-cycle-dag.svg",
+            "assets/ch03/original-graph-vocabulary.svg",
+            "assets/ch03/original-satellite.svg"
+          ]
         },
         {
           "pages": [
@@ -1336,53 +1367,98 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Conditional independence — the meaning of a missing edge",
-              "slide_at_review": 14,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Three structures, three verdicts",
-              "slide_at_review": 15,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Explaining away — the collider, in words",
-              "slide_at_review": 16,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Wet grass — explaining away, with numbers",
               "slide_at_review": 17,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Evidence, entered by hand",
-              "slide_at_review": 18,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "The burglar alarm — the same move, sharper",
+              "heading": "Three structures, three verdicts",
               "slide_at_review": 19,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
+              "heading": "Explaining away — the collider, in words",
+              "slide_at_review": 21,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Wet grass — explaining away, with numbers",
+              "slide_at_review": 23,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Evidence, entered by hand",
+              "slide_at_review": 24,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The burglar alarm — the same move, sharper",
+              "slide_at_review": 26,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
               "heading": "What the missing edges buy",
-              "slide_at_review": 20,
+              "slide_at_review": 27,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 2 — d-separation, the complete rule",
-              "slide_at_review": 62,
+              "slide_at_review": 96,
               "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The factorisation — one joint, written locally",
+              "slide_at_review": 10,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "See why the collider is different",
+              "slide_at_review": 18,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Marginalize or condition — watch the connection change",
+              "slide_at_review": 20,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Wet grass — the graph and its probability tables",
+              "slide_at_review": 22,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Burglar alarm — two competing explanations",
+              "slide_at_review": 25,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The query, and three kinds of variable",
+              "slide_at_review": 30,
+              "placement_at_review": "main"
             }
           ],
-          "note": "missing arrow 하나만으로 독립을 단정하지 않도록 수정."
+          "note": "missing arrow 하나만으로 독립을 단정하지 않도록 수정. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-satellite-tables.svg",
+            "assets/ch03/original-three-structures.svg",
+            "assets/ch03/original-marginalize-condition.svg",
+            "assets/ch03/original-wet-grass.svg",
+            "assets/ch03/original-alarm.svg",
+            "assets/ch03/original-satellite-observed.svg",
+            "assets/ch03/original-query-evidence.svg"
+          ]
         },
         {
           "pages": [
@@ -1395,47 +1471,112 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "The query, and three kinds of variable",
-              "slide_at_review": 23,
+              "slide_at_review": 30,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Exact inference — and why it hurts",
-              "slide_at_review": 24,
+              "slide_at_review": 31,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Variable elimination — push each sum past what it cannot touch",
-              "slide_at_review": 25,
+              "slide_at_review": 33,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "What the ordering is worth",
-              "slide_at_review": 26,
+              "slide_at_review": 34,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "When exact inference is hopeless — sample",
-              "slide_at_review": 27,
+              "slide_at_review": 43,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 1 — variable elimination, step by step",
-              "slide_at_review": 61,
+              "slide_at_review": 95,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 3 — approximate inference, and where each method breaks",
-              "slide_at_review": 63,
+              "slide_at_review": 97,
               "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A factor covers the variables in one local table",
+              "slide_at_review": 32,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Generate one sample — 1/5 · Draw the battery",
+              "slide_at_review": 35,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Generate one sample — 2/5 · Draw the solar panel",
+              "slide_at_review": 36,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Generate one sample — 3/5 · Draw the electrical state",
+              "slide_at_review": 37,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Generate one sample — 4/5 · Draw the trajectory",
+              "slide_at_review": 38,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Generate one sample — 5/5 · Draw communication",
+              "slide_at_review": 39,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Reject rows that disagree with the evidence",
+              "slide_at_review": 40,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Weight the evidence instead of rejecting a row",
+              "slide_at_review": 41,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Rare causes — why weighting can still struggle",
+              "slide_at_review": 42,
+              "placement_at_review": "main"
             }
           ],
-          "note": "elimination 순서와 topological sampling 순서 구분."
+          "note": "elimination 순서와 topological sampling 순서 구분. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-elimination-factors.svg",
+            "assets/ch03/original-sample-1.svg",
+            "assets/ch03/original-sample-2.svg",
+            "assets/ch03/original-sample-3.svg",
+            "assets/ch03/original-sample-4.svg",
+            "assets/ch03/original-sample-5.svg",
+            "assets/ch03/original-rejection-samples.svg",
+            "assets/ch03/original-weighted-samples.svg",
+            "assets/ch03/original-rare-cause.svg"
+          ]
         },
         {
           "pages": [
@@ -1448,11 +1589,41 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Hybrid networks — a table is not the only local model",
-              "slide_at_review": 67,
+              "slide_at_review": 103,
+              "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A continuous root — wing span",
+              "slide_at_review": 104,
+              "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A discrete root — aircraft type",
+              "slide_at_review": 105,
+              "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A conditional Gaussian — radar cross section",
+              "slide_at_review": 106,
+              "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A binary observation — detection probability",
+              "slide_at_review": 107,
               "placement_at_review": "appendix"
             }
           ],
-          "note": "항공기 예제의 local Gaussian/logistic 모형 복원. 학부 학습 경로 개편: 세부 유도·응용은 심화로 이동."
+          "note": "항공기 예제의 local Gaussian/logistic 모형 복원. 학부 학습 경로 개편: 세부 유도·응용은 심화로 이동. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-hybrid-wing.svg",
+            "assets/ch03/original-hybrid-type.svg",
+            "assets/ch03/original-hybrid-radar.svg",
+            "assets/ch03/original-hybrid-detection.svg"
+          ]
         },
         {
           "pages": [
@@ -1465,11 +1636,14 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Naive Bayes — classification is posterior inference",
-              "slide_at_review": 29,
+              "slide_at_review": 45,
               "placement_at_review": "main"
             }
           ],
-          "note": "독립 가정과 posterior 계산을 함께 제시."
+          "note": "독립 가정과 posterior 계산을 함께 제시. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-naive-bayes.svg"
+          ]
         },
         {
           "pages": [
@@ -1482,13 +1656,13 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Learning the tables — reuse Lecture 2 locally",
-              "slide_at_review": 31,
+              "slide_at_review": 47,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Learning the graph — compare explanations, not just fitted tables",
-              "slide_at_review": 68,
+              "slide_at_review": 108,
               "placement_at_review": "appendix"
             }
           ],
@@ -1505,23 +1679,48 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "The same graph, unrolled through time",
-              "slide_at_review": 33,
+              "slide_at_review": 50,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Fit a transition matrix — count where each state goes",
-              "slide_at_review": 34,
+              "slide_at_review": 52,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A stationary model need not start in a stationary distribution",
-              "slide_at_review": 35,
+              "slide_at_review": 54,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A dynamic Bayesian network — repeat the same local structure",
+              "slide_at_review": 49,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Markov order — how far back do the arrows reach?",
+              "slide_at_review": 51,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Predict a marginal — collect probability from every predecessor",
+              "slide_at_review": 53,
               "placement_at_review": "main"
             }
           ],
-          "note": "전이행렬 추정, 시간불변 전이와 정상분포를 구분."
+          "note": "전이행렬 추정, 시간불변 전이와 정상분포를 구분. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-dynamic-network.svg",
+            "assets/ch03/original-full-history.svg",
+            "assets/ch03/original-markov-orders.svg",
+            "assets/ch03/original-transition-counts.svg",
+            "assets/ch03/original-markov-marginal.svg"
+          ]
         },
         {
           "pages": [
@@ -1534,23 +1733,68 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Hidden Markov models — name the question before computing",
-              "slide_at_review": 36,
+              "slide_at_review": 56,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Filtering — Bayes' rule, once per time step",
-              "slide_at_review": 37,
+              "slide_at_review": 61,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "One filtering step — predict, observe, normalise",
-              "slide_at_review": 38,
+              "slide_at_review": 62,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "State transitions — a graph of possible next states",
+              "slide_at_review": 55,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Filtering — locate the present",
+              "slide_at_review": 57,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Prediction — look beyond the observations",
+              "slide_at_review": 58,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Smoothing — use later evidence to revise the past",
+              "slide_at_review": 59,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Decoding — choose a whole hidden path",
+              "slide_at_review": 60,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Add an input — the original IOHMM",
+              "slide_at_review": 65,
               "placement_at_review": "main"
             }
           ],
-          "note": "filtering/smoothing/prediction/likelihood/decoding을 분리. 원본 likelihood 표기 정정."
+          "note": "filtering/smoothing/prediction/likelihood/decoding을 분리. 원본 likelihood 표기 정정. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-state-transition.svg",
+            "assets/ch03/original-hmm.svg",
+            "assets/ch03/original-hmm-filtering.svg",
+            "assets/ch03/original-hmm-prediction.svg",
+            "assets/ch03/original-hmm-smoothing.svg",
+            "assets/ch03/original-hmm-viterbi.svg",
+            "assets/ch03/original-iohmm.svg"
+          ]
         },
         {
           "pages": [
@@ -1563,23 +1807,54 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Continuous time-series data — regression becomes a transition model",
-              "slide_at_review": 69,
+              "slide_at_review": 109,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Linear Gaussian state space — the Kalman version of the same update",
-              "slide_at_review": 41,
+              "slide_at_review": 68,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup — when the time-series model itself changes",
-              "slide_at_review": 65,
+              "slide_at_review": 100,
               "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A continuous hidden state — the same two-row picture",
+              "slide_at_review": 66,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Changing coefficients — a hidden process above the observations",
+              "slide_at_review": 99,
+              "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Changing variance — ARCH and GARCH side by side",
+              "slide_at_review": 101,
+              "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Kalman filtering — carry the mean and covariance forward",
+              "slide_at_review": 67,
+              "placement_at_review": "main"
             }
           ],
-          "note": "Kalman의 평균/분산 갱신과 scalar 계산. ARCH/GARCH는 appendix 개요, 전 식별 유도는 없음. 학부 학습 경로 개편: 세부 유도·응용은 심화로 이동."
+          "note": "Kalman의 평균/분산 갱신과 scalar 계산. ARCH/GARCH는 appendix 개요, 전 식별 유도는 없음. 학부 학습 경로 개편: 세부 유도·응용은 심화로 이동. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-kalman-model.svg",
+            "assets/ch03/original-ar-graph.svg",
+            "assets/ch03/original-varying-coefficients.svg",
+            "assets/ch03/original-arch-garch.svg",
+            "assets/ch03/original-kalman-update.svg"
+          ]
         },
         {
           "pages": [
@@ -1592,35 +1867,59 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Bayesian network $+$ decision $+$ utility",
-              "slide_at_review": 43,
+              "slide_at_review": 70,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Utility — a number for comparing outcomes",
-              "slide_at_review": 44,
+              "slide_at_review": 71,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Utility is not necessarily money — the original lottery example",
-              "slide_at_review": 45,
+              "slide_at_review": 73,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Several consequences — when can utilities be added?",
-              "slide_at_review": 46,
+              "slide_at_review": 75,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Maximum expected utility",
-              "slide_at_review": 47,
+              "slide_at_review": 77,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Utility curves — the same money can have different value",
+              "slide_at_review": 72,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Utility factorisation — one large function or several small ones",
+              "slide_at_review": 74,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Collision avoidance — safety and alarm cost in one picture",
+              "slide_at_review": 76,
               "placement_at_review": "main"
             }
           ],
-          "note": "원본 복권과 collision-avoidance의 multiattribute 해석 복원."
+          "note": "원본 복권과 collision-avoidance의 multiattribute 해석 복원. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-utility-curves.svg",
+            "assets/ch03/original-additive-utility.svg",
+            "assets/ch03/original-collision-utility.svg",
+            "assets/ch03/original-expected-utility.svg"
+          ]
         },
         {
           "pages": [
@@ -1633,47 +1932,77 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Should I do a PhD?",
-              "slide_at_review": 48,
+              "slide_at_review": 80,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Pick a decision, watch the utility",
-              "slide_at_review": 49,
+              "slide_at_review": 81,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Add one option, and the answer flips",
-              "slide_at_review": 50,
+              "slide_at_review": 83,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "The value of information",
-              "slide_at_review": 51,
+              "slide_at_review": 84,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A decision and the value of looking first",
-              "slide_at_review": 52,
+              "slide_at_review": 85,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "From an influence diagram to an MDP — state the extra assumptions",
-              "slide_at_review": 53,
+              "slide_at_review": 87,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 4 — from maximum expected utility to Bellman",
-              "slide_at_review": 64,
+              "slide_at_review": 98,
               "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Bayesian network $+$ decision $+$ utility",
+              "slide_at_review": 70,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The PhD decision — follow cost and benefit through the graph",
+              "slide_at_review": 79,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A later start-up decision — the information arrow matters",
+              "slide_at_review": 82,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Sequential decisions — average, observe, then choose again",
+              "slide_at_review": 86,
+              "placement_at_review": "main"
             }
           ],
-          "note": "MDP로 바꾸려면 정보구조와 Markov state가 필요함을 명시."
+          "note": "MDP로 바꾸려면 정보구조와 Markov state가 필요함을 명시. 2026-09-08: 원본 도식의 배치·색상·표 구성을 SVG로 복원함. 구체적 영역·교정은 ch03_visual_restoration.json 참조.",
+          "visual_assets": [
+            "assets/ch03/original-decision-network.svg",
+            "assets/ch03/original-phd-network.svg",
+            "assets/ch03/original-startup-network.svg",
+            "assets/ch03/original-sequential-decisions.svg"
+          ]
         }
       ]
     },
@@ -4659,5 +4988,6 @@
   ],
   "paper_revision_note": "Representative readings and teaching examples added in September 2026. See paper_selection_review.md. Original source hashes and page inventory retained; current slide locations include main/appendix placement.",
   "teaching_revision_date": "2026-09-08",
-  "teaching_revision_note": "Shortened orientation, retained core concepts and moved advanced applications/derivations to appendices. See teaching_structure_review.md and teaching_route_map.json. Temperature examples are new teaching material, not copied paper experiments."
+  "teaching_revision_note": "Shortened orientation, retained core concepts and moved advanced applications/derivations to appendices. See teaching_structure_review.md and teaching_route_map.json. Temperature examples are new teaching material, not copied paper experiments.",
+  "visual_restoration_note": "Chapter 3 original figure restoration: ch03_visual_restoration.md / .json. Chapter 3 slide references updated after the 2026-09-08 visual revision."
 }
