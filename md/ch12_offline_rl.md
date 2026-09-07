@@ -89,7 +89,7 @@ The $\max$ ranges over ==every== action, including actions $\beta$ never took at
 
 ::: reveal
 ::: keypoint
-Every algorithm in Part IV assumed it could try something. Take that away and the Bellman equation starts lying to you — because the one term it needs is evaluated ==at actions nobody ever took.==
+Every algorithm in Part IV assumed it could try something. Take that away and an estimated Bellman target becomes unreliable — because the one term it needs is evaluated ==at actions nobody ever took.==
 :::
 :::
 
@@ -99,9 +99,26 @@ Every algorithm in Part IV assumed it could try something. Take that away and th
 :::
 
 - **Q1 — What actually breaks?** ==Distributional shift==: the policy queries $Q$ where $\beta$ never went, and nothing corrects it. This is Lecture 8's deadly triad with the escape hatch removed.
-- **Q2 — Can we constrain the policy?** Keep $\pi$ near $\beta$ — ==BCQ, BEAR, TD3+BC== — and pay for it with $\beta$'s ceiling.
-- **Q3 — Can we constrain the value instead?** Make $Q$ ==pessimistic== off-support and let the policy run free: CQL, IQL.
+- **Q2 — Can we constrain the policy?** Keep $\pi$ near $\beta$ — ==BCQ, BEAR, TD3+BC== — and trade freedom to improve against closeness to the data.
+- **Q3 — Can we constrain the value instead?** CQL makes values conservative; IQL uses in-data value fitting to avoid maximizing over unseen actions.
 - **Q4 — How would you know it worked?** ==Off-policy evaluation== — the question a practitioner asks first, and the one this course has not yet addressed.
+
+### Learning route — improve a policy using only the log
+
+**Bring:** Q-learning targets, actor–critic, model error, and basic importance sampling. The probability appendix supplies the last tool if needed.
+
+::: flow
+- **Diagnose** | find the unobserved action in a target
+- **Restrict / penalize** | compare policy and value methods
+- **Recombine** | use good transitions across trajectories
+- !**Evaluate** | check what the fixed data can support
+:::
+
+By the end, calculate an inflated Q target, a two-action expectile, and an importance-weighted estimate. **CQL's theorem and the OPE estimator catalogue are the advanced layer.**
+
+::: keypoint
+Offline means **no new environment interaction during learning**. Off-policy describes a difference between the data policy and the target policy; it does not necessarily mean offline.
+:::
 
 ## Act 1 — what breaks: distributional shift
 {short: ACT 1, num: Act 1}
@@ -122,7 +139,7 @@ The transition is real: $s$, $a$, $r$, $s'$ were all measured. The highlighted t
 Call the gap $\epsilon(s',a') = Q(s',a') - Q^*(s',a')$. Three properties make it lethal together:
 
 - **It is unbounded off-support.** A neural network's error away from its training distribution has no bound; only its architecture decides what it says there.
-- **The $\max$ selects for it.** $\max_{a'} Q = \max_{a'} (Q^* + \epsilon)$ picks the *largest* $\epsilon$, not a typical one — so the error entering the target is an ==extreme order statistic==, not an average.
+- **The $\max$ selects for it.** $\max_{a'} Q = \max_{a'} (Q^* + \epsilon)$ favors a large combination of true value and error. It need not pick the largest error, but optimization can select optimistic mistakes.
 - **The bootstrap compounds it.** That target becomes a label; the fit spreads it to neighbouring $(s,a)$; the next sweep takes a $\max$ over the raised surface.
 :::
 
@@ -142,12 +159,12 @@ Off-policy learning has always been hard. What follows is not that difficulty; i
 ::: col Online — a closed loop
 $Q$ over-rates $(s,a)$ $\Rightarrow$ the policy tries $a$ at $s$ $\Rightarrow$ the environment returns a disappointing $r, s'$ $\Rightarrow$ the target drops $\Rightarrow$ $Q$ falls.
 
-An optimistic error is ==self-correcting, and it corrects itself fastest exactly where the agent believes most.==
+New visits **can provide corrective evidence**; online learning still needs exploration and a stable update method.
 :::
 ::: col.red Offline — the loop is cut
 $Q$ over-rates $(s,a)$ $\Rightarrow$ the policy would try $a$ at $s$ $\Rightarrow$ **but it may not** $\Rightarrow$ no transition from $(s,a)$ is ever added $\Rightarrow$ the target never drops.
 
-An optimistic error is ==permanent, and it grows, because the $\max$ keeps choosing it.==
+The log supplies no direct corrective observation at that pair. Without other structure or regularization, the error may persist and grow.
 :::
 :::
 
@@ -165,7 +182,7 @@ This is Lecture 4 against Lecture 5 again, in the dynamic world. There, uncertai
 
 ### The deadly triad, with the escape hatch removed
 
-Lecture 8's Act 4 named three ingredients — function approximation, bootstrapping, off-policy data — each harmless alone. Offline RL has all three ==maximally==: the data is not merely off-policy, it comes from a policy we did not choose and cannot re-run. And what online RL had, the ability to go and visit the state–action pair it is wrong about, is precisely what has been withdrawn.
+Lecture 8's Act 4 named three ingredients — function approximation, bootstrapping, off-policy data — whose combination can cause divergence. Standard bootstrapped offline value learning has all three: the data is not merely off-policy, it comes from a policy we did not choose and cannot re-run. And what online RL had, the ability to go and visit the state–action pair it is wrong about, is precisely what has been withdrawn.
 
 ::: widget deadly-triad {"seed":5}
 Lecture 8's counterexample, unchanged. Read the third switch again — *update $s_1\to s_2$ only*. Online that switch is a modelling choice; ==offline it is the dataset==, and there is no switching it off. {p}(Tsitsiklis & Van Roy, 1997)
@@ -175,6 +192,19 @@ Lecture 8's counterexample, unchanged. Read the third switch again — *update $
 
 ::: widget offline-divergence {"seed":11}
 A machine on a ten-step track. The action $a\in[-1,1]$ is how hard you push: bigger jumps further, and within the data bigger is genuinely better — until $|a|>0.5$, where the machine breaks. The operator who logged $D$ never pushed past $0.3$. Run Lecture 8's backup unchanged and $\hat V(s_0)=\max_a Q$ climbs from $0.21$ to ==$990.7$== in fifty sweeps — a factor of $1.21$ per sweep, without bound — while the greedy policy it implies scores ==$-1.00$== in the real machine, every single sweep. Then restrict the $\max$ to the five actions in $D$: the same code settles at $0.788$ and returns $0.767$, the best any in-support policy can do.
+:::
+
+### A target can grow without one new observation
+
+The log contains a transition with reward **1** to state B. At B, action **stay** was observed and has estimated value 2; action **jump** was never observed but the network predicts 20. Let $\gamma=0.9$.
+
+| backup | continuation used | target |
+|---|---|---|
+| unrestricted maximum | 20, from the unsupported action | $1+0.9(20)=19$ |
+| maximum over observed actions | 2 | $1+0.9(2)=2.8$ |
+
+::: keypoint
+Both targets use the same real reward. The difference comes entirely from an **unverified continuation estimate**. Restricting the action set reduces this particular extrapolation risk; it is not a proof that all remaining estimates are correct.
 :::
 
 ### The same disease, one rung up the course
@@ -213,7 +243,7 @@ Lecture 5 promised this slide would return with a policy in place of an optimise
 - The learning rate is too high
 - The dataset is too small to fit $Q$
 - The discount factor is too close to 1
-Online, an over-valued action gets chosen, tried, and disappoints — the error corrects itself. Offline, that feedback loop is cut. The $\max$ systematically selects whichever out-of-distribution action happens to have the largest positive error, feeds it back as a target, and the estimate inflates without limit. It is Lecture 5's adversarial optimiser, wearing a policy.
+Online interaction can supply corrective data for visited actions. Offline, that feedback loop is cut. Maximization can select optimistic unsupported values and feed them back as targets, causing estimates to inflate. It is Lecture 5's adversarial optimiser, wearing a policy.
 :::
 
 ## Act 2 — constrain the policy
@@ -231,17 +261,17 @@ The trivial offline algorithm is **behaviour cloning** — supervised learning o
 
 $$\hat\pi = \argmax_\pi \; \E_{(s,a)\sim D}\big[\log \pi(a\mid s)\big]$$
 
-It is safe, it is stable, and it can never be better than $\beta$. If the logs are a demonstration by an expert, that ceiling is fine and cloning is the right answer.
+It directly fits demonstrated actions. Exact replication has the same expected performance as the behavior policy, but approximation, generalization, and action selection can make it better or worse. It has **no reward-based mechanism for selecting better actions** and no automatic safety guarantee.
 
 ::: reveal
 ::: block What offline RL is *for* | the one capability cloning does not have
-**Stitching.** $D$ may contain no good trajectory at all and still contain a good *policy* — the first half of one mediocre run joined to the second half of another. The Bellman equation does not know or care which trajectory a transition came from; it composes value across them. Cloning imitates trajectories, so it cannot ==recombine== them.
+**Reward-guided stitching.** A Markov state can connect the good first half of one run to the good second half of another. Bellman backups use rewards to identify those continuations. A state-based clone can also produce unseen combinations, but does not explicitly select them by return.
 :::
 :::
 
 ::: reveal
 ::: small
-So the offline problem is not "imitate the data" but ==beat every trajectory in the data, using only transitions the data contains==. Hold those two clauses together: the second is what keeps us safe, the first is what makes the exercise worth doing.
+So the offline problem is not "imitate the data" but ==seek better expected return using supported actions and transitions==. Hold those two clauses together: support reduces extrapolation risk; it does not by itself establish safety or improvement.
 :::
 :::
 
@@ -257,12 +287,12 @@ Two logged routes from **S** to **G**, crossing at **M**. One is cheap early and
 | method | what it constrains | the mechanism |
 |---|---|---|
 | **BCQ** {p}(Fujimoto, Meger & Precup, 2019) | the **support** of $\pi$ | fit a generative model $G_\omega(s)\approx\beta$, sample $n$ candidate actions, allow a small learned perturbation $\xi_\phi$, and take the $\max$ ==only over those== |
-| **BEAR** {p}(Kumar et al., 2019) | the **support**, softly | an MMD penalty between $\pi(\cdot\mid s)$ and $\hat\beta(\cdot\mid s)$ — matches supports without matching densities |
+| **BEAR** {p}(Kumar et al., 2019) | the **support**, softly | an MMD penalty between $\pi(\cdot\mid s)$ and $\hat\beta(\cdot\mid s)$ — encourages similarity using finite-sample MMD; MMD is not literally a support-only distance |
 | **BRAC** {p}(Wu, Tucker & Nachum, 2019) | the **distribution** | an explicit divergence, usually KL, penalised in the actor loss or subtracted from the reward |
 :::
 
 ::: reveal
-The distinction in column two is the one that matters. A **support** constraint says *only propose actions $\beta$ might plausibly have taken*; a **distribution** constraint says *propose them about as often as $\beta$ did.* Stitching survives the first and dies under the second — at $M$, both continuations are in $\beta$'s support, so BCQ may take the better one, while a tight KL to $\beta$ drags the choice back toward the mixture.
+The distinction in column two is the one that matters. A **support** constraint says *only propose actions $\beta$ might plausibly have taken*; a **distribution** constraint says *propose them about as often as $\beta$ did.* A support restriction allows reweighting of observed choices; a tight distribution penalty limits it — at $M$, both continuations are in $\beta$'s support, so BCQ may take the better one, while a tight KL to $\beta$ drags the choice back toward the mixture.
 :::
 
 ::: reveal
@@ -278,7 +308,7 @@ Take TD3 — Lecture 10's overestimation-hardened DDPG — exactly as it stands.
 
 $$\pi \;\leftarrow\; \argmax_\pi\; \E_{(s,a)\sim D}\Big[\,\hl{\lambda}\, Q(s, \pi(s)) \;-\; \big(\pi(s) - a\big)^2\,\Big], \qquad \lambda = \frac{\alpha}{\frac1N\sum_i |Q(s_i,a_i)|}$$
 
-A behaviour-cloning term, and a normaliser $\lambda$ that makes the single hyperparameter $\alpha$ scale-free across tasks. No generative model, no divergence estimate, no extra network.
+A behaviour-cloning term, and a normaliser $\lambda$ that reduces sensitivity to the scale of Q; it does not eliminate task dependence. No generative model, no divergence estimate, no extra network.
 
 ::: reveal
 ::: small
@@ -288,19 +318,19 @@ It is worth dwelling on how little this is. On the D4RL benchmark it matches or 
 
 ::: reveal
 ::: block The cost the whole family pays | and it cannot be paid down
-Wherever the constraint **binds**, the policy inherits $\beta$'s ceiling. If $\beta$ was competent, that is cheap. If $\beta$ dithered, staying near it means dithering. And the constraint binds hardest exactly where $\beta$ was least confident — which is often where the improvement was available.
+A tight distribution constraint can limit improvement. A support constraint can still select better actions than the behavior policy by changing their probabilities. The right restriction depends on coverage and estimation error.
 :::
 :::
 
 ### Check — what offline RL is for
 {q: 2}
 
-::: quiz If the policy must stay close to the data-collecting policy, why not simply clone it? What can offline RL do that behaviour cloning cannot?
+::: quiz If the policy must stay close to the data-collecting policy, why not simply clone it? What does a reward-based offline RL objective explicitly try to achieve?
 - Learn from fewer trajectories
-- =Stitch: combine the good segments of several mediocre trajectories into a path better than any single trajectory in the data
+- =Use rewards to choose good segments across trajectories, potentially improving on the logged behavior
 - Handle continuous action spaces
 - Guarantee it will never perform worse than the behaviour policy
-Cloning can only reproduce the average of what it saw. Because the Bellman equation propagates value **across** trajectories through shared states, offline RL can discover that the first half of one poor trajectory joins the second half of another to make a good one — a route nobody in the dataset ever drove. That is the whole reason to accept the difficulty.
+Cloning maximizes action likelihood rather than return. Because the Bellman equation propagates value **across** trajectories through shared states, offline RL can discover that the first half of one poor trajectory joins the second half of another to make a good one — a route nobody in the dataset ever drove. That is the whole reason to accept the difficulty.
 :::
 
 ## Act 3 — constrain the value
@@ -317,7 +347,7 @@ Cloning can only reproduce the average of what it saw. Because the Bellman equat
 $$\min_Q \;\; \hl{\alpha}\Big(\underbrace{\E_{s\sim D,\, a\sim\mu}\big[Q(s,a)\big]}_{\text{(i) push down what }\pi\text{ likes}} - \underbrace{\E_{(s,a)\sim D}\big[Q(s,a)\big]}_{\text{(ii) hold up what the data has}}\Big) \;+\; \underbrace{\tfrac12\,\E_{D}\Big[\big(Q - \mathcal{B}\hat Q\big)^2\Big]}_{\text{(iii) the usual Bellman error}}$$
 
 - **(i)** $\mu$ is the distribution the learner is drawn toward — in CQL(H), the softmax of $Q$ itself, which makes the term a soft $\max$. Whatever $Q$ currently loves, push it down.
-- **(ii)** without this the whole surface sinks and $Q\to-\infty$ everywhere. It holds up precisely the actions $\beta$ actually took.
+- **(ii)** the counter-term offsets pessimism on data actions. With a fixed target, the squared Bellman error already anchors observed predictions; removing the counter-term does not imply every value tends to minus infinity.
 - **(iii)** unchanged from Lecture 8.
 
 ::: reveal
@@ -326,22 +356,25 @@ The policy may still maximise freely. It will simply find that ==the peaks it us
 :::
 :::
 
-### Why it is a lower bound, and on what
+### What the CQL lower-bound statement actually covers
 
-::: block Theorem 3.2, informally | Kumar et al., 2020
-With $\mu = \pi$, the fixed point of the CQL update satisfies, for every $s$ in the support of $D$,
+The theoretical result concerns a **policy value**, averaged over that policy's actions:
 
-$$\hat V^\pi(s) \;=\; \E_{a\sim\pi}\big[\hat Q(s,a)\big] \;\le\; V^\pi(s) \qquad \text{for } \alpha \text{ large enough.}$$
+$$\hat V^\pi(s)=\E_{a\sim\pi}[\hat Q(s,a)]\le V^\pi(s).$$
 
-The per-action correction is $-\alpha\big[\tfrac{\pi(a\mid s)}{\hat\beta(a\mid s)} - 1\big]$, so $\hat Q$ is pushed *down* wherever $\pi$ is more eager than $\beta$ and *up* where it is more timid; the expectation under $\pi$ of that quantity is a divergence, hence non-negative.
+It requires the theorem's coverage, estimation-error, update, and sufficiently large penalty assumptions. The practical neural-network loss does not automatically certify those assumptions.
+
+::: cols
+::: col What it can say
+Under the stated assumptions, the estimated value of the evaluated policy is conservative.
+:::
+::: col.accent What it does not say
+Every action value is a lower bound; any extracted policy is safe; or every trained network has the guarantee.
+:::
 :::
 
-::: reveal
-Read the direction carefully, exactly as in Lecture 5. It does **not** say $\hat Q$ is accurate — off-support it can still be badly wrong. It says the ==value of the policy you extract is under-promised==, so a policy that looks good on $\hat Q$ cannot be a hallucination. It is the same guarantee COMs gives, with $x$ replaced by $(s,a)$.
-
-::: small
-Note also what CQL is *not*. Its lower bound holds on $\hat V^\pi$, not pointwise on $\hat Q$, and only for $\alpha$ above a problem-dependent threshold that the theorem does not tell you how to compute. Which is why the next slide is a dial rather than a formula.
-:::
+::: keypoint
+Keep **theoretical scope**, **training objective**, and **measured performance** distinct, just as we did for COMs in Lecture 5. {p}(Kumar et al., 2020, Theorem 3.2)
 :::
 
 ### Turning the dial
@@ -369,8 +402,24 @@ The improvement operator becomes an ==in-support maximum, obtained without ever 
 
 ::: reveal
 ::: small
-The policy is then extracted separately by advantage-weighted regression, $\;\pi = \argmax_\pi \E_D\big[\exp(\varkappa\,(Q(s,a)-V(s)))\log\pi(a\mid s)\big]$ — a weighted behaviour clone, which is why IQL is both cheap and stable. The price is that the in-support maximum is estimated from however many actions $\beta$ happened to try at $s$; where $\beta$ was nearly deterministic, there is nothing for the expectile to climb.
+The policy is then extracted separately by advantage-weighted regression, $\;\pi = \argmax_\pi \E_D\big[\exp(\varkappa\,(Q(s,a)-V(s)))\log\pi(a\mid s)\big]$ — a weighted behaviour clone, which is why IQL avoids one important source of training extrapolation. The price is that the in-support maximum is estimated from however many actions $\beta$ happened to try at $s$; where $\beta$ was nearly deterministic, there is nothing for the expectile to climb.
 :::
+:::
+
+### Expectile regression — two observed actions are enough to see it
+
+At one state, suppose the log contains the two actions equally often, with Q values **2 and 6**. For an expectile $m$ between them:
+
+$$\tau(6-m)=(1-\tau)(m-2).$$
+
+| expectile level | fitted value | interpretation |
+|---|---|---|
+| $\tau=0.5$ | 4 | ordinary mean |
+| $\tau=0.8$ | 5.2 | pulled toward the higher observed value |
+| $\tau\to1$ | approaches 6 | approaches the observed maximum |
+
+::: keypoint
+IQL can favor better observed actions without asking Q to score a newly invented action. At finite $\tau$, an expectile is **not an exact maximum**; the learned actor can still generalize outside the data.
 :::
 
 ### One dial, and both ends are bad
@@ -381,18 +430,18 @@ The policy is then extracted separately by advantage-weighted regression, $\;\pi
 |---|---|---|
 | **COMs**, $\alpha$ | the optimiser escapes the data and returns a hallucinated design | the surface flattens; ascent cannot move at all |
 | **CQL**, $\alpha$ | the $\max$ escapes the support and $Q$ diverges | $\hat Q$ tracks $\log\hat\beta$; the argmax becomes $\beta$'s modal action — ==behaviour cloning, arrived at by accident== |
-| **IQL**, $\tau$ | $V \to \E_\beta[Q]$; no improvement over the behaviour policy | the expectile chases the largest *sampled* $Q$ and re-imports the over-estimation it was designed to avoid |
+| **IQL**, $\tau$ | $V \to \E_\beta[Q]$; mean-value fitting; actor weighting can still favor better actions | the expectile chases the largest *sampled* $Q$ and re-imports the over-estimation it was designed to avoid |
 :::
 
 ::: reveal
 ::: keypoint
-It is the same dial in all three rows — ==how far may we trust a model beyond its evidence== — and in all three, both ends fail.
+It is the same dial in all three rows — ==how far may we trust a model beyond its evidence== — and in all three, extreme settings can be unhelpful; the three parameters are not mathematically identical.
 :::
 :::
 
 ::: reveal
 ::: small
-Which is Lecture 5's closing move as well: convert the penalty into a *constraint* with a budget read in the units of the objective, so the hyperparameter is comparable across problems. TD3+BC's normaliser $\lambda$ and CQL's Lagrangian variant are both that move.
+Which is Lecture 5's closing move as well: convert the penalty into a *constraint* with a budget read in the units of the objective, so the budget has an interpretable scale; cross-task transfer still needs checking. TD3+BC's normaliser $\lambda$ and CQL's Lagrangian variant are both that move.
 :::
 :::
 
@@ -402,7 +451,7 @@ Which is Lecture 5's closing move as well: convert the penalty into a *constrain
 ::: quiz CQL adds a term that pushes $Q$ *down* on actions not in the data. Which earlier idea is this, exactly?
 - The trust region of Lecture 1 and Lecture 10
 - The $\varepsilon$-greedy exploration tax of Lecture 8
-- =The conservative objective model of Lecture 5 — make the learned score a lower bound off the data, so the optimiser cannot exploit your ignorance
+- =The conservative objective model of Lecture 5 — penalize unsupported high predictions while fitting the data, reducing the incentive to exploit estimation error
 - The target network of Lecture 8
 The static half and the dynamic half of this course meet the identical failure and answer it with the identical instrument. There, an optimiser exploited a surrogate $\hat{f}$ off the data; here, a policy exploits a learned $Q$ on unseen actions. Both are cured by training the model to be **pessimistic in proportion to its ignorance** — and both come with the same over-conservatism at the far end of the dial.
 :::
@@ -425,7 +474,7 @@ $$\tilde r(s,a) \;=\; r(s,a) \;-\; \hl{\lambda\, u(s,a)}$$
 ::: reveal
 ::: cols
 ::: col MOPO {p}(Yu et al., 2020)
-$u(s,a)$ is the maximum standard deviation across a bootstrapped ensemble of dynamics models — Lecture 5's `ensemble-alarm`, now measuring disagreement about *where you will end up* rather than about *how good it is*. The result lower-bounds the true return of the policy in the real MDP.
+$u(s,a)$ is the maximum standard deviation across a bootstrapped ensemble of dynamics models — Lecture 5's `ensemble-alarm`, now measuring disagreement about *where you will end up* rather than about *how good it is*. A theoretical lower bound requires a valid model-error bound; empirical ensemble uncertainty is a proxy, not an automatic certificate.
 :::
 ::: col MOReL {p}(Kidambi et al., 2020)
 Harder-edged: an *unknown state–action detector* partitions the space, and every pair it flags is routed to an absorbing state with the worst possible reward. Planning then avoids the unknown region because the model says it is a cliff.
@@ -449,10 +498,10 @@ Every method so far has kept Bellman and defended it. The last family does not k
 ::: col Decision Transformer {p}(Chen et al., 2021)
 Model the trajectory as a sequence: $\;\hat R_1, s_1, a_1, \hat R_2, s_2, a_2, \dots$, where $\hat R_t=\sum_{t'\ge t} r_{t'}$ is the **return-to-go**. Train a causal transformer to predict $a_t$. At test time, *condition* on the return you want and let it autoregress.
 
-No bootstrapping, so ==no divergence to defend against==. The failure mode moves instead: ask for a return the data never achieved and it will confabulate.
+It avoids Bellman bootstrapping and its particular feedback loop; training and generalization can still fail. The failure mode moves instead: ask for a return the data never achieved and it will confabulate.
 :::
 ::: col.accent Diffuser {p}(Janner et al., 2022)
-Go further: learn a diffusion model over ==whole trajectories== and generate one, guided by a reward gradient. Planning becomes sampling; the model's own support is the constraint, for free.
+Go further: learn a diffusion model over ==whole trajectories== and generate one, guided by a reward gradient. Planning becomes sampling; the learned distribution guides the proposal, but feasibility and dynamics consistency are not guaranteed for free.
 :::
 :::
 
@@ -470,25 +519,40 @@ You have a candidate policy $\pi$. You cannot deploy it to find out whether it i
 ::: col Importance sampling
 $$\hat V_{\text{IS}} = \frac1n \sum_{j=1}^{n} \Big(\prod_{t=1}^{H} \frac{\pi(a_t^j\mid s_t^j)}{\beta(a_t^j\mid s_t^j)}\Big) G^j$$
 
-Unbiased, model-free — and the weight is a ==product of $H$ ratios==.
+Unbiased with correct behavior probabilities, matching environment dynamics, and target-policy support covered by the data policy. The weight is a **product of ratios**.
 :::
 ::: col.accent Per-decision IS {p}(Precup, Sutton & Singh, 2000)
 $$\hat V_{\text{PDIS}} = \frac1n\sum_j \sum_{t=1}^{H} \gamma^{t-1}\Big(\prod_{t'\le t}\rho^j_{t'}\Big) r_t^j$$
 
-A reward at step $t$ cannot depend on later actions, so it should not be reweighted by them. Strictly better, still exponential.
+A reward at step $t$ cannot depend on later actions, so it should not be reweighted by them. This avoids unnecessary future-action ratios; it often reduces variance, without a universal strict ranking.
 :::
 :::
 
 ::: reveal
 ::: small
-Write $\mathbb{E}_\beta[\rho^2] = q$. Then $\mathrm{Var}(\prod_t \rho_t)$ grows like $q^H$, so the estimator's standard error grows like ==$q^{H/2}$== — geometric in the horizon, with a base fixed by how far $\pi$ has moved from $\beta$. This is the wall, and no amount of data of a fixed size climbs it.
+In the independent, identical-step example below, let $\E_\beta[\rho^2]=q$. Then $\E[W^2]=q^H$ and $\mathrm{Var}(W)=q^H-1$, so the estimator's standard error grows like ==$q^{H/2}$== — geometric in the horizon, with a base fixed by how far $\pi$ has moved from $\beta$. This is the wall, and no amount of data of a fixed size climbs it.
 :::
+:::
+
+### Importance sampling — change frequencies, not rewards
+
+One decision, two actions. The behavior policy uses probabilities **(0.5, 0.5)**; the target policy uses **(0.8, 0.2)**. Rewards are **(1, 0)**.
+
+| logged action | target / behavior weight | weighted reward |
+|---|---|---|
+| A | $0.8/0.5=1.6$ | 1.6 |
+| B | $0.2/0.5=0.4$ | 0 |
+
+With one observation of each, IS gives $(1.6+0)/2=0.8$, matching the target's true value. This exact agreement is specific to this balanced sample.
+
+::: keypoint
+If behavior never chooses A, its ratio is undefined and the log cannot identify A's reward without additional assumptions. **No estimator repairs missing support by arithmetic alone.**
 :::
 
 ### The variance, measured
 
 ::: widget ope-variance {"seed":9}
-$H$ decisions, two actions, $\beta$ a coin flip and $\pi$ choosing the good action nine times in ten, so $q = 1.64$ and $V^\pi = 0.9H$. With $n=200$ logged trajectories, ordinary IS has a root-mean-square error of $0.069$ at $H=1$ and ==$636$ at $H=24$== — where the quantity being estimated is $21.6$. Doubly robust with a 5 % reward-model error runs a decade and a half below it, ==and parallel to it==: it scales the exponential down, it does not remove it. Only the self-normalised and model-based estimators stay usable, and both are biased.
+$H$ decisions, two actions, $\beta$ a coin flip and $\pi$ choosing the good action nine times in ten, so $q = 1.64$ and $V^\pi = 0.9H$. With $n=200$ logged trajectories, ordinary IS has a root-mean-square error of $0.069$ at $H=1$ and ==$636$ at $H=24$== — where the quantity being estimated is $21.6$. Doubly robust with a 5 % reward-model error runs a decade and a half below it, ==and parallel to it==: it scales the exponential down, it does not remove it. Self-normalized and fitted estimators look steadier in this example; that does not guarantee accurate evaluation at long horizons in general.
 :::
 
 ### What a practitioner actually runs
@@ -497,16 +561,16 @@ $H$ decisions, two actions, $\beta$ a coin flip and $\pi$ choosing the good acti
 ::: col Doubly robust {p}(Jiang & Li, 2016; Thomas & Brunskill, 2016)
 $$\hat V_{\text{DR}} = \hat V(s_1) + \sum_{t} \gamma^{t-1} \Big(\textstyle\prod_{t'\le t}\rho_{t'}\Big)\big(r_t + \gamma \hat V(s_{t+1}) - \hat Q(s_t,a_t)\big)$$
 
-Unbiased if *either* the ratios or the model is right. The weights now multiply ==Bellman residuals== rather than returns, so a good model shrinks the variance in proportion to how good it is.
+Under support and appropriate independent fitting, DR is unbiased when the ratios are correct or the relevant Q model is exact. The weights now multiply ==Bellman residuals== rather than returns, so a good model shrinks the variance in proportion to how good it is.
 :::
 ::: col Fitted Q evaluation {p}(Le, Voloshin & Yue, 2019)
-Regress $Q^\pi$ directly: $\;Q \leftarrow r + \gamma\, \E_{a'\sim\pi}[Q(s',a')]$, fitted on $D$. Low variance at any horizon, and a bias that ==does not shrink with $n$== — it is the bias of the function class, evaluated off-support.
+Regress $Q^\pi$ directly: $\;Q \leftarrow r + \gamma\, \E_{a'\sim\pi}[Q(s',a')]$, fitted on $D$. FQE avoids products of trajectory ratios, but its error still depends on horizon, coverage, function approximation, and fitting. More data can reduce estimation error; misspecification or missing support can leave irreducible error.
 :::
 :::
 
 ::: reveal
 ::: block The honest verdict | and the reason to report more than one number
-Every estimator is somewhere on one line: unbiased and unusable at long horizons, or usable and biased. Run several, and treat their **disagreement** as the confidence interval — the ensemble alarm of Lecture 5, pointed at an evaluation instead of a prediction.
+Compare estimators and inspect coverage and importance weights. Their **disagreement is a diagnostic, not a confidence interval**. Any reported uncertainty interval needs an explicit construction and its assumptions; agreement alone cannot establish accuracy.
 :::
 :::
 
@@ -537,7 +601,7 @@ One failure, three answers — and then the whole map, stood back up.
 ::: table center
 | | what is made conservative | the cost |
 |---|---|---|
-| **Policy** — BCQ · BEAR · TD3+BC | *where $\pi$ may look* | inherits $\beta$'s ceiling where it binds |
+| **Policy** — BCQ · BEAR · TD3+BC | *where $\pi$ may look* | can restrict improvement where it binds |
 | **Value** — CQL · IQL | *what $Q$ may promise* | $\alpha$, $\tau$ tuned blind, and both ends fail |
 | **Model** — MOPO · MOReL | *what $\hat P$ may claim* | needs calibrated uncertainty, which is hard |
 :::
@@ -563,7 +627,7 @@ Lecture 0's cube, walked to its last cell: ⑤ ==the interaction withdrawn==. St
 ### Every algorithm in Part IV assumed it could try something.
 {layout: standout}
 
-Take that away and the Bellman equation starts lying — because the term it needs is evaluated at actions nobody ever took. The cure is not a better optimiser. It is a model taught to doubt itself exactly where it will be attacked.
+Take that away and estimated Bellman targets become unreliable — because the term it needs is evaluated at actions nobody ever took. The cure is not a better optimiser. It is a model taught to doubt itself exactly where it will be attacked.
 
 ### Questions?
 {layout: standout}
@@ -589,7 +653,7 @@ Complete statements, kept out of the narrative.
 :::
 
 ::: small
-The middle column is where the confusion usually sits. Q-learning has always been off-policy, and Lecture 8 showed it converging happily while behaving $\varepsilon$-greedily. What made that work was not the algorithm but the clause "with every $(s,a)$ visited infinitely often" in Watkins & Dayan's theorem. Offline, that clause is false by construction, and everything downstream of it fails. {p}(Levine, Kumar, Tucker & Fu, 2020)
+The middle column is where the confusion usually sits. Q-learning has always been off-policy, and Lecture 8 showed it converging happily while behaving $\varepsilon$-greedily. What made that work was not the algorithm but the clause "with every $(s,a)$ visited infinitely often" in Watkins & Dayan's theorem. A finite log generally cannot supply fresh samples from every true transition law. Replaying every covered pair infinitely often can solve an empirical MDP; it does not remove uncertainty about the real MDP. A fully covered deterministic finite problem, such as the stitching example, can still be solved from a finite log. {p}(Levine, Kumar, Tucker & Fu, 2020)
 :::
 
 ### Backup 2 — the CQL objective, term by term
@@ -601,12 +665,12 @@ $$\min_Q \;\max_{\alpha\ge0}\;\; \alpha\Big(\E_{s\sim D,\,a\sim\mu(\cdot\mid s)}
 
 $$\alpha\,\E_{s\sim D}\Big[\log\textstyle\sum_a \exp Q(s,a) \;-\; \E_{a\sim\hat\beta}\big[Q(s,a)\big]\Big]$$
 
-The first term is a soft $\max$ over all actions; the second is the empirical behaviour average. Their difference is non-negative and vanishes only when $\mathrm{softmax}(Q) = \hat\beta$ — which is the precise sense in which ==$\alpha\to\infty$ turns CQL into behaviour cloning==.
+The first term is a soft $\max$ over all actions; the second is the empirical behaviour average. For discrete actions, the difference is $H(\hat\beta)+D_{\mathrm{KL}}(\hat\beta\|\mathrm{softmax}(Q))$. Its minimum is **$H(\hat\beta)$**, not generally zero. A dominant penalty encourages softmax scores to match behavior frequencies; greedy extraction then favors the mode.
 
-**The Lagrangian form.** The $\max_{\alpha}$ with a budget $\tau$ is Lecture 5's move again: $\tau$ is read in the units of the value function and transfers across tasks, where a raw $\alpha$ does not.
+**The Lagrangian form.** The $\max_{\alpha}$ with a budget $\tau$ is Lecture 5's move again: $\tau$ is read in the units of the value function and is interpretable on the value scale, but is not automatically transferable across tasks.
 
 ::: small
-**Why the counter-term is not optional.** Delete $-\E_D[Q]$ and the minimiser drives $Q\to-\infty$ everywhere; the Bellman error alone cannot hold it up, because a constant shift changes $Q - \gamma Q$ by only $(1-\gamma)$ per unit.
+**Why the counter-term is not optional.** The counter-term protects supported actions from excessive pessimism. With fixed Bellman targets, squared error anchors observed values; a linear pessimism term alone does not imply that every Q value diverges downward.
 :::
 
 ### Backup 3 — expectile regression, and why $\tau\to1$ is an in-support max
@@ -616,7 +680,7 @@ For a random variable $X$, the $\tau$-expectile $m_\tau$ is the minimiser of $\E
 
 $$\tau\,\E\big[(X-m_\tau)_+\big] \;=\; (1-\tau)\,\E\big[(m_\tau-X)_+\big]$$
 
-so $m_{1/2}=\E[X]$, and as $\tau\to1$ the right side must vanish, forcing $m_\tau\to\operatorname{ess\,sup}X$. IQL applies this with $X = Q(s,a)$, $a\sim\hat\beta(\cdot\mid s)$ — hence the supremum is over the ==support of the behaviour policy at $s$==, never over the whole action set.
+so $m_{1/2}=\E[X]$, and for bounded $X$, as $\tau\to1$ the expectile approaches $\operatorname{ess\,sup}X$. IQL applies this with $X = Q(s,a)$, $a\sim\hat\beta(\cdot\mid s)$ — hence the supremum is over the ==support of the behaviour policy at $s$==, never over the whole action set.
 
 **The two losses, in order.**
 
@@ -634,16 +698,18 @@ Note what is absent from every line: an action that is not in $D$. IQL is the on
 ### Backup 4 — the OPE estimators, and where each one breaks
 {fill: top}
 
-Behaviour $\beta$, target $\pi$, per-step ratio $\rho_t = \pi(a_t\mid s_t)/\beta(a_t\mid s_t)$, trajectory weight $W = \prod_{t\le H}\rho_t$.
+Let $\rho_t=\pi(a_t\mid s_t)/\beta(a_t\mid s_t)$ and $W=\prod_t\rho_t$. Assume target support is covered and environment dynamics are shared.
 
-| estimator | form | bias | variance |
-|---|---|---|---|
-| **IS** | $\frac1n\sum_j W^j G^j$ | none | $\propto q^H$, $q=\E_\beta[\rho^2]$ |
-| **PDIS** | $\frac1n\sum_j\sum_t \gamma^{t-1}W^j_{1:t} r^j_t$ | none | same base, smaller constant |
-| **WIS** | $\sum_j W^j G^j \big/ \sum_j W^j$ | $O(1/n)$, toward $\beta$'s own return | bounded — $W/\sum W \le 1$ |
-| **DR** | $\hat V(s_1)+\sum_t \gamma^{t-1}W_{1:t}\big(r_t+\gamma\hat V(s_{t+1})-\hat Q(s_t,a_t)\big)$ | none if *either* $\rho$ or $\hat Q$ is right | $q^H$ scaled by the Bellman residual |
-| **FQE** | fixed point of $Q\leftarrow r+\gamma\E_{a'\sim\pi}Q(s',a')$ on $D$ | function-class bias off-support | low at any $H$ |
+| estimator | main calculation | practical limitation |
+|---|---|---|
+| **IS** | average $WG$ | unbiased with correct ratios; variance can be very large |
+| **PDIS** | weight each reward by its prefix ratios | avoids unnecessary future ratios; can still have high variance |
+| **WIS** | $\sum_j W^jG^j/\sum_jW^j$ | finite-sample bias; direction varies; few weights can dominate |
+| **DR** | model estimate + weighted TD residuals | correct ratios or exact Q can preserve unbiasedness with appropriate fitting; no universal variance cure |
+| **FQE** | regress on $r+\gamma\E_{a'\sim\pi}Q(s',a')$ | depends on coverage, horizon, function class, and fitting |
 
-::: small
-**Two things the table hides.** First, the ratios $\rho_t$ require a *known or estimated* $\beta$; when the logs came from a human operator, estimating $\beta$ is itself a modelling problem whose error enters multiplicatively. Second, the empirical variance of IS is not a safe diagnostic: with the weight distribution this heavy-tailed, a sample standard deviation computed from a few hundred replications systematically ==under-reports== the true error — in the Act 4 experiment it reads $112$ at $H=24$ where the exact value is $636$. An estimator that looks fine and is not is worse than one that looks bad.
+::: keypoint
+Estimated behavior probabilities add error. Rare large weights may be absent from a small test sample, making the apparent error misleadingly small. Estimator disagreement is a diagnostic, **not a confidence interval**.
 :::
+
+WIS stays within the observed return range when its denominator is positive; that does not imply closeness to the true policy value. Detailed IS, PDIS, and DR formulas are in Act 4.

@@ -10,7 +10,7 @@
    action nine times in ten -- so the per-step ratio is 1.8 or 0.2 and
    E_beta[rho^2] = q = 1.64.
 
-   IS, per-decision IS, doubly robust and the direct (model / FQE)
+   IS, per-decision IS, doubly robust and the direct reward-model
    estimator all have CLOSED-FORM error here, and the widget draws
    those exact curves rather than a simulation, because a simulation of
    this quantity is itself untrustworthy -- see below. Only weighted IS,
@@ -124,7 +124,7 @@ IE437.widget('ope-variance', function (host, opts) {
     { k: 'PDIS',  lab: 'per-decision IS',     col: AMBER, w: 2.0 },
     { k: 'DR',    lab: 'doubly robust',       col: GREEN, w: 2.2 },
     { k: 'WIS',   lab: 'weighted IS',         col: BLUE,  w: 2.0 },
-    { k: 'MODEL', lab: 'model / FQE',         col: SLATE, w: 1.8, dash: '4 3' }
+    { k: 'MODEL', lab: 'direct model',         col: SLATE, w: 1.8, dash: '4 3' }
   ];
 
   function draw() {
@@ -188,7 +188,7 @@ IE437.widget('ope-variance', function (host, opts) {
     /* ---------- readout ---------- */
     var rows = [['importance sampling', c.IS, RED], ['per-decision IS', c.PDIS, AMBER],
                 ['weighted IS', WISC[H], BLUE], ['doubly robust', c.DR, GREEN],
-                ['model / FQE', c.MODEL, SLATE]];
+                ['direct model', c.MODEL, SLATE]];
     host.querySelector('[data-num]').innerHTML =
       '<b>H = ' + H + '</b> &middot; n = ' + NTRAJ + ' logged trajectories<br>' +
       'the true value is <b>' + c.V.toFixed(1) + '</b><br>' +

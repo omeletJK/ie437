@@ -96,17 +96,14 @@ Two objects, and they are the two halves of the lecture: a **generative model** 
 :::
 :::
 
-### Three things sampling buys that searching cannot
-{sub: the source deck's own list, and the reason the second route is not merely the first one backwards}
+### What generation changes — and what still needs checking
 
-- **No optimisation to solve.** There is no ascent to run, so there is no ascent that can run away. You draw a sample; that is the whole decision.
-- **Diversity, for free.** A generative model is multi-modal by construction, so one query returns ==a spread of distinct good designs==, not one point. An $\argmax$ returns one answer even when the problem has several.
-- **The constraints come for nothing.** The model was trained only on feasible designs, so ==every sample is on the manifold by construction== — which is precisely the failure Lecture 5 could only mitigate.
+- **A different search mechanism.** A trained generator can propose designs directly. Training, conditional sampling or latent optimisation may still be expensive.
+- **Several candidate answers.** Stochastic generation can represent distinct design modes, although a trained model can miss modes or generate duplicates.
+- **A learned preference for plausible designs.** Training on feasible examples encourages similar outputs. It does not prove that every output satisfies physical or combinatorial constraints.
 
-::: reveal
 ::: keypoint
-Lecture 5 fights to stay on the valid manifold. Lecture 6 ==never leaves it==, because it never moves through input space at all.
-:::
+==Generate candidates, then check constraints and assess their scores.== Exact feasibility needs a construction that enforces it, a repair procedure, or a separate check.
 :::
 
 ### The roadmap — four questions
@@ -118,6 +115,20 @@ Lecture 5 fights to stay on the valid manifold. Lecture 6 ==never leaves it==, b
 - **Q2 — How do we model valid designs at all?** ==Generative models== — a prior $p(x)$ whose support is the manifold.
 - **Q3 — One concrete model, worked through.** The ==VAE==: encoder, decoder, and a latent space you can sample.
 - **Q4 — How do we steer toward *good* designs?** ==Conditioning== — CbAS, and Model Inversion Networks.
+
+### Learning route — represent several answers, then favour good ones
+
+**Start with:** conditional probability, likelihood, a regression loss and sampling from a Gaussian.
+
+::: flow
+- **Represent** | one desired score can correspond to several designs
+- **Generate** | encode and decode a latent variable with a VAE
+- **Condition** | reweight plausible designs toward the requested outcome
+:::
+
+::: keypoint
+You should be able to ==explain why averaging designs can fail, calculate an ELBO, and normalise conditioning weights.== The diffusion and score-SDE derivations are optional extensions.
+:::
 
 ## Act 1 — inverting the function
 {short: ACT 1, num: Act 1}
@@ -157,8 +168,32 @@ The forward map is single-valued: one design, one score. Run it backwards and it
 
 ::: reveal
 ::: keypoint
-So the inverse map must be **stochastic**: $f^{-1}_\theta:\mathcal{Y}\times\mathcal{Z}\to\mathcal{X}$, with $z\sim p_0(z)$ supplying the choice among the many valid answers.
+To represent multiple answers, use a **stochastic** inverse: $f^{-1}_\theta:\mathcal{Y}\times\mathcal{Z}\to\mathcal{X}$, with $z\sim p_0(z)$ supplying the choice among the many valid answers.
 :::
+:::
+
+### Why the average answer can be wrong
+{sub: one desired value, two valid inverse solutions}
+
+Take the forward map $y=x^2$. The requested value $y=4$ has two solutions, $x=-2$ and $x=2$.
+
+::: cols c2
+::: col Predict one number by squared error
+If the two designs are equally common, the conditional mean is
+
+$$\mathbb E[x\mid y=4]=\tfrac12(-2)+\tfrac12(2)=0.$$
+
+But $f(0)=0$, not 4.
+:::
+::: col.accent Model the two alternatives
+A conditional distribution can put probability $1/2$ on each of $-2$ and $2$.
+
+Every draw then has score 4. A deterministic rule could also choose one branch, but it would not represent both alternatives.
+:::
+:::
+
+::: keypoint
+==Average scores and scores of average designs are different.== A distribution preserves alternatives that a mean prediction can erase.
 :::
 
 ### The answer set, and the point in the middle of it
@@ -250,10 +285,10 @@ Which is the whole point for us. Lecture 5's second failure — "only a thin sli
 
 Learning a generative model means picking the member of the model family closest to the data distribution. Write that down and it collapses into something you already know:
 
-$$\argmin_{p_\theta}\ \mathbb{D}_{\mathrm{KL}}\big(p_{\text{data}}\,\|\,p_\theta\big) \;=\; \hl{\max_{p_\theta}\ \frac{1}{|D|}\sum_{x_i\in D}\log p_\theta(x_i)}$$
+$$\argmin_{p_\theta}\ \mathbb{D}_{\mathrm{KL}}\big(p_{\text{data}}\,\|\,p_\theta\big) \;=\; \hl{\argmax_{p_\theta}\ \mathbb E_{p_{\text{data}}}[\log p_\theta(x)]}$$
 
 ::: reveal
-The KL divergence $\mathbb{D}_{\mathrm{KL}}(P\|Q) = \E_{x\sim P}[\log P(x)/Q(x)]$ measures the inefficiency of using $Q$ in place of $P$. Its first term does not involve $\theta$, so minimising it is maximising the average log-likelihood of the data — ==Act 1's "KL $\Rightarrow$ maximum likelihood" row, arriving one act early and for the same reason.==
+The KL divergence $\mathbb{D}_{\mathrm{KL}}(P\|Q) = \E_{x\sim P}[\log P(x)/Q(x)]$ measures the inefficiency of using $Q$ in place of $P$. Its first term does not involve $\theta$, so minimising it is maximising expected log-likelihood, estimated by the sample average $N^{-1}\sum_i\log p_\theta(x_i)$ — ==Act 1's "KL $\Rightarrow$ maximum likelihood" row, arriving one act early and for the same reason.==
 :::
 
 ::: reveal
@@ -281,7 +316,7 @@ The latent axes are the ==degrees of freedom a valid design actually has==. A pr
 
 ::: reveal
 ::: small
-Note what this buys before any optimisation happens. A design expressed in latent coordinates is valid ==for every value of $z$==, because the decoder was only ever trained to emit valid designs. The manifold has become the whole space.
+Note what this buys before any optimisation happens. A decoder learns to place probability near the data distribution. Unusual latent inputs and model error can still produce invalid outputs; feasibility is guaranteed only when the representation or decoder enforces the constraints.
 :::
 :::
 
@@ -307,10 +342,10 @@ Any of the four can serve as the prior $p(x)$ in a generative design pipeline, a
 
 ::: quiz Why does sampling from a learned distribution over designs help where searching a surrogate did not?
 - Sampling is computationally cheaper than optimisation
-- =Because the model is trained to put mass on designs that look like real ones, the samples stay on the data manifold instead of running off it
+- =It biases proposals toward designs resembling the data, although feasibility still needs checking
 - Generative models cannot extrapolate, so they are safe by construction
 - Because the generated designs are guaranteed to beat everything in the dataset
-The surrogate pipeline failed by leaving the data behind. A generative model carries the constraint "this must look like a real design" **inside** it — off-manifold points simply have low probability, so they are rarely produced. The safety is not free, though: the same pull toward the data is what makes it reluctant to propose anything genuinely new.
+The surrogate pipeline failed by leaving the data behind. A generative model carries the constraint "this must look like a real design" **inside** it — off-manifold points simply have low probability, so they are rarely produced. This is a learned bias, not a feasibility certificate: the same pull toward the data is what makes it reluctant to propose anything genuinely new.
 :::
 
 ## Act 3 — the VAE
@@ -336,13 +371,13 @@ $$\mathrm{KL}\big(q_\phi(z\mid x)\,\|\,p(z\mid x)\big) = -\text{ELBO} + \log p(x
 
 ::: reveal
 ::: keypoint
-Maximising the evidence $=$ maximising the ELBO $=$ ==driving $q_\phi$ onto the true posterior.== Three readings of one inequality.
+==The ELBO is a lower bound, not generally the exact evidence.== For fixed $\theta$, improving $q_\phi$ tightens the bound; equality holds only when it equals the true posterior.
 :::
 :::
 
 ::: reveal
 ::: small
-Lecture 2 wrote a variational posterior over one parameter and solved it in closed form. This is that idea with a neural network in place of the closed form — and it is why the deck's own section heading for the VAE is *"Variational Inference"*.
+Lecture 2 introduced posterior inference. Here a neural network approximates a posterior that is not available in closed form — and it is why the deck's own section heading for the VAE is *"Variational Inference"*.
 :::
 :::
 
@@ -355,17 +390,17 @@ Draw $z\sim\mathcal{N}(0,I)$ from the prior, decode $x\sim p_\theta(x\mid z)$.
 That is the whole sampler. It never touches the data, and it never runs an optimiser.
 :::
 ::: col.accent Inference process — how the code is *found*
-The encoder $q_\phi(z\mid x)=\mathcal{N}\big(\mu_\phi(x),\sigma_\phi(x)\big)$ approximates the intractable posterior $p(z\mid x)$.
+The encoder $q_\phi(z\mid x)=\mathcal{N}\big(\mu_\phi(x),\operatorname{diag}(\sigma_\phi^2(x))\big)$ approximates the intractable posterior $p(z\mid x)$.
 
 It exists only to make training possible.
 :::
 :::
 
-$$\max_{\phi,\theta}\ \frac1N\sum_{i=1}^N \log p_\theta\big(x_i \mid \underbrace{\mu_\phi(x_i)+\epsilon\,\sigma_\phi(x_i)}_{\hl{\text{reparameterised } z}}\big) \;-\; \mathrm{KL}\big[\mathcal{N}(\mu_\phi(x_i),\sigma_\phi(x_i))\,\big\|\,\mathcal{N}(0,I)\big], \qquad \epsilon\sim\mathcal{N}(0,I)$$
+$$\max_{\phi,\theta}\ \frac1N\sum_{i=1}^N\left[\mathbb E_{\epsilon\sim\mathcal N(0,I)}\log p_\theta(x_i\mid\mu_i+\sigma_i\odot\epsilon)-\mathrm{KL}\big(q_\phi(z\mid x_i)\|p(z)\big)\right].$$
 
 ::: reveal
 ::: small
-The reparameterisation moves the randomness off the parameters and onto $\epsilon$, so a gradient can flow through the sample. Without it there is nothing to differentiate. *(Backup 1 derives both the bound and the trick.)*
+The reparameterisation moves the randomness off the parameters and onto $\epsilon$, so a gradient can flow through the sample. Other gradient estimators exist; this form provides a pathwise gradient through the sampled code. *(Backup 1 derives both the bound and the trick.)*
 :::
 :::
 
@@ -376,18 +411,32 @@ $$\mathcal{L} = \underbrace{\E_{q_\phi(z\mid x)}\big[\log p_\theta(x\mid z)\big]
 ::: reveal
 ::: cols
 ::: col.red $\beta$ too small — the code cheats
-The encoder shrinks $\sigma_\phi$ to nothing, so each design gets a private, isolated point. Reconstruction is perfect and the code means nothing between the points: draw $z$ from the prior and the decoder has never been there.
+The encoder shrinks $\sigma_\phi$ to nothing, so each design gets a private, isolated point. Reconstruction can improve while the prior poorly covers the learned codes: draw $z$ from the prior and the decoder has never been there.
 :::
 ::: col.red $\beta$ too large — the code collapses
-The KL term wins outright: $\mu_\phi(x)\to 0$ for every design and $\sigma_\phi\to 1$. The posterior *is* the prior, the code carries no information, and every $z$ decodes to the average design.
+The KL term wins outright: $\mu_\phi(x)\to 0$ for every design and $\sigma_\phi\to 1$. The posterior *is* the prior, the code carries no information, and the decoder may ignore $z$; what it outputs depends on its likelihood model and architecture.
 :::
 :::
 :::
 
 ::: reveal
 ::: keypoint
-The KL term is what makes the latent space ==samplable==: a smooth, prior-shaped code from which new valid designs can actually be drawn.
+The KL term is what makes the latent space ==samplable==: a code distribution better aligned with the prior used for generation; generated designs still need validation.
 :::
+:::
+
+### One VAE calculation — reconstruction and the KL cost
+
+For one latent coordinate, suppose $q(z\mid x)=\mathcal N(1,0.5^2)$ and $p(z)=\mathcal N(0,1)$.
+
+$$\mathrm{KL}(q\|p)=\tfrac12\left(\mu^2+\sigma^2-1-\log\sigma^2\right)=\tfrac12(1+0.25-1-\log0.25)\approx0.818.$$
+
+If the expected reconstruction log-likelihood is $-2$, the standard ELBO is $-2-0.818=\mathbf{-2.818}$.
+
+**One reparameterised draw:** with $\epsilon=-1$, $z=\mu+\sigma\epsilon=1+0.5(-1)=0.5$.
+
+::: keypoint
+==Reconstruction rewards explaining the input; KL charges for moving the code distribution away from the prior.== The standard ELBO uses $\beta=1$; other weights change the objective.
 :::
 
 ### Turning the dial
@@ -416,12 +465,13 @@ So the inverse map of Act 1 is not a new architecture at all. It is a conditiona
 :::
 
 ### Diffusion — a VAE whose encoder was never trained
+{sub: extension — follow the noise-removal idea; derivations are in the appendix}
 
 ::: flow  add noise | add noise | add noise
 - $x$ | the design
 - $z_1$ | a little noise added
 - $z_2$ | more
-- !$z_T$ | pure $\mathcal{N}(0,I)$
+- !$z_T$ | approximately standard Gaussian noise
 :::
 
 Stack the VAE $T$ times and you have a hierarchical latent model, $\mathcal{L}_{\theta,\phi}(x)=\E_{q_\phi(z_{1:T}\mid x)}\big[\log p_\theta(x,z_{1:T})/q_\phi(z_{1:T}\mid x)\big]$. A diffusion model is that stack under three restrictions:
@@ -439,7 +489,7 @@ That Gaussian kernel is not asserted; it is *derived*. The source deck asks what
 ### The score view, and a failure you have met before
 {sub: why the same model can be trained by a bound or by a gradient field}
 
-An energy model $p_\theta(x)=e^{-\varepsilon_\theta(x)}/Z_\theta$ is untrainable by likelihood because $Z_\theta$ is intractable. But differentiate the *log density in $x$* and the constant disappears:
+For an energy model $p_\theta(x)=e^{-\varepsilon_\theta(x)}/Z_\theta$, exact likelihood gradients can be expensive because of the partition function $Z_\theta$. But differentiate the *log density in $x$* and the constant disappears:
 
 $$s_\theta(x)\;\approx\;\nabla_x\log p(x)\;=\;-\nabla_x\varepsilon_\theta(x)-\cancel{\nabla_x\log Z_\theta}$$
 
@@ -492,7 +542,7 @@ The KL term pulls the posterior over latents toward the prior; the reconstructio
 ::: col.accent The query
 $$x \sim p\big(x \mid y \ge y_{\max}\big)$$
 
-Set the bar above anything in the data, sample below it, and out come candidate designs — on-manifold by construction.
+Condition on meeting the target and generate candidate designs. A target beyond the observed range asks the models to extrapolate, so both feasibility and performance remain uncertain.
 :::
 :::
 
@@ -507,6 +557,22 @@ The whole lecture on one line: ==an inverse problem is a Bayesian inference prob
 ::: small
 Which is also how conditional image generation works: classifier guidance adds $s\,\Sigma\nabla_{x_t}\log p_\phi(y\mid x_t)$ to every denoising step, and the scale $s$ is the dial. In the source deck's example, guidance scale $1.0$ gives FID $33.0$ and unconvincing samples; scale $10.0$ gives FID $12.0$ and class-consistent ones. ==How hard to push the condition is a hyperparameter, and it matters.== {p}(Dhariwal & Nichol, 2021)
 :::
+:::
+
+### Condition on success — three candidate designs
+
+Let $S$ mean “meets the requested score”. The prior prefers common designs; the success model favours promising ones.
+
+| Design | Prior probability | Success probability | Product | Conditional probability |
+|---|---|---|---|---|
+| A | $0.6$ | $0.1$ | $0.06$ | $0.06/0.29=0.207$ |
+| B | $0.3$ | $0.5$ | $0.15$ | $0.15/0.29=0.517$ |
+| C | $0.1$ | $0.8$ | $0.08$ | $0.08/0.29=0.276$ |
+
+$$p(x\mid S)=\frac{P(S\mid x)p(x)}{\sum_{x'}P(S\mid x')p(x')}.$$
+
+::: keypoint
+==The highest predicted success probability does not necessarily get the most posterior mass.== B balances plausibility and success. CbAS approximates this conditional when design space is too large to enumerate.
 :::
 
 ### CbAS — fit a generative model to its own best samples
@@ -539,8 +605,22 @@ The estimator above is unbiased and useless. In a design problem, satisfying $S$
 
 ::: reveal
 ::: small
-The proposal is the previous iterate, $r^{(t)}=q(x\mid\phi^{(t-1)})$, so the importance weight is $p(x\mid\theta^{(0)})/q(x\mid\phi^{(t)})$ and the estimator stays low-variance throughout. ==A hard conditional query, replaced by a sequence of easy ones.==
+The proposal is the previous iterate, $r^{(t)}=q(x\mid\phi^{(t-1)})$. The weight is $P(S^{(t)}\mid x)p(x\mid\theta^{(0)})/q(x\mid\phi^{(t-1)})$. This corrects the sampling distribution; variance still depends on overlap and the weights. ==A hard conditional query, replaced by a sequence of easy ones.==
 :::
+:::
+
+### Why the importance ratio belongs in the weight
+
+Use the preceding A/B/C example, but now sample from proposal probabilities $q=(0.2,0.3,0.5)$ instead of prior $p=(0.6,0.3,0.1)$.
+
+| Design | Proposal q | Weight: prior / proposal × success | Expected weighted contribution |
+|---|---|---|---|
+| A | $0.2$ | $(0.6/0.2)(0.1)=0.30$ | $0.2(0.30)=0.06$ |
+| B | $0.3$ | $(0.3/0.3)(0.5)=0.50$ | $0.3(0.50)=0.15$ |
+| C | $0.5$ | $(0.1/0.5)(0.8)=0.16$ | $0.5(0.16)=0.08$ |
+
+::: keypoint
+==The ratio corrects how often each design was proposed.== Without it, repeatedly sampling C would incorrectly change the target. The proposal must cover every design with positive target weight.
 :::
 
 ### One shot, then the ladder
@@ -587,7 +667,7 @@ The same two hundred designs, and the same oracle, now driven by the bar $\gamma
 
 ::: reveal
 ::: keypoint
-The prior is the leash. The oracle is just as wrong out there as it was in Lecture 5 — but ==the sampler cannot go where the prior has no mass==, so the failure is a loss of precision rather than a hallucination.
+The prior is the leash. The oracle is just as wrong out there as it was in Lecture 5 — but an exact conditional assigns no mass where the prior is zero. Learned models often have nonzero tails and approximate sampling, so invalid or overestimated designs can still occur.
 :::
 :::
 
@@ -649,26 +729,21 @@ Learn a scoring function and search it, or learn the thing that produces answers
 
 An inverse model, sampled. And a duality that is about to return one level up.
 
-### Why generation sidesteps the surrogate trap
+### Generation changes the failure mode; it does not remove model error
 
-Lecture 5's failure was an ascent that climbed off the valid manifold into hallucinated peaks. The generative approach removes that failure ==structurally==:
+A learned prior can keep proposals near plausible designs, and conditioning can favour high scores. These are useful biases, not guarantees.
 
-- it never optimises *over* input space, so there is no ascent to run off-manifold;
-- every output is a *sample* from a model of *valid* designs — on-manifold by definition;
-- conditioning on $y\ge y_{\max}$ steers toward good designs ==within== that valid set.
-
-::: reveal
-::: block The trade | neither route dominates
-Surrogate search risks invalid designs but optimises sharply, and can in principle reach anywhere.
-
-Generative sampling guarantees valid designs but is ==bounded by what the data's good region contains==: ask for more than the prior can supply and the samples thin out, then decay.
+::: cols c2
+::: col Forward model and search
+The optimiser can exploit an overestimated score. Control the search, quantify uncertainty and inspect the selected design.
+:::
+::: col.accent Inverse model and sampling
+The generator can miss modes, violate constraints or respond poorly to an extreme requested score. Check samples and the model used to rank them.
 :::
 :::
 
-::: reveal
-::: small
-Which is why a practitioner uses both, and why the field's best current methods are hybrids: a generative prior to stay valid, a conservative surrogate to rank. Lecture 5's LCOMs did it from the other side — a crystal-structure VAE supplying the coordinates, and a conservative surrogate optimised *inside* that latent space.
-:::
+::: keypoint
+==Both routes need evidence about the final design.== They can be combined: generate plausible candidates, enforce constraints, then rank them with a conservative model.
 :::
 
 ### Where we are — the design-optimisation duality, complete
@@ -678,8 +753,8 @@ Which is why a practitioner uses both, and why the field's best current methods 
 |---|---|---|
 | direction | forward $f_\theta(x)$ | inverse $p(x\mid y)$ |
 | the decision | ==search== for the maximum | ==sample== a design |
-| the valid manifold | guarded, by conservatism | enforced, by construction |
-| the risk | off-manifold hallucination | limited to the data's good region |
+| valid designs | constraints or a suitable representation | learned prior, plus explicit feasibility checks |
+| the risk | exploiting prediction error | unsupported conditions, invalid samples or missing modes |
 | what fails first | the model's honesty | the data's coverage |
 :::
 
@@ -724,7 +799,7 @@ To optimise a function you only have as data, you can approximate it and **searc
 ### Questions?
 {layout: standout}
 
-Two things to carry out of here. **Conditioning replaces searching** — and a sample from a model of valid designs cannot be a hallucination, only a disappointment. And **search against produce** — you will meet it again in Lecture 10, wearing $Q(s,a)$ and $\pi_\theta(a\mid s)$.
+Two things to carry out of here. **Conditioning replaces searching** — and a learned prior encourages plausible designs but does not certify feasibility or performance. And **search against produce** — you will meet it again in Lecture 10, wearing $Q(s,a)$ and $\pi_\theta(a\mid s)$.
 
 ## Appendix — backup slides
 {short: APPENDIX}
@@ -745,7 +820,7 @@ $$\mathcal{L}_{\theta,\phi}(x) = \E_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)] - 
 **Reparameterisation.** To backpropagate through $z\sim q_\phi$, write $z = \mu_\phi(x) + \sigma_\phi(x)\odot\epsilon$ with $\epsilon\sim\mathcal{N}(0,I)$: the randomness moves off the parameters and the gradient flows.
 
 ::: small
-**Why the KL term is exactly the samplability term.** With a linear-Gaussian decoder the $\beta$-optimal encoder is $\mu = (W^\top W + \beta\sigma^2 I)^{-1}W^\top(x-b)$ and $\Sigma = \beta\sigma^2(W^\top W+\beta\sigma^2 I)^{-1}$. Along an eigendirection of $W^\top W$ with eigenvalue $w$ the aggregate posterior variance is $\mathrm{Var}(\mu)+\Sigma = \big(w^2+\sigma^2 w+\beta\sigma^2 w+\beta^2\sigma^4\big)/(w+\beta\sigma^2)^2$, whose difference from $1$ is $\sigma^2 w(1-\beta)/(w+\beta\sigma^2)^2$ — zero **if and only if** $\beta = 1$. The Act 3 widget is that formula, plotted.
+**Why the KL term is exactly the samplability term.** With a linear-Gaussian decoder the $\beta$-optimal encoder is $\mu = (W^\top W + \beta\sigma^2 I)^{-1}W^\top(x-b)$ and $\Sigma = \beta\sigma^2(W^\top W+\beta\sigma^2 I)^{-1}$. Along an eigendirection of $W^\top W$ with eigenvalue $w$ the aggregate posterior variance is $\mathrm{Var}(\mu)+\Sigma = \big(w^2+\sigma^2 w+\beta\sigma^2 w+\beta^2\sigma^4\big)/(w+\beta\sigma^2)^2$, whose difference from $1$ is $\sigma^2 w(1-\beta)/(w+\beta\sigma^2)^2$ — zero at $\beta=1$ (and also in degenerate zero-signal or zero-noise cases). The Act 3 widget is that formula, plotted.
 :::
 
 ### Backup 2 — the four families, and diffusion as a hierarchical VAE
@@ -784,12 +859,12 @@ Substituting $x_t(x_0,\epsilon)=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\,\e
 
 $$\mu_\theta \;\overset{\text{def}}{=}\; \frac{1}{\sqrt{\alpha_t}}\Big(x_t - \frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\,\epsilon_\theta(x_t,t)\Big) \qquad\Longrightarrow\qquad L_{t-1}=\E_{x_0,\epsilon}\Big[\tfrac{\beta_t^2}{2\sigma_t^2\alpha_t(1-\bar\alpha_t)}\big\|\epsilon-\epsilon_\theta(x_t,t)\big\|^2\Big]$$
 
-Dropping the weight — which the authors found works better in practice — leaves the whole evidence bound as a single regression:
+Dropping the weight — which the authors found works better in practice — gives a simplified denoising objective, rather than the exact evidence bound:
 
 $$\hl{\mathcal{L}_{\text{simple}} = \E_{t,x_0,\epsilon}\Big[\big\|\epsilon - \epsilon_\theta\big(\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon,\ t\big)\big\|^2\Big]},\qquad t\sim U(1,T)$$
 
 ::: small
-The other algorithmic choices: schedule $\beta_t$ as constants rather than learning them; fix $\Sigma_\theta(x_t,t)=\sigma_t I$ with $\sigma_t^2=\beta_t$ or $\tilde\beta_t$; learn $\mu_\theta$ only, and learn it as an error term. Sampling is $x_{t-1} = \tfrac{1}{\sqrt{\alpha_t}}\big(x_t - \tfrac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\big) + \sigma_t z$. {p}(Ho, Jain & Abbeel, 2020)
+The other algorithmic choices: schedule $\beta_t$ as constants rather than learning them; fix $\Sigma_\theta(x_t,t)=\sigma_t^2 I$ with $\sigma_t^2=\beta_t$ or $\tilde\beta_t$; learn $\mu_\theta$ only, and learn it as an error term. Sampling is $x_{t-1} = \tfrac{1}{\sqrt{\alpha_t}}\big(x_t - \tfrac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\big) + \sigma_t z$. {p}(Ho, Jain & Abbeel, 2020)
 :::
 
 ### Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them
@@ -828,13 +903,13 @@ The weight comes from a bias–variance bound whose three terms are *variance fr
 q ← p(·|θ⁰)
 repeat:
   x₁..x_M ~ q                     ← propose
-  γ ← min(target, Q-th pct of
-          f̂(x₁..x_M))            ← relax
+  γ ← max(γ, min(target, Q-th pct of
+                 f̂(x₁..x_M)))            ← relax
   wᵢ ← p(xᵢ|θ⁰)/q(xᵢ) · P(y≥γ|xᵢ)
   q ← weighted MLE on {xᵢ, wᵢ}    ← refit
 ```
 
-The importance weight uses the *previous* iterate as the proposal, which is what keeps the estimator's variance finite; and $\gamma$ rises only as fast as the model can follow, which is condition (B).
+The importance weight uses the *previous* iterate as the proposal, which corrects the change in sampling distribution; finite variance additionally requires suitable weight moments and support; and $\gamma$ rises only as fast as the model can follow, which is condition (B).
 :::
 :::
 

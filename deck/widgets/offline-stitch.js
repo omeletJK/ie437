@@ -172,7 +172,7 @@ IE437.widget('offline-stitch', function (host, opts) {
       'sampling the clone instead of taking its mode: ' + expCost(0).toFixed(1) + '</div>';
     host.querySelector('[data-note]').innerHTML =
       mode === 0 ? 'Neither log is good. One wastes its first leg, the other its second &mdash; and they cost the same.'
-      : mode === 1 ? 'Cloning reproduces what was driven. At <b>M</b> it copies the majority choice and turns up, into the expensive leg. It cannot do better than the logs, because doing better is not what it is asked to do.'
+      : mode === 1 ? 'Cloning reproduces what was driven. At <b>M</b> it copies the majority choice and turns up, into the expensive leg. In this example it costs 7. Cloning fits action frequencies; it does not use reward to select the cheaper continuation.'
       : 'The backup at <b>M</b> compares two continuations that came from <b>different trajectories</b>. Bellman does not know or care which; it takes the max. Cost <b>4</b>, on a route no one drove.';
   }
 

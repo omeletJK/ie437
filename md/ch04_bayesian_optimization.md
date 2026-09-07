@@ -54,7 +54,7 @@ The loop closes. Use the belief to choose a query, observe the answer, update th
 ### The setting — unknown, expensive, and every query counts
 
 ::: lede
-Lecture 1 minimised an $f$ that was written down, cheap, and differentiable. Delete all three assumptions.
+Lecture 1 assumed we could evaluate the objective and use its mathematical structure. Here a new evaluation is expensive, and a formula or gradient for the true objective is unavailable.
 :::
 
 $$x^* = \argmax_x f(x), \qquad f \text{ \hl{unknown} and \hl{expensive}}$$
@@ -70,7 +70,7 @@ One evaluation is a wet-lab experiment, a multi-hour CFD run, a clinical trial, 
 
 ::: reveal
 ::: small
-Both halves matter. Unknown alone would be handled by fitting a model once and optimising it — that is Lecture 5. Expensive alone would be handled by a careful experimental design fixed in advance. It is *unknown **and** expensive together* that forces the loop: you must learn $f$ and optimise it **at the same time**, with the same queries.
+The setting makes an adaptive loop useful: spend the next expensive evaluation using what earlier evaluations taught us. A fixed experimental design is another option; BO uses feedback to target promising or informative regions. Lecture 5 considers the separate restriction that no new evaluations are allowed.
 :::
 :::
 
@@ -104,6 +104,20 @@ Three earlier lectures fused into one turn of a crank: step 1 is Lecture 2's Bay
 - **Q2 — What is that model, concretely?** The ==Gaussian process== — and its one real assumption, the kernel.
 - **Q3 — Where do we look next?** The ==acquisition function==, which fuses "probably good" with "worth learning" into one optimisable score.
 - **Q4 — What lies beyond?** Contextual BO, and the ==bandit-to-RL== bridge.
+
+### Learning route — predict, choose, pay for one measurement
+
+**Start with:** Bayes' rule, Gaussian means and covariances, and maximising a function.
+
+::: flow
+- **Predict** | a GP gives a mean and uncertainty at each candidate input
+- **Choose** | an acquisition rule scores those candidates
+- **Measure** | evaluate the real system once, then update the GP
+:::
+
+::: keypoint
+You should be able to ==calculate a small GP update and explain why two acquisition rules choose different points.== Matrix derivations and the bandit toolkit remain in the appendix.
+:::
 
 ## Act 1 — a belief over an unknown function
 {short: ACT 1, num: Act 1}
@@ -170,7 +184,7 @@ The handoff from Chapter 2 is not an analogy. It is the *same five steps*, with 
 
 ::: reveal
 ::: small
-Chapter 2 ended on the Normal–Normal case and noted that the predictive variance splits into measurement noise you can never remove plus parameter uncertainty you can. ==Replace the parameter by an entire function and that same predictive integral is Gaussian-process regression.== The conjugacy that made Chapter 2 computable is the *only* reason Chapter 4 is computable too.
+Chapter 2 ended on the Normal–Normal case and noted that the predictive variance splits into measurement noise you can never remove plus parameter uncertainty you can. ==Replace the parameter by an entire function and that same predictive integral is Gaussian-process regression.== Gaussian conjugacy gives the closed-form posterior used here. Other likelihoods are possible but may require approximate inference.
 :::
 :::
 
@@ -202,7 +216,7 @@ $$\begin{bmatrix} f(x_1)\\ \vdots \\ f(x_n)\end{bmatrix} \sim \mathcal N\!\left(
 
 ::: cols
 ::: col The mean function
-$m(x)=\E[f(x)]$ — the overall trend. Taken as $m\equiv 0$ almost always: it costs no expressiveness and saves computation.
+$m(x)=\E[f(x)]$ — the prior trend. We use $m\equiv0$ after centring the outputs for this derivation. The choice matters, especially far from the observed inputs.
 :::
 ::: col.accent The covariance function
 $k(x,x')=\E\big[(f(x)-m(x))(f(x')-m(x'))\big]$ — how strongly nearby points are tied together. It must make every $\mathbf K$ positive semidefinite. ==This is where all the modelling lives.==
@@ -240,6 +254,22 @@ The kernel decides how much one observation is worth at every other point in the
 :::
 :::
 
+### A GP update with just two numbers
+{sub: the source's correlation example, calculated explicitly}
+
+Assume $f_1,f_2$ have zero mean, unit variance and correlation $\rho$. We observe $f_1=-0.313$ without noise.
+
+$$\mathbb E[f_2\mid f_1]=\rho(-0.313),\qquad\operatorname{Var}(f_2\mid f_1)=1-\rho^2.$$
+
+| Relationship to the measured point | Correlation | Posterior mean | Posterior variance |
+|---|---|---|---|
+| Nearby | $0.966$ | $-0.302$ | $0.0668$ |
+| Farther away | $0.573$ | $-0.179$ | $0.6717$ |
+
+::: keypoint
+==A stronger correlation transfers more information.== The next matrix formula performs this same calculation using many measurements at once.
+:::
+
 ### GP regression — mean and uncertainty, in closed form
 
 Observe $\mathcal D=\{(x_i,y_i)\}_{i=1}^n$ with $y_i=f_i+\epsilon_i$, $\epsilon_i\sim\mathcal N(0,\sigma_\epsilon^2)$. Prior and likelihood are Gaussian, so the joint of the data and the value at any new $x$ is Gaussian:
@@ -258,8 +288,33 @@ The GP hands us, at every $x$, both a best guess *and* ==how much to trust it== 
 
 ::: reveal
 ::: small
-Read the two formulas. The mean is a **kernel-weighted average of the observed $y$'s** — a linear smoother whose weights the kernel chose. The variance starts at the prior value $k(x,x)$ and is reduced by $\mathbf k^\top(\cdot)^{-1}\mathbf k$, a quantity that is large near data and vanishes far from it. Note that $\sigma^2$ ==does not depend on $\mathbf y$ at all==: where the GP is uncertain is fixed the moment you choose *where* to look, before you see a single answer. That is what makes experimental design possible.
+Read the two formulas. The mean is a **linear combination of the observed $y$'s**. The kernel determines its weights, which need not be positive or sum to one. The variance starts at the prior value $k(x,x)$ and is reduced by $\mathbf k^\top(\cdot)^{-1}\mathbf k$, a quantity that is large near data and vanishes far from it. For a fixed kernel and fixed noise level, $\sigma^2$ ==does not depend on $\mathbf y$==: where the GP is uncertain is fixed the moment you choose *where* to look, before seeing the answers. If hyperparameters are refitted using $\mathbf y$, the uncertainty can change indirectly.
 :::
+:::
+
+### Read the GP formula — what each object means
+
+For $n$ observations and one query input $x$, $\mathbf K$ is an $n\times n$ matrix with $K_{ij}=k(x_i,x_j)$; $\mathbf k$ is a length-$n$ vector with $k_i=k(x_i,x)$.
+
+::: cols c2
+::: col One noisy observation
+Use prior variances 1, covariance $k(x_1,x)=0.8$, noise variance $0.25$, and observe $y_1=1$.
+
+$$\mu(x)=\frac{0.8}{1+0.25}(1)=0.64.$$
+
+$$\sigma_f^2(x)=1-\frac{0.8^2}{1.25}=0.488.$$
+:::
+::: col.accent A function value or a new measurement?
+The formula predicts the latent $f(x)$.
+
+For a future independent noisy measurement $y=f(x)+\epsilon$, add its noise:
+
+$$\sigma_y^2(x)=0.488+0.25=0.738.$$
+:::
+:::
+
+::: keypoint
+==Uncertainty about the function and noise in a new measurement are different.== Numerically, solve linear systems with $\mathbf K+\sigma_\epsilon^2 I$ rather than explicitly forming its inverse.
 :::
 
 ### The kernel is the assumption — and the data can pick it
@@ -268,15 +323,15 @@ Read the two formulas. The mean is a **kernel-weighted average of the observed $
 ::: col A small vocabulary
 - **Squared exponential** $k=\sigma_0^2\exp\!\big[-\tfrac12\big(\tfrac{x-x'}{\lambda}\big)^2\big]$ — stationary, infinitely differentiable, *very* smooth. $\lambda$ is the length scale, $\sigma_0$ the amplitude.
 - **Matérn** $\tfrac32$, $\tfrac52$ — finitely differentiable, visibly rougher sample paths, usually more honest about physical data.
-- **ARD** — one $\lambda_d$ per input dimension; a large $\lambda_d$ means dimension $d$ is ==irrelevant==.
-- **Sums and products** — $k_1+k_2$ adds independent processes, $k_1k_2$ multiplies them: trend plus periodicity, periodicity with growing amplitude.
+- **ARD** — one $\lambda_d$ per input dimension; a large $\lambda_d$ makes the function vary slowly along dimension $d$ over the observed range.
+- **Sums and products** — sums and products of valid kernels remain valid. Sums describe independent additive components; a product kernel combines similarity requirements. A pointwise product of two GPs is generally not itself Gaussian.
 :::
 ::: col.accent Fitting $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$
 Maximise the **marginal likelihood** of the data:
 
-$$\theta^*=\argmax_\theta \Big[\underbrace{-\tfrac12\mathbf y^\top(\mathbf K_\theta+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y}_{\text{data fit}}\;\underbrace{-\tfrac12\log|\mathbf K_\theta+\sigma_\epsilon^2\mathbf I|}_{\text{complexity}}\Big] - \tfrac{n}{2}\log 2\pi$$
+$$\theta^*=\argmax_\theta \Big[\underbrace{-\tfrac12\mathbf y^\top(\mathbf K_\theta+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y}_{\text{data fit}}\;\underbrace{-\tfrac12\log|\mathbf K_\theta+\sigma_\epsilon^2\mathbf I|}_{\text{complexity}}\; - \tfrac{n}{2}\log 2\pi\Big]$$
 
-The first term rewards explaining the data, the second rewards a *rigid* model. Their sum peaks in between — ==an Occam balance, automatic and free==, and itself an optimisation (Lecture 1) sitting inside the loop.
+The first term rewards explaining the data, the second rewards a *rigid* model. Their sum balances fit and model complexity. Optimising it can have local optima and needs numerical care; it is another Lecture 1 optimisation inside the loop.
 :::
 :::
 
@@ -341,7 +396,7 @@ This is the explore–exploit dilemma — the same one inside every reinforcemen
 | **Expected improvement** | $\mathrm{EI}(x)=\E\big[\max(0,f(x)-f^{+})\big]$ | how likely **and by how much** | balanced |
 | **Upper confidence bound** | $\mathrm{UCB}(x)=\mu(x)+\kappa\,\sigma(x)$ | optimism, at an explicit price $\kappa$ | tunable |
 
-where $f^{+}=\max_{x_i\in x_{1:t}} f(x_i)$ is the best value seen so far.
+Here $\Phi$ is the standard normal CDF, $\xi\ge0$ is an improvement margin, and $\kappa\ge0$ weights uncertainty. In the noiseless case, $f^{+}$ is the best observed value. With noise, the incumbent requires a noise-aware definition.
 
 ::: reveal
 ::: block PI's flaw, and why EI exists | the source deck's own words
@@ -349,6 +404,22 @@ where $f^{+}=\max_{x_i\in x_{1:t}} f(x_i)$ is the best value seen so far.
 
 The patch is a margin $\xi\ge0$ — demand improvement *by at least $\xi$* — scheduled large early and decayed to zero. But it is a knob you must tune: too small and the search is highly local, too large and it is excessively global. EI needs no such knob, because integrating $\max(0,f-f^{+})$ already counts **how far above the line** the improvement is, not merely whether it happens.
 :::
+:::
+
+### Choose between two candidate experiments
+{sub: maximisation, incumbent 1, no improvement margin}
+
+Suppose the posterior at candidate A is $\mathcal N(1.10,0.05^2)$ and at B is $\mathcal N(1.00,0.50^2)$. For UCB, use $\kappa=2$.
+
+| Score | Candidate A | Candidate B | Choice |
+|---|---|---|---|
+| Mean only | $1.10$ | $1.00$ | A |
+| PI | $\Phi(2)\approx0.977$ | $\Phi(0)=0.500$ | A |
+| EI | $0.10\Phi(2)+0.05\phi(2)\approx0.1004$ | $0.50\phi(0)\approx0.1995$ | B |
+| UCB | $1.10+2(0.05)=1.20$ | $1.00+2(0.50)=2.00$ | B |
+
+::: keypoint
+A offers a likely small gain. B offers a less certain but potentially larger gain. ==The acquisition rule determines which opportunity is worth the next measurement.==
 :::
 
 ### The three rules, disagreeing
@@ -380,7 +451,7 @@ Note also what the loop does *not* do: it never touches $f$ except at step 3. Al
 {sub: Example 4.1 · maximise $-1.3x^4+x^3+1.5x^2+1$ over $-1 \le x \le 1.5$ with noise $\sigma_\epsilon = 0.01$}
 
 ::: widget bo-run {"seed":5}
-Press *next query* and watch EI decide. The second query goes straight to the far boundary $x=-1$ — the mean there is unremarkable, but the uncertainty is enormous, and EI pays to find out. By the eighth the queries have collapsed onto $x=1.10$, and the EI peak has fallen from $0.48$ to $0.002$: ==the model no longer expects to learn anything by asking again.== The true maximum is $x^*=1.1010$, $f^*=2.2427$.
+Press *next query* and watch EI decide. The second query goes straight to the far boundary $x=-1$ — the mean there is unremarkable, but the uncertainty is enormous, and EI pays to find out. By the eighth the queries have collapsed onto $x=1.10$, and the EI peak has fallen from $0.48$ to $0.002$: ==the model expects little additional improvement under this acquisition rule.== A small EI is not a proof that the true global optimum has been found. The true maximum is $x^*=1.1010$, $f^*=2.2427$.
 :::
 
 ::: small
@@ -399,13 +470,13 @@ Find $\pi^*$ maximising $\E\big[\textstyle\sum_t r_t\big]$.
 ::: col.accent Bayesian optimisation, Lecture 4
 $$\pi:\big[(x^1,y^1),\dots,(x^{n-1},y^{n-1})\big]\to x^n$$
 
-Find $\pi^*$ maximising $\E\big[\textstyle\sum_t y^t\big]$.
+A common BO objective is a good **final recommendation** $\hat x_T$: maximise $\E[f(\hat x_T)]$ after $T$ queries.
 :::
 :::
 
 ::: reveal
 ::: keypoint
-The same definition twice: a rule that maps ==the whole history to the next action.== That is what a policy is, and this is where the course meets one.
+Both are rules mapping ==history to the next action==. Their goals can differ: cumulative reward values every trial; final-design optimisation values the recommendation after the trials.
 :::
 :::
 
@@ -445,7 +516,7 @@ Put a slot machine under every point of the domain. Pulling arm $x$ pays $f(x)$ 
 The word *policy*, and the trade-off in its bare form: **acquiring new information** against **capitalising on the information already held**. With finitely many arms the belief is one number per arm; here it is a whole GP.
 :::
 ::: col.accent What BO contributes
-Structure. A finite bandit must try every arm at least once, so its regret scales with the number of arms. A GP over a continuum needs only enough queries to pin down $f$ at ==the kernel's resolution==, which is why tens of evaluations can suffice.
+Structure. A kernel lets an observation inform other inputs. This can reduce the number of required evaluations when the smoothness assumptions fit the problem; there is no universal small-query guarantee.
 :::
 :::
 :::
@@ -459,7 +530,7 @@ The lineage runs both ways. The bandit's Bayesian form is Chapter 2 exactly: aft
 ### How much exploration is the right amount?
 
 ::: widget explore-regret {"seed":21}
-Ten arms, unknown payout probabilities, a thousand pulls, cumulative regret on the vertical axis. Pure greed ($\varepsilon=0$) locks onto whichever arm happened to pay first and never recovers. Constant thrashing ($\varepsilon=0.5$) pays a fixed toll on every round. ==The best fixed rate is in between, and the confidence-bound rule beats every fixed rate== — because it explores where the uncertainty actually is, rather than at random. That is the whole argument for $\mu+\kappa\sigma$, made without a Gaussian process anywhere in sight.
+Ten arms, unknown payout probabilities, a thousand pulls, cumulative regret on the vertical axis. Pure greed ($\varepsilon=0$) locks onto whichever arm happened to pay first and never recovers. Constant thrashing ($\varepsilon=0.5$) pays a fixed toll on every round. ==Compare the fixed exploration rates with UCB in this simulated run== — because it explores where the uncertainty actually is, rather than at random. That is the whole argument for $\mu+\kappa\sigma$, made without a Gaussian process anywhere in sight.
 :::
 
 ### From a function to a context
@@ -475,7 +546,7 @@ Put a kernel on the context too and multiply:
 
 $$k\big((x,c),(x',c')\big) = k_X(x,x')\cdot k_C(c,c')$$
 
-which asserts that ==similar contexts have similar optima==. Without that, each context would be a separate problem and no policy could be learned at all.
+which couples function values at similar inputs and contexts. Similar values do not guarantee similar argmax locations, especially when two peaks nearly tie.
 :::
 ::: col.accent What we have just built
 A rule that at each round takes all past $(c,x,y)$, maintains a belief state $B_t(f)$ over the unknown function, and acts to maximise cumulative reward.
@@ -543,7 +614,7 @@ What this lecture hands on is ==the acquisition policy — the seed of an RL pol
 
 ::: reveal
 ::: small
-Honest limits, before you go: a GP costs $O(n^3)$, so BO lives in the low thousands of evaluations, and the acquisition surface becomes flat and hostile in high dimension — in practice BO optimises **10–20 parameters**, not 10 000. Latent-space and neural surrogates push on both walls, and the first of them, learning a low-dimensional representation to optimise inside, is Lecture 6.
+Honest limits, before you go: dense exact GP training costs $O(n^3)$, and high-dimensional acquisition optimisation can be difficult. The practical range depends on evaluation budget, effective dimension, kernels and approximations. Latent-space and neural surrogates push on both walls, and the first of them, learning a low-dimensional representation to optimise inside, is Lecture 6.
 :::
 :::
 
@@ -573,12 +644,12 @@ $$Y_2\mid Y_1 = y \sim \mathcal N\big(\mu_2 + \Sigma_{21}\Sigma_{11}^{-1}(y-\mu_
 $$\mu(x\mid\mathcal D) = \mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y, \qquad \sigma^2(x\mid\mathcal D) = k(x,x)-\mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf k \quad\blacksquare$$
 
 ::: small
-Three readings. The mean is a **kernel-weighted average** of the observed $y$'s. The variance shrinks near data and returns to the prior $k(x,x)$ far from it. And the variance never sees $\mathbf y$ — only where you looked, not what you found — which is why a GP can plan an experiment before running it. The cost is the inverse: $O(n^3)$ once, $O(n^2)$ per prediction, which is the entire reason BO stops at a few thousand evaluations.
+Three readings. The mean is a **linear combination** of observed $y$ values; its weights need not form an average. The variance shrinks near data and returns to the prior $k(x,x)$ far from it. For fixed hyperparameters, the variance depends on the inputs and noise level, not directly on $\mathbf y$ — which is why a GP can plan an experiment before running it. The cost is the inverse: $O(n^3)$ once, $O(n^2)$ per prediction, which is the entire reason BO stops at a few thousand evaluations.
 :::
 
 ### Backup 2 — kernels, and hyperparameters by marginal likelihood
 
-**Squared exponential.** $k(x,x')=\sigma_0^2\exp\!\big(-\tfrac12\|x-x'\|^2/\lambda^2\big)$ — stationary, infinitely differentiable. **Matérn $\tfrac32$:** $\alpha(1+\sqrt3 r)e^{-\sqrt3 r}$; **Matérn $\tfrac52$:** $\alpha(1+\sqrt5 r+\tfrac53 r^2)e^{-\sqrt5 r}$, with $r=\|x-x'\|_2/l$ — finitely differentiable, rougher, usually more realistic. **ARD:** one $\lambda_d$ per dimension, $k=\sigma_0^2\exp\!\big[-\tfrac12\sum_d ((x_d-x_d')/\lambda_d)^2\big]$, and a large $\lambda_d$ declares dimension $d$ irrelevant. **Algebra:** $k_1+k_2$ is the sum of independent processes, $k_1k_2$ their product — so Lin $+$ Per is *periodic with a trend*, Lin $\times$ Per is *growing amplitude*.
+**Squared exponential.** $k(x,x')=\sigma_0^2\exp\!\big(-\tfrac12\|x-x'\|^2/\lambda^2\big)$ — stationary, infinitely differentiable. **Matérn $\tfrac32$:** $\alpha(1+\sqrt3 r)e^{-\sqrt3 r}$; **Matérn $\tfrac52$:** $\alpha(1+\sqrt5 r+\tfrac53 r^2)e^{-\sqrt5 r}$, with $r=\|x-x'\|_2/l$ — finitely differentiable, rougher, usually more realistic. **ARD:** one $\lambda_d$ per dimension, $k=\sigma_0^2\exp\!\big[-\tfrac12\sum_d ((x_d-x_d')/\lambda_d)^2\big]$, and a large $\lambda_d$ means slow variation along dimension $d$ on the studied range. **Algebra:** $k_1+k_2$ is the covariance of a sum of independent GPs; $k_1k_2$ is a valid covariance, but multiplying GP sample paths does not generally produce a GP — so Lin $+$ Per is *periodic with a trend*, Lin $\times$ Per is *growing amplitude*.
 
 **Fitting $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$.** Marginalise the latent $\mathbf f$ away and maximise what is left:
 
@@ -594,7 +665,7 @@ With $f(x)\sim\mathcal N(\mu,\sigma^2)$ and incumbent $f^{+}$, define $I=\max(0,
 
 $$\mathrm{EI}(x)=\int_{f^{+}}^{\infty}\big(f-f^{+}\big)\,p(f\mid\mathcal D)\,df = \sigma(x)\Big[\,\underbrace{\tfrac{\mu-f^{+}}{\sigma}\,\Phi(z)}_{\text{exploit}} + \underbrace{\phi(z)}_{\text{explore}}\,\Big], \qquad z=\frac{\mu-f^{+}}{\sigma}$$
 
-with $\Phi,\phi$ the standard normal CDF and PDF. Adding a margin $\xi$ gives the general form $\mathrm{EI}=(\mu-f^{+}-\xi)\Phi(Z)+\sigma\phi(Z)$, $Z=(\mu-f^{+}-\xi)/\sigma$, and $\mathrm{EI}=0$ wherever $\sigma=0$.
+with $\Phi,\phi$ the standard normal CDF and PDF. Adding a margin $\xi$ gives the general form $\mathrm{EI}=(\mu-f^{+}-\xi)\Phi(Z)+\sigma\phi(Z)$, $Z=(\mu-f^{+}-\xi)/\sigma$, and at $\sigma=0$ use $\mathrm{EI}=\max(0,\mu-f^{+}-\xi)$.
 
 ::: small
 **Reading the two terms.** $(\mu-f^{+})\Phi(z)$ is large where the mean already beats the incumbent; $\sigma\phi(z)$ is large where the uncertainty is high, even if the mean is unremarkable. **Why EI beats PI.** PI integrates the *density* above the line — it counts whether an improvement happens. EI integrates the density *weighted by how far above the line it lands* — it counts how big. That single difference removes the need for a tuning parameter, and on the Act 3 posterior it moves the query from $x=0.630$ (worth $1.075$) to $x=0.470$ (worth $1.301$, against a true maximum of $1.303$).
@@ -614,5 +685,5 @@ The source lecture develops the finite-armed bandit in full before reaching BO. 
 | **UCB** | $a_t=\argmax_i\big(\mu_i+\sqrt{2\ln t / n_i}\big)$ | $\mu(x)+\kappa\sigma(x)$, this lecture, continuous |
 
 ::: small
-Every arm is sampled infinitely often, so $Q_t\to Q^*$ and the chance of choosing the optimal action converges to at least $1-\varepsilon$ — and never better, while $\varepsilon$ is fixed. That floor is why the Act 4 curve turns back up.
+For a stationary finite bandit with sufficient sampling, sample averages converge to action means. Under uniform fixed-$\varepsilon$ exploration and a unique best arm, its selection probability approaches $1-\varepsilon+\varepsilon/|A|$, so exploration still incurs a continuing cost.
 :::

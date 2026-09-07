@@ -111,6 +111,21 @@ The distinction is ==what the probability statement describes==, not whether unc
 Source alignment: original Lecture 2 PDF 4–7.
 :::
 
+### Learning goals — one repeatable Bayesian calculation
+
+**Bring:** sums, derivatives, and elementary probability. Use the probability appendix for expectation and Gaussian conditioning.
+
+::: flow
+- **Specify** | what is unknown, what is observed?
+- **Update** | prior × likelihood, then normalize
+- **Predict** | average over posterior uncertainty
+- !**Check** | compare predictions with data
+:::
+
+By the end, update a coin probability, an event rate, and a Normal mean; then explain how the same logic becomes regression and regularization.
+
+In each experiment: **predict what will change → move one control → explain the result**. Read the main worked examples first; the appendix preserves the longer integrations and completing-the-square derivations.
+
 ### The lecture route — keep each example together
 
 ::: flow

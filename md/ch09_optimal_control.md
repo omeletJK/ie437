@@ -17,7 +17,7 @@ cube:
   model: model-based
   agents: single agent
 inherits: dynamic decision making's second parent — control theory, alongside Lecture 7's OR
-handoff: the feedback law γ(x), u = Kx (Lecture 10)
+handoff: the feedback law γ(x), u = -Kx (Lecture 10)
 questions:
   - Same problem?
   - HJB?
@@ -82,7 +82,7 @@ The goal is identical to Lecture 7's: not a *plan*, but a ==feedback law== $u = 
 ### One wall Lecture 8 left, and where it actually lands
 {sub: the continuous-argmax problem — a meeting point, not the premise}
 
-Lecture 8 ended at a wall: with a continuum of actions, $\max_{a'} Q(s',a')$ is itself an intractable search, so Q-learning's update cannot even be written down.
+Lecture 8 ended at a wall: with a continuum of actions, $\max_{a'} Q(s',a')$ is itself an intractable search, so a generic action maximum needs an optimizer rather than finite enumeration.
 
 ::: reveal
 That wall is not this lecture's starting point — we begin from Lecture 7, not Lecture 8. But it *is* one of the seams where the two lineages meet, and it is worth naming now because it recurs three times today:
@@ -132,8 +132,25 @@ One question per Act. This strip returns at every transition — watch the highl
 
 - **Q1 — Is this really the same problem?** Discrete-time optimal control *is* Lecture 7's dynamic programming, made deterministic and continuous-valued.
 - **Q2 — What is Bellman in continuous time?** The ==Hamilton–Jacobi–Bellman== PDE: sufficient, global, and almost never solvable. {p}(Bellman, 1957)
-- **Q3 — When *can* we solve it?** The one closed form in the whole course: ==LQR== and the Riccati equation. {p}(Kalman, 1960)
+- **Q3 — When *can* we solve it?** An important solvable special case: ==LQR== and the Riccati equation. {p}(Kalman, 1960)
 - **Q4 — Is there another way in?** ==Pontryagin's minimum principle== — the trajectory view, and the costate. {p}(Pontryagin et al., 1956)
+
+### Learning route — solve a small control problem first
+
+**Bring:** derivatives, matrix multiplication, Lecture 1's optimality conditions, and Lecture 7's Bellman idea.
+
+::: flow
+- **One step** | trade control effort against next-state cost
+- **Continuous time** | understand what HJB says
+- **Linear–quadratic** | compute a feedback gain
+- !**One trajectory** | interpret the costate
+:::
+
+**Core goal:** calculate a scalar controller and explain feedback. HJB verification and the full Riccati/Pontryagin derivations are the **advanced layer**, supported in the appendix.
+
+::: keypoint
+Here we minimize **cost**, so good actions reduce $V$. We write feedback as $u=-Kx$; this chapter's $\gamma(t,x)$ denotes a control rule, not a discount factor.
+:::
 
 ## Act 1 — it is the same problem
 {short: ACT 1, num: Act 1}
@@ -168,14 +185,14 @@ The course cube puts Lectures 7 and 9 in ==one cell==: single agent, dynamic, mo
 :::
 
 ::: small
-Lecture 7 read this grid across the *columns*, to say what separates it from today. Read it down the *rows* instead and it says something Lecture 7 could not yet: the model axis is one move, made twice — and the empty bottom row is not an oversight but the honest edge of the field.
+Lecture 7 read this grid across the *columns*, to say what separates it from today. Read it down the *rows* instead and it says something Lecture 7 could not yet: the model axis is one move, made twice — and the empty cells are outside our syllabus, not empty research fields.
 :::
 
 ### Dynamic programming, in control's notation
 
 Define the cost-to-go from *any* state $x$ at *any* time $k$:
 
-$$V(k,x) = \min_{\gamma_k,\dots,\gamma_K}\ \sum_{i=k}^{K} g_i(x_i,u_i), \qquad u_i = \gamma_i(x_i)\in U_i,\quad x_k = x$$
+$$V(k,x) = \min_{\gamma_k,\dots,\gamma_{K-1}}\Big[\sum_{i=k}^{K-1}g_i(x_i,u_i)+g_K(x_K)\Big],\quad x_k=x$$
 
 ::: reveal
 ::: block Bellman's principle of optimality | quoted as the source deck quotes it
@@ -220,7 +237,23 @@ Solve backward in time; optimal sub-plans compose into an optimal plan. ==The lo
 :::
 :::
 
-### The one real difference — the $\arg\min$ runs over a continuum
+### One-step control — spend effort now to reduce the final error
+
+Let $x_1=x_0+u$, $x_0=2$, and minimize $J(u)=u^2+x_1^2$. There are no input constraints.
+
+$$J(u)=u^2+(2+u)^2=2(u+1)^2+2.$$
+
+| control | final state | effort cost | final-state cost | total |
+|---|---|---|---|---|
+| 0 | 2 | 0 | 4 | 4 |
+| −1 | 1 | 1 | 1 | **2** |
+| −2 | 0 | 4 | 0 | 4 |
+
+::: keypoint
+The optimum is $u^*=-1$. Reaching zero immediately costs too much effort. For any initial state, the same calculation gives the **feedback rule** $u^*(x)=-x/2$.
+:::
+
+### The key computational difference — optimize over a continuum
 
 In Lecture 7 the inner $\max_a$ was a *loop*: try each of the finitely many actions, keep the best. Here $U_k$ is a continuum, so the inner minimisation
 
@@ -282,7 +315,7 @@ The boundary condition is the terminal cost. In Lecture 7 the recursion was seed
 
 Apply the principle of optimality over a short interval $\delta$, then let $\delta \to 0$:
 
-$$V(t,x) \;=\; \min_{u\in U}\Big\{\, g(t,x,u)\,\delta \;+\; V\big(t+\delta,\; x + f(t,x,u)\,\delta\big) \,\Big\}$$
+$$V(t,x) \;=\; \min_{u\in U}\Big\{\, g(t,x,u)\,\delta \;+\; V\big(t+\delta,\; x + f(t,x,u)\,\delta\big) \,\Big\}+o(\delta)$$
 
 ::: reveal
 Taylor-expand the second term, cancel $V(t,x)$ from both sides, divide by $\delta$ and take the limit. Assuming $V$ is continuously differentiable, what survives is the ==Hamilton–Jacobi–Bellman equation==:
@@ -311,7 +344,7 @@ A scalar problem whose HJB solution is known exactly: $\dot x = x + u$, cost $\i
 
 ::: cols
 ::: col Sufficient, and global
-Find *any* continuously differentiable $V$ solving the PDE and you have proved optimality — and the optimal control falls out of a ==static, pointwise== minimisation:
+Find a continuously differentiable $V$ satisfying **the PDE and terminal condition**, and an admissible control attaining its minimum: the verification argument proves optimality — and the optimal control falls out of a ==static, pointwise== minimisation:
 
 $$u^*(t) = \argmin_{u\in U}\Big\{ \partial_x V\, f(t,x,u) + g(t,x,u)\Big\}$$
 :::
@@ -344,7 +377,7 @@ Three prices, and each is a limitation we will spend the rest of the course work
 
 ::: reveal
 ::: small
-So HJB is the ==characterisation==, rarely the computation. It is exactly solvable in essentially one case — and it happens to be the case every control engineer knows cold.
+So HJB is the ==characterisation==, rarely the computation. LQR is a particularly useful solvable case: a quadratic value function closes the equation. Other special problems also admit explicit solutions.
 :::
 :::
 
@@ -362,7 +395,7 @@ The recursion becomes a PDE. HJB is the Bellman equation with the discrete step 
 ## Act 3 — the one closed form
 {short: ACT 3, num: Act 3}
 
-**Q3.** Linear dynamics, quadratic cost. The only sequential decision problem in this course with an exact answer you can write down.
+**Q3.** Linear dynamics, quadratic cost: a useful case whose value function can be represented by a matrix.
 
 ### LQR — the harmonic oscillator of control
 {q: 3}
@@ -370,7 +403,7 @@ The recursion becomes a PDE. HJB is the Bellman equation with the discrete step 
 ::: qstrip
 :::
 
-$$\dot x = Ax + Bu, \qquad J = \int_0^T \big(x^\top Q x + u^\top R u\big)\,dt + x(T)^\top Q_f\, x(T), \qquad Q \succeq 0,\; R \succ 0$$
+$$\dot x = Ax + Bu, \qquad J = \int_0^T \big(x^\top Q x + u^\top R u\big)\,dt + x(T)^\top Q_f\, x(T), \qquad Q,Q_f \succeq 0,\; R \succ 0$$
 
 ::: reveal
 **Try** $V(t,x) = x^\top P_t\, x$. Then $\partial_x V = 2P_t x$ and $\partial_t V = x^\top \dot P_t x$, and the HJB equation reads
@@ -388,6 +421,22 @@ The wall of the continuous $\arg\min$ falls to ==one line of linear algebra.==
 :::
 :::
 
+### Read the gain with numbers — a scalar infinite-horizon example
+
+Let $\dot x=u$ and $J=\int_0^\infty(x^2+u^2)\,dt$. Try $V(x)=Px^2$.
+
+$$0=\min_u\{x^2+u^2+2Pxu\},\qquad u^*=-Px.$$
+
+Substitution gives $0=(1-P^2)x^2$. The nonnegative stabilizing solution is **$P=1$**, so $u^*=-x$.
+
+Starting at $x(0)=2$: $x(t)=2e^{-t}$ and
+
+$$J^*=\int_0^\infty 8e^{-2t}\,dt=4=V(2).$$
+
+::: keypoint
+The gain is 1: a displacement of 2 calls for control −2; a displacement of 0.5 calls for −0.5. Feedback automatically weakens as the error shrinks.
+:::
+
 ### The Riccati equation, and a gain that stops moving
 
 Substitute $u^*$ back and match $x^\top(\cdot)x$ for all $x$. What is left is an ODE in the matrix $P_t$ alone:
@@ -397,7 +446,7 @@ $$-\dot P_t \;=\; A^\top P_t + P_t A - P_t B R^{-1} B^\top P_t + Q, \qquad P_T =
 the ==Riccati differential equation==, integrated backwards in time — a backward sweep, exactly like Lecture 7's.
 
 ::: reveal
-Let the horizon go to infinity. The problem becomes *shift invariant* — the time-to-go is always $\infty$ — so $V$ cannot depend on $t$, and $\dot P \to 0$. What remains is algebra:
+For infinite-horizon LQR, standard sufficient assumptions are **stabilizability of $(A,B)$** and **detectability of $(Q^{1/2},A)$**, with $R\succ0$. The stabilizing Riccati solution gives a stationary value and gain:
 
 $$A^\top P + PA - PBR^{-1}B^\top P + Q = 0 \qquad\text{(the \hl{algebraic Riccati equation})}$$
 
@@ -436,27 +485,23 @@ Value iteration, with the value function carried in closed form instead of enume
 :::
 :::
 
-### Two hazards the tidy derivation hides
+### Conditions behind the tidy answer
 
 ::: cols
-::: col.accent Hazard 1 — the cost can be infinite
-$$x_{t+1} = 2x_t + \hl{0}\cdot u_t, \qquad x_0 = 1$$
+::: col Can we control unstable motion?
+For $x_{t+1}=2x_t+0u_t$, $x_0=1$, and state cost $x_t^2$, every control has infinite cost.
 
-An unstable mode the input cannot touch: $J=\infty$ for *every* input sequence.
-
-The condition that rules it out is ==controllability of $(A,B)$== — then some input drives $x$ to zero in $n$ steps and holds it, so $\min_u J < \infty$ from every $x_0$.
+**Stabilizable** means every unstable mode can be controlled. Full controllability is stronger than necessary.
 :::
-::: col Hazard 2 — the weights are not free
-$Q \succeq 0$ makes the cost a cost. But $R \succ 0$ — *strictly* — is what makes the inner minimisation of Act 1 well-posed: with $R$ singular, the quadratic in $u$ has no minimum and $R^{-1}$ does not exist.
+::: col.accent Does the cost see unstable motion?
+**Detectable** means an unstable mode cannot remain invisible to the state penalty $Q$.
 
-Free control is not a limiting case of cheap control. It is a different problem.
+Together with $Q\succeq0$, $R\succ0$, this gives the standard stabilizing infinite-horizon LQR result.
 :::
 :::
 
-::: reveal
-::: small
-Controllability is the control lineage's counterpart of Lecture 8's "every state–action pair visited infinitely often": a reachability condition, assumed quietly, without which the theorem is false rather than merely slow.
-:::
+::: keypoint
+Positive $R$ makes the unconstrained minimization strictly convex. If $R$ is singular, a minimum may still exist, but the displayed inverse formula does not apply. Input constraints also change the solution.
 :::
 
 ### LQR, run
@@ -468,8 +513,8 @@ $A=\left[\begin{smallmatrix}0&1\\0&0\end{smallmatrix}\right]$, $B=\left[\begin{s
 
 ### Why LQR is the cornerstone
 
-- **Globally optimal, and linear.** For the LQ problem there is no iteration, no approximation and no local minimum. The answer is a matrix.
-- **The local model of everything.** Linearise any smooth problem about a trajectory, take a quadratic approximation of the cost, solve the resulting LQR, re-linearise, repeat: that is ==iLQR / DDP==, and it is the backbone of trajectory optimisation and of model-based planning in Lecture 11. {p}(Jacobson & Mayne, 1970)
+- **Globally optimal, and linear.** For the stated unconstrained LQ problem, the Riccati solution is globally optimal. Computing that matrix usually requires numerical integration or an algebraic solver.
+- **A useful local approximation.** Linearise any smooth problem about a trajectory, take a quadratic approximation of the cost, solve the resulting LQR, re-linearise, repeat: that is ==iLQR / DDP==, and it is the backbone of trajectory optimisation and of model-based planning in Lecture 11. {p}(Jacobson & Mayne, 1970)
 - **The target the data-driven world reaches for.** In Lecture 10, DDPG's learned actor $\mu_\theta(s)$ occupies exactly the place of this gain $K$ — for a system whose $A$ and $B$ are ==unknown==.
 
 ::: reveal
@@ -484,7 +529,7 @@ Hold $u=-Kx$ in view: it is the closed form that policy gradient ==learns to app
 ::: quiz For linear dynamics and a quadratic cost, the optimal controller is $u = -Kx$, with $K$ from the Riccati equation. Why does this single special case deserve a whole act?
 - Because most real systems are exactly linear
 - Because it is the only case where the HJB equation has a solution
-- =Because it is the one case where the infinite-dimensional problem collapses to a finite matrix equation — and it is the local model that non-linear methods iterate on
+- =Because in this case the value function collapses to a finite matrix representation — and it is the local model that non-linear methods iterate on
 - Because quadratic costs are the only ones that are convex
 Almost nothing is truly linear-quadratic. What LQR gives is a **solvable local approximation**: linearise the dynamics and take a quadratic expansion of the cost around the current trajectory, solve exactly, step, and repeat. That is iLQR, and it is how the closed form earns its place — as the inner loop of methods for problems that are not LQ at all.
 :::
@@ -514,7 +559,7 @@ One multiplier per instant, and a whole function $\lambda(\cdot)$ instead of a v
 
 ### The necessary conditions
 
-Along an optimal trajectory, four conditions hold together:
+For a smooth, fixed-horizon problem with free terminal state and no state constraints, the **normal** minimum principle gives these necessary conditions:
 
 $$\dot x^* = \frac{\partial H}{\partial \lambda} = f, \qquad
 \hl{\dot\lambda^* = -\frac{\partial H}{\partial x}}, \qquad
@@ -535,7 +580,7 @@ And the last condition is the familiar move again: dynamic optimisation reduced 
 
 ::: block The costate is the value gradient, seen from the trajectory
 $$\lambda(t) \;=\; \frac{\partial V}{\partial x}\big(t, x^*(t)\big)$$
-HJB carries $\partial_x V$ over *every* state; Pontryagin carries its restriction to the ==one trajectory you are on==. That is precisely the saving, and precisely the loss.
+When $V$ is differentiable along the optimum, HJB carries $\partial_x V$ over every state; Pontryagin carries its restriction to the ==one trajectory you are on==. That is precisely the saving, and precisely the loss.
 :::
 
 ::: reveal
@@ -544,6 +589,20 @@ Check it on the scalar LQ problem of Act 3, where $V(t,x)=P(t)x^2$ and so $\lamb
 ::: small
 Economically, $\lambda$ is a shadow price: the marginal cost of being nudged in state $x$ at time $t$. It is Lecture 1's multiplier with a time index — and it is what a policy gradient will later estimate by sampling instead of solving.
 :::
+:::
+
+### What does a costate measure? Use the same scalar example
+
+For $\dot x=u$ and $V(x)=x^2$, the costate is $\lambda=V_x=2x$.
+
+At $x=2$, $\lambda=4$: increasing the state by 0.01 raises optimal future cost by approximately **$4(0.01)=0.04$**. The exact change is $2.01^2-2^2=0.0401$.
+
+$$H=x^2+u^2+\lambda u,\qquad H_u=2u+\lambda=0.$$
+
+Thus $u=-\lambda/2=-x$, the same feedback law as before.
+
+::: keypoint
+A costate is a **marginal future cost**. Pontryagin carries this sensitivity along a trajectory instead of solving for the whole value field.
 :::
 
 ### Shooting — two views, one optimum
@@ -562,13 +621,13 @@ The same problem the HJB widget solved: $\dot x = x+u$, $\int_0^2(x^2+u^2)dt$. G
 | logic | ==sufficient==, over all $(t,x)$ | ==necessary==, along the optimum |
 | output | a feedback law $\gamma(t,x)$ | an open-loop $u^*(t)$, from a costate ODE |
 | mathematics | a nonlinear **PDE** | a two-point boundary-value **ODE** |
-| stochastic | extends naturally | does not, in general |
+| stochastic | second-order HJB | stochastic maximum principles exist; beyond this lecture |
 | cost | the curse of dimensionality | one trajectory, but only local |
 :::
 
 ::: reveal
 ::: small
-Feedback beats an open-loop plan for the reason Lecture 7 already gave: $\gamma(t,x)$ is valid from *any* state you actually reach, while $u^*(t)$ is valid only along the trajectory you predicted. But Pontryagin scales where HJB cannot, which is why every practical trajectory optimiser is built on it. Its machinery returns in Lecture 10 — REINFORCE is a trajectory view — and in Lecture 11, where a learned policy imitates an iLQR teacher.
+Feedback beats an open-loop plan for the reason Lecture 7 already gave: $\gamma(t,x)$ is valid from *any* state you actually reach, while $u^*(t)$ is valid only along the trajectory you predicted. But Pontryagin scales where HJB cannot, which motivates trajectory methods, alongside direct optimization approaches. Its machinery returns in Lecture 10 — REINFORCE is a trajectory view — and in Lecture 11, where a learned policy imitates an iLQR teacher.
 :::
 :::
 
@@ -594,25 +653,25 @@ Both model-based origins are now on the table. Each one leaned entirely on knowi
 :::
 
 ::: reveal
-Three exact answers to one question, and no approximation anywhere in them:
+Three mathematical tools with different roles; numerical solutions still need checking:
 
 | | what it gives | what it needs |
 |---|---|---|
 | **HJB** | the characterisation — $V$ over all $(t,x)$, and feedback | $f$, $g$, and a differentiable $V$ |
 | **LQR** | the one closed form — $u=-Kx$ from the Riccati equation | $A$, $B$, $Q$, $R$ |
-| **Pontryagin** | one optimal trajectory, and the costate | $f$, $g$, and $\partial_x f$ |
+| **Pontryagin** | necessary conditions for candidate trajectories | $f$, $g$, and $\partial_x f$ |
 :::
 
 ::: reveal
 ::: keypoint
-Each is exact. ==Each needed the dynamics $f$.==
+HJB can verify an admissible solution; LQR solves its special case; Pontryagin provides necessary conditions. **All use the dynamics.**
 :::
 :::
 
 ### What we hand on
 
 ::: flow | 
-- **Lecture 9 leaves** | the feedback law $\gamma(x)$, and $u = Kx$
+- **Lecture 9 leaves** | the feedback law $\gamma(x)$, and $u = -Kx$
 - !**Lecture 10 deletes $f$** | and learns the same controller from data
 :::
 
@@ -632,7 +691,7 @@ A value field (HJB), a closed form (LQR), and a trajectory law (Pontryagin) — 
 ### Questions?
 {layout: standout}
 
-Two traditions, one destination. Bellman wrote the same equation twice — once as a sum over a table, once as a partial differential equation — and Kalman found the single case where the second one can be solved. Everything after this is what happens when you are no longer told $f$.
+Two traditions, one destination. Bellman wrote the same equation twice — once as a sum over a table, once as a partial differential equation — and LQR gives a central case where the value field reduces to a matrix. Everything after this is what happens when you are no longer told $f$.
 
 ## Appendix — backup slides
 {short: APPENDIX}
@@ -642,7 +701,7 @@ Complete arguments, kept out of the narrative.
 ### Backup 1 — the HJB equation, derived in one step
 Start from Bellman's optimality principle over a short interval $\delta$:
 
-$$V(t,x) = \min_{u\in U}\Big\{\, g(t,x,u)\,\delta + V\big(t+\delta,\; x + f(t,x,u)\,\delta\big) \,\Big\}$$
+$$V(t,x) = \min_{u\in U}\Big\{\, g(t,x,u)\,\delta + V\big(t+\delta,\; x + f(t,x,u)\,\delta\big) \,\Big\}+o(\delta)$$
 
 Taylor-expand the second term about $(t,x)$:
 
@@ -658,17 +717,17 @@ Compare Lecture 7's derivation of the Bellman optimality equation: identical, wi
 
 ### Backup 2 — why HJB is *sufficient*: the verification argument
 {math: compact}
-Suppose $V$ is continuously differentiable and satisfies HJB. Take any admissible $\gamma\in\Gamma$, with trajectory $x$ and terminal time $T$, alongside the candidate $\gamma^*$ with $x^*$ and $T^*$. Because the HJB right-hand side is a *minimum* over $u$, the arbitrary control can only do worse, while the minimising control attains it exactly:
+Suppose $V$ is continuously differentiable and satisfies HJB. Take any admissible $\gamma\in\Gamma$, with trajectory $x$, alongside an admissible minimizing candidate $\gamma^*$ with $x^*$, both at the same fixed terminal time $T$. Also require $V(T,x)=q(T,x)$. Because the HJB right-hand side is a *minimum* over $u$, the arbitrary control can only do worse, while the minimising control attains it exactly:
 
 $$g(t,x,u) + \partial_x V\, f(t,x,u) + \partial_t V \;\ge\; 0, \qquad\qquad g(t,x^*,u^*) + \partial_x V\, f(t,x^*,u^*) + \partial_t V \;\equiv\; 0$$
 
-Along a trajectory the last two terms of each are exactly $\tfrac{d}{dt}V\big(t,x(t)\big)$, so integrating the first over $[0,T]$ and the second over $[0,T^*]$ gives
+Along a trajectory the last two terms of each are exactly $\tfrac{d}{dt}V\big(t,x(t)\big)$, so integrating the first over $[0,T]$ and the second over $[0,T]$ gives
 
-$$\int_0^{T} g\,dt + V\big(T,x(T)\big) - V(0,x_0) \;\ge\; 0, \qquad\qquad \int_0^{T^*} g^*\,dt + V\big(T^*,x^*(T^*)\big) - V(0,x_0) \;=\; 0$$
+$$\int_0^{T} g\,dt + V\big(T,x(T)\big) - V(0,x_0) \;\ge\; 0, \qquad\qquad \int_0^{T} g^*\,dt + V\big(T,x^*(T)\big) - V(0,x_0) \;=\; 0$$
 
 Eliminate $V(0,x_0)$ between them and apply the boundary condition $V(T,x)=q(T,x)$:
 
-$$L(u) \;=\; \int_0^{T} g\,dt + q\big(T,x(T)\big) \;\ge\; \int_0^{T^*} g^*\,dt + q\big(T^*,x^*(T^*)\big) \;=\; L(u^*) \qquad \blacksquare$$
+$$L(u) \;=\; \int_0^{T} g\,dt + q\big(T,x(T)\big) \;\ge\; \int_0^{T} g^*\,dt + q\big(T,x^*(T)\big) \;=\; L(u^*) \qquad \blacksquare$$
 
 ::: small
 A solution of the PDE is therefore a ==certificate==: no admissible strategy beats $\gamma^*$, from any initial state. This is exactly what Pontryagin's conditions do *not* give — they are stationarity conditions, satisfied by every extremal, optimal or not.
@@ -684,14 +743,14 @@ Minimise over $u$: $\;2B^\top P_t x + 2Ru = 0 \Rightarrow u^* = -R^{-1}B^\top P_
 
 $$-\dot P_t = A^\top P_t + P_t A - P_t B R^{-1}B^\top P_t + Q$$
 
-Infinite horizon: $\dot P\to0$, giving the algebraic Riccati equation $A^\top P + PA - PBR^{-1}B^\top P + Q = 0$ with a unique PSD solution, hence the constant gain $K=R^{-1}B^\top P$ and $u^*=-Kx$.
+Infinite horizon: $\dot P\to0$, giving the algebraic Riccati equation $A^\top P + PA - PBR^{-1}B^\top P + Q = 0$ under the stabilizability and detectability assumptions above, with a unique PSD stabilizing solution, hence the constant gain $K=R^{-1}B^\top P$ and $u^*=-Kx$.
 
 **Discrete time.** With $x_{t+1}=Ax_t+Bu_t$ and $V(z)=z^\top Pz$, the backup is $z^\top Pz = \min_w \{z^\top Qz + w^\top Rw + (Az+Bw)^\top P(Az+Bw)\}$, whose minimiser is $w^* = -(R+B^\top PB)^{-1}B^\top PA\,z$. Substituting and matching for all $z$:
 
 $$P = Q + A^\top PA - A^\top PB\big(R + B^\top PB\big)^{-1}B^\top PA, \qquad K = \big(R+B^\top PB\big)^{-1}B^\top PA$$
 
 ::: small
-The ARE has exactly one solution with $P=P^\top\succeq0$, and it *is* the value function. Started from $P_1=Q$, the recursion converges to it whenever $(A,B)$ is controllable — value iteration, on a matrix. This discrete form is the one a learned critic implicitly targets in Lecture 10.
+Under stabilizability and detectability, the ARE has a unique positive-semidefinite stabilizing solution. Started from $P_1=Q$, the recursion converges to it — value iteration, on a matrix. This discrete form is the one a learned critic implicitly targets in Lecture 10.
 :::
 
 ### Backup 4 — Euler–Lagrange to the minimum principle
@@ -706,5 +765,5 @@ $$\dot x^* = \frac{\partial H}{\partial\lambda} = f, \qquad \dot\lambda^* = -\fr
 **From Euler–Lagrange to Pontryagin.** Stationarity, $\partial_u H = 0$, presumes $u$ is interior to $U$. Pontryagin replaces it with the global condition $u^* = \argmin_{u\in U} H(t,x^*,u,\lambda^*)$, which remains valid on the *boundary* of $U$ — so it covers saturated actuators and bang-bang controls, where the derivative never vanishes.
 
 ::: small
-**A conserved quantity.** Along a trajectory $\frac{dH}{dt} = \frac{\partial H}{\partial u}\dot u + \frac{\partial H}{\partial t}$; for a time-invariant problem the second term vanishes and the first vanishes precisely when $u$ minimises $H$ at every instant. So $H$ is constant along an extremal and drifts along anything else — the invariant the Act 4 widget plots. The minimum principle is also the standard way to *state* equilibrium conditions for dynamic games, which is how ==IE579== uses it.
+**A conserved quantity.** Along a trajectory $\frac{dH}{dt} = \frac{\partial H}{\partial u}\dot u + \frac{\partial H}{\partial t}$; for a time-invariant problem the second term vanishes and along a smooth interior extremal the first vanishes because $H_u=0$. Thus $H$ is constant there; constancy alone does not prove optimality or that the minimum principle holds — the invariant the Act 4 widget plots. The minimum principle is also the standard way to *state* equilibrium conditions for dynamic games, which is how ==IE579== uses it.
 :::

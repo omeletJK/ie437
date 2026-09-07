@@ -57,12 +57,13 @@ Lecture 8 deleted $P$ and $R$ and kept the Bellman equation. Lecture 10 deleted 
 
 ::: reveal
 ::: keypoint
-==Sample inefficiency.== Each transition is used once and thrown away.
+==Sample inefficiency.== Real transitions can be reused through replay, as in DQN and DDPG. A learned model adds the ability to generate **new synthetic transitions**.
 :::
 :::
 
 ::: reveal
-Lecture 10 closed by asking the question both extensions had been avoiding: *if deleting the model cost us this much, what happens if we learn it?* Here is the cost, measured. On a MuJoCo half-cheetah, a model-free learner needs of order $10^7$–$10^8$ environment steps to reach a competent gait — ==about ten days of real time==. A model-based learner reaches a walking gait from $10^4$–$10^5$ steps: ==about ten minutes.== {p}(Nagabandi et al., 2018)
+Lecture 10 closed by asking the question both extensions had been avoiding: *if deleting the model cost us this much, what happens if we learn it?* Here is the cost, measured. The source experiments compare substantially fewer real interactions for model-based learning than for their model-free baselines. The exact count depends on the task, performance threshold, control frequency, and baseline; a simulation step is not automatically a fixed amount of real training time. {p}(Nagabandi et al., 2018)
+
 
 ::: small
 The reason is arithmetic, not cleverness. A learned $f_\theta$ can be queried without touching the world, so ==one real transition can inform the value of many imagined states.== That is the entire case for this lecture.
@@ -136,6 +137,21 @@ And Lecture 10 leaves something more specific: ==the trust-region machinery==. I
 - **Q3 — Can the planner itself be trained?** ==Differentiable MPC== — backpropagate *through* the optimiser, and fit the model to the task.
 - **Q4 — How do the lineages reunite?** Three routes from a model to a policy, of which ==guided policy search== is the clearest: control teaches, a network learns. {p}(Levine & Koltun, 2013)
 
+### Learning route — use a learned model, then check what it changes
+
+**Bring:** Bellman backups (Lectures 7–8), feedback control (Lecture 9), and policy gradients (Lecture 10).
+
+::: flow
+- **Fit** | predict the next state from a transition
+- **Plan** | compare short action sequences
+- **Re-plan** | replace a prediction with a measurement
+- !**Learn a policy** | differentiate, imitate, or simulate
+:::
+
+**Core goal:** calculate a two-step plan and an imagined Q update. Differentiable MPC and guided policy search are the **advanced extension**; their KKT derivations remain in the appendix.
+
+A good model should support good decisions on the states the controller will actually visit. Small training error alone cannot establish that.
+
 ## Act 1 — the spectrum of model use
 {short: ACT 1, num: Act 1}
 
@@ -155,7 +171,7 @@ And Lecture 10 leaves something more specific: ==the trust-region machinery==. I
 :::
 ::: col.accent Often we can *learn* one
 - **System identification** — fit the few unknown parameters of a ==known== structure. Excite the system, measure the response, fit.
-- **Learning** — fit a ==general-purpose== model to observed transitions $\{(s,a,s')\}$, with no structure assumed.
+- **Learning** — fit a ==general-purpose== model to observed transitions $\{(s,a,s')\}$, with architecture and regularization supplying inductive assumptions.
 :::
 :::
 
@@ -209,7 +225,7 @@ $$p_{\pi_f}(s_t)\;\neq\;p_{\pi_0}(s_t)$$
 ::: col.accent Where you have met this before
 Lecture 5, exactly: a surrogate fitted to a fixed dataset, then handed to an optimiser that exploits it. ==The optimiser is an adversary== — and a planner is an optimiser with a time axis.
 
-And it gets *worse* with capacity: distribution mismatch is ==exacerbated as the model class becomes more expressive.==
+And it gets *worse* with capacity: extra capacity can worsen off-distribution overfitting without adequate data or regularization; it can also reduce misspecification.
 :::
 :::
 
@@ -227,7 +243,7 @@ So the optimum found in a learned model is only ==optimum from the model's point
 - Lower asymptotic error — the final policy is always better
 - Freedom from the Markov assumption
 - Guaranteed convergence, which model-free methods lack
-Real interaction is the scarce resource — it costs wall-clock time, hardware, or safety. A learned model turns a small amount of it into an unlimited supply of cheap synthetic experience. What it does **not** buy is accuracy: asymptotically, model-free methods trained on unlimited real data usually win, because they never inherit anyone else's modelling error.
+Real interaction is the scarce resource — it costs wall-clock time, hardware, or safety. A learned model turns a small amount of it into an unlimited supply of cheap synthetic experience. What it does **not** buy is accuracy: the eventual ranking depends on the model class, task, optimization, and data; there is no universal winner.
 :::
 
 ## Act 2 — planning with a learned model
@@ -290,7 +306,7 @@ Append what actually happened, refit, repeat. If the model is wrong where the pl
 :::
 
 ::: reveal
-This is data aggregation: chase $p_{\pi_f}$ with the dataset until $p_{\pi_f}(s_t)= p_{\pi_0}(s_t)$. It helps — and it still executes a whole plan before looking.
+This is data aggregation: add data from the controller’s current visits so the training distribution better covers the states planning needs. It helps — and it still executes a whole plan before looking.
 
 ::: keypoint
 So: what if we make a mistake ==in the middle of the plan?==
@@ -301,7 +317,7 @@ So: what if we make a mistake ==in the middle of the plan?==
 
 At each step, optimise a short horizon of actions, ==execute only the first==, observe, re-plan:
 
-$$\tau^*_{1:T} = \mathrm{MPC}(x_{\text{init}}; C, f_\theta) = \argmin_{x_{1:T},\,u_{1:T}} \sum_{t=1}^{T} C_t(x_t,u_t) \quad\text{s.t.}\quad x_{t+1}=\hl{f_\theta(x_t,u_t)},\; x_1 = x_{\text{init}}$$
+$$\min_{u_{0:H-1}}\sum_{t=0}^{H-1}C_t(x_t,u_t)+C_H(x_H),\quad x_{t+1}=f_\theta(x_t,u_t),\quad x_0=x_{\mathrm{measured}}$$
 
 ::: reveal
 This is ==Lecture 9's optimal control, run on a learned model== instead of a given one. Nothing in the solver changes; only the constraint is now fitted.
@@ -313,34 +329,49 @@ This is ==Lecture 9's optimal control, run on a learned model== instead of a giv
 :::
 :::
 
+### Plan twice — first from a prediction, then from a measurement
+
+Use $\hat x_{t+1}=\hat x_t+u_t$, start at $x_0=2$, and compare two-step plans with cost $u_0^2+u_1^2+x_2^2$.
+
+| plan | predicted final state | total predicted cost |
+|---|---|---|
+| $(0,0)$ | 2 | 4 |
+| $(-1,0)$ | 1 | 2 |
+| $(-1,-1)$ | 0 | 2 |
+
+Among these candidates, choose $(-1,0)$ and execute **only $u_0=-1$**. Suppose the measured next state is **1.4**, not the predicted 1.
+
+::: keypoint
+The next optimization starts from **1.4**. For a final one-step cost $u^2+(1.4+u)^2$, it chooses $u=-0.7$. MPC corrects its starting state; it does not magically correct every model error.
+:::
+
 ### What a rollout does to a model's error
 
 ::: widget rollout-drift {"seed":17}
 A one-dimensional system, a base policy that explored a band around the origin, and a model fitted inside it. Left: the model is ==excellent where the data is== and hopeless outside. Middle: rolled out open loop, the model is composed with *its own output*, so it walks out of the band and never comes back. Right, on a log axis: the open-loop error climbs a decade every few steps, while ==re-measuring the state each step holds it flat.==
 :::
 
-### Why it compounds, precisely
+### Why rollout error grows — count the propagation
 
-::: lede
-Iterating a one-step model means feeding it inputs it never saw — its own predictions.
-:::
+Let the one-step model error be at most $\epsilon$ and let true dynamics amplify state differences by at most $L$. For the same actions and $e_0=0$,
 
-$$\hat y_{t+k} = f(\hat x_{t+k}) + e_{t+k},\qquad \hat x_{t+k} = (\;\underbrace{\hat y_{t+k-1},\dots,\hat y_{t+1}}_{\hl{\text{random variables}}},\;\underbrace{y_t,\dots,y_{t+k-L}}_{\hl{\text{data}}}\;)$$
+$$e_{t+1}\le Le_t+\epsilon,\qquad e_H\le\epsilon\sum_{j=0}^{H-1}L^j.$$
 
-::: reveal
-As the horizon grows the model's input is made of ==more of its own guesses and less of the world==. Each step's error is the next step's input error, and the two multiply.
-:::
+For $\epsilon=0.1$:
 
-::: reveal
-::: small
-Two consequences the practice lives by. Keep the planning horizon short. And re-plan often, because re-planning replaces the leading random variables with data — which is exactly what the widget's flat green line is.
-:::
+| amplification | bound after 1 step | after 3 steps | after 5 steps |
+|---|---|---|---|
+| $L=1$ | 0.1 | 0.3 | 0.5 |
+| $L=2$ | 0.1 | 0.7 | 3.1 |
+
+::: keypoint
+Error can grow linearly, geometrically, or remain bounded when $L<1$. **Exponential growth is not universal.** The bound assumes the error and sensitivity limits hold along the rollout.
 :::
 
 ### Version 3+ — plan with the model's uncertainty
 
 ::: lede
-Version 3 still acts on the model's *mean*: it takes actions believed good in expectation, which quietly forbids exploring the places the model does not know.
+Version 3 still acts on the model's *mean*: it takes actions believed good in expectation, which provides no explicit incentive to seek information. It may still visit unfamiliar states.
 :::
 
 Split the error the way Lecture 0 split it, and the way Lecture 2 wrote it:
@@ -348,7 +379,7 @@ Split the error the way Lecture 0 split it, and the way Lecture 2 wrote it:
 $$\E\lVert Y - \hat f(X)\rVert^2 \;=\; \underbrace{\E\lVert Y - f(X)\rVert^2}_{\sigma_s^2\;=\;\hl{\text{systemic noise}}} \;+\; \underbrace{\E\lVert f(X) - \hat f(X)\rVert^2}_{\sigma_m^2\;=\;\hl{\text{model uncertainty}}}$$
 
 ::: reveal
-The first term is irreducible. The second is ==high exactly where training data is thin== — and it is the quantity a planner must respect.
+This decomposition assumes $f(X)=\E[Y\mid X]$ and zero-mean conditional noise for the evaluation data. The second term includes model error; sparse data can increase it, but no universal equality links error to data density.
 :::
 
 ### Three ways to get $\sigma_m$, all of them borrowed
@@ -360,20 +391,20 @@ $$p(\theta\mid\mathcal D)\approx\tfrac1N\textstyle\sum_i \delta(\theta_i),\quad 
 Train each $\theta_i$ on $\mathcal D_i$, sampled with replacement. ==Lecture 5's `ensemble-alarm`, in dynamics.==
 :::
 ::: col.accent Gaussian processes
-A GP transition model is *non-parametric* (nonlinear dynamics), *Bayesian* (non-stationary dynamics — update on recent data), and *probabilistic* (robust decisions). ==Lecture 4's posterior, used as $f$.==
+A GP provides a posterior distribution over transitions. Tracking changing dynamics requires an explicit time model, forgetting scheme, or other adaptation; Bayesian updating alone does not establish nonstationarity or robustness. ==Lecture 4's posterior, used as $f$.==
 :::
 :::
 
 ::: reveal
 ::: small
-The third is a Bayesian network — put a distribution on the weights rather than a point estimate {p}(Blundell et al., 2015). All three answer the same question Lecture 2 asked about a coin: ==do not carry a number, carry a belief.== **PETS** combines the first two — a probabilistic *ensemble*, whose spread far from data is epistemic and whose per-member variance is aleatoric — and learns four continuous-control tasks in ==under 100 000 steps, or 100 trials==, where PPO, SAC and DDPG need one to two orders of magnitude more. {p}(Chua et al., 2018)
+The third is a **Bayesian neural network** — put a distribution on the weights rather than a point estimate {p}(Blundell et al., 2015). All three answer the same question Lecture 2 asked about a coin: ==do not carry a number, carry a belief.== **PETS** combines neural-network ensembles with probabilistic outputs — a probabilistic *ensemble*, whose spread far from data is epistemic and whose per-member variance is aleatoric — and learns four continuous-control tasks in ==under 100 000 steps, or 100 trials==, where PPO, SAC and DDPG need one to two orders of magnitude more. {p}(Chua et al., 2018)
 :::
 :::
 
 ### Version 4 — plan in a latent space
 
 ::: lede
-Raw observations are high-dimensional, redundant and partial. The dynamics are not.
+Raw observations may be high-dimensional and partial. A useful latent representation should retain information needed to predict and control; it is not guaranteed to be low-dimensional or Markov.
 :::
 
 ::: flow
@@ -385,12 +416,12 @@ Raw observations are high-dimensional, redundant and partial. The dynamics are n
 ::: reveal
 Learn all three at once, with a deterministic encoder $q_\psi(s_t\mid o_t)=\delta\big(s_t = g_\psi(o_t)\big)$:
 
-$$\max_{\phi,\psi}\;\frac1N\sum_{i}\sum_t \underbrace{\log p_\phi\big(g_\psi(o_{t+1,i})\mid g_\psi(o_{t,i}),a_{t,i}\big)}_{\text{latent dynamics}} + \underbrace{\log p_\phi\big(o_{t,i}\mid g_\psi(o_{t,i})\big)}_{\text{reconstruction}} + \underbrace{\log p_\phi\big(r_{t,i}\mid g_\psi(o_{t,i})\big)}_{\text{reward}}$$
+$$\max_{\phi,\psi}\frac1N\sum_{i,t}\Big[\log p_\phi(z_{t+1,i}\mid z_{t,i},a_{t,i})+\log p_\phi(o_{t,i}\mid z_{t,i})+\log p_\phi(r_{t+1,i}\mid z_{t,i},a_{t,i})\Big],\quad z_{t,i}=g_\psi(o_{t,i}).$$
 :::
 
 ::: reveal
 ::: small
-This is ==Lecture 6's VAE, carrying a transition==. And the payload of *Embed to Control* is worth naming: it learns a latent space in which the dynamics are locally ==linear==, so Lecture 9's LQR applies to a robot controlled from pixels. {p}(Watter et al., 2015; Zhang et al., 2019)
+This is a simplified reconstruction-and-prediction objective, **not the full VAE ELBO**. A partially observed system generally needs history or a belief-state encoder, not one image alone. And the payload of *Embed to Control* is worth naming: it learns a latent space in which the dynamics are locally ==linear==, so Lecture 9's LQR applies to a robot controlled from pixels. {p}(Watter et al., 2015; Zhang et al., 2019)
 :::
 :::
 
@@ -405,12 +436,12 @@ Lecture 1's answer, imposed on a network. An **input-convex** neural network is 
 
 $$\min_{u_t,\dots,u_{t+T}}\;\sum_{\tau} f(x_{\tau-n_w},\dots,x_\tau) \quad\text{s.t.}\quad s_\tau = g(x_{\tau-n_w},\dots,u_\tau),\;\; \underline u \le u_\tau\le \bar u,\;\; \underline s \le s_\tau \le \bar s$$
 
-is ==a convex program in the actions==, solvable to global optimality. {p}(Amos, Xu & Kolter, 2017; Chen, Shi & Zhang, 2019)
+is convex in the actions **only when the whole formulation preserves convexity**: appropriate monotone compositions, convex inequality constraints, and affine equalities or a valid reformulation. An ICNN dynamics model alone does not make nonlinear equality constraints convex. {p}(Amos, Xu & Kolter, 2017; Chen, Shi & Zhang, 2019)
 :::
 
 ::: reveal
 ::: block The bill, paid in a real building
-An input-convex recurrent model fits building dynamics as accurately as an ordinary RNN, and the controller built on it finds actions worth ==11.52% more energy saving== — while the ordinary RNN's decisions "vary dramatically". Later work ran the same controller on a real ETH building for a fortnight. ==Lecture 1's convexity was never a mathematical convenience; it is what makes a learned model safe to optimise inside.==
+An input-convex recurrent model fits building dynamics as accurately as an ordinary RNN, and the controller built on it finds actions worth ==11.52% more energy saving== — while the ordinary RNN's decisions "vary dramatically". Later work ran the same controller on a real ETH building for a fortnight. ==Lecture 1's convexity was never a mathematical convenience; it can make the optimization tractable; predictive accuracy, feasibility, and real-system performance still need separate checks.==
 :::
 :::
 
@@ -419,7 +450,7 @@ An input-convex recurrent model fits building dynamics as accurately as an ordin
 
 ::: quiz Dyna-style methods train on rollouts imagined by the learned model. Why are those rollouts usually kept to a handful of steps?
 - Longer rollouts are too expensive to compute
-- =Because one-step model error compounds: each imagined step feeds the next, so the trajectory drifts off the real dynamics exponentially
+- =Because one-step model error compounds: each imagined step feeds the next, so trajectory errors can accumulate and amplify, especially outside the data
 - Because the discount factor makes distant steps irrelevant anyway
 - Because the replay buffer cannot hold long trajectories
 A model accurate to within $\epsilon$ per step is not accurate to within $\epsilon$ over fifty steps — the errors feed forward and the imagined state leaves the region the model was ever fitted on. Short rollouts branched from **real** states keep the model working where it is trustworthy, which is the same discipline as Lecture 5's conservatism and Lecture 10's trust region.
@@ -456,7 +487,7 @@ For a convex quadratic planning subproblem — an LQR, or a QP —
 
 $$\tau^*_{1:T} = \argmin_{\tau_{1:T}} \sum_t \tfrac12 \tau_t^\top C_t \tau_t + c_t^\top \tau_t \quad\text{s.t.}\quad x_1 = x_{\text{init}},\;\; x_{t+1}=F_t\tau_t + f_t$$
 
-the optimum is characterised by its KKT conditions. Do not differentiate $\tau^*$; ==differentiate the conditions it satisfies==:
+With a locally unique optimum and a nonsingular KKT system (and a stable active set for inequalities), the solution is differentiable locally. Do not differentiate $\tau^*$; ==differentiate the conditions it satisfies==:
 
 $$\mathcal L(\tau,\lambda) \;\Longrightarrow\; \text{KKT} \;\Longrightarrow\; \text{take differentials} \;\Longrightarrow\; \frac{\partial \tau^*}{\partial \theta}$$
 
@@ -467,7 +498,21 @@ The differentials give a *linear system* in $(d\tau, d\lambda)$ whose matrix is 
 :::
 
 ::: reveal
-And the saving is measurable: differentiating the fixed point costs ==about $1.5\times10^{-2}$ s regardless of horizon==, while unrolling the iLQR solver and backpropagating through every iteration costs $\approx 3$ s at 128 steps — two orders of magnitude, and growing.
+And the saving is measurable: differentiating the fixed point costs ==about $1.5\times10^{-2}$ s over the horizons shown in the reported benchmark, not a horizon-independent complexity guarantee==, while unrolling the iLQR solver and backpropagating through every iteration costs $\approx 3$ s at 128 steps — two orders of magnitude, and growing.
+:::
+
+### Differentiate a solution — first do it with one number
+
+A one-step planner chooses $u^*(\theta)$ by minimizing $\tfrac12(u-\theta)^2+\tfrac12u^2$.
+
+The optimality condition is **$2u^*-\theta=0$**. Differentiate that condition:
+
+$$2\frac{du^*}{d\theta}-1=0\quad\Rightarrow\quad\frac{du^*}{d\theta}=\frac12.$$
+
+If the training goal is an expert action 1, let $\ell=\tfrac12(u^*-1)^2$. At $\theta=0$, $u^*=0$ and $d\ell/d\theta=(-1)(1/2)=-0.5$.
+
+::: keypoint
+We differentiate **the equation defining the solution**. The KKT matrix method is this same calculation with several variables and constraints.
 :::
 
 ### A model fitted to be wrong in the right places
@@ -540,10 +585,12 @@ Each route is one of the course's earlier chapters, ==feeding its own data-drive
 
 Compose policy and model along the horizon and differentiate the whole chain:
 
-$$a_t=\pi_\theta(s_t) \;\to\; s_{t+1}=f(s_t,a_t) \;\to\; a_{t+1}=\pi_\theta(s_{t+1}) \;\to\;\cdots, \qquad \nabla_\theta J = \sum_i \frac{dr_t}{ds_t}\prod_{t'=2}^{t}\frac{ds_{t'}}{da_{t'-1}}\frac{da_{t'-1}}{ds_{t'-1}}$$
+$$D_\theta a_t=\partial_\theta\pi_\theta(s_t)+\partial_s\pi_\theta(s_t)D_\theta s_t,\qquad D_\theta s_{t+1}=f_sD_\theta s_t+f_aD_\theta a_t.$$
+
+Starting from $D_\theta s_0=0$, propagate these sensitivities and sum $\nabla_\theta J=\sum_t(r_sD_\theta s_t+r_aD_\theta a_t)$, with discount factors when needed.
 
 ::: reveal
-**PILCO** does this with a *probabilistic* model — a GP on the state difference $\Delta_t = x_t - x_{t-1}$ — and propagates the whole distribution forward by moment matching, so long-horizon planning carries the model's own uncertainty. Policy evaluation is then closed form and the policy gradient is analytic. {p}(Deisenroth & Rasmussen, 2011)
+**PILCO** does this with a *probabilistic* model — a GP on the state difference $\Delta_t = x_t - x_{t-1}$ — and propagates the whole distribution forward by moment matching, so long-horizon planning carries the model's own uncertainty. Moment calculations are analytic for the selected GP and cost forms, but the Gaussian rollout distribution is an approximation. {p}(Deisenroth & Rasmussen, 2011)
 
 ::: small
 The result is the data-efficiency headline of the field: real cart-pole swing-up *and* balance from ==17.5 seconds of interaction with the physical hardware==; a robotic unicycle in $\R^{12}$ from about 20 trials. Against the methods of the decade before it, roughly ==three orders of magnitude less interaction.==
@@ -578,8 +625,8 @@ Lecture 1 wrote an optimisation. Lecture 9 added the dynamics as a constraint. A
 | | objective | dynamics constraint | policy constraint |
 |---|---|---|---|
 | **Optimisation** *(Lec 1)* | $\min_u c(u)$ | — | — |
-| **Optimal control** *(Lec 9)* | $\min_{u,x}\sum_t c(x_t,u_t)$ | $x_t = f(x_t,u_t)$ | — |
-| ==**+ imitation** *(Lec 11)*== | $\min_{u,x,\theta}\sum_t c(x_t,u_t)$ | $x_t = f(x_t,u_t)$ | ==$u_t = \pi_\theta(x_t)$== |
+| **Optimal control** *(Lec 9)* | $\min_{u,x}\sum_t c(x_t,u_t)$ | $x_{t+1} = f(x_t,u_t)$ | — |
+| ==**+ imitation** *(Lec 11)*== | $\min_{u,x,\theta}\sum_t c(x_t,u_t)$ | $x_{t+1} = f(x_t,u_t)$ | ==$u_t = \pi_\theta(x_t)$== |
 :::
 
 ::: reveal
@@ -592,7 +639,7 @@ Three rows, three lectures. The middle row constrains the trajectory to be *phys
 
 The constrained program, with an augmented Lagrangian:
 
-$$\bar{\mathcal L}(\tau,\theta,\lambda) = c(\tau) + \sum_t \lambda_t\big(\pi_\theta(x_t)-u_t\big) + \sum_t \rho_t\big(\pi_\theta(x_t)-u_t\big)^2$$
+$$\bar{\mathcal L}(\tau,\theta,\lambda) = c(\tau) + \sum_t \lambda_t^\top\big(\pi_\theta(x_t)-u_t\big) + \sum_t \rho_t\lVert\pi_\theta(x_t)-u_t\rVert^2$$
 
 ::: flow
 - !**1 · Trajectory optimisation** | $\tau^*\leftarrow \min_\tau \bar{\mathcal L}$ — via iLQR
@@ -601,7 +648,7 @@ $$\bar{\mathcal L}(\tau,\theta,\lambda) = c(\tau) + \sum_t \lambda_t\big(\pi_\th
 :::
 
 ::: reveal
-Step 1 is Lecture 9. Step 2 is plain supervised learning. Step 3 is dual gradient descent — and its derivation uses the same envelope argument as Act 3: at the inner optimum $d\mathcal L/dx^*=0$, so ==the gradient through the $\arg\min$ collapses to a single term.==
+Step 1 is Lecture 9. Step 2 is plain supervised learning. Step 3 is dual gradient ascent — and its derivation uses the same envelope argument as Act 3: at the inner optimum $d\mathcal L/dx^*=0$, so ==the gradient through the $\arg\min$ collapses to a single term.==
 :::
 
 ::: reveal
@@ -643,10 +690,10 @@ The states visited by the *teacher* are not the states visited by the *learner*,
 $$\pi^t_\lambda(u\mid x_t,\theta) \leftarrow \min_\pi\; J_t(\pi\mid x_t) + \lambda\, D_{\mathrm{KL}}\big(\pi(u\mid x_t)\,\|\,\pi_\theta(u\mid o_t)\big)$$
 
 ::: reveal
-==The only difference from ordinary MPC is that KL term.== It makes the teacher visit the states the student will visit, while still reacting competently to surprises the half-trained student could not survive.
+==The only difference from ordinary MPC is that KL term.== It encourages the teacher’s actions and state distribution to stay closer to the student’s, while still reacting competently to surprises the half-trained student could not survive.
 
 ::: small
-Two practical consequences. The MPC teacher may use ==full state== at training time while the final policy uses ==only the observations== the robot will have at test time — the input-remapping trick. And in flight experiments the crash count stays near zero throughout training, where DAgger's saturates: this is a ==safety== argument, not only an accuracy one. {p}(Kahn et al., 2017)
+Two practical consequences. The MPC teacher may use ==full state== at training time while the final policy uses ==only the observations== the robot will have at test time — the input-remapping trick. And in flight experiments the crash count stays near zero throughout training, where DAgger's saturates: these are empirical safety results, not a guarantee of zero crashes in other settings. {p}(Kahn et al., 2017)
 :::
 :::
 
@@ -664,11 +711,25 @@ The simplest reunion of all: use the model to *manufacture experience*, and hand
 :::
 
 ::: reveal
-Line 3 is Lecture 8, untouched. Line 4 is Lecture 7's planning backup, on an estimated model. ==The two lineages meet inside a single loop, four lines apart.== {p}(Sutton, 1990)
+Line 3 is Lecture 8, untouched. Line 4 is a sampled planning backup on an estimated model, extending Lecture 7's planning idea. ==The two lineages meet inside a single loop, four lines apart.== {p}(Sutton, 1990)
 
 ::: small
 Only short rollouts are needed — as few as one step — and the algorithm still sees diverse states, because the imagined transitions start from every state in the buffer. Longer rollouts from $\pi$ give MVE and MBPO; the question their titles ask is the honest one: ==*when* to trust your model.==
 :::
+:::
+
+### Dyna — the same update from two different sources
+
+Let $Q(s,a)=2$, $\alpha=0.2$, $\gamma=0.9$, and next maximum value 5.
+
+| source | reward | target | updated estimate from 2 |
+|---|---|---|---|
+| real transition | 1 | $1+0.9(5)=5.5$ | 2.70 |
+| correct imagined transition | 1 | 5.5 | 2.70 |
+| optimistic model error | 3 | $3+0.9(5)=7.5$ | 3.10 |
+
+::: keypoint
+The update cannot tell whether its label came from reality or a model. Extra planning saves real interaction **only insofar as the imagined information is useful**. It can also repeat a mistake many times.
 :::
 
 ### Real steps against imagined steps
@@ -690,7 +751,7 @@ The same paper answers Lecture 8's parting wall from the other side. Write $Q$ a
 
 $$Q(x,u) = V(x) - \tfrac12\big(u-\mu(x)\big)^\top P(x)\big(u-\mu(x)\big)$$
 
-and the maximising action is ==always $\mu(x)$==, analytically. The continuous $\arg\max$ is solved by ==assuming LQR structure==: Lecture 9 answering Lecture 8 directly.
+with $P(x)\succ0$, the unique maximizing action is **$\mu(x)$**, analytically. The continuous $\arg\max$ is solved by ==assuming LQR structure==: Lecture 9 answering Lecture 8 directly.
 :::
 :::
 
@@ -714,7 +775,7 @@ And the honest ledger, which the source deck insists on:
 - **It relies on assumptions** — linearisability, continuity, smoothness.
 
 ::: small
-Route 1 is simple but unstable; route 2 is sample-efficient but needs a real planner (iLQR, MCTS, MPC); route 3 is simple but the least sample-efficient of the three.
+Route 1 is simple but unstable; route 2 is sample-efficient but needs a real planner (iLQR, MCTS, MPC); route 3 is simple; relative sample efficiency depends on model accuracy, rollout length, and task.
 :::
 :::
 
@@ -786,7 +847,7 @@ Take that away — no new samples, ever — and model bias stops being a nuisanc
 :::
 
 ::: small
-That is Lecture 12, offline RL. Its answer will be this lecture's learned model, made ==pessimistic==: penalise the reward by the model's own uncertainty, $\tilde r(s,a) = r(s,a) - \lambda\,u(s,a)$, and plan in that penalised MDP. {p}(MOPO, Yu et al., 2020; MOReL, Kidambi et al., 2020) The dial you turned in Act 2 becomes the only defence left.
+That is Lecture 12, offline RL. Its answer will be this lecture's learned model, made ==pessimistic==: penalise the reward by the model's own uncertainty, $\tilde r(s,a) = r(s,a) - \lambda\,u(s,a)$, and plan in that penalised MDP. {p}(MOPO, Yu et al., 2020; MOReL, Kidambi et al., 2020) This is one defense; Lecture 12 also covers policy constraints, conservative values, and evaluation.
 :::
 :::
 
@@ -817,10 +878,11 @@ $$dQ\,z^* + Q\,dz + dq + dA^\top\nu^* + A^\top d\nu = 0,\qquad dA\,z^* + A\,dz -
 
 $$\Longrightarrow\quad \begin{bmatrix} Q & A^\top\\ A & 0\end{bmatrix}\begin{bmatrix} dz\\ d\nu\end{bmatrix} = -\begin{bmatrix} dQ\,z^* + dq + dA^\top\nu^*\\ dA\,z^* - db\end{bmatrix}$$
 
-One solve of this system yields $\partial z^*/\partial(\cdot)$ for every parameter, so the planner is a differentiable layer. Writing $[d_z;\,d_\nu]$ for its solution against $[(\partial\ell/\partial z^*)^\top;\,0]$, the chain rule gives $\nabla_Q\ell = \tfrac12(d_z z^\top + z\,d_z^\top)$, $\nabla_q\ell = d_z$, $\nabla_A\ell = d_\nu z^\top + \nu\,d_z^\top$ and $\nabla_b\ell = -d_\nu$.
+Each parameter perturbation has its own right-hand side; factorization can be reused. For a scalar outer loss, an adjoint solve yields all parameter gradients. Write $[d_z;d_\nu]$ for the solution of the transposed KKT system against **$[-\nabla_{z^*}\ell;0]$**. Then the chain rule gives $\nabla_Q\ell = \tfrac12(d_z z^\top + z\,d_z^\top)$, $\nabla_q\ell = d_z$, $\nabla_A\ell = d_\nu z^\top + \nu\,d_z^\top$ and $\nabla_b\ell = -d_\nu$.
 
 ::: small
-**The LQR specialisation.** With $\tau=(x,u)$ the finite-horizon LQR optimum solves exactly such a system, whose matrix is block-tridiagonal in $(\tau_t,\lambda_t)$ — and because that matrix has LQR structure, the backward solve *is another LQR problem*, $d^*_{\tau_{1:T}} = \mathrm{LQR}_T(0; C, \nabla_{\tau^*}\ell, F, 0)$: one Riccati sweep, reusing the forward pass's factorisations. **Nonlinear case:** run iLQR to a fixed point, Taylor-expand there, and differentiate the resulting LQR, zeroing the rows of $F$ for tight control constraints. If iLQR has no fixed point, fall back to unrolling. {p}(OptNet; Differentiable MPC)
+**LQR:** the structured linear solve can reuse Riccati factorizations. **Nonlinear MPC:** differentiate a converged local approximation, with a stable active set and nonsingular KKT matrix. If the solver has not converged, differentiating its iterations describes that finite algorithm, not an exact optimum. {p}(OptNet; Differentiable MPC)
+
 :::
 
 ### Backup 2 — guided policy search, the constrained program
@@ -833,7 +895,7 @@ $$\min_{\theta,\,p(\tau)}\ \E_{p(\tau)}\Big[\textstyle\sum_t c(x_t,u_t)\Big]\qua
 
 1. **w.r.t. $p(\tau)$** — trajectory optimisation by iLQG under time-varying linear-Gaussian dynamics; the LQR structure makes the local controller $p(u_t\mid x_t)=\mathcal N(K_t(x_t-\hat x_t)+k_t+\hat u_t,\Sigma_t)$ fall out automatically;
 2. **w.r.t. $\theta$** — supervised regression: minimise the weighted sum of KL divergences between $\pi_\theta$ and the local controllers;
-3. **duals $\lambda$** — dual gradient descent (in practice often *scheduled* rather than updated).
+3. **duals $\lambda$** — dual gradient ascent (in practice often *scheduled* rather than updated).
 
 ::: small
 **Why the dual step is cheap.** With $x^*(\lambda)=\argmin_x \mathcal L(x,\lambda)$ and $g(\lambda)=\mathcal L(x^*(\lambda),\lambda)$, the chain rule gives $dg/d\lambda = (d\mathcal L/dx^*)(dx^*/d\lambda) + d\mathcal L/d\lambda$, and the first term vanishes because $d\mathcal L/dx^*=0$ at the argmin. So $dg/d\lambda = d\mathcal L/d\lambda$ evaluated at $x^*$ — no derivative through the inner solve is needed. That is the same envelope argument Act 3 exploits, used there in the case where the derivative through the solve *is* wanted.
@@ -847,12 +909,12 @@ $$\min_{\theta,\,p(\tau)}\ \E_{p(\tau)}\Big[\textstyle\sum_t c(x_t,u_t)\Big]\qua
 |---|---|---|---|---|
 | **V1** Model building + open-loop planning | one batch from $\pi_0$ | plan once, execute all | nothing | $p_{\pi_f}\neq p_{\pi_0}$ |
 | **V2** Iterative model building | aggregate $\pi_f$'s own visits | plan once, execute all | the *training* distribution | a mistake mid-plan is never corrected |
-| **V3** + MPC | aggregate; refit every $N$ steps | plan, execute the **first** action, re-plan | mid-plan errors; short horizons suffice | acts on the mean — never explores |
+| **V3** + MPC | aggregate; refit every $N$ steps | plan, execute the **first** action, re-plan | mid-plan errors; short horizons suffice | no explicit information-seeking incentive |
 | **V3+** + model uncertainty | as V3 | plan against an ensemble / GP posterior | over-confidence off-distribution | cost, and the horizon still compounds |
 | **V4** + latent space | observations $(o,a,o')$ | plan in the learned latent state | high-dimensional, partial observations | everything above, plus representation error |
 
 ::: small
-**Propagating uncertainty through a horizon.** If the state input is itself uncertain, $x\sim\mathcal N(\mu_x,\Sigma_x)$, then $p(f(x)\mid \mu_x,\Sigma_x) = \int p(f(x)\mid x,\mathcal D)\,p(x)\,dx$, which is intractable and is handled either by Monte-Carlo — sample $x^t\sim p(x)$ and average $p(f(x^t)\mid x^t,\mathcal D)$ over $T$ particles — or by exact moment matching to a Gaussian, which is PILCO's choice. Rolling a large number of such trajectories and taking their mean and standard deviation gives the fan of predictions that widens with horizon: ==compounding uncertainty, drawn.==
+**Propagating uncertainty through a horizon.** If the state input is itself uncertain, $x\sim\mathcal N(\mu_x,\Sigma_x)$, then $p(f(x)\mid \mu_x,\Sigma_x) = \int p(f(x)\mid x,\mathcal D)\,p(x)\,dx$, which is intractable and is handled either by Monte-Carlo — sample $x^t\sim p(x)$ and average $p(f(x^t)\mid x^t,\mathcal D)$ over $T$ particles — or by computing moments analytically where possible and approximating the result as Gaussian, which is PILCO's choice. Rolling a large number of such trajectories and taking their mean and standard deviation gives the fan of predictions that widens with horizon: ==compounding uncertainty, drawn.==
 :::
 
 ### Backup 4 — the sample-efficiency versus model-bias trade, made precise

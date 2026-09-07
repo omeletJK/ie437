@@ -97,6 +97,20 @@ So far the course has *modelled* (Ch 1–2). Here modelling and deciding are joi
 - **Q3 — How do we answer questions with it?** ==Inference==: enumeration, variable elimination, sampling; and the same machinery run through time.
 - **Q4 — How do we add *decisions*?** ==Decision networks==, maximum expected utility, and the seed of the MDP.
 
+### Learning route — from a joint probability to a decision
+
+**Start with:** conditional probability, Bayes' rule and sums over discrete outcomes (Lecture 2).
+
+::: flow
+- **Represent** | multiply local probability tables to get a joint probability
+- **Infer** | fix the evidence, sum hidden cases, then normalise
+- **Decide** | average each action's utility, then choose the best action
+:::
+
+::: keypoint
+By the end, you should be able to ==compute a small posterior, explain a collider, and choose an action from expected utilities.== The full elimination and sequential-decision derivations are backup material.
+:::
+
 ## Act 1 — the joint as a graph
 {short: ACT 1, num: Act 1}
 
@@ -143,7 +157,7 @@ For an edge $x_i \to x_j$, $x_i$ is a **parent** of $x_j$ and $x_j$ a **child** 
 $\mathrm{pa}_{x}$ denotes the set of parents of $x$ — the only piece of notation this lecture really needs.
 :::
 ::: col.accent Why acyclic
-A cycle would make a variable its own ancestor, and the product $\prod_i p(x_i \mid \mathrm{pa}_i)$ would no longer be a distribution — there would be no order in which to generate the variables.
+A cycle would make a variable its own ancestor. Arbitrary local conditional tables on a cycle do not necessarily multiply to a normalised joint; a DAG provides an order in which to generate each variable from already generated parents.
 
 Acyclicity is what guarantees ==a topological order==: a sequence in which every node comes after its parents. Sampling, elimination and learning all walk that order.
 :::
@@ -179,11 +193,29 @@ against $2^5-1 = 31$ for the flat joint. ==One giant table becomes five small on
 :::
 :::
 
+### Multiply first, then sum — a two-node calculation
+{sub: an illustrative sensor model; each row has a clear role}
+
+Let $F$ mean a machine fault and $A$ mean an alarm: $F\to A$. Use $P(F)=0.1$, $P(A\mid F)=0.8$, $P(A\mid\neg F)=0.2$.
+
+| Case | Local probabilities | Joint probability |
+|---|---|---|
+| Fault and alarm | $0.1\times0.8$ | $0.08$ |
+| No fault and alarm | $0.9\times0.2$ | $0.18$ |
+
+The alarm probability sums both possible causes: $P(A)=0.08+0.18=0.26$.
+
+$$P(F\mid A)=\frac{P(F,A)}{P(A)}=\frac{0.08}{0.26}\approx0.308.$$
+
+::: keypoint
+==Multiply along a complete case, add mutually exclusive cases, normalise after observing evidence.== An alarm increases the fault probability from 10% to about 31%; it does not make a fault certain.
+:::
+
 ### The collapse, in numbers
 {fill: top}
 
 ::: widget factor-count
-The joint's cost is $2^n-1$ whatever you do. The network's cost is set by ==how many parents a node has, not how many variables exist== — so it grows linearly while the joint explodes. Slide $n$ and watch the gap open; the satellite sits at $n=5$, where 31 becomes 10.
+The joint's cost is $2^n-1$ whatever you do. With a fixed upper bound on the number of parents, each binary node needs a bounded-size table. ==The network then grows linearly in the number of nodes== while the full joint grows exponentially. Slide $n$ and watch the gap open; the satellite sits at $n=5$, where 31 becomes 10.
 :::
 
 ### Every distribution is a Bayesian network — and that is the catch
@@ -202,7 +234,7 @@ The saving is not in the factorisation. It is in ==the edges you leave out.==
 
 ::: reveal
 ::: small
-$p(E \mid B,S)$ rather than $p(E \mid B,S,D,C)$ is a claim about the world: once you know the battery and the panel, nothing else changes your belief about the electrical system. The DAG *is* the model, and every missing arrow is an assumption you are on the hook for. Act 2 says exactly which assumptions a given DAG makes.
+$p(C \mid E)$ rather than $p(C \mid E,B,S,D)$ is a conditional-independence claim: once the electrical state is known, the other listed variables add no information about communication loss. Observing descendants $D,C$ can still change our belief about $E$, even when $B,S$ are known. The DAG *is* the model, and every missing arrow is an assumption you are on the hook for. Act 2 says exactly which assumptions a given DAG makes.
 :::
 :::
 
@@ -258,20 +290,20 @@ Chain any two variables through a third and there are only three shapes. Whether
 ::: table center
 | structure | shape | $X \perp Y$ with $Z$ **unobserved** | $X \perp Y$ **given** $Z$ |
 |---|---|---|---|
-| chain | $X \to Z \to Y$ | no — influence flows through | **yes** |
-| fork (common cause) | $X \leftarrow Z \to Y$ | no — a shared cause correlates them | **yes** |
-| collider (common effect) | $X \to Z \leftarrow Y$ | **yes** — separate causes | ==**no**== |
+| chain | $X \to Z \to Y$ | not guaranteed | **yes** |
+| fork (common cause) | $X \leftarrow Z \to Y$ | not guaranteed | **yes** |
+| collider (common effect) | $X \to Z \leftarrow Y$ | **yes** | ==not guaranteed== |
 :::
 
 ::: reveal
-The first two say the same thing: observing the middle node **blocks** the path. The collider inverts it, and the algebra is one line each:
+For these isolated three-node graphs, observing a chain or fork middle node **blocks** the path; observing a collider **opens** it. An open path permits dependence but does not force it for every choice of probabilities:
 
-$$\text{fork: } p(x,y\mid z) = \frac{p(z)p(x\mid z)p(y\mid z)}{p(z)} = p(x\mid z)p(y\mid z) \qquad \text{collider: } p(x,y\mid z) = \frac{p(x)p(y)\,\hl{p(z\mid x,y)}}{p(z)} \;\neq\; p(x\mid z)p(y\mid z)$$
+$$\text{fork: } p(x,y\mid z) = \frac{p(z)p(x\mid z)p(y\mid z)}{p(z)} = p(x\mid z)p(y\mid z) \qquad \text{collider: } p(x,y\mid z) = \frac{p(x)p(y)\,\hl{p(z\mid x,y)}}{p(z)} \;\not\equiv\; p(x\mid z)p(y\mid z)$$
 :::
 
 ::: reveal
 ::: small
-The offending term is $p(z\mid x,y)$: the effect couples its causes, and conditioning on it cannot factor that coupling away — whereas *marginalising* over $z$ would. So the two operations do opposite things: on a fork, summing $Z$ out **connects** $X$ and $Y$ while conditioning on it **separates** them; on a collider, exactly the reverse.
+D-separation tells us which independences hold for **every** distribution with this factorisation. An open path means the graph gives no independence guarantee; special probability tables can still make the variables independent.
 :::
 :::
 
@@ -281,11 +313,11 @@ The offending term is $p(z\mid x,y)$: the effect couples its causes, and conditi
 ::: flow
 - **Before** | $B$ and $S$ independent: a battery failure says nothing about the solar panel
 - !**Observe $E$** | the electrical system has failed — *something* caused it
-- **After** | $B$ and $S$ ==anti-correlated==: learning the battery is fine makes the panel the likely culprit
+- **After** | in a model with competing failure causes, evidence for one cause can reduce belief in the other
 :::
 
 ::: reveal
-Each cause **explains away** the other. This is the one place where the graph predicts a dependence that the causal story does not obviously suggest — and it tells you in advance exactly when it will happen. It is also why careless conditioning manufactures correlations: ==select a sample on a common effect and you couple its causes.==
+This pattern is called **explaining away**. The collider allows it; the sign and size of the dependence come from the conditional probability table. It is also why careless conditioning manufactures correlations: ==select a sample on a common effect and you couple its causes.==
 :::
 
 ### Wet grass — explaining away, with numbers
@@ -369,7 +401,7 @@ Chaining the three structures across a whole graph gives **d-separation**: a pur
 
 ::: reveal
 ::: small
-So the translation between graph and probability runs both ways and is exact: the edges you draw determine the independences, and the independences determine what the graph is allowed to cost.
+A blocked path supports an independence claim. An open path allows dependence; extra independence can occur for special parameters. Also, arrows encode a factorisation, not a causal intervention unless a causal interpretation is explicitly assumed.
 :::
 :::
 
@@ -378,7 +410,7 @@ So the translation between graph and probability runs both ways and is exact: th
 
 ::: quiz Two independent causes point at one effect: $X \to Z \leftarrow Y$. What is the relationship between $X$ and $Y$?
 - Dependent, and conditioning on $Z$ makes them independent
-- =Independent, until you condition on $Z$ — which makes them dependent
+- =Independent before conditioning; observing $Z$ can make them dependent
 - Independent, and they stay independent whatever you condition on
 - Dependent, and no conditioning changes that
 This is the collider, and it runs opposite to the chain and the fork. Learning the alarm went off makes burglary and earthquake **compete** to explain it, so hearing that there was an earthquake lowers your belief in a burglary — they became dependent the moment you conditioned on their shared effect. *Explaining away* is the reason d-separation needs a special rule for colliders, and it is a standard way to introduce a correlation that is not there.
@@ -441,7 +473,7 @@ $$\underbrace{T_1(B)\,T_2(S)\,T_3(E,B,S)\,T_4(E)\,T_5(E)}_{\text{after fixing }d
 
 ::: reveal
 ::: small
-$T_8(B,S) = \sum_e T_3(e,B,S)T_6(e)T_7(e)$, then $T_9(B) = \sum_s T_2(s)T_8(B,s)$; normalise $T_1(B)T_9(B)$ and you have the answer. The cost is set by the largest intermediate factor, which depends on the **elimination order** — and finding the best order is itself NP-hard. So the ordering is a heuristic: often linear, ==sometimes still exponential.==
+$T_8(B,S) = \sum_e T_3(e,B,S)T_4(e)T_5(e)$, then $T_9(B) = \sum_s T_2(s)T_8(B,s)$; normalise $T_1(B)T_9(B)$ and you have the answer. The cost is set by the largest intermediate factor, which depends on the **elimination order** — and finding the best order is itself NP-hard. So the ordering is a heuristic: often linear, ==sometimes still exponential.==
 :::
 :::
 
@@ -466,13 +498,13 @@ $$\hat P(b^1 \mid d^1,c^1) = 1/3$$
 ::: col.accent Likelihood weighting, and its flaw
 Do not reject. Clamp each evidence variable to its observed value and carry a weight $w \leftarrow w \times P(x_i \mid \mathrm{pa}_i)$ for the clamping.
 
-**The flaw is worse.** Take $C \to D$ with $p(c^1) = 0.001$, $p(d^1\mid c^1) = 0.999$, $p(d^1 \mid c^0) = 0.001$. The exact posterior is $p(c^1\mid d^1) = \hl{0.5}$. But $C$ is still drawn from its prior, so a sampler emits $c^0$ a thousand times before it ever sees $c^1$ — and reports ==0 for an answer that is a half.==
+**A different failure mode.** Take $C \to D$ with $p(c^1) = 0.001$, $p(d^1\mid c^1) = 0.999$, $p(d^1 \mid c^0) = 0.001$. The exact posterior is $p(c^1\mid d^1) = \hl{0.5}$. But $C$ is still drawn from its prior. The chance of seeing no $c^1$ in 1,000 draws is $0.999^{1000}\approx0.368$. Such a run reports ==0 for an answer that is a half.==
 :::
 :::
 
 ::: reveal
 ::: small
-The cure is to stop sampling variables independently: **Gibbs sampling** sweeps through the variables, redrawing each from its conditional given the current value of all the others, and — after a burn-in that is discarded — its samples come from the true posterior. Approximate inference is not a shortcut; it is a second set of failure modes, traded for the first.
+The cure is to stop sampling variables independently: **Gibbs sampling** sweeps through the variables, redrawing each from its conditional given the current value of all the others, and, under suitable irreducibility and mixing conditions, approaches the posterior. A finite burn-in does not guarantee exact posterior samples. Approximate inference is not a shortcut; it is a second set of failure modes, traded for the first.
 :::
 :::
 
@@ -497,7 +529,7 @@ one transition table, shared by every time step, instead of $T$ of them.
 
 ::: reveal
 ::: small
-Lecture 7 will open by *assuming* both of these. They are not assumptions about time; they are two missing-edge patterns in a Bayesian network over $S_1,\dots,S_T$, and everything Act 2 said about them still applies.
+Lecture 7 will open by *assuming* both of these. Markov structure is a conditional-independence assumption. Time homogeneity is a separate parameter-sharing assumption: the transition table does not change with time.
 :::
 :::
 
@@ -515,6 +547,25 @@ Read it as Lecture 2's loop, run once per tick: yesterday's posterior is pushed 
 ::: block.accent Now add an input | and look what you have drawn
 Let an action $A_t$ steer the transition, $P(X_t \mid X_{t-1}, A_t)$, and the observation, $P(Y_t\mid X_t, A_t)$. That graph is a ==POMDP==. Delete the emission row and observe the state directly, and it is a ==Markov Decision Process.== Lecture 7 does not introduce a new object; it names this one.
 :::
+:::
+
+### One filtering step — predict, observe, normalise
+{sub: a two-state machine, healthy or faulty}
+
+Yesterday's posterior fault probability is $0.2$. A fault persists with probability $0.8$; a healthy machine develops a fault with probability $0.1$.
+
+**Predict today's state:**
+
+$$P(F_t)=0.8(0.2)+0.1(0.8)=0.24.$$
+
+Now an alarm occurs, with $P(A_t\mid F_t)=0.9$ and $P(A_t\mid\neg F_t)=0.1$.
+
+**Correct using the observation:**
+
+$$P(F_t\mid A_t)=\frac{0.9(0.24)}{0.9(0.24)+0.1(0.76)}\approx0.740.$$
+
+::: keypoint
+The transition changes 0.20 to 0.24; the measurement changes 0.24 to 0.74. ==The corrected belief becomes the starting belief at the next time step.==
 :::
 
 ### Check — cheap to store, cheap to use?
@@ -561,32 +612,31 @@ Three edge types come with them: a **conditional edge** into a chance node (the 
 
 ::: reveal
 ::: small
-A worked example throughout: $T$ *treat?*, $D$ *disease?*, and $O^1,O^2,O^3$ *diagnostic test results*, with $U(T,D)$ giving $0$ for a healthy untreated patient, $-10$ for a sick untreated one and $-1$ for treating either way. Those four numbers alone say: treat whenever $P(D{=}1) > 1/9$.
+A worked example throughout: $T$ *treat?*, $D$ *disease?*, and $O^1,O^2,O^3$ *diagnostic test results*, with $U(T,D)$ giving $0$ for a healthy untreated patient, $-10$ for a sick untreated one and $-1$ for treating either way. In this illustrative utility model, treatment has expected utility $-1$ and no treatment has $-10P(D{=}1)$, so the threshold is $P(D{=}1)>0.1$.
 :::
 :::
 
-### Utility — preference built the way belief was
+### Utility — a number for comparing outcomes
 
-::: cols
-::: col Belief, from comparisons
-Given two statements you can say *I believe this more*, and if the comparison is complete and transitive it can be represented by a real-valued function with
+Probabilities describe **how likely** outcomes are. Utilities describe **how desirable** those outcomes are to the decision maker.
 
-$$P(A) > P(B) \iff A \succ B$$
-
-That argument produced probability in Lecture 2.
+::: cols c2
+::: col A certain outcome
+Assign a utility $U(s)$ to outcome $s$. Higher is preferred; the units can be profit, comfort or a stated combination of objectives.
 :::
-::: col.accent Preference, from comparisons
-Given two *outcomes* you can say *I prefer this*. Add **continuity** — if $A \succ B \succ C$ there is a $p$ with $[A{:}p;\, C{:}1{-}p] \sim B$ — and **monotonicity**, and the same argument produces a real-valued $U$.
+::: col.accent An uncertain outcome
+Under the expected-utility model, an action producing outcomes with probabilities $p_i$ is valued by
 
-Then the utility of a lottery is forced to be linear in the probabilities:
-$$U([S_1{:}p_1;\dots;S_n{:}p_n]) = \sum_i p_i\,U(S_i)$$
+$$\mathrm{EU}(a)=\sum_i p_iU(s_i).$$
 :::
 :::
 
-::: reveal
+::: keypoint
+==Average utilities, then compare actions.== Completeness and transitivity alone do not derive probability or expected utility; the latter also uses assumptions such as continuity and independence over lotteries.
+:::
+
 ::: small
-Just as beliefs can be subjective, so can preferences — and $U$ need not be money. The curvature of $U$ against money *is* one's attitude to risk: concave is risk-averse, linear risk-neutral, convex risk-seeking. A ==risk preference is a shape, not an extra ingredient==; expected utility already contains it.
-:::
+Utility need not equal money. A concave utility of money represents risk aversion; the same expected-utility calculation still applies.
 :::
 
 ### Maximum expected utility
@@ -650,13 +700,13 @@ $$U(\text{no PhD}) = \hl{240\,000}$$
 
 **Do not do the PhD.** And the start-up is never founded either — "no start-up" wins the inner $\max$ in every branch.
 
-An option that is never exercised has ==reversed the decision==, because the doctorate's only surviving route to income is a 0.001 chance at the prize, which does not repay 50 000.
+Changing the income model has ==reversed the decision==, because the doctorate's only surviving route to income is a 0.001 chance at the prize, which does not repay 50 000.
 :::
 :::
 
 ::: reveal
 ::: small
-No number in the utility tables changed. What changed is *which node the income depends on* — one edge. The graph, not the arithmetic, decided.
+The income distribution now depends on start-up choice rather than education. This changes the model, not just the option set. Merely adding an optional action to an unchanged decision problem cannot reduce its maximum expected utility.
 :::
 :::
 
@@ -673,8 +723,32 @@ the expected value of the *better decision* the observation lets you make, minus
 
 ::: reveal
 ::: block.accent Where you will meet this again | Lecture 4
-"How much is it worth to look here?" is precisely the question an **acquisition function** answers in Bayesian optimisation. Expected improvement and the knowledge gradient are value of information, computed against a Gaussian process instead of a discrete network. Act 4 has already written the formula.
+"How much is it worth to look here?" is precisely the question an **acquisition function** answers in Bayesian optimisation. The knowledge gradient measures improvement in the value of a final recommendation. Expected improvement instead measures expected improvement over an incumbent; both guide queries, but they are different objectives. Act 4 has already written the formula.
 :::
+:::
+
+### A decision and the value of looking first
+{sub: illustrative maintenance costs; this is a utility calculation}
+
+A machine is faulty with probability $0.2$. Running it earns utility 10 if healthy and $-30$ if faulty. Stopping gives utility 0.
+
+::: cols c2
+::: col Decide without a test
+$$\mathrm{EU}(\text{run})=0.8(10)+0.2(-30)=2.$$
+
+Run is better than stop, so the best expected utility is **2**.
+:::
+::: col.accent A perfect test before deciding
+If healthy, run; if faulty, stop.
+
+$$\mathrm{EU}(\text{test then decide})=0.8(10)+0.2(0)=8.$$
+
+The information is worth $8-2=\mathbf6$ before paying for the test.
+:::
+:::
+
+::: keypoint
+==Information matters because it can change the action.== A test costing 7 utility units is not worth buying here; a cost of 3 gives a net gain of 3.
 :::
 
 ### Why this is the hinge of the whole course
@@ -808,7 +882,7 @@ The "or any descendant" clause is why observing $J$ in the wet-grass example mat
 | **Gibbs sampling** | redraw each variable from its conditional given all the others; discard a burn-in | correct in the limit, but can mix arbitrarily slowly |
 
 ::: small
-**The likelihood-weighting counter-example.** Take $C \to D$ with $p(c^1)=0.001$, $p(d^1\mid c^1)=0.999$, $p(d^1\mid c^0)=0.001$, so that exactly $p(c^1\mid d^1) = \frac{0.999 \times 0.001}{0.999\times 0.001 + 0.001\times 0.999} = 0.5$. But $C$ is sampled from its prior, so a run of a thousand draws is $c^0,c^0,\dots$ and the weighted estimate is $0$. The estimator is unbiased and, at any practical sample size, useless — "asymptotically correct" is a statement about a limit you may never reach.
+**The likelihood-weighting counter-example.** Take $C \to D$ with $p(c^1)=0.001$, $p(d^1\mid c^1)=0.999$, $p(d^1\mid c^0)=0.001$, so that exactly $p(c^1\mid d^1) = \frac{0.999 \times 0.001}{0.999\times 0.001 + 0.001\times 0.999} = 0.5$. A 1,000-draw run has probability $0.999^{1000}\approx0.368$ of never proposing $c^1$, in which case the estimate is zero. The normalised weighted estimator is generally biased at finite sample sizes but consistent under suitable support conditions; rare important samples can make convergence slow.
 :::
 
 ### Backup 4 — from maximum expected utility to Bellman

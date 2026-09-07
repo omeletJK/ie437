@@ -92,6 +92,21 @@ A model that keeps every detail of the world cannot be solved; a model a solver 
 Prerequisites: derivatives, dot products and basic matrix algebra. We introduce convexity and KKT here; the later implicit-differentiation derivation is an advanced extension.
 :::
 
+### Learning route — formulate, solve, and certify
+
+**Bring:** gradients, matrix multiplication, and inequalities. Probability is needed only for the stochastic examples.
+
+::: flow
+- **Formulate** | variables, objective, feasible set
+- **Recognize structure** | convexity and useful rewrites
+- **Certify** | first-order and KKT conditions
+- !**Approximate locally** | trust regions for nonconvex problems
+:::
+
+**Core goal:** formulate the production example, explain necessary versus sufficient, and check all four KKT conditions. Keep the production problem and the one-dimensional wall example in view as each new concept arrives.
+
+**Advanced applications:** optimization layers, bilevel design, and wind-farm subproblems show where the tools lead; their research details need not be mastered before the core examples.
+
 ## Act 1 — the standard form
 {short: ACT 1, num: Act 1}
 

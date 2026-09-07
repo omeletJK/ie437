@@ -23,6 +23,19 @@ handoff: the three-axis cube, and the route through it (Lecture 1)
 
 Every lecture this term is the same question, asked again with one more thing made harder.
 
+### Learning route — identify the decision before naming the method
+
+**No algorithm derivations are required today.** Use this lecture to recognize the problem each later chapter solves.
+
+::: flow
+- **Decision** | what can we choose?
+- **Information** | what is known or measured?
+- **Time** | choose once or respond repeatedly?
+- !**Evidence** | how will we judge the result?
+:::
+
+The wind-farm, traffic, and furnace cases are **motivation**. Read each by its decision, objective, available data, and validation. Their network architectures and research extensions will make more sense after the corresponding lectures.
+
 ### What this course is about — in one sentence
 
 ::: keypoint
@@ -30,7 +43,7 @@ How do we make ==good decisions under uncertainty?==
 :::
 
 ::: reveal
-That is the entire course. Every lecture is this question, asked again with one more thing taken away — the model made uncertain, the dynamics unknown, the world shared with rivals.
+That is the entire course. Every lecture is this question, asked again with one more thing taken away — the model made uncertain, the dynamics unknown, and eventually the right to collect new data withdrawn. Multi-agent games are a preview of IE579.
 :::
 
 ::: reveal
@@ -76,8 +89,8 @@ A course that answers only the first question is a catalogue. ==This one answers
 Everything we model is uncertain in one of two ways. The distinction recurs all term.
 :::
 
-- **Aleatoric** (statistical) uncertainty — the world is genuinely stochastic. Repeating the experiment gives different outcomes. No amount of data removes it; we can only *characterise* it, as a distribution.
-- **Epistemic** (systematic) uncertainty — we simply *don't know* the model: its parameters, its state, its dynamics. Data ==reduces== it.
+- **Aleatoric** (statistical) uncertainty — the world is genuinely stochastic. Repeating the experiment gives different outcomes. More data alone does not remove this variability under the chosen observation model; improved sensing or a changed process can alter it.
+- **Epistemic** (model) uncertainty — we simply *don't know* the model: its parameters, its state, its dynamics. Relevant data can reduce it; misspecified models may remain confidently wrong.
 
 ::: reveal
 ::: keypoint
@@ -124,6 +137,20 @@ Criterion 1 is where the two uncertainties live: epistemic uncertainty is exactl
 :::
 :::
 
+### One familiar decision, three versions — stocking a shop
+
+Suppose selling one item earns 5, ordering it costs 2, and unsold items have no value. Profit is $5\min(q,D)-2q$.
+
+| setting | what must be decided | what is needed |
+|---|---|---|
+| demand is known to be 10 | today's order $q$ | compare profits: $q=8,10,12$ gives 24, 30, 26 |
+| demand is uncertain | today's order before seeing demand | a demand distribution; compare expected profit |
+| orders repeat daily | order based on stock and new information | a policy; today's stock affects tomorrow |
+
+::: keypoint
+The product is the same. Changing **information and time** changes the decision problem. Start with this distinction before learning the names of algorithms.
+:::
+
 ### Three criteria make a cube
 
 ::: widget course-cube
@@ -148,7 +175,7 @@ $$\text{optimisation} \to \text{Bayesian optimisation} \qquad \text{DP} \to \tex
 
 ::: reveal
 ::: small
-Almost every lecture *pair* in this course is one instance of this single move.
+This is a teaching map. In standard RL terminology, **model-based RL can itself be data-driven** when it learns a model, as in Lecture 11.
 :::
 :::
 
@@ -162,7 +189,7 @@ Almost every lecture *pair* in this course is one instance of this single move.
 :::
 
 ::: reveal
-**Static** — one decision. You choose $x$ once; the world does not move. This is classical optimisation (Lecture 1) and its uncertain, data-driven cousins (Lectures 2–6).
+**Static** — one decision. You choose $x$ once; the modeled decision is chosen once. BO may query repeatedly to find that one design. This is classical optimisation (Lecture 1) and its uncertain, data-driven cousins (Lectures 2–6).
 
 **Dynamic** — a sequence. Each decision reshapes the state the next one faces. This is the realm of MDPs, optimal control and reinforcement learning (Lectures 7–11).
 :::
@@ -263,7 +290,7 @@ Add a **decision** node and a **utility** node to a Bayesian network and you hav
 
 ::: reveal
 ::: small
-And a fourth, which the field cares about most: ==offline meta optimisation with online adaptation== — learn across many past tasks, then adapt to today's in a handful of trials. The traffic-signal case below is exactly this.
+A research extension is ==offline meta optimisation with online adaptation== — learn across many past tasks, then adapt to today's in a handful of trials. The traffic-signal case below is exactly this.
 :::
 :::
 
@@ -284,7 +311,7 @@ The decision is $\mathbf{x}$, the turbine positions. The obstacle is that power 
 ::: col.accent Why a graph network
 Nodes are turbines and carry free-flow wind speed; edges carry the ==down-stream wake distance $d$ and radial distance $r$==; the global feature is the wind itself.
 
-A GNN is permutation-invariant and takes any $N$ — so one trained model serves a five-turbine farm and a twenty-turbine farm.
+An appropriate graph readout is permutation-invariant, while node outputs are equivariant. It can accept different graph sizes; accurate transfer from five to twenty turbines still needs validation.
 :::
 :::
 
@@ -331,7 +358,7 @@ The same decision — the green split at every intersection — in Hangzhou, Man
 ### Why *meta* Bayesian optimisation
 
 ::: figure bo-vs-metabo | 900
-Ordinary BO starts each new intersection from a prior that knows nothing. ==Meta-BO pre-trains $f_\theta$ on a buffer of past tasks==, then adapts online — so the first trial on a new junction is already informed.
+Ordinary BO can use an informative prior, but does not automatically transfer experience across intersections. ==Meta-BO pre-trains $f_\theta$ on a buffer of past tasks==, then adapts online — so the first trial on a new junction is already informed.
 :::
 
 ### The result
@@ -364,7 +391,7 @@ Now the decision is a sequence, and each one reshapes the state the next one fac
 
 ::: reveal
 ::: keypoint
-Value-based and policy-based RL are not two methods — ==they are two heritages.==
+We teach two useful routes into RL: **value-based** and **policy-based** methods. They overlap in actor–critic algorithms.
 :::
 :::
 
@@ -386,7 +413,7 @@ Zoom into the dynamic, single-agent cell and split it twice: by **action space**
 :::
 
 ::: reveal
-Now delete the model and the same grid names the data-driven methods:
+For this course’s main examples, deleting the given model leads to the methods below. These are not exclusive categories: policies can be discrete and value functions continuous.
 
 ::: table center
 | model-free | finite action space | infinite action space |
@@ -399,7 +426,7 @@ Now delete the model and the same grid names the data-driven methods:
 
 ::: cols
 ::: col First crossing · Lecture 1 → 2
-The static world. Delete the model and exactly ==one== object goes missing:
+The static world. In our first examples, the objective is the main unknown:
 
 $$\min_x\; \hl{f(x)} \quad \text{s.t.}\quad g(x)\le 0$$
 
@@ -456,7 +483,7 @@ The balance the professor's own slide names: *model expressivity* against *optim
 ### Extension toward practical RL
 {sub: pp. 59 and 66 of the source — the professor's own roadmap}
 
-Textbook reinforcement learning assumes a simulator you may query without limit. Three extensions close the gap to a real plant, and this course takes two of them.
+Many benchmark RL experiments allow extensive simulator interaction. The MDP formalism itself does not require a simulator or unlimited queries. Three extensions close the gap to a real plant, and this course takes two of them.
 
 ::: flow
 - **1 · Model-based RL** | learn the dynamics, then plan *(Lecture 11)*
@@ -473,7 +500,7 @@ Textbook reinforcement learning assumes a simulator you may query without limit.
 ### Case D · Offline meta policy learning, then online adaptation
 
 ::: figure offline-meta | 900
-Collect operation data across many tasks; train a general controller offline — the encoder, the critic and the actor share a buffer per task; then adapt on the target task with ==a handful of interactions, not a million==. This is Lecture 12's territory, and it is where a plant deployment actually begins.
+Collect operation data across many tasks; train a general controller offline — the encoder, the critic and the actor share a buffer per task; then adapt on the target task with ==a handful of interactions, not a million==. Offline pretraining connects to Lecture 12. The later online adaptation is an extension beyond its fixed-data learning setting.
 :::
 
 ### Check — the four unknowns, taken one at a time
@@ -514,7 +541,7 @@ Every method in this course was built against a real system. These four run thro
 
 ::: reveal
 ::: small
-None of these is a benchmark. Each is a system where a wrong decision costs power, time or yield — which is why the course spends its first six lectures on *how to state the problem* before it spends any on how to learn one.
+These are source-deck case studies, including simulations and reported applications. Their figures apply to the displayed setting; they are not performance guarantees on a new system — which is why the course spends its first six lectures on *how to state the problem* before it spends any on how to learn one.
 :::
 :::
 
@@ -571,13 +598,13 @@ The source deck's own phrase for where this goes: ==“ChatGPT for Optimization 
 ### Neural combinatorial optimisation, defined
 
 ::: figure nco-definition | 900
-Learn a ==solver==, not a solution: $f_\theta: \mathcal{X}\to\mathcal{Y}$, trained over a *distribution* of instances $x \sim g(\cdot)$ so that it generalises to $x' \sim g'(\cdot)$. Because the training signal spans tasks, ==learning an NCO solver is inherently multi-task learning== — which is why the meta-learning of Case B returns here.
+Learn a ==solver==, not a solution: $f_\theta: \mathcal{X}\to\mathcal{Y}$, trained over a *distribution* of instances $x \sim g(\cdot)$ with the aim of generalizing to $x'\sim g'(\cdot)$; a changed instance distribution must be tested. Because the training signal spans tasks, ==learning an NCO solver is inherently multi-task learning== — which is why the meta-learning of Case B returns here.
 :::
 
 ### Two ways to train it
 
 ::: figure nco-rl-vs-il | 880
-**Imitation learning** needs an oracle solver's answers — easy to train, and capped by the oracle. **Reinforcement learning** needs only the objective value — no labels, poorer sample efficiency, better generalisation. The choice is Lecture 8 and Lecture 10 arriving in a new domain.
+**Imitation learning** fits solver-provided solutions. **Reinforcement learning** uses reward or objective feedback. Their sample efficiency, solution quality, and generalization depend on the training setup; neither has a universal advantage. The choice is Lecture 8 and Lecture 10 arriving in a new domain.
 :::
 
 ### One engine, three domains — ① Vehicle routing
@@ -624,7 +651,7 @@ Generation now emits a **task assignment**; test-time search is a **path search*
 Placement is *meta* design: the task changes with the higher-level design flow, so what must be learned is a solver that adapts, not a placement that is fixed. {p}(NeurIPS'23)
 :::
 
-### The same engine, measured against a commercial solver
+### The same engine, compared with a solver baseline
 {sub: delivery routing, in paid production}
 
 ::: cols
@@ -700,7 +727,7 @@ A request in words ($l$) is turned by the **Formulator** into an instance $x = (
 ### The knowledge that makes the translation possible
 
 ::: widget opt-ontology
-An ontology over ==objective, constraints, data and parameters== is what turns a sentence into exactly one formulation. Supply it once per problem class, and every later run inherits it.
+An ontology over ==objective, constraints, data and parameters== is what turns a sentence into a structured formulation, while exposing missing information and ambiguities that still need resolution. Supply it once per problem class, and every later run inherits it.
 :::
 
 ### The OI Factory

@@ -19,7 +19,20 @@ institute: KAIST
 ## Orientation
 {short: ORIENTATION}
 
-Not a prerequisite to be read first. A ledger, to be read afterwards — with a pointer to the slide where each fact did the work.
+Use this as a refresher before a lecture or return to it when a probability step moves too quickly. Each topic points to where it is used.
+
+### Learning route — four tools to calculate, not memorize
+
+::: flow
+- **Average** | expectation and conditional expectation
+- **Update** | Bayes' rule
+- **Condition** | a Gaussian after an observation
+- !**Estimate** | sample averages and importance weights
+:::
+
+You should be able to check a weighted average, split variance into two parts, and update a two-variable Gaussian. Start with the numerical examples, then read the general formulas.
+
+**Notation:** $\mathcal N(\mu,\sigma^2)$ uses **variance** as its second argument. Matrix inverses in the Gaussian density require a positive-definite covariance.
 
 ### Why an appendix — the few facts everything rested on
 
@@ -47,7 +60,7 @@ Every method this term leaned on a handful of probability facts. Eight rows, and
 :::
 
 ::: center
-==Statistics infers the causes that generated the observed data.== The arrow runs left to right in the world, and right to left in inference.
+==Statistics infers model properties from observed data; causal claims require additional assumptions.== The arrow runs left to right in the world, and right to left in inference.
 :::
 
 ::: reveal
@@ -81,7 +94,7 @@ $$\E[aU+bV] = a\,\E[U] + b\,\E[V] \qquad \hl{\text{regardless of any dependence 
 
 ::: reveal
 ::: small
-It is why a return can be split term by term, why a baseline can be subtracted from a policy gradient without touching its mean, and why the covariance of $AY$ is $A\Sigma A^\top$. Every objective the course optimised is an expectation: the return $\E_\pi[\sum_t\gamma^t r_t]$ (Ch 7–11), expected improvement $\E[\max(0,f-f^{\max})]$ (Ch 4), the ELBO $\E_{q}[\log p(x\mid z)]$ (Ch 6), the policy objective $\E_\tau[R(\tau)]$ (Ch 10). ==Manipulating expectations *is* the technical core of the course.==
+It is why a return can be split term by term, why subtracting a baseline can be separated algebraically (zero bias additionally needs the score identity), and why the covariance of $AY$ is $A\Sigma A^\top$. Many probabilistic objectives in the course are expectations: the return $\E_\pi[\sum_t\gamma^t r_t]$ (Ch 7–11), expected improvement $\E[\max(0,f-f^{\max})]$ (Ch 4), the ELBO $\E_{q}[\log p(x\mid z)]$ (Ch 6), the policy objective $\E_\tau[R(\tau)]$ (Ch 10). ==Manipulating expectations *is* the technical core of the course.==
 :::
 :::
 
@@ -97,8 +110,24 @@ $$\mathrm{var}(U) \;=\; \underbrace{\E_V\big[\mathrm{var}(U\mid V)\big]}_{\text{
 
 ::: reveal
 ::: small
-Both say the same thing from two heights: knowing $V$ does not change your average, and it does reduce your spread — by ==exactly the amount your average moves around== as $V$ varies. Everything on the next two slides is those two sentences, cashed.
+Both say the same thing from two heights: conditional means average back to the original mean. Conditional variance is smaller **on average over $V$**, not necessarily for every observed value. Everything on the next two slides is those two sentences, cashed.
 :::
+:::
+
+### Total variance with numbers — within groups and between groups
+
+Two equally likely groups have means **1 and 3**, and both have variance **1**.
+
+$$\E[U]=0.5(1)+0.5(3)=2.$$
+
+| contribution | calculation | value |
+|---|---|---|
+| within-group variance | $0.5(1)+0.5(1)$ | 1 |
+| variance of group means | $0.5(1-2)^2+0.5(3-2)^2$ | 1 |
+| total variance | within + between | **2** |
+
+::: keypoint
+Learning the group removes the uncertainty about **which mean applies**. There is still variation inside that group. This is the same decomposition used in posterior prediction.
 :::
 
 ### Total expectation, read in three chapters
@@ -110,7 +139,7 @@ $$\E[\theta] = \E\big[\,\E[\theta\mid y]\,\big]$$
 Before seeing data, your belief is already the average of every belief you might end up with. A posterior that moved in one direction *for every possible dataset* would be an incoherent prior.
 :::
 ::: col.accent Ch 7 — the Bellman equation
-$$V^\pi(s) = \E\big[r_t + \gamma V^\pi(s_{t+1})\mid s\big]$$
+$$V^\pi(s) = \E\big[r_{t+1} + \gamma V^\pi(s_{t+1})\mid s\big]$$
 
 Lecture 7 peeled one step off the return and let the Markov property close the loop. ==That peel is the tower rule== — condition on the next state, average the conditional averages.
 :::
@@ -138,13 +167,13 @@ A Beta$(\alpha,\beta)$ prior and $n$ coin tosses, with *every* dataset enumerate
 
 ::: cols c3
 ::: col Ch 2 — the posterior tightens
-$\mathrm{var}(\theta\mid y)$ is smaller than $\mathrm{var}(\theta)$ by exactly the spread of posterior means. Chapter 2 stated it as ==data cannot, on average, make you less certain== — which is this identity read as an inequality.
+$\E_y[\mathrm{var}(\theta\mid y)]$ equals prior variance minus the variance of posterior means. A particular dataset can still increase posterior variance. Chapter 2 stated it as ==data cannot, on average, make you less certain== — which is this identity read as an inequality.
 :::
 ::: col.accent Ch 2 and 4 — the predictive split
 The predictive variance is $\sigma_Y^2+\tau_1^2$: measurement noise you can never remove, plus parameter uncertainty you can. Lecture 0's aleatoric/epistemic pair, arriving as the two terms of one identity.
 :::
 ::: col Ch 10 — the baseline
-Subtracting $\E[U\mid V]$ deletes the between part and leaves the mean untouched. That is why a baseline reduces the variance of a policy gradient at ==zero bias== — Chapter 10 measures the effect at nearly twentyfold — and why the advantage exists at all.
+The residual $U-\E[U\mid V]$ has mean **zero**, not the original mean. Policy-gradient baselines preserve the mean by a different fact: the action score has expectation zero. A well-chosen baseline can reduce variance; see Lecture 10.
 :::
 :::
 
@@ -254,11 +283,11 @@ The single most-used distribution in the course. Four properties, and each one b
 
 ### The multivariate normal — definition
 
-A random vector $Y=(Y_1,\dots,Y_k)$ is jointly Gaussian if
+A nonsingular jointly Gaussian vector $Y=(Y_1,\dots,Y_k)$ has density
 
 $$p(y) = \mathcal N(y\mid\mu,\Sigma) = \frac{1}{\sqrt{(2\pi)^k|\Sigma|}}\exp\!\Big(-\tfrac12 (y-\mu)^\top\Sigma^{-1}(y-\mu)\Big)$$
 
-with $\E[Y]=\mu$ and $\mathrm{var}(Y)=\Sigma\succeq0$, $\Sigma_{ij}=\mathrm{cov}(Y_i,Y_j)$.
+For this density require $\Sigma\succ0$, with $\E[Y]=\mu$ and $\mathrm{var}(Y)=\Sigma$. A singular Gaussian still exists but has no full-dimensional density of this form; $\Sigma_{ij}=\mathrm{cov}(Y_i,Y_j)$.
 
 ::: reveal
 ::: center
@@ -320,8 +349,22 @@ Y_2\mid Y_1=y \;\sim\; \mathcal N\big(\underbrace{\mu_2+\Sigma_{21}\Sigma_{11}^{
 
 ::: reveal
 ::: small
-Read the two braces. The mean moves by ==how far the observation fell from its own mean, geared by the correlation==; the covariance drops by a term that does not depend on the observed *value* at all — which is why a GP's error bars can be planned before any data arrives, and why Chapter 4 could choose where to sample next.
+Read the two braces. The mean moves by ==how far the observation fell from its own mean, geared by the correlation==; with fixed covariance parameters, the covariance drops by a term independent of the observed value — which is why a GP's error bars can be planned before any data arrives, and why Chapter 4 could choose where to sample next.
 :::
+:::
+
+### Gaussian conditioning — read one observation across a correlation
+
+Let $Y_1,Y_2$ have means 0, variances 1, and correlation **0.8**. Observe $Y_1=1$.
+
+$$\E[Y_2\mid Y_1=1]=0+0.8(1)=0.8,$$
+
+$$\mathrm{Var}(Y_2\mid Y_1=1)=1-0.8^2=0.36.$$
+
+So $Y_2\mid Y_1=1\sim\mathcal N(0.8,0.36)$, with standard deviation **0.6**.
+
+::: keypoint
+Correlation transmits information: the mean shifts toward the observation, and uncertainty shrinks. If the correlation were zero, neither would change. If the observation were −1, the mean would be −0.8 but the variance would still be 0.36.
 :::
 
 ### Conditioning, in your hands
@@ -346,7 +389,7 @@ With $y=\mathbf Xw+\epsilon$ and both $w$ and $\epsilon$ Gaussian, $w$ and $y$ a
 It lands on $\mathcal N(\mu_w,\Sigma_w)$ with $\mu_w$ the ridge solution, $\lambda=\sigma^2/\alpha^2$.
 :::
 ::: col Ch 9 — LQR with noise
-The value is quadratic, $V(x)=x^\top P x$. Put Gaussian noise back into $x_{t+1}=Ax_t+Bu_t+w_t$ and
+For finite-horizon, fully observed LQ control with additive zero-mean noise independent of state and action, the value is quadratic **plus a constant**. Put noise back into $x_{t+1}=Ax_t+Bu_t+w_t$ and
 
 $$\E[x^\top P x] = \mu^\top P\mu + \mathrm{tr}(P\Sigma), \quad x\sim\mathcal N(\mu,\Sigma)$$
 
@@ -381,7 +424,7 @@ When an expectation has no closed form, ==estimate it by sampling:==
 
 $$\E_{x\sim p}[g(x)] \;\approx\; \hat\mu_N = \frac1N\sum_{i=1}^N g(x_i), \qquad x_i\sim p$$
 
-unbiased by construction, with standard error $\sigma_g/\sqrt N$ by the central limit theorem — where $\sigma_g^2=\mathrm{var}_p(g)$.
+For i.i.d. samples and an integrable $g$, the average is unbiased. If variance is finite, its exact standard error is $\sigma_g/\sqrt N$; the central limit theorem supplies an asymptotic Gaussian approximation. Correlated samples require a different standard-error calculation.
 
 ::: reveal
 ::: small
@@ -391,7 +434,7 @@ This is the quiet foundation of *model-free* reinforcement learning. When the ex
 
 ::: reveal
 ::: keypoint
-For an i.i.d. average the rate $1/\sqrt N$ is fixed by the central limit theorem. ==The constant $\sigma_g$ is entirely yours to choose.==
+For an i.i.d. average the rate $1/\sqrt N$ is fixed by the central limit theorem. ==Variance-reduction methods can lower the constant, subject to cost and assumptions.==
 :::
 :::
 
@@ -402,7 +445,7 @@ $$\E_{x\sim p}[g(x)] = \E_{x\sim q}\Big[\underbrace{\tfrac{p(x)}{q(x)}}_{\text{w
 ::: reveal
 ::: cols
 ::: col Where it worked — Ch 6
-CbAS cannot draw from $p(x\mid S)$ directly, so it draws from the previous iterate and reweights. The ladder exists precisely to keep $q$ close to the target, ==so the weights never get the chance to explode.==
+CbAS cannot draw from $p(x\mid S)$ directly, so it draws from the previous iterate and reweights. The ladder exists precisely to keep $q$ close to the target, ==which helps control weight variability but does not guarantee bounded weights or finite variance.==
 :::
 ::: col.accent Where it is the whole problem — Ch 12
 Off-policy evaluation scores a policy you may not deploy, by reweighting a dataset another policy collected. The weight is a *product over the horizon*, so its variance grows with $T$ — which is why the chapter reaches for doubly-robust estimators.
@@ -426,12 +469,12 @@ Estimating $\Pr(X>3)=1.35\times10^{-3}$ for $X\sim\mathcal N(0,1)$. Both clouds 
 
 $$\mathrm{KL}(p\,\|\,q) = \E_{x\sim p}\Big[\log\tfrac{p(x)}{q(x)}\Big] \;\ge\; 0, \qquad =0 \iff p=q$$
 
-Not symmetric, and not a metric — but the natural *information cost* of using $q$ where $p$ is true. For Gaussians it is closed form, which is why it can sit inside a loss: $\mathrm{KL}\big(\mathcal N(0,1)\|\mathcal N(0,2)\big)=0.318$ while the reverse is $0.807$.
+Not symmetric, and not a metric — but the natural *information cost* of using $q$ where $p$ is true. For Gaussians it is closed form, which is why it can sit inside a loss: $\mathrm{KL}\big(\mathcal N(0,1)\|\mathcal N(0,4)\big)=0.318$ while the reverse is $0.807$.
 
 ::: reveal
 - **Ch 6, the VAE.** The ELBO's KL term pulls the encoder onto the prior, which is what makes the latent space ==samplable==: without it $q_\phi$ is free to encode anywhere and new draws decode to nothing.
 - **Ch 6, generative training.** Minimising KL to the data distribution *is* maximum likelihood; minimising JS instead is the GAN. Same shape, different divergence, different failure mode.
-- **Ch 10, trust regions.** TRPO maximises an importance-weighted advantage subject to $\E[\mathrm{KL}(\pi_{\text{old}}\|\pi_\theta)]\le\delta$ — the largest step that keeps the new policy *close in behaviour*, not close in parameters. PPO recovers the effect with a clip.
+- **Ch 10, trust regions.** TRPO maximises an importance-weighted advantage subject to $\E[\mathrm{KL}(\pi_{\text{old}}\|\pi_\theta)]\le\delta$ — the largest step that keeps the new policy *close in behaviour*, not close in parameters. PPO discourages some large changes with clipping; it imposes no hard KL bound.
 :::
 
 ::: reveal
@@ -447,7 +490,7 @@ Not symmetric, and not a metric — but the natural *information cost* of using 
 - The asymmetry has no practical consequence for the fitted $q$
 - $q$ matches the mean and variance of $p$ exactly
 - =$q$ is penalised heavily for putting mass where $p$ has none, so it tends to fit a single mode and under-cover
-The integrand carries $q \log(q/p)$: wherever $q$ is large and $p$ is near zero the penalty explodes, but where $p$ is large and $q$ near zero it costs almost nothing. So this direction is **mode-seeking** — it would rather explain part of the distribution well than all of it badly. That is the tendency behind a VAE's blurry, over-averaged samples in Lecture 6.
+The integrand carries $q \log(q/p)$: wherever $q$ is large and $p$ is near zero the penalty explodes, but where $p$ is large and $q$ near zero it costs almost nothing. So this direction is **mode-seeking** — it would rather explain part of the distribution well than all of it badly. This tendency depends on a restricted approximating family; a flexible family can match the whole posterior. It is not a general explanation of blurry VAE reconstructions, which also depend on the decoder likelihood and capacity.
 :::
 
 ## Closing
@@ -476,7 +519,7 @@ Everything above, on one page.
 {fill: center}
 
 ::: keypoint
-The whole course manipulates an ==expectation== — what we believe will happen on average — and a ==Gaussian== — the one uncertainty we can carry in closed form.
+The whole course manipulates an ==expectation== — what we believe will happen on average — and a ==Gaussian== — one especially tractable uncertainty model.
 :::
 
 ::: reveal
@@ -485,7 +528,7 @@ Everything else is how to **update** them (Bayes, conjugacy, conditioning), how 
 
 ::: reveal
 ::: small
-Keep this appendix beside the main lectures. Whenever a derivation moves quickly through a probability step — a swapped expectation, a conditional that stays Gaussian, a sample average standing in for an integral — the justification is one of the ten rows above, and the pointer beside it says where to look.
+Keep this appendix beside the main lectures. Whenever a derivation moves quickly through a probability step — a swapped expectation, a conditional that stays Gaussian, a sample average standing in for an integral — the justification is one of the nine rows above, and the pointer beside it says where to look.
 :::
 :::
 

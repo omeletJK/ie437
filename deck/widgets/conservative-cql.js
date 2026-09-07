@@ -330,8 +330,8 @@ IE437.widget('conservative-cql', function (host, opts) {
     host.querySelector('[data-note]').innerHTML =
       al === 0 ? 'No penalty. The value climbs without bound and the policy it implies breaks the machine on the first step.'
       : gap > 0 ? 'Now <b>too</b> conservative: the argmax has been squeezed back onto the operator&rsquo;s most frequent action, and earns less than the log it was learned from.'
-      : (vs > 0.25 ? 'The value <b>under</b>-promises &mdash; a lower bound, so what it reports can be trusted &mdash; and the policy beats the operator.'
-                   : 'Still a lower bound, but the penalty is now costing real return.');
+      : (vs > 0.25 ? 'In this toy MDP the estimate under-predicts the measured policy value, and the policy beats the operator. This run alone is not a general guarantee.'
+                   : 'Still an under-prediction in this example, but the penalty is now costing real return.');
   }
 
   IE437.slider(host.querySelector('[data-sl]'), {

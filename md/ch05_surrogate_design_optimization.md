@@ -50,14 +50,14 @@ Lecture 4 leaves us $\argmax_x f(x)$ with a GP — and this lecture ==removes th
 :::
 :::
 
-### Four ways to optimise a black box, and what every one of them needs
+### Five ways to optimise a black box, and what every one of them needs
 {sub: what the source lecture spends fifteen slides establishing}
 
 | method | what it does | what it costs |
 |---|---|---|
 | **Gradient ascent on a proxy** | fit $f_\theta$ to the data so far, step $x_{t+1} = x_t + \eta\nabla_x f_\theta(x_t)$, evaluate | one query per step |
 | **Genetic algorithms** | population, truncation selection of the top $E$, crossover, mutation | $N$ queries per generation |
-| **CMA-ES** | sample $x_i\sim\mathcal N(\mathbf m_t,\sigma_t^2 I)$, rank, move the mean and shrink $\sigma$ | $n$ queries per generation |
+| **CMA-ES** | sample from an adaptive Gaussian $\mathcal N(\mathbf m_t,\sigma_t^2 C_t)$; update mean, covariance and step size | $n$ queries per generation |
 | **Bayesian optimisation** *(Lec 4)* | GP posterior, then $x_{t+1} = \argmax_x A_t(x)$ | one query per round |
 | **Policy gradient** | learn $\pi_\theta(x)$ by $\nabla_\theta\E_{x\sim\pi_\theta}[f(x)] = \E[\nabla_\theta\log\pi_\theta(x)\,f(x)]$ | $n$ queries per round |
 
@@ -121,6 +121,20 @@ So the whole lecture is one failure and its cure: the surrogate **overestimates*
 - **Q3 — How do we fix it?** ==Conservative objective models== — penalise the surrogate where the optimiser attacks.
 - **Q4 — What else helps?** Honest ==uncertainty== (NEMO) and local ==smoothness== (RoMA).
 
+### Learning route — separate prediction quality from design quality
+
+**Start with:** regression loss, gradient ascent and the BO loop from Lecture 4.
+
+::: flow
+- **Diagnose** | compare the surrogate's prediction with the true score
+- **Correct** | train against inputs the optimiser is likely to exploit
+- **Evaluate** | compare proposed designs with the best measured design
+:::
+
+::: keypoint
+You should be able to ==explain a failure using two candidate designs and calculate the signs of the COMs loss terms.== NEMO, RoMA and theorem details are extensions of this core idea.
+:::
+
 ## Act 1 — the naive approach
 {short: ACT 1, num: Act 1}
 
@@ -180,18 +194,18 @@ One line deleted, and with it every correction. The surrogate is fitted once and
 :::
 
 ::: small
-Five thousand designs in a 5,126-dimensional space. Whatever the surrogate believes about that space, ==almost all of it was never checked against anything== — and gradient ascent is free to walk in any of those directions. {p}(Trabucco et al., Design-Bench, 2022)
+Only 3,200 designs in a 5,126-dimensional space for HopperController. Whatever the surrogate believes about that space, ==almost all of it was never checked against anything== — and gradient ascent is free to walk in any of those directions. {p}(Trabucco et al., Design-Bench, 2022)
 :::
 
 ### Check — the naive pipeline
 {q: 1}
 
-::: quiz You fit a surrogate $\hat{f}$ to a fixed dataset and hand it to an optimiser to maximise. The optimiser returns a design scoring far above anything in the data. What is the most likely explanation?
-- =The optimiser found a region where $\hat{f}$ is confidently wrong, and exploited the error rather than the function
+::: quiz You fit a surrogate $\hat{f}$ to a fixed dataset and hand it to an optimiser to maximise. The optimiser returns a design scoring far above anything in the data. Which risk must you check before trusting that prediction?
+- =The optimiser may have selected a region where the surrogate overestimates the true score
 - The surrogate generalises well and has found a genuinely better design
 - The optimiser has not converged
 - The dataset was too small to fit the surrogate at all
-A surrogate is accurate **on the distribution it was trained on** and unconstrained off it. The optimiser is not a neutral user of the model — it is an adversary that actively seeks the argmax, and the argmax of $\hat{f}$ tends to sit exactly where the error is largest and positive. A spectacular predicted score is evidence of extrapolation, not of discovery.
+Training error alone does not establish generalisation, and predictions far from the training distribution can be unreliable. The optimiser is not a neutral user of the model — it is an adversary that actively seeks the argmax, and the argmax of $\hat{f}$ tends to sit exactly where the error is largest and positive. A spectacular predicted score alone establishes neither success nor failure; it needs evidence about the proposed design.
 :::
 
 ## Act 2 — why it fails
@@ -207,14 +221,14 @@ A surrogate is accurate **on the distribution it was trained on** and unconstrai
 
 ::: cols
 ::: col.red Problem 1 — extrapolation
-The trained model is only valid **near the training distribution**, so its error off that distribution is large and unbounded.
+The training data constrains the model most strongly where it has support. Error outside that region is not controlled by a small training loss.
 
-And yet the whole point of the exercise is to return a design *better than anything in $D$* — so ==we must extrapolate==. The failure is not incidental to the task; it *is* the task.
+And yet the whole point of the exercise is to return a design *better than anything in $D$* — so we often need to evaluate predictions beyond the best measured outcomes. Improvement can sometimes come from interpolation among existing inputs, too. The failure is not incidental to the task; it *is* the task.
 :::
 ::: col.red Problem 2 — the valid manifold
 Searching for the input that maximises the proxy is easy: gradient ascent. But only **a thin sliver of the input space is valid** at all — real molecules, foldable proteins, buildable layouts.
 
-In high dimensions, ascent steps almost surely leave that sliver, and a design off it is ==not merely poor but meaningless==.
+Unconstrained ascent steps can leave that sliver, and a design off it is ==not merely poor but meaningless==.
 :::
 :::
 
@@ -228,6 +242,20 @@ The two want different cures. Problem 1 is about the *values* the surrogate repo
 
 ::: widget two-failures
 Left, the dataset does not determine $f$ off the data: ==every one of those dashed continuations fits $D$ equally well==, and the fitted surrogate is whichever one the architecture happens to prefer. Right, the valid inputs are a small disc inside a large space; ascent starting inside it leaves almost immediately, and the returned designs are not molecules at all.
+:::
+
+### A good prediction fit can still choose the wrong design
+{sub: illustrative scores; the offline optimiser does not see the truth column}
+
+| Candidate | Surrogate prediction | True score, revealed only for this example |
+|---|---|---|
+| A, near measured designs | $5.5$ | $5.2$ |
+| B, far from measured designs | $8.0$ | $1.0$ |
+
+The optimiser correctly solves $\argmax_x\hat f(x)$ and chooses B. Its predicted gain over A is $8-5.5=2.5$, but its true loss is $5.2-1=4.2$.
+
+::: keypoint
+==The optimisation can be correct while the decision is poor.== The missing guarantee is that a high surrogate score means a high true score at the selected input.
 :::
 
 ### The optimiser is an adversary
@@ -267,15 +295,15 @@ A stronger, more thorough optimiser finds a *higher* point of $f_\theta$ — whi
 Optimisation strength is on the ==wrong side== of the problem.
 :::
 ::: col.red Search less
-Constrain the search to stay near $D$ and the answer is capped at the best design already in the dataset.
+Restricting search to the measured designs caps the result at the best recorded score. A neighbourhood constraint can still permit improvement, but may also exclude useful novel designs.
 
-Safe and pointless: ==beating $D$ was the entire task.==
+The trade-off is between evidence and novelty.
 :::
 :::
 
 ::: reveal
 ::: keypoint
-Neither the optimiser nor its leash. The cure is a ==more honest surrogate== — one whose maximum sits where the evidence can support it.
+==Search restrictions and conservative models are complementary controls.== Here we focus on changing what the surrogate predicts at tempting, weakly supported inputs.
 :::
 :::
 
@@ -305,14 +333,14 @@ This is the uncomfortable part. Every improvement in the optimiser is an improve
 We want a model that ==does not overestimate the very inputs an optimiser would chase==. The obstacle is knowing which inputs those are — and the answer is to generate them, by simulating the attack we fear.
 
 ::: reveal
-$$\mu(x) = \Big\{\textstyle\sum_{t\ge 0} \delta_{x_t} \;:\; x_{t+1} = x_t + \eta\,\nabla_{x_t} f_\theta(x_t),\quad x_0 \sim D\Big\}$$
+$$\mu_\theta=\frac1M\sum_{j=1}^{M}\delta_{x_T^{(j)}},\qquad x_{t+1}^{(j)}=x_t^{(j)}+\eta\nabla_x f_\theta(x_t^{(j)}),\quad x_0^{(j)}\sim D$$
 :::
 
 ::: reveal
 ::: flow | | 
 - **Start from the data** | $x_0\sim D$ — real designs
 - **Run the attacker** | a few steps of ascent on the *current* surrogate
-- !**Collect what it visited** | that set is $\mu(x)$: the inputs this surrogate is tempting
+- !**Collect what it visited** | the empirical distribution of these candidates is $\mu_\theta$: the inputs this surrogate is tempting
 :::
 :::
 
@@ -327,19 +355,43 @@ Because $f_\theta$ changes at every training step, $\mu$ is regenerated as train
 $$L(\theta) = \underbrace{\tfrac12\,\E_{(x,y)\sim D}\big[(f_\theta(x)-y)^2\big]}_{\text{(i) fit the data}} \;+\; \alpha\Big(\underbrace{\E_{x\sim\mu(x)}[f_\theta(x)]}_{\hl{\text{(ii) push the adversaries down}}} \;-\; \underbrace{\E_{x\sim D}[f_\theta(x)]}_{\hl{\text{(iii) hold the data up}}}\Big)$$
 
 - **(i)** ordinary regression — be right about the designs we actually measured;
-- **(ii)** the conservative term — *prevents overestimation of out-of-distribution inputs*;
-- **(iii)** the counter-term — without it, (ii) would drag the whole surface down and the model would simply predict $-\infty$ everywhere. It *prevents underestimation of in-distribution inputs*.
+- **(ii)** lowers scores at the adversarial candidates;
+- **(iii)** raises scores relative to the dataset. Regression already penalises unbounded downward shifts on data; this term controls the adversary-versus-data score gap.
 
 ::: reveal
 ::: small
-Structurally this is ordinary supervised regression plus one adversarial term. No new optimiser, no inversion, no sampler — which is exactly why COMs is the easiest of the three methods in this lecture to deploy. Optimising it is a naive gradient ascent started from ==the best design already in $D$==.
+Structurally this is ordinary supervised regression plus one adversarial term. The additional work is to generate adversarial candidates while training the surrogate. Optimising it is a naive gradient ascent started from ==the best design already in $D$==.
 :::
+:::
+
+### One COMs loss calculation
+{sub: freeze the sampled candidates while inspecting the update}
+
+One measured design has target $y=4$ and prediction $u=3.5$. One adversarial design has prediction $v=8$. Use $\alpha=0.2$.
+
+$$L=\tfrac12(u-4)^2+0.2(v-u)=0.125+0.9=1.025.$$
+
+::: cols c2
+::: col At the measured design
+$$\frac{\partial L}{\partial u}=(u-4)-0.2=-0.7.$$
+
+Gradient descent increases $u$, improving the fit and the relative data score.
+:::
+::: col.accent At the adversarial design
+$$\frac{\partial L}{\partial v}=0.2.$$
+
+Gradient descent decreases $v$, reducing the unsupported high prediction.
+:::
+:::
+
+::: keypoint
+==Fit measured targets and reduce the score gap to tempting candidates.== Shared network parameters couple these updates, so this calculation explains the loss, not a guaranteed independent change at each point.
 :::
 
 ### Turning the dial
 
 ::: widget conservative-coms {"seed":17}
-The same dataset, the same optimiser, the same fifteen points — only the training loss differs. At $\alpha = 0$ the search runs to the boundary and returns a design worth $-0.14$. By $\alpha = 0.3$ it halts at $6.20$, all but exactly the true optimum at $6.04$. Watch the readout: past $\alpha \approx 0.15$ the surrogate's prediction at $x^*$ falls *below* the truth. ==It has become a lower bound== — and then, at $\alpha = 1.3$, so conservative that it will not leave the data at all.
+The same dataset, the same optimiser, the same fifteen points — only the training loss differs. At $\alpha = 0$ the search runs to the boundary and returns a design worth $-0.14$. At $\alpha=0.3$, the returned **input** is about $x=6.20$, near the true maximising input $x=6.04$. Watch the readout: past $\alpha \approx 0.15$ the surrogate's prediction at $x^*$ falls *below* the truth. ==At this returned design the prediction is below the true value== — and then, at $\alpha = 1.3$, so conservative that it will not leave the data at all.
 :::
 
 ### Why it works — a learned lower bound
@@ -351,7 +403,23 @@ $$\E_{x_0\sim D,\ x_T\sim\mu(x_T\mid x_0)}\big[f_\theta(x_T)\big] \;\le\; \E_{x_
 :::
 
 ::: reveal
-Read the direction carefully. It does not say the surrogate is accurate. It says that ==wherever the optimiser can reach, the surrogate under-promises== — so a design that looks good on the surrogate cannot be a hallucination, only an underestimate. The hallucinated peaks have been flattened, and gradient ascent has nowhere false left to climb.
+Read the expectation carefully. This is an average statement under the theorem's assumptions and the specified candidate distribution. It is not a pointwise certificate for every generated design, and finite neural-network training may not satisfy those assumptions.
+:::
+
+### An average lower bound is not a guarantee for every design
+
+Consider two equally likely candidate designs:
+
+| Candidate | Conservative prediction | True score |
+|---|---|---|
+| A | $0$ | $9$ |
+| B | $10$ | $3$ |
+| **Average** | **5** | **6** |
+
+The average prediction is below the average truth, yet B is overestimated: $10>3$.
+
+::: keypoint
+==An expectation inequality cannot be read as a pointwise inequality.== Conservatism reduces a risk under stated assumptions; it does not certify every proposed design as Lecture 1's convex KKT conditions did.
 :::
 
 ### Conservatism is a dial, and both ends are bad
@@ -374,7 +442,7 @@ The surrogate flattens so hard that ascent cannot move. In the source ablation, 
 
 ::: reveal
 ::: small
-Converting a penalised objective into a constrained one to get a scale-free, tunable hyperparameter is a move this course has made before and will make again — ==it is the trust region== of Lecture 1, and it is how TRPO will tame the policy gradient in Lecture 10.
+Converting a penalised objective into a constrained one to get a directly interpretable constraint budget is a move this course has made before and will make again — it resembles the constraint-based control of updates in Lecture 1, and it is how TRPO will tame the policy gradient in Lecture 10.
 :::
 :::
 
@@ -431,7 +499,7 @@ Conservatism is a **dial, not a direction**. Too little and the optimiser exploi
 ::: table center
 | method | what it treats overestimation as | the lever |
 |---|---|---|
-| **NEMO** {p}(Fu & Levine, ICLR 2021) | a failure of **uncertainty** — the model does not know what it does not know | a normalised-maximum-likelihood posterior |
+| **NEMO** {p}(Fu & Levine, ICLR 2021) | a failure of **uncertainty** — the model does not know what it does not know | a normalised-maximum-likelihood predictor |
 | **COMs** {p}(Trabucco et al., ICML 2021) | a failure of **calibration on the attack** — the model over-rates what the optimiser finds | an adversarial penalty, $\alpha$ |
 | **RoMA** {p}(Yu, Ahn, Song & Shin, NeurIPS 2021) | a failure of **smoothness** — spurious spikes between and beyond the data | a local smoothness prior at the current candidate |
 :::
@@ -453,7 +521,7 @@ $$p_{\text{NML}}(y\mid x) = \frac{p\big(y \mid x;\ \hat\theta_{D\cup(x,y)}\big)}
 - **Pick a candidate label $y'$** | for the query point $x$
 - **Refit** | $\hat\theta_{D\cup(x,y')}$ — the MLE on the data *plus that made-up point*
 - **Ask how well it fits** | $p(y'\mid x;\hat\theta_{D\cup(x,y')})$
-- !**Normalise over all $y'$** | the answer is the posterior
+- !**Normalise over all $y'$** | the answer is a normalised predictive distribution
 :::
 :::
 
@@ -471,14 +539,14 @@ Ten surrogates, each fitted to a bootstrap resample of the same fifteen points. 
 
 ### RoMA — flatten the surface the optimiser is standing on
 
-The clause NEMO and COMs leave implicit: a deep network overestimates off-distribution ==because it is not smooth==. A flexible model threaded through sparse data does not interpolate gently; it oscillates, and its spurious spikes are precisely what an argmax finds.
+RoMA targets sensitivity of predictions and gradients near candidate inputs. A jagged surrogate can create spurious peaks; even a smooth surrogate can extrapolate incorrectly. Smoothness is a useful modelling bias, not a sufficient condition for accuracy.
 
 ::: reveal
 ::: cols
 ::: col Stage 1 — train it smooth
 $$L(\theta) = \max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \delta\sim\mathcal N(0,\sigma)}\Big[\big(f(x+\delta;\tilde\theta)-y\big)^2\Big]$$
 
-Gaussian smoothing of the *inputs* under worst-case *weight* perturbations, $B(\theta) = \{\tilde\theta : \lVert\theta_l-\tilde\theta_l\rVert_F \le \epsilon\lVert\theta_l\rVert_F\}$; the inner maximisation by projected gradient descent.
+Gaussian smoothing of the *inputs* under worst-case *weight* perturbations, $B(\theta) = \{\tilde\theta : \lVert\theta_l-\tilde\theta_l\rVert_F \le \epsilon\lVert\theta_l\rVert_F\}$; the inner maximisation by projected gradient ascent.
 :::
 ::: col.accent Stage 2 — re-smooth as you go
 $$\theta_t = \argmin_{\tilde\theta\in B(\theta)} \big\lVert\nabla_x f(x;\tilde\theta)\big\rVert_2\Big|_{x = x^{(t)}} + \alpha\big(f(x^{(t)};\tilde\theta) - f(x^{(t)};\theta_{t-1})\big)^2$$
@@ -495,7 +563,7 @@ The source figure says it in two panels: without the prior, a jagged surrogate's
 :::
 
 ### What the benchmark says
-{sub: 100th-percentile score on Design-Bench, normalised so the best design in the dataset = 1.000}
+{sub: source-reported best-of-batch task scores; Avg uses the source's normalised aggregate}
 
 ::: table center
 | method | GFP | Molecule | Supercond. | Hopper | Ant | DKitty | **Avg** |
@@ -598,7 +666,7 @@ But there is a completely different route. Instead of approximating $f$ and sear
 ### Offline, a surrogate's optimism becomes the optimiser's trap.
 {layout: standout}
 
-The cure is conservatism: teach the model to doubt itself exactly where it will be attacked, and gradient ascent has nowhere false left to climb.
+Conservative training discourages unsupported high predictions. Its effectiveness still depends on the data, model, optimisation and candidate checks.
 
 ### Questions?
 {layout: standout}
@@ -632,7 +700,7 @@ Both build a surrogate; both maximise something over it. What differs is whether
 ### Backup 2 — generating the adversarial distribution
 {fill: top}
 
-$$\mu(x) = \Big\{\textstyle\sum_{t}\delta_{x_t} \;:\; x_0\sim D,\quad x_{t+1} = x_t + \eta\,\nabla_{x_t}f_\theta(x_t)\Big\}$$
+$$\mu_\theta=\frac1M\sum_{j=1}^M\delta_{x_T^{(j)}},\qquad x_0^{(j)}\sim D,\quad x_{t+1}^{(j)}=x_t^{(j)}+\eta\nabla_xf_\theta(x_t^{(j)})$$
 
 **Reading it.** Start from real data points; run a few steps of gradient ascent on the *current* surrogate; collect what it visits. These are exactly the inputs this surrogate would lure an optimiser toward, so these are the inputs whose predicted value must come down.
 
@@ -643,7 +711,7 @@ initialise f_θ; pick η, α
 for i = 1 … steps:
   sample (x₀, y) ~ D
   x_T ← ascent from x₀ on f_θ
-  μ ← Σ_{x₀∈D} δ_{x_T(x₀)}
+  μ ← empirical distribution of sampled x_T
   L = E_D (f_θ(x₀)−y)²
       − α E_D[f_θ] + α E_μ[f_θ]
   θ ← θ − λ ∇_θ L
@@ -651,7 +719,7 @@ for i = 1 … steps:
 :::
 ::: col.accent Algorithm 2 — finding $x^*$
 ```
-x̃ = argmax_{(x,y)∈D} y   ← the best
+x₀ = input of argmax_{(x,y)∈D} y ← best
                            design we own
 for t = 0 … T−1:
   x_{t+1} = x_t + η ∇_x f_θ*(x_t)
@@ -662,23 +730,26 @@ return x* = x_T
 :::
 
 ::: small
-Note where Algorithm 2 starts. Ascent is initialised at the ==best design in the dataset==, not at random — so the method's worst case is roughly "return what we already had", and the conservative penalty is what stops it wandering away from that floor.
+Note where Algorithm 2 starts. Ascent is initialised at the ==best design in the dataset==, not at random — which gives a sensible starting point. It does not guarantee that the final true score is at least the starting score; that would need an additional valid improvement check.
 :::
 
-### Backup 3 — the COMs loss, term by term, and the guarantee
-{fill: top}
+### Backup 3 — the COMs loss and the scope of its guarantee
 
-$$L(\theta) = \underbrace{\tfrac12\E_{(x,y)\sim D}\big[(f_\theta(x)-y)^2\big]}_{\text{(i) supervised fit}} \;+\; \alpha\underbrace{\E_{x\sim\mu(x)}[f_\theta(x)]}_{\text{(ii) push adversaries down}} \;-\; \alpha\underbrace{\E_{x\sim D}[f_\theta(x)]}_{\text{(iii) hold data up}}$$
+$$L(\theta)=\tfrac12\mathbb E_D[(f_\theta(x)-y)^2]+\alpha\left(\mathbb E_{\mu_\theta}[f_\theta(x)]-\mathbb E_D[f_\theta(x)]\right).$$
 
-- **(i)** ordinary regression: be accurate on the data we have.
-- **(ii)** the conservative term: minimise the predicted value on $\mu(x)$, the points gradient ascent on $f_\theta$ actually produces. *Prevents overestimation of out-of-distribution inputs.*
-- **(iii)** the counter-term: without it, (ii) drags the entire surface down, data included. Maximising the predicted value on $D$ *prevents underestimation of in-distribution inputs*.
+**Fit:** the squared loss anchors predictions at measured inputs. **Penalise:** the additional term lowers the adversarial-versus-data prediction gap.
 
-**The guarantee.** Under regularity assumptions, the conservative iterate satisfies, for all $x\in D$ and $x''\in\mathcal X$,
+An informal reading of the paper's conservative-result assumptions is
 
-$$f_\theta^{k+1}(x'') := \max\Big\{\, f_\theta^{k+1}(x) - \hat L\lVert x''-x\rVert_2,\;\; \tilde f_\theta^{k+1}(x'') - \eta\alpha\,\E_{x\sim\bar D, x'\sim\mu}\big[G_f^k(x'',x')\big] + \eta\alpha\,\E_{x\sim\bar D, x'\sim\bar D}\big[G_f^k(x'',x')\big]\Big\}$$
+$$\mathbb E_{x_T\sim\mu_\theta}[f_\theta(x_T)]\le\mathbb E_{x_T\sim\mu_\theta}[f(x_T)].$$
 
-where $\tilde f_\theta^{k+1}$ is the iterate that *would* have resulted without conservative training. For $\alpha$ large enough the asymptotic model therefore lower-bounds the truth on whatever the optimiser reaches: $\E[f_\theta(x_T)] \le \E[f(x_T)]$.
+::: keypoint
+This is an **expected-value statement under additional assumptions**, not a global certificate that $f_\theta(x)\le f(x)$ for all $x$. A large penalty or low training loss alone does not establish the theorem's hypotheses.
+:::
+
+::: small
+Advanced reference: Trabucco et al., *Conservative Objective Models*, ICML 2021. Consult the paper for the precise iterate, regularity and candidate-distribution assumptions. The main lecture's two-candidate counterexample explains why an average bound can still overestimate an individual design.
+:::
 
 ### Backup 4 — NEMO, made tractable
 {fill: top}

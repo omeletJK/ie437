@@ -203,7 +203,7 @@ IE437.widget('conservative-coms', function (host, opts) {
       a === 0 ? 'No penalty. The search runs to the edge of the design space and reports a value that is not there.'
       : gap > 0 ? 'Still optimistic where the optimiser lands.'
       : (vs < 0 ? 'Now <b>too</b> conservative: the surface is so flat that ascent never leaves the data, and we do worse than the design we started from.'
-                : 'The surrogate now <b>under</b>-promises at x* &mdash; a lower bound, so what it reports can be trusted.');
+                : 'At this selected design the surrogate under-predicts the known toy objective. This observed result is not a pointwise guarantee for every design.');
   }
 
   IE437.slider(host.querySelector('[data-sl]'), {

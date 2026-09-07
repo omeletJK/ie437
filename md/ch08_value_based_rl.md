@@ -135,6 +135,19 @@ One question per Act. This strip returns at every transition — watch the highl
 - **Q3 — Whose value are we learning?** On-policy (==SARSA==) vs. off-policy (==Q-learning==) — the cliff decides. {p}(Watkins, 1989)
 - **Q4 — Can it scale past a table?** Function approximation, the deadly triad, and the two tricks of ==DQN==. {p}(Mnih et al., 2013/2015)
 
+### Learning route — change the target, then change the representation
+
+**Bring:** Lecture 7's return, $V$, $Q$, and one Bellman backup. We keep its reward timing: $(s_t,a_t)\to(r_{t+1},s_{t+1})$.
+
+::: flow
+- **Predict** | compare MC and TD targets
+- **Explore** | collect actions worth learning about
+- **Control** | SARSA versus Q-learning
+- !**Scale** | a network, replay, and frozen targets
+:::
+
+You should be able to **calculate one update**, name the policy its target evaluates, and explain why a tabular convergence theorem does not automatically cover DQN.
+
 ## Act 1 — evaluation without a model
 {short: ACT 1, num: Act 1}
 
@@ -199,13 +212,28 @@ Don't wait. After a *single* transition $(s_t, r_{t+1}, s_{t+1})$, update:
 
 $$V(s_t) \;\leftarrow\; V(s_t) + \alpha\big[\,\underbrace{r_{t+1} + \gamma V(s_{t+1})}_{\hl{\text{TD target}}} - V(s_t)\,\big]$$
 
-The target contains $V(s_{t+1})$ — ==our own current estimate==. We update a guess toward a slightly-better guess. This is **bootstrapping**.
+The target contains $V(s_{t+1})$ — ==our own current estimate==. It need not be better on every individual transition. This is **bootstrapping**.
 
 ::: reveal
 - **Online, incremental, model-free.** One step is enough — ideal for long or non-terminating tasks.
-- **Low variance, some bias.** The target depends on one reward plus a learned value, not a whole noisy trajectory — but it inherits whatever error $V(s_{t+1})$ currently carries.
-- In practice TD usually converges *faster* than constant-$\alpha$ MC on stochastic tasks.
+- **Often lower variance, possible bias.** The target depends on one reward plus a learned value, not a whole noisy trajectory — but it inherits whatever error $V(s_{t+1})$ currently carries.
+- TD can learn faster in many tasks; neither method dominates for every reward process, initialization, and step size.
 :::
+
+### One transition, two targets — calculate the update
+
+Let $V(s)=2$, $V(s')=3$, $\alpha=0.2$, and $\gamma=0.9$. We observe reward 1; the next transition pays 4 and ends the episode.
+
+| method | target | updated value of the first state |
+|---|---|---|
+| TD, available after step 1 | $1+0.9(3)=3.7$ | $2+0.2(3.7-2)=2.34$ |
+| MC, available after termination | $1+0.9(4)=4.6$ | $2+0.2(4.6-2)=2.52$ |
+
+::: keypoint
+Both use **old estimate + step size × prediction error**. TD uses an estimate of the future; MC waits for its realized return.
+:::
+
+If the first transition had terminated, both targets would be **1**: terminal continuation value is zero.
 
 ### Both estimators, the same episodes
 ::: widget mc-vs-td {"alpha":0.1,"seed":7}
@@ -240,7 +268,7 @@ That single inheritance is why TD, not MC, becomes the engine of control. We now
 {q: 1}
 
 ::: quiz Monte Carlo waits for the episode to end and averages the actual return; TD updates after one step using its own estimate of what follows. What is the trade?
-- =MC is unbiased but high-variance; TD bootstraps, so it is biased but much lower-variance and works without waiting for the end
+- =MC uses an unbiased full-return target; TD can introduce bootstrap bias, often reduces variance, and can update immediately
 - MC has lower variance and higher bias; TD the reverse
 - Both are unbiased; TD is simply faster to compute
 - TD is unbiased only in deterministic environments, where it equals MC
@@ -318,15 +346,12 @@ Two Q-learning agents, identical but for $\varepsilon$. The greedy one locks ont
 ### Check — the price of exploring
 {q: 2}
 
-::: quiz An $\varepsilon$-greedy agent is left running with $\varepsilon$ fixed at $0.1$ forever. What happens to its *behaviour*?
+::: quiz Assume tabular Q-learning satisfies its convergence conditions. With $\varepsilon=0.1$ fixed, what happens to its behaviour?
 - It converges to the optimal policy, because $Q$ converges to $Q^*$
 - =$Q$ converges to $Q^*$, but the agent keeps taking a random action one time in ten
 - Neither converges — a fixed $\varepsilon$ prevents $Q$ from converging
 - It converges to the optimal policy only if the environment is deterministic
-Q-learning is **off-policy**: it learns $Q^*$ from whatever data arrives, so a fixed
-$\varepsilon$ costs nothing in the estimate. What it costs is the *return earned along the
-way* — the agent goes on paying the exploration tax forever. Decaying $\varepsilon \to 0$
-is what turns a converged $Q$ into converged behaviour.
+Under adequate state–action coverage and diminishing step sizes, tabular Q-learning can converge to $Q^*$ while its behavior remains exploratory. With two actions and one unique best action, $\varepsilon=0.1$ chooses the best with probability $0.9+0.1/2=0.95$, not 0.9. Exploration can choose the best action too.
 :::
 
 ## Act 3 — whose value are we learning?
@@ -361,8 +386,21 @@ $\max$ over **all** next actions, taken or not.
 
 ::: reveal
 ::: small
-**S**, **A**, **R**, **S**$'$, **A**$'$ — SARSA literally uses the next action it sampled. Q-learning replaces that sampled $a'$ with the ==best possible== $a'$. That single $\max$ is the entire on/off-policy distinction.
+**S**, **A**, **R**, **S**$'$, **A**$'$ — SARSA literally uses the next action it sampled. Q-learning replaces that sampled $a'$ with the ==best possible== $a'$. For these two algorithms, that substitution reveals the distinction: the target policy need not be the policy that generated the data.
 :::
+:::
+
+### Same data, different policy in the target
+
+Let $Q(s,a)=2$, reward $r=1$, $\gamma=0.9$, and $\alpha=0.2$. At the next state, the two action values are **5 and 1**. Exploration actually selects the action worth 1.
+
+| update | continuation used | target | new estimate |
+|---|---|---|---|
+| SARSA | actual next action: 1 | $1+0.9(1)=1.9$ | $2+0.2(1.9-2)=1.98$ |
+| Q-learning | greedy next action: 5 | $1+0.9(5)=5.5$ | $2+0.2(5.5-2)=2.70$ |
+
+::: keypoint
+The reward and transition are identical. The difference is **what behavior we assume after arriving**. This is what the cliff experiment will make visible.
 :::
 
 ### The 2×2 that organizes everything
@@ -397,7 +435,7 @@ SARSA learns the value of *acting randomly*.  Q-learning learns the value of the
 :::
 
 ::: small
-Because the learned target is independent of the behavior, $Q$ converges to $Q^*$ no matter how (sufficiently exploratory) the data was gathered.
+This convergence statement is tabular: finite stationary MDP, bounded rewards, $\gamma<1$, every state–action pair visited infinitely often, and Robbins–Monro step sizes **per pair**. Random actions alone do not guarantee visits to unreachable states.
 :::
 :::
 
@@ -467,7 +505,7 @@ In the tabular world that chase still converged. With function approximation, it
 ### The deadly triad — why naive deep Q-learning blows up
 
 ::: lede
-Three ingredients are each harmless alone. Together they can make value estimates diverge.
+These three ingredients together create an important source of instability. Their absence is not a universal safety guarantee for arbitrary algorithms or step sizes.
 :::
 
 ::: flow
@@ -494,17 +532,31 @@ Two states, every reward $0$, so the true value is $0$ everywhere. With all thre
 
 Keep Q-learning's update. Add two stabilizers.
 
-- **Experience replay.** Store transitions $(s,a,r,s')$ in a buffer $D$; train on *random minibatches* from it. This ==breaks correlation== between consecutive samples and reuses each experience many times — restoring something close to i.i.d. data.
+- **Experience replay.** Store transitions $(s,a,r,s')$ in a buffer $D$; train on *random minibatches* from it. This **reduces temporal correlation within minibatches** and reuses experience; the finite replay data are not independent samples from a fixed environment distribution.
 - **Target network.** Compute the target with a *frozen* copy $w^-$, synced to $w$ only every $C$ steps:
 
 $$\mathcal{L}(w) = \E_{(s,a,r,s')\sim D}\Big[\big(r + \gamma \max_{a'}\hat Q(s',a';\,\hl{w^-}) - \hat Q(s,a;w)\big)^2\Big]$$
 
-Now the target stops moving while we chase it — the ==moving-target== pathology is suppressed.
+For each stored transition, the target is fixed between target-network updates. This helps stability but does not restore a general convergence guarantee.
 
 ::: reveal
 ::: small
 Result: one architecture, one set of hyperparameters, ==human-level play across dozens of Atari games== from raw pixels. The Bellman equation, untouched; the model, never learned; the table, replaced by a convnet.
 :::
+:::
+
+### DQN as regression — freeze the label, fit the prediction
+
+For one stored nonterminal transition, let $r=1$, $\gamma=0.9$, and the target network's next values be **5 and 1**. The label is $y=1+0.9(5)=5.5$.
+
+If the current network predicts 2:
+
+$$\tfrac12(y-Q_w(s,a))^2=\tfrac12(5.5-2)^2=6.125.$$
+
+The derivative with respect to that prediction is $2-5.5=-3.5$, so gradient descent pushes the prediction upward. **Do not differentiate through the label.**
+
+::: keypoint
+Store a terminal flag $d$ and use $y=r+\gamma(1-d)\max_{a'}Q_{w^-}(s',a')$. For a true terminal transition, $y=r$. A time-limit truncation may still need bootstrapping.
 :::
 
 ### The DQN loop — everything from today, assembled
@@ -535,11 +587,11 @@ The two tricks opened a decade of refinements, each patching a named flaw:
 - **Double DQN** — the $\max$ over-estimates; decouple action-selection from evaluation. {p}(van Hasselt et al., 2016)
 - **Dueling networks** — split $\hat Q$ into state-value $+$ advantage; learn "which states matter" separately. {p}(Wang et al., 2016)
 - **Prioritized replay** — sample high-error transitions more often. {p}(Schaul et al., 2016)
-- **Rainbow** — combine them; the sum beats every part. {p}(Hessel et al., 2018)
+- **Rainbow** — combine them; the combination improved the reported Atari benchmark results. {p}(Hessel et al., 2018)
 
 ::: reveal
 ::: small
-Every one keeps the same skeleton: *sampled Bellman backup* $+$ *$Q$ for model-free greed* $+$ *a stabilizer*. None brings back the model — and none works in ==continuous action spaces==, where $\max_{a'}$ itself becomes intractable.
+Every one keeps the same skeleton: *sampled Bellman backup* $+$ *$Q$ for model-free greed* $+$ *a stabilizer*. None brings back the model — and their standard finite-action versions cannot simply enumerate a **continuous action space**. The maximization then needs extra structure or an optimizer, motivating an actor.
 :::
 
 ::: keypoint
@@ -555,7 +607,7 @@ That wall — the $\max$ over a continuum — is exactly where ==Lecture 9== beg
 - Non-stationarity, correlated samples, and a moving target network
 - High learning rate, sparse reward, and long horizon
 - =Function approximation, bootstrapping, and off-policy training
-Any **two** of the three are safe; all three together can send the estimate to infinity even when every reward is zero and the true value is zero everywhere. DQN's two tricks are best read as attacks on this: a replay buffer decorrelates the updates and a frozen target network weakens the bootstrap. Neither removes the third leg, which is why deep RL remains fragile.
+All three together can send an estimate to infinity even when all rewards and true values are zero. Removing a leg helps in the displayed example; it does not prove every remaining algorithm converges. DQN's two tricks are best read as attacks on this: a replay buffer decorrelates the updates and a frozen target network weakens the bootstrap. Neither removes the third leg, which is why deep RL remains fragile.
 :::
 
 ## Closing
@@ -580,7 +632,7 @@ One repeated move, three times over: **model → sample**,  **wait → bootstrap
 ### Lecture 7 could solve the Bellman equation, because it owned the world. Lecture 8 *learned* to solve it.
 {layout: standout}
 
-by sampling the expectation, storing $Q$ instead of $V$, and replacing the table with a network it could trust.
+by sampling the expectation, storing $Q$ instead of $V$, and replacing the table with a network whose stability and performance must be checked.
 
 ### Questions?
 {layout: standout}
@@ -601,8 +653,8 @@ Both estimate $V^\pi(s)=\E_\pi[G_t\mid s_t=s]$ from samples; they differ in *wha
 - *Variance:* high — a function of **many** random rewards and transitions along the whole episode.
 :::
 ::: col TD(0) target $r_{t+1}+\gamma V(s_{t+1})$
-- *Bias:* present — uses the current (imperfect) estimate $V(s_{t+1})$; unbiased only at the true $V^\pi$.
-- *Variance:* low — depends on **one** reward and one transition.
+- *Bias:* present — uses the current (imperfect) estimate $V(s_{t+1})$; unbiased at the true $V^\pi$ (and sometimes when errors cancel in expectation).
+- *Variance:* often lower — depends on one reward and one successor estimate; no universal ordering holds for arbitrary estimates.
 :::
 :::
 
@@ -611,10 +663,10 @@ Interpolate by bootstrapping after $n$ steps, $G_t^{(n)} = r_{t+1}+\cdots+\gamma
 :::
 
 ### Backup 2 — when does tabular Q-learning converge?
-**Claim** {p}(Watkins & Dayan, 1992): tabular Q-learning converges to $Q^*$ with probability 1, provided
+**Claim** {p}(Watkins & Dayan, 1992): in a finite stationary MDP with bounded rewards and $0\le\gamma<1$, tabular Q-learning converges to $Q^*$ with probability 1, provided
 
 - every state–action pair $(s,a)$ is visited ==infinitely often== (the role of exploration, e.g. $\varepsilon>0$), and
-- the step sizes satisfy the Robbins–Monro conditions $\sum_t \alpha_t = \infty$, $\sum_t \alpha_t^2 < \infty$.
+- for each state–action pair, its update step sizes satisfy the Robbins–Monro conditions $\sum_t \alpha_t = \infty$, $\sum_t \alpha_t^2 < \infty$.
 
 **Why it holds (sketch).** The Bellman optimality operator $(\mathcal{T}Q)(s,a) = \E_{s'}[\,r + \gamma\max_{a'}Q(s',a')\,]$ is a $\gamma$-contraction in the sup-norm, so it has a unique fixed point $Q^*$. The Q-learning update is a ==stochastic approximation== of $\mathcal{T}$: each step replaces the expectation by one sample. Robbins–Monro step sizes average out the sampling noise; infinite visitation guarantees every entry keeps being corrected. Together they drive $Q \to Q^*$.
 
