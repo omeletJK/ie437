@@ -453,53 +453,205 @@ Convexity does not make a problem easy to *write down* or guarantee a formula. I
 ::: qstrip
 :::
 
-For a convex problem $\min_{x\in D} f(x)$ with differentiable $f$, a feasible $x^{*}$ is optimal **if and only if**
+Let $X$ be the **full feasible set**. Assume $X$ is convex, $f$ is convex and differentiable on an open set containing $X$, and $x^{*}\in X$.
 
-$$\nabla f(x^{*})^\top (y - x^{*}) \;\ge\; 0 \qquad \text{for all feasible } y$$
+$$x^{*}\text{ is globally optimal}\quad\hl{\Longleftrightarrow}\quad\nabla f(x^{*})^\top(y-x^{*})\ge0,\quad\forall y\in X$$
 
 ::: reveal
-**Reading it geometrically.** Moving from $x^{*}$ toward any other feasible point cannot decrease $f$ — there is no improving feasible direction. If $\nabla f(x^{*})\neq 0$ it defines a ==supporting hyperplane== to the feasible set at $x^{*}$: the whole feasible region lies on the uphill side.
+Call the right-hand statement $C(x^{*})$, the **first-order condition**. The dot product measures the initial rate of change toward $y$: a negative value would give a feasible downhill direction.
+:::
+
+::: reveal
+::: cols c2
+::: col Necessary · optimal ⇒ condition
+**Must every optimum pass this test?** If a point fails, it cannot be optimal.
+:::
+::: col Sufficient · condition ⇒ optimal
+**Does passing certify an optimum?** If it passes, no feasible point can have lower cost.
+:::
+:::
 :::
 
 ::: reveal
 ::: keypoint
-Optimality $=$ ==no feasible direction points downhill.==
-:::
-
-::: small
-Both directions of the *if and only if*, and the collapse to the familiar $\nabla f(x^{*})=0$, are on the next slide.
+==Exact means both necessary and sufficient.== We prove each arrow separately to show that the condition completely characterises optimality.
 :::
 :::
 
-### Why that condition is exact — and what it becomes with no constraints
-{sub: both directions, and the collapse to $\nabla f = 0$}
+### Necessary — an optimum cannot have a feasible downhill direction
+{math: compact}
+
+**Question:** if $x^{*}$ really is optimal, must it satisfy $C(x^{*})$? We prove **optimal $\Rightarrow$ condition** by ruling out a violation.
 
 ::: cols c2
-::: col Sufficient
-Suppose $\nabla f(x^{*})^\top(y-x^{*})\ge 0$ for every feasible $y$. The global underestimator finishes it:
-
-$$f(y)\;\ge\;f(x^{*})+\underbrace{\nabla f(x^{*})^\top(y-x^{*})}_{\ge\,0}\;\ge\;f(x^{*})$$
-
-True for *every* feasible $y$, so $x^{*}$ is a ==global== minimum — not merely a local one.
+::: col See why a candidate fails
+::: widget first-order-proof {"mode":"necessary"}
+Here $f'(0.5)(2.5-0.5)=-6<0$. Move $t$ to take a small feasible step and watch the cost fall.
 :::
-::: col Necessary
-Suppose instead some feasible $y$ has $\nabla f(x^{*})^\top(y-x^{*})<0$. The feasible set is convex, so $x_t=x^{*}+t(y-x^{*})$ stays in it, and
+:::
+::: col The general argument
+Suppose some $y\in X$ violates the condition. Set $d=y-x^{*}$, so $\nabla f(x^{*})^\top d<0$.
 
-$$\tfrac{\mathrm d}{\mathrm dt}f(x_t)\big|_{t=0}=\nabla f(x^{*})^\top(y-x^{*})<0$$
+::: reveal
+**The segment stays feasible** because $X$ is convex:
 
-Then $f(x_t)<f(x^{*})$ for small $t>0$: $x^{*}$ was not optimal after all.
+$$x_t=(1-t)x^{*}+ty\in X,\qquad 0\le t\le1.$$
+:::
+
+::: reveal
+**The cost initially falls** because $f$ is differentiable:
+
+$$\left.\frac{\mathrm d}{\mathrm dt}f(x_t)\right|_{t=0}=\nabla f(x^{*})^\top d<0.$$
+
+Thus $f(x_t)<f(x^{*})$ for all sufficiently small $t>0$, contradicting optimality.
+:::
 :::
 :::
 
 ::: reveal
-**With no constraints the condition *is* $\nabla f(x^{*})=0$.** If the gradient vanishes the inequality is trivial. For the converse, every $y$ is now feasible — so try the steepest-descent direction itself, $y=x^{*}-t\,\nabla f(x^{*})$ with $t>0$:
+::: keypoint
+An optimum must pass. ==Necessity uses the convexity of $X$; it does not require convexity of $f$.== The same argument applies to a local minimum.
+:::
+:::
 
-$$0\;\le\;\nabla f(x^{*})^\top(y-x^{*})\;=\;-t\,\lVert\nabla f(x^{*})\rVert_2^2 \qquad\Longrightarrow\qquad \nabla f(x^{*})=0$$
+### Sufficient — a convex tangent bound certifies every feasible point
+{math: compact}
+
+**Question:** if $x^{*}$ satisfies $C(x^{*})$, can we certify a global optimum? Now prove **condition $\Rightarrow$ optimal**.
+
+::: cols c2
+::: col Watch the two inequalities
+::: widget first-order-proof {"mode":"sufficient"}
+Illustration: minimise $x^2$ over $X=[1,3]$. At $x^{*}=1$, the orange tangent is $T(y)=1+2(y-1)$. Move the feasible comparison point $y$.
+:::
+:::
+::: col The general argument
+**Convexity of $f$ gives a global lower bound:**
+
+$$f(y)\ge\underbrace{f(x^{*})+\nabla f(x^{*})^\top(y-x^{*})}_{T(y)}.$$
+
+::: reveal
+**The assumed condition lifts that bound above the candidate cost:** for every $y\in X$,
+
+$$T(y)\ge f(x^{*}).$$
 :::
 
 ::: reveal
-::: small
-So the constrained condition is not a different rule; it is ==the same rule with fewer directions available.== On a boundary, $-\nabla f(x^{*})$ may simply not be a feasible direction, and the gradient is then free to stay non-zero — which is exactly the slack the multipliers of the next slides will put a price on.
+Combine them:
+
+$$f(y)\ge T(y)\ge f(x^{*}),\qquad\forall y\in X.$$
+
+Every feasible comparison point has at least the candidate's cost. This certifies a **global** minimum.
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+==Convexity of $f$ turns first-order information into a global certificate.== A tangent to a general non-convex function need not be a lower bound.
+:::
+:::
+
+### Necessary alone does not certify a minimum
+{math: compact}
+
+Remove convexity of the **objective**. Keep the convex feasible set $X=\R$ and take $f(x)=x^3$.
+
+::: cols c2
+::: col Zero slope, but lower points arbitrarily close
+::: widget first-order-proof {"mode":"counterexample"}
+The orange horizontal tangent passes through the candidate $x^{*}=0$. Move $y$ to the left: the curve falls below the tangent.
+:::
+:::
+::: col The condition passes — optimality fails
+At zero, $f'(0)=0$. Therefore the full first-order condition holds:
+
+$$f'(0)(y-0)=0\ge0,\qquad\forall y\in\R.$$
+
+::: reveal
+Yet for every $\epsilon>0$,
+
+$$f(-\epsilon)=-\epsilon^3<0=f(0).$$
+
+There are better points arbitrarily close to zero. It is **not even a local minimum**.
+:::
+
+::: reveal
+The necessary implication still holds. The sufficient implication fails because this tangent is **not a global lower bound**.
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+==Passing a necessary test only keeps a candidate in consideration.== It does not, by itself, prove optimality.
+:::
+:::
+
+### Why the condition is exact — the two arrows do different work
+{math: compact}
+
+For a differentiable $f$ and feasible $x^{*}$, the two proofs use different geometric facts:
+
+| Direction | Convexity used in the proof | What it gives |
+|---|---|---|
+| **Necessary:** optimal $\Rightarrow C(x^{*})$ | **Convex set $X$** | The segment toward any feasible $y$ stays feasible; a negative initial slope would disprove optimality. |
+| **Sufficient:** $C(x^{*})\Rightarrow$ global optimal | **Convex function $f$** | The tangent is a global lower bound; the condition puts that bound above $f(x^{*})$ on $X$. |
+
+::: reveal
+::: cols c2
+::: col If only necessity has been proved
+Failing the condition rules out optimality. **Passing alone is inconclusive** — as $x^3$ demonstrates.
+:::
+::: col If only sufficiency has been proved
+Passing the condition certifies optimality. **Failing alone is inconclusive**: this arrow does not say that every optimum must pass.
+:::
+:::
+:::
+
+::: reveal
+With both assumptions in place, combine the arrows:
+
+$$x^{*}\text{ globally optimal}\quad\hl{\Longleftrightarrow}\quad\nabla f(x^{*})^\top(y-x^{*})\ge0,\quad\forall y\in X$$
+:::
+
+::: note
+Opening line: We prove both directions because this condition does more than describe something an optimum must satisfy: it completely characterises optimality. The previous two columns describe what one implication alone permits; after both proofs, passing and failing are decisive for this convex problem.
+:::
+
+### With no constraints, every direction is available
+{math: compact}
+
+The constrained condition becomes $\nabla f(x^{*})=0$ when $X=\R^n$. At a boundary, fewer directions are available.
+
+::: cols c2
+::: col Full space · the gradient must vanish
+If $\nabla f(x^{*})=0$, the dot product is zero for every $y$, so $C(x^{*})$ holds immediately.
+
+::: reveal
+Conversely, if $C(x^{*})$ holds, choose the feasible point $y=x^{*}-\nabla f(x^{*})$. Then
+
+$$0\le\nabla f(x^{*})^\top(y-x^{*})=-\lVert\nabla f(x^{*})\rVert_2^2,$$
+
+which forces $\nabla f(x^{*})=0$. For convex $f$, this is a global certificate; for a general differentiable $f$, it is only necessary at a local minimum.
+:::
+:::
+::: col A boundary · a nonzero gradient is allowed
+Return to $\min_{x\in[1,3]}x^2$. At $x^{*}=1$, the derivative is **2**, not zero.
+
+::: reveal
+Nevertheless, every feasible $y$ satisfies
+
+$$f'(1)(y-1)=2(y-1)\ge0.$$
+
+The steepest-descent direction points left, outside $X$. The point passes the first-order test and is globally optimal.
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+==The same rule, with fewer feasible directions.== KKT will express how active constraints balance a nonzero objective gradient at a boundary optimum.
 :::
 :::
 
