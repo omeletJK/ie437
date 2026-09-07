@@ -345,6 +345,23 @@ Among these candidates, choose $(-1,0)$ and execute **only $u_0=-1$**. Suppose t
 The next optimization starts from **1.4**. For a final one-step cost $u^2+(1.4+u)^2$, it chooses $u=-0.7$. MPC corrects its starting state; it does not magically correct every model error.
 :::
 
+### What does “plan through the model” actually compute?
+{sub: original model-based RL PDF pp. 18–30 · the inner search in MPC}
+
+At the measured state $s_t$, compare candidate action sequences using the learned dynamics and the same objective:
+
+$$\hat J(a_{t:t+H-1})=\sum_{j=0}^{H-1}\gamma^j\hat r(\hat s_{t+j},a_{t+j}),\qquad\hat s_{t+j+1}=\hat f(\hat s_{t+j},a_{t+j}).$$
+
+| Search option | Calculation |
+|---|---|
+| Random shooting | sample several action sequences, simulate each, keep the highest predicted return |
+| Cross-entropy method (CEM) | repeatedly refit a sampling distribution to the best candidate sequences |
+| Gradient-based planning | differentiate predicted return through a differentiable dynamics model |
+
+::: keypoint
+MPC executes **only the first action of the chosen sequence**, measures the new state, and searches again. This feedback rule matters even when the inner search is approximate.
+:::
+
 ### What a rollout does to a model's error
 
 ::: widget rollout-drift {"seed":17}
@@ -404,6 +421,23 @@ A GP provides a posterior distribution over transitions. Tracking changing dynam
 The third is a **Bayesian neural network** — put a distribution on the weights rather than a point estimate {p}(Blundell et al., 2015). All three answer the same question Lecture 2 asked about a coin: ==do not carry a number, carry a belief.== **PETS** combines neural-network ensembles with probabilistic outputs — a probabilistic *ensemble*, whose spread far from data is epistemic and whose per-member variance is aleatoric — and learns four continuous-control tasks in ==under 100 000 steps, or 100 trials==, where PPO, SAC and DDPG need one to two orders of magnitude more. {p}(Chua et al., 2018)
 :::
 :::
+
+### Uncertain inputs require a distribution of rollouts
+{sub: original model-based RL PDF pp. 38–41 · uncertainty propagates through the model}
+
+After one prediction, a future state is uncertain. Feeding only its mean into a nonlinear model generally loses information:
+
+$$\mathbb E[f(X)]\ne f(\mathbb E[X]).$$
+
+For an illustrative $X$ equally likely to be $-1$ or $1$ and $f(x)=x^2$, the true next-state mean is **1**, while the plug-in mean prediction is $f(0)=\mathbf0$.
+
+::: flow
+- **Draw possible states** | represent the current uncertainty with particles
+- **Propagate** | apply a sampled model and transition noise to each trajectory
+- **Summarise** | compare distributions of predicted returns across action sequences
+:::
+
+The source uses Monte Carlo propagation and Gaussian moment approximations. An ensemble represents alternative models; transition noise represents variability within a model. Neither a particle count nor ensemble agreement alone certifies calibration.
 
 ### Version 4 — plan in a latent space
 

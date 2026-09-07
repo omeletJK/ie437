@@ -1,0 +1,4119 @@
+{
+  "review_date": "2026-09-07",
+  "scope": "Source-topic traceability, not a claim that every original figure or derivation is reproduced. PDF pages are 1-based physical pages. Targets name representative slides; treatment and notes describe compression, movement, and exceptions.",
+  "source_pdf_count": 13,
+  "source_pdf_pages": 1102,
+  "sources": [
+    {
+      "path": "lecture_slides/0.Introduction.pdf",
+      "pages": 76,
+      "sha256": "b2fcd26f3cd62b484ac99fd85fa2b08e4713f6094a29ae5a084e49884bc4fc1c",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            6
+          ],
+          "topic": "AI와 의사결정의 관계",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "The one question",
+              "slide_at_review": 2
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "What this course is about — in one sentence",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "AI, decision making, and what joins them",
+              "slide_at_review": 5
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "From a real system to a solved problem",
+              "slide_at_review": 6
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Engineering is all about decision making",
+              "slide_at_review": 7
+            }
+          ],
+          "note": "실제 시스템에서 의사결정 문제로 가는 연결을 추가."
+        },
+        {
+          "pages": [
+            7,
+            15
+          ],
+          "topic": "정적/동적·모델/데이터·단일/다중 의사결정자",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "Three criteria, four categories",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "The three criteria",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "One familiar decision, three versions — stocking a shop",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Three criteria make a cube",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Criterion 1 — model-based becomes data-driven",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Criterion 2 — static becomes dynamic",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Criterion 3 — one decision maker becomes many",
+              "slide_at_review": 16
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "The four categories, and the four systems that prove them",
+              "slide_at_review": 17
+            }
+          ],
+          "note": "shop 사례는 새 수치 예시."
+        },
+        {
+          "pages": [
+            16,
+            18
+          ],
+          "topic": "Bayesian inference와 선행 개념",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "① Fundamentals — optimisation, and belief",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "From a Bayesian network to a decision",
+              "slide_at_review": 21
+            }
+          ],
+          "note": "상세 내용은 Lecture 2–3에 배치."
+        },
+        {
+          "pages": [
+            19,
+            31
+          ],
+          "topic": "GP와 Bayesian optimization 미리보기",
+          "treatment": "이관·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The Gaussian process — a prior over functions",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Conditioning is the whole of it",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "GP regression — mean and uncertainty, in closed form",
+              "slide_at_review": 17
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The acquisition function — a score you are allowed to optimise",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Three scores",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The loop",
+              "slide_at_review": 31
+            }
+          ],
+          "note": "도입부는 경로만 소개하고 원리·획득함수는 Lecture 4에서 전개."
+        },
+        {
+          "pages": [
+            32,
+            49
+          ],
+          "topic": "풍력단지 GNN surrogate와 설계",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "Case A · Wind farm layout",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "The farm is a graph, so the model should be one",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Physics-induced graph network — do not learn what you already know",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Let the network learn $\\alpha, \\kappa, R_0$",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Does it work — and then, does it decide?",
+              "slide_at_review": 27
+            }
+          ],
+          "note": "핵심 구조·물리 파라미터·설계 평가 유지. 반복 그래프와 모든 실험 패널을 복제하지 않음."
+        },
+        {
+          "pages": [
+            50,
+            56
+          ],
+          "topic": "생성 설계와 meta-BO 교통 사례",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "② Data-driven static — three routes when the model is gone",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Case B · Traffic signal split",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Why *meta* Bayesian optimisation",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "The result",
+              "slide_at_review": 30
+            }
+          ],
+          "note": "생성 모델 상세는 Lecture 6, 교통 사례는 도입에 유지."
+        },
+        {
+          "pages": [
+            57,
+            67
+          ],
+          "topic": "동적 최적제어·furnace와 RL",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "Categories ③ and ④ — the dynamic half",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "③ Fundamentals — two scientific parents",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "The same claim, in two grids",
+              "slide_at_review": 34
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "④ The doubling — why the second crossing is not the first again",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Three answers to the same doubling",
+              "slide_at_review": 36
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Case C · Semiconductor furnace heat control",
+              "slide_at_review": 37
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Case C · the result",
+              "slide_at_review": 38
+            }
+          ],
+          "note": "제어 방식 구분과 furnace 사례 유지. HTML의 offline-meta 사례는 확장."
+        },
+        {
+          "pages": [
+            68,
+            76
+          ],
+          "topic": "Neural combinatorial optimization 분류",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch00_introduction",
+              "heading": "Neural combinatorial optimisation, defined",
+              "slide_at_review": 49
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "What is learned in neural combinatorial optimisation?",
+              "slide_at_review": 50
+            },
+            {
+              "deck": "ch00_introduction",
+              "heading": "Two ways to train it",
+              "slide_at_review": 51
+            }
+          ],
+          "note": "construct/improve/assist/configure 역할과 지도/RL 학습법을 구분. 최신 PPTX의 연구·사업 전망은 별도 확장."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/1. Optimization Problem Modeling.pdf",
+      "pages": 50,
+      "sha256": "5b03f06f0663d38aad22a988f096aedb28121084f1a635e60d2e9754b90142de",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            5
+          ],
+          "topic": "최적화 표준형",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The standard form — one shape for all of them",
+              "slide_at_review": 9
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A production decision, written all the way down",
+              "slide_at_review": 10
+            }
+          ],
+          "note": "production 수치 예시 추가."
+        },
+        {
+          "pages": [
+            6,
+            13
+          ],
+          "topic": "Convex set/function와 일차 최적성",
+          "treatment": "유지·재배치",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Convexity — the line between easy and hard",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Convex sets — the segment test",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The same convexity, seen through the gradient",
+              "slide_at_review": 16
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "When is a point optimal? — the first-order condition",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Necessary — an optimum cannot have a feasible downhill direction",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Sufficient — a convex tangent bound certifies every feasible point",
+              "slide_at_review": 31
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Necessary alone does not certify a minimum",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Why the condition is exact — the two arrows do different work",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Unconstrained optimality — combine two equivalences",
+              "slide_at_review": 34
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Why the first-order inequality becomes a zero gradient",
+              "slide_at_review": 35
+            }
+          ],
+          "note": "필요/충분을 분리. KKT·duality는 이 원본 PDF의 직접 복제 아닌 보충."
+        },
+        {
+          "pages": [
+            14,
+            18
+          ],
+          "topic": "동치 변환 네 가지",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Equivalent problems — four rewrites worth knowing",
+              "slide_at_review": 11
+            }
+          ],
+          "note": "보조 등식·slack·epigraph·부분 최소화 네 가지 모두 표로 정리."
+        },
+        {
+          "pages": [
+            19,
+            28
+          ],
+          "topic": "학습된 목적함수·ICNN·bilevel 설계",
+          "treatment": "유지·확장",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Convexity can be imposed on a learned model",
+              "slide_at_review": 54
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Heater placement changes the control problem",
+              "slide_at_review": 55
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Design is chosen once; heating is chosen repeatedly",
+              "slide_at_review": 56
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Bilevel design — evaluate a layout through its best operation",
+              "slide_at_review": 57
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The graph separates operation inputs from geometry",
+              "slide_at_review": 58
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A design update combines several control solves",
+              "slide_at_review": 59
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "What convexity certifies in the inner problem",
+              "slide_at_review": 60
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A lower predicted cost can hide a worse design",
+              "slide_at_review": 61
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Compare surrogates using the same optimisation method",
+              "slide_at_review": 62
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Compare optimisers using the same surrogate",
+              "slide_at_review": 63
+            }
+          ],
+          "note": "추가 PPTX 사례와 비교하여 heater 설계·운영 관계 설명."
+        },
+        {
+          "pages": [
+            29,
+            35
+          ],
+          "topic": "LP·diet·piecewise linear·Chebyshev centre",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The convex family — LP, QP, QCQP",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Diet — where linear programming started",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Piecewise-linear — the epigraph earns its keep",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Chebyshev centre — an infinity of constraints, collapsed",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "None of the three looked linear when it was stated",
+              "slide_at_review": 22
+            }
+          ],
+          "note": "사례의 LP 변환을 유지."
+        },
+        {
+          "pages": [
+            36,
+            37
+          ],
+          "topic": "LPMARL",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "An LP inside a policy — LPMARL",
+              "slide_at_review": 50
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "An allocation LP need not return a matching",
+              "slide_at_review": 51
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Training through an optimisation layer",
+              "slide_at_review": 52
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "What differentiating KKT actually requires",
+              "slide_at_review": 53
+            }
+          ],
+          "note": "LP relaxation과 KKT 미분의 조건을 보충."
+        },
+        {
+          "pages": [
+            38,
+            42
+          ],
+          "topic": "QP·확률 비용·robust LP",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Least squares with bounds — nothing to check",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A linear programme with random cost",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Robust LP — the worst case is convex for free",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Robust LP — the chance constraint is not",
+              "slide_at_review": 26
+            }
+          ],
+          "note": "chance constraint의 convexity 조건 구분."
+        },
+        {
+          "pages": [
+            43,
+            50
+          ],
+          "topic": "Wind-farm SCP 설계",
+          "treatment": "유지·확장",
+          "targets": [
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Successive convexification — solve a sequence of easy problems",
+              "slide_at_review": 65
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The trust region, iterated",
+              "slide_at_review": 66
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Wind-farm layout — the wakes make it a joint decision",
+              "slide_at_review": 67
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A wake model turns geometry into a power prediction",
+              "slide_at_review": 68
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Recovering from one wake does not remove the others",
+              "slide_at_review": 69
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Wind direction and speed determine the scenario weights",
+              "slide_at_review": 70
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "An expectation is a weighted collection of wind scenarios",
+              "slide_at_review": 71
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The layout problem, with one consistent separation rule",
+              "slide_at_review": 72
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A convex inner region keeps turbines out of exclusion zones",
+              "slide_at_review": 73
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Deriving the safe linearised spacing constraint",
+              "slide_at_review": 74
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "A concave local power model gives a convex subproblem",
+              "slide_at_review": 75
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Accept a step only when the power model earns trust",
+              "slide_at_review": 76
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The optimised layout breaks repeated wake alignments",
+              "slide_at_review": 77
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "The reported efficiency improves, then levels off",
+              "slide_at_review": 78
+            },
+            {
+              "deck": "ch01_optimization_modeling",
+              "heading": "Better average power does not mean better in every direction",
+              "slide_at_review": 79
+            }
+          ],
+          "note": "원본 및 PPTX의 wake·시나리오·spacing·trust region·결과를 풀어 설명."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/2. Fundamentals on Bayesian Statistics.pdf",
+      "pages": 70,
+      "sha256": "c3ea5d2250cd4faf8039fe4e51e7adbd6bbe9903331ae09421069d49db786070",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            14
+          ],
+          "topic": "통계적 추론·Bayes·MLE",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Statistics works backwards from data to a model",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Two approaches, both able to quantify uncertainty",
+              "slide_at_review": 5
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Bayes' rule — name each part before using it",
+              "slide_at_review": 8
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Why Bayes' rule works",
+              "slide_at_review": 9
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Two candidate coins — Bayes' rule with numbers",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Likelihood scores the candidate parameters",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "One toss, a sequence, and a count",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "The coin MLE — maximise the log likelihood",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 1 — repeat the coin experiment",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "The Bayesian move — carry a distribution",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Prior, posterior, predictive — keep the target clear",
+              "slide_at_review": 16
+            }
+          ],
+          "note": "두 동전 계산과 likelihood 표본공간 구분 추가."
+        },
+        {
+          "pages": [
+            15,
+            25
+          ],
+          "topic": "동전의 Bayesian 추정",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "A Beta prior — location and strength",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Derive the posterior by collecting powers",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Sequential updating — do not count old data twice",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Bayesian coin updating — the first five tosses",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Bayesian coin updating — from 8 to 500 tosses",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "What does Beta(4,3) actually tell us?",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 2 — repeat an interval procedure",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Read the two 95% statements carefully",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "The posterior mean is a balance — in numbers",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 3 — change the prior, keep the data",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Does more data always make a posterior narrower?",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "From estimating the coin to predicting its next toss",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Predicting a batch — one uncertain coin is shared",
+              "slide_at_review": 31
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 4 — predict one toss, then a batch",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Three steps in Bayesian approaches",
+              "slide_at_review": 33
+            }
+          ],
+          "note": "원본 순차 갱신 유지, 개별 posterior 분산 증가 가능성 명시."
+        },
+        {
+          "pages": [
+            26,
+            32
+          ],
+          "topic": "Conjugacy와 Beta–Binomial",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Conjugacy — recognise the same family after updating",
+              "slide_at_review": 36
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Binomial–Beta recap — our template for the next models",
+              "slide_at_review": 37
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — integrate the Beta–Binomial prediction",
+              "slide_at_review": 77
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — Beta–Binomial normalisation and moments",
+              "slide_at_review": 81
+            }
+          ],
+          "note": "반복 conjugacy family 표는 대표 모형 중심으로 압축. 표에만 나오는 geometric 등의 별도 유도는 없음."
+        },
+        {
+          "pages": [
+            33,
+            37
+          ],
+          "topic": "Poisson–Gamma·Pokémon",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Counting events — why Poisson and Gamma?",
+              "slide_at_review": 38
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Poisson–Gamma updating — counts and exposure add",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "The original example — Pokémon counts in 20 districts",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "The count estimate — calculate, then interpret",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 5 — observe the districts one by one",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Predict one new district — rate uncertainty is not count noise",
+              "slide_at_review": 43
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — the Poisson–Gamma predictive distribution",
+              "slide_at_review": 82
+            }
+          ],
+          "note": "원본 20개 district 데이터와 Gamma rate 표기 유지."
+        },
+        {
+          "pages": [
+            38,
+            44
+          ],
+          "topic": "Normal–Normal",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Normal observations — combine information by precision",
+              "slide_at_review": 44
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Four temperature readings — calculate the update",
+              "slide_at_review": 45
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 6 — vary precision with the same average",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Normal prediction — restore the observation noise",
+              "slide_at_review": 47
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 7 — compare the mean and the next reading",
+              "slide_at_review": 48
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — complete the square for the Normal mean",
+              "slide_at_review": 84
+            }
+          ],
+          "note": "temperature 수치 예시는 보충. 알려진 관측 분산을 가정."
+        },
+        {
+          "pages": [
+            45,
+            47
+          ],
+          "topic": "Multinomial–Dirichlet",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "More than two outcomes — the Dirichlet update",
+              "slide_at_review": 49
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "An unseen category need not get zero probability",
+              "slide_at_review": 50
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 8 — observe a previously unseen category",
+              "slide_at_review": 51
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — the Dirichlet predictive distribution",
+              "slide_at_review": 83
+            }
+          ],
+          "note": "새 category 관측 실험 추가."
+        },
+        {
+          "pages": [
+            48,
+            62
+          ],
+          "topic": "회귀·Gaussian MLE·Bayesian regression",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Problem solving — estimate a housing price",
+              "slide_at_review": 54
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Regression roadmap — the same model from several views",
+              "slide_at_review": 55
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Put a line into matrix form",
+              "slide_at_review": 56
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Least squares — use Lecture 1's optimality condition",
+              "slide_at_review": 57
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Solve the three-point regression by hand",
+              "slide_at_review": 58
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Why Gaussian noise turns MLE into least squares",
+              "slide_at_review": 59
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 9 — move the line and watch its residuals",
+              "slide_at_review": 60
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "From MLE to Bayesian regression",
+              "slide_at_review": 61
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Full Bayes keeps the distribution over weights",
+              "slide_at_review": 62
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Bayesian regression — one posterior in two spaces",
+              "slide_at_review": 63
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 10 — change data, watch the posterior over a line",
+              "slide_at_review": 64
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Regression prediction — a line and a noisy observation",
+              "slide_at_review": 65
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "When the integral is hard — simulate the two stages",
+              "slide_at_review": 66
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — complete the square for regression weights",
+              "slide_at_review": 85
+            }
+          ],
+          "note": "housing 사례 유지. 점추정과 full posterior를 구분."
+        },
+        {
+          "pages": [
+            63,
+            69
+          ],
+          "topic": "정규화·Ridge·Lasso",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Why regularise a regression?",
+              "slide_at_review": 67
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Why shrinkage helps — and what it changes",
+              "slide_at_review": 68
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 11 — compare training fit with validation error",
+              "slide_at_review": 69
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Add a Gaussian prior — derive ridge, not just name it",
+              "slide_at_review": 70
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Lasso — a different prior changes the penalty",
+              "slide_at_review": 71
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Experiment 12 — see why ridge shrinks and lasso can select",
+              "slide_at_review": 72
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Backup — why Lasso can select an exact zero",
+              "slide_at_review": 86
+            }
+          ],
+          "note": "prior에서 penalty로 가는 유도와 수치 실험 추가."
+        },
+        {
+          "pages": [
+            70,
+            70
+          ],
+          "topic": "마무리",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "What we can now calculate",
+              "slide_at_review": 74
+            },
+            {
+              "deck": "ch02_bayesian_statistics",
+              "heading": "Questions?",
+              "slide_at_review": 75
+            }
+          ],
+          "note": "다음 강의의 joint model로 연결."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/3. Bayesian Network.pdf",
+      "pages": 94,
+      "sha256": "2033924eebd9e4661d29d3369c68679a2e16283073eb0db0dd60be43eea1628d",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            12
+          ],
+          "topic": "Joint distribution와 DAG factorisation",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The wall — a joint distribution is exponentially large",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A joint, written out in full",
+              "slide_at_review": 9
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A directed acyclic graph, and the words for reading one",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The factorisation — one joint, written locally",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Multiply first, then sum — a two-node calculation",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The collapse, in numbers",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Every distribution is a Bayesian network — and that is the catch",
+              "slide_at_review": 14
+            }
+          ],
+          "note": "효율적인 저장과 효율적인 추론은 구분."
+        },
+        {
+          "pages": [
+            13,
+            25
+          ],
+          "topic": "Conditional independence·collider",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Conditional independence — the meaning of a missing edge",
+              "slide_at_review": 17
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Three structures, three verdicts",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Explaining away — the collider, in words",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Wet grass — explaining away, with numbers",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Evidence, entered by hand",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The burglar alarm — the same move, sharper",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "What the missing edges buy",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Backup 2 — d-separation, the complete rule",
+              "slide_at_review": 63
+            }
+          ],
+          "note": "missing arrow 하나만으로 독립을 단정하지 않도록 수정."
+        },
+        {
+          "pages": [
+            26,
+            38
+          ],
+          "topic": "Exact/approximate inference",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The query, and three kinds of variable",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Exact inference — and why it hurts",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Variable elimination — push each sum past what it cannot touch",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "What the ordering is worth",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "When exact inference is hopeless — sample",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Backup 1 — variable elimination, step by step",
+              "slide_at_review": 62
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Backup 3 — approximate inference, and where each method breaks",
+              "slide_at_review": 64
+            }
+          ],
+          "note": "elimination 순서와 topological sampling 순서 구분."
+        },
+        {
+          "pages": [
+            39,
+            42
+          ],
+          "topic": "Hybrid continuous/discrete network",
+          "treatment": "복원",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Hybrid networks — a table is not the only local model",
+              "slide_at_review": 31
+            }
+          ],
+          "note": "항공기 예제의 local Gaussian/logistic 모형 복원."
+        },
+        {
+          "pages": [
+            43,
+            43
+          ],
+          "topic": "Naive Bayes",
+          "treatment": "복원",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Naive Bayes — classification is posterior inference",
+              "slide_at_review": 32
+            }
+          ],
+          "note": "독립 가정과 posterior 계산을 함께 제시."
+        },
+        {
+          "pages": [
+            44,
+            45
+          ],
+          "topic": "파라미터 및 구조 학습",
+          "treatment": "복원",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Learning the tables — reuse Lecture 2 locally",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Learning the graph — compare explanations, not just fitted tables",
+              "slide_at_review": 34
+            }
+          ],
+          "note": "조건별 count/MLE/Beta 갱신, graph evidence 구분."
+        },
+        {
+          "pages": [
+            46,
+            53
+          ],
+          "topic": "Markov chain·stationarity·transition fitting",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The same graph, unrolled through time",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Fit a transition matrix — count where each state goes",
+              "slide_at_review": 36
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A stationary model need not start in a stationary distribution",
+              "slide_at_review": 37
+            }
+          ],
+          "note": "전이행렬 추정, 시간불변 전이와 정상분포를 구분."
+        },
+        {
+          "pages": [
+            54,
+            62
+          ],
+          "topic": "Hidden Markov model",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Hidden Markov models — name the question before computing",
+              "slide_at_review": 38
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Filtering — Bayes' rule, once per time step",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "One filtering step — predict, observe, normalise",
+              "slide_at_review": 40
+            }
+          ],
+          "note": "filtering/smoothing/prediction/likelihood/decoding을 분리. 원본 likelihood 표기 정정."
+        },
+        {
+          "pages": [
+            63,
+            73
+          ],
+          "topic": "AR·LDS·Kalman·ARCH/GARCH",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Continuous time-series data — regression becomes a transition model",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Linear Gaussian state space — the Kalman version of the same update",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Backup — when the time-series model itself changes",
+              "slide_at_review": 66
+            }
+          ],
+          "note": "Kalman의 평균/분산 갱신과 scalar 계산. ARCH/GARCH는 appendix 개요, 전 식별 유도는 없음."
+        },
+        {
+          "pages": [
+            74,
+            82
+          ],
+          "topic": "의사결정·utility·risk·additive utility",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Bayesian network $+$ decision $+$ utility",
+              "slide_at_review": 45
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Utility — a number for comparing outcomes",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Utility is not necessarily money — the original lottery example",
+              "slide_at_review": 47
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Several consequences — when can utilities be added?",
+              "slide_at_review": 48
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Maximum expected utility",
+              "slide_at_review": 49
+            }
+          ],
+          "note": "원본 복권과 collision-avoidance의 multiattribute 해석 복원."
+        },
+        {
+          "pages": [
+            83,
+            94
+          ],
+          "topic": "Influence diagram·PhD·sequential decision",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Should I do a PhD?",
+              "slide_at_review": 50
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Pick a decision, watch the utility",
+              "slide_at_review": 51
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Add one option, and the answer flips",
+              "slide_at_review": 52
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The value of information",
+              "slide_at_review": 53
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A decision and the value of looking first",
+              "slide_at_review": 54
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "From an influence diagram to an MDP — state the extra assumptions",
+              "slide_at_review": 55
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Backup 4 — from maximum expected utility to Bellman",
+              "slide_at_review": 65
+            }
+          ],
+          "note": "MDP로 바꾸려면 정보구조와 Markov state가 필요함을 명시."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/4. Bayesian Optimization.pdf",
+      "pages": 225,
+      "sha256": "95f6e62d83efd20fc18883b22b12a7c97bff577337f52c2ea6793c6c034d983d",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            19
+          ],
+          "topic": "GP 정의·다변량 정규분포",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The surrogate — a distribution, not a fitted curve",
+              "slide_at_review": 9
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "A function on a finite domain is a vector",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Lecture 2's posterior, with the parameter replaced by a function",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The Gaussian process — a prior over functions",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Conditioning is the whole of it",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "A GP update with just two numbers",
+              "slide_at_review": 16
+            }
+          ],
+          "note": "Gaussian 네 성질 상세는 확률 appendix 21–27에도 배치."
+        },
+        {
+          "pages": [
+            20,
+            39
+          ],
+          "topic": "Kernel·GP posterior·hyperparameter",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "GP regression — mean and uncertainty, in closed form",
+              "slide_at_review": 17
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Read the GP formula — what each object means",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The kernel is the assumption — and the data can pick it",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Turn the dial and watch the assumption move",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup 1 — the GP posterior, from one Gaussian fact",
+              "slide_at_review": 52
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup 2 — kernels, and hyperparameters by marginal likelihood",
+              "slide_at_review": 53
+            }
+          ],
+          "note": "kernel covariance와 BN conditional independence를 혼동하지 않도록 수정."
+        },
+        {
+          "pages": [
+            40,
+            45
+          ],
+          "topic": "GP regression x sin x exercise",
+          "treatment": "복원",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The original regression exercise — fit $x\\sin x$ before optimising",
+              "slide_at_review": 21
+            }
+          ],
+          "note": "함수는 원본 유지. 관측 위치·kernel 설정을 명시한 재계산 그림이며 원본 screenshot 복제 아님."
+        },
+        {
+          "pages": [
+            46,
+            68
+          ],
+          "topic": "Multi-output GP·ICM·SLFM·LMC",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "More than one output — share information through a latent function",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "ICM, SLFM and LMC — change which latent patterns are shared",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup — the multi-output covariance, with dimensions visible",
+              "slide_at_review": 56
+            }
+          ],
+          "note": "shared latent 직관과 covariance 차원 복원. 모든 원본 block-matrix 전개는 압축."
+        },
+        {
+          "pages": [
+            69,
+            94
+          ],
+          "topic": "Bandits·exploration·preference/pursuit",
+          "treatment": "재배치·보충",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Bayesian optimisation is a bandit with infinitely many arms",
+              "slide_at_review": 36
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The finite-bandit calculation underneath the loop",
+              "slide_at_review": 37
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "How much exploration is the right amount?",
+              "slide_at_review": 38
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup 4 — the bandit toolkit, three lectures early",
+              "slide_at_review": 55
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup — preference and pursuit are different bandit updates",
+              "slide_at_review": 57
+            }
+          ],
+          "note": "원본은 BO보다 앞, HTML은 BO 뒤 RL bridge. preference 예제를 full REINFORCE와 구분."
+        },
+        {
+          "pages": [
+            95,
+            109
+          ],
+          "topic": "BO loop와 GP surrogate",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The setting — unknown, expensive, and every query counts",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The thesis — model the unknown, then act on the model",
+              "slide_at_review": 5
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The acquisition function — a score you are allowed to optimise",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The loop",
+              "slide_at_review": 31
+            }
+          ],
+          "note": "expensive objective와 cheap acquisition 분리."
+        },
+        {
+          "pages": [
+            110,
+            128
+          ],
+          "topic": "PI·EI·UCB",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Three scores",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Choose between two candidate experiments",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "The three rules, disagreeing",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup 3 — Expected Improvement, in closed form",
+              "slide_at_review": 54
+            }
+          ],
+          "note": "같은 후보 두 개의 수치 비교 추가. EI가 항상 PI보다 좋다는 표현 제거."
+        },
+        {
+          "pages": [
+            129,
+            138
+          ],
+          "topic": "Quartic BO iterations",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Ten queries on a quartic",
+              "slide_at_review": 32
+            }
+          ],
+          "note": "여러 정적 iteration 패널을 interactive run으로 압축."
+        },
+        {
+          "pages": [
+            139,
+            149
+          ],
+          "topic": "획득함수 최적화·DIRECT·CMA-ES",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Optimise the acquisition — spend computation before spending an experiment",
+              "slide_at_review": 30
+            }
+          ],
+          "note": "내부 탐색 목적과 대안 비교. 세부 CMA-ES 수식 전체는 없음."
+        },
+        {
+          "pages": [
+            150,
+            163
+          ],
+          "topic": "Contextual BO·교통 신호",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "From a function to a context",
+              "slide_at_review": 39
+            }
+          ],
+          "note": "myopic acquisition과 belief-state optimal policy의 차이를 명시."
+        },
+        {
+          "pages": [
+            164,
+            175
+          ],
+          "topic": "GPflowOpt 계산 실습",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup — the source's computational exercises",
+              "slide_at_review": 58
+            }
+          ],
+          "note": "실습의 질문·비교 조건 보존. 오래된 package 설치와 API 코드는 재현하지 않음."
+        },
+        {
+          "pages": [
+            176,
+            185
+          ],
+          "topic": "Unknown constraints·constrained EI",
+          "treatment": "복원",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Unknown constraints — model feasibility as well as reward",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Constrained improvement — one numerical choice",
+              "slide_at_review": 41
+            }
+          ],
+          "note": "feasible incumbent 및 posterior 독립 가정 명시, 수치 선택 예시."
+        },
+        {
+          "pages": [
+            186,
+            208
+          ],
+          "topic": "Pareto·HV·multiobjective/contextual BO 실습",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Several objectives — a Pareto set replaces one best number",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Expected hypervolume improvement — EI for a set of trade-offs",
+              "slide_at_review": 43
+            },
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup — the source's computational exercises",
+              "slide_at_review": 58
+            }
+          ],
+          "note": "새 maximization 도식으로 원본 minimization과 방향 차이 명시. 실습 screenshot은 압축."
+        },
+        {
+          "pages": [
+            209,
+            221
+          ],
+          "topic": "계산량·고차원 한계",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Two different scaling limits — data count and input dimension",
+              "slide_at_review": 44
+            }
+          ],
+          "note": "데이터 수 n과 입력 차원 d의 문제를 분리. scalability 논문별 모든 결과는 없음."
+        },
+        {
+          "pages": [
+            222,
+            225
+          ],
+          "topic": "Neural networks와 GP 결합",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch04_bayesian_optimization",
+              "heading": "Backup — three ways to combine Gaussian processes and neural networks",
+              "slide_at_review": 59
+            }
+          ],
+          "note": "Deep GP/DKL/CNP 구분. 구현·유도는 개요 수준."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/5. Data-Driven Design Optimization (Surrogate Model Based)  part 1.pdf",
+      "pages": 25,
+      "sha256": "a57921c65b028a184da0da718027c996e5618ebcbf388667d84c231d374f372b",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            3
+          ],
+          "topic": "Black-box 최적화 소개",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The handoff — optimisation with no oracle",
+              "slide_at_review": 2
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Where we are — the query is taken away",
+              "slide_at_review": 3
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The problem, and the two routes out of it",
+              "slide_at_review": 5
+            }
+          ],
+          "note": "query 불가인 offline 조건을 분명히 함."
+        },
+        {
+          "pages": [
+            4,
+            17
+          ],
+          "topic": "다섯 online 방법",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Five ways to optimise a black box, and what every one of them needs",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Backup 1 — offline MBO against Bayesian optimisation",
+              "slide_at_review": 45
+            }
+          ],
+          "note": "finite difference/GA/BO/REINFORCE/ES를 비교 표로 압축."
+        },
+        {
+          "pages": [
+            18,
+            25
+          ],
+          "topic": "고정 데이터 surrogate 설계와 naive failure",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The obvious method — fit a proxy, then climb it",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "What \"high-dimensional\" means here",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Two problems, not one",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The two pictures",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "A good prediction fit can still choose the wrong design",
+              "slide_at_review": 16
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The optimiser is an adversary",
+              "slide_at_review": 17
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Watch it happen",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The cure is not a better optimiser",
+              "slide_at_review": 19
+            }
+          ],
+          "note": "회귀 성능과 결정 성능을 다른 기준으로 설명."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/5. Data-Driven Design Optimization (Surrogate Model Based) - Part2.pdf",
+      "pages": 59,
+      "sha256": "3ae92d68cd8e8669817c49db5506b9d15634af56172a0173f1987d349f25d1a2",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            10
+          ],
+          "topic": "Offline MBO와 naive 접근 recap",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Where we are — the query is taken away",
+              "slide_at_review": 3
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The problem, and the two routes out of it",
+              "slide_at_review": 5
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The obvious method — fit a proxy, then climb it",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Two problems, not one",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The two pictures",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "A good prediction fit can still choose the wrong design",
+              "slide_at_review": 16
+            }
+          ],
+          "note": "Part 1과 중복 내용 통합."
+        },
+        {
+          "pages": [
+            11,
+            24
+          ],
+          "topic": "NEMO·CNML",
+          "treatment": "재배치·압축",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Three cures for one disease",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "NEMO — how easily could the model have been talked into it?",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "But surely an ensemble would have caught it?",
+              "slide_at_review": 34
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Backup 4 — NEMO, made tractable",
+              "slide_at_review": 48
+            }
+          ],
+          "note": "원본은 NEMO 먼저, HTML은 COMs 후. refit/normalise와 근사 알고리즘 보존, 전체 theorem 증명 없음."
+        },
+        {
+          "pages": [
+            25,
+            40
+          ],
+          "topic": "COMs·보수성·ablation",
+          "treatment": "유지·재배치",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "COMs — train the surrogate to distrust its own optimiser",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The loss, term by term",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "One COMs loss calculation",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Turning the dial",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Why it works — a learned lower bound",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "An average lower bound is not a guarantee for every design",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Conservatism is a dial, and both ends are bad",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Backup 2 — generating the adversarial distribution",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Backup 3 — the COMs loss and the scope of its guarantee",
+              "slide_at_review": 47
+            }
+          ],
+          "note": "mean-bound와 pointwise 보장 구분. 모든 원본 ablation 패널은 복제하지 않음."
+        },
+        {
+          "pages": [
+            41,
+            52
+          ],
+          "topic": "RoMA·local smoothness·benchmark",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "RoMA — flatten the surface the optimiser is standing on",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "What the benchmark says",
+              "slide_at_review": 36
+            }
+          ],
+          "note": "두 단계 손실과 benchmark 유지. 원본 p47 inner max의 descent 표기는 ascent로 수정."
+        },
+        {
+          "pages": [
+            53,
+            57
+          ],
+          "topic": "실제 설계 적용 사례",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "It is already in production",
+              "slide_at_review": 40
+            }
+          ],
+          "note": "여러 application 패널을 한 페이지로 통합."
+        },
+        {
+          "pages": [
+            58,
+            59
+          ],
+          "topic": "마무리·참고문헌",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Where we are — a forward model, then a search",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Offline, a surrogate's optimism becomes the optimiser's trap.",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Questions?",
+              "slide_at_review": 43
+            }
+          ],
+          "note": "논문 인용은 해당 방법 옆에 분산 배치."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/6. Data-Driven Design Optimization (Generative Model Based) - Part1.pdf",
+      "pages": 63,
+      "sha256": "9ac56d1c46235b5270a42f791a6919acdf212c1c3dee3a6f25d265b73ee07fb1",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            6
+          ],
+          "topic": "Generative design 동기",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The problem, unchanged — and the route not taken",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The inverse map — from a desired outcome back to a design",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "One $y$, many $x$ — so the inverse cannot be a function",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Why the average answer can be wrong",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The answer set, and the point in the middle of it",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The goal — a distribution whose support is the valid manifold",
+              "slide_at_review": 18
+            }
+          ],
+          "note": "one-to-many inverse 예시 추가."
+        },
+        {
+          "pages": [
+            7,
+            14
+          ],
+          "topic": "VI·VAE·conditional VAE",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The evidence is intractable — so bound it",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The architecture — encode, decode, generate",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Reading the ELBO — reconstruct, and stay regular",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "One VAE calculation — reconstruction and the KL cost",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Turning the dial",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Condition the encoder and the decoder, and the inverse map is built",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 1 — the ELBO, derived, and the reparameterisation trick",
+              "slide_at_review": 57
+            }
+          ],
+          "note": "scalar KL 계산 추가. encoder는 학습 이후에도 encoding에 사용 가능."
+        },
+        {
+          "pages": [
+            15,
+            22
+          ],
+          "topic": "DDPM forward/reverse",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Diffusion — a VAE whose encoder was never trained",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "DDPM training — corrupt once, learn the noise that was added",
+              "slide_at_review": 31
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "DDPM generation — reverse the noise one step at a time",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 2 — the four families, and diffusion as a hierarchical VAE",
+              "slide_at_review": 58
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 2b — diffusion as a hierarchical VAE",
+              "slide_at_review": 59
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 3 — the DDPM objective collapses to one squared error",
+              "slide_at_review": 60
+            }
+          ],
+          "note": "noise-prediction 학습과 반복 생성을 분리."
+        },
+        {
+          "pages": [
+            23,
+            31
+          ],
+          "topic": "Score matching·energy-based model·Langevin",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The score view, and a failure you have met before",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
+              "slide_at_review": 61
+            }
+          ],
+          "note": "score 정의와 sampler 구분. 원본 전체 도출은 압축."
+        },
+        {
+          "pages": [
+            32,
+            37
+          ],
+          "topic": "SDE 통합 관점",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
+              "slide_at_review": 61
+            }
+          ],
+          "note": "advanced appendix에 핵심 식. 전체 stochastic calculus 강의는 아님."
+        },
+        {
+          "pages": [
+            38,
+            42
+          ],
+          "topic": "Conditional sampling과 diffusion 활용",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Conditioning a score — tell generation which outcome is wanted",
+              "slide_at_review": 34
+            }
+          ],
+          "note": "classifier guidance와 classifier-free guidance를 구분. application 갤러리는 압축."
+        },
+        {
+          "pages": [
+            43,
+            46
+          ],
+          "topic": "정리·reference",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Four families, one job",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The score view, and a failure you have met before",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 2 — the four families, and diffusion as a hierarchical VAE",
+              "slide_at_review": 58
+            }
+          ],
+          "note": "추가 GAN/flow 비교는 원본 이외 보충."
+        },
+        {
+          "pages": [
+            47,
+            63
+          ],
+          "topic": "DDPM supplementary derivation",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 2b — diffusion as a hierarchical VAE",
+              "slide_at_review": 59
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 3 — the DDPM objective collapses to one squared error",
+              "slide_at_review": 60
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
+              "slide_at_review": 61
+            }
+          ],
+          "note": "hierarchical VAE/ELBO/noise loss 연결 보존. 각 중간 전개를 모두 복제하지 않음."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/6. Data-Driven Design Optimization (Generative Model Based) - Part2.pdf",
+      "pages": 42,
+      "sha256": "48c8e0cf79276274ce942f35215dd60c20a3e1469df591382a60aeb286ec13a5",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            6
+          ],
+          "topic": "고정 데이터 설계·inverse 접근",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The problem, unchanged — and the route not taken",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Training the inverse — pick a divergence, and a familiar objective appears",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "What is still missing — a model that knows what a valid $x$ looks like",
+              "slide_at_review": 15
+            }
+          ],
+          "note": "Part 1과 중복 소개 통합."
+        },
+        {
+          "pages": [
+            7,
+            16
+          ],
+          "topic": "CbAS",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The query — set the bar high, and sample below it",
+              "slide_at_review": 37
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Condition on success — three candidate designs",
+              "slide_at_review": 38
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "CbAS — fit a generative model to its own best samples",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Why you cannot simply sample and reweight",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Why the importance ratio belongs in the weight",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "One shot, then the ladder",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 5 — MINs and CbAS, in full",
+              "slide_at_review": 62
+            }
+          ],
+          "note": "conditioning·adaptive threshold·importance denominator를 명시."
+        },
+        {
+          "pages": [
+            17,
+            28
+          ],
+          "topic": "MINs",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "MINs — train the inverse map, and choose the $y$ you ask for",
+              "slide_at_review": 43
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "How far past the data can you ask?",
+              "slide_at_review": 44
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "What it does on real design problems",
+              "slide_at_review": 45
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Backup 5 — MINs and CbAS, in full",
+              "slide_at_review": 62
+            }
+          ],
+          "note": "target selection과 distribution shift 유지. 모든 benchmark 패널은 압축."
+        },
+        {
+          "pages": [
+            29,
+            34
+          ],
+          "topic": "DDOM",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The 2023 descendants",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "DDOM — reweight the data, then guide a conditional diffusion model",
+              "slide_at_review": 47
+            }
+          ],
+          "note": "reweight/train/guide 순서 및 source-reported ablation. 일반 성능 보장 아님."
+        },
+        {
+          "pages": [
+            35,
+            41
+          ],
+          "topic": "BootGen",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The 2023 descendants",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "BootGen — generated labels do not become new measurements",
+              "slide_at_review": 48
+            }
+          ],
+          "note": "pseudo-label augmentation과 bagging을 분리. 생성 라벨을 실측으로 취급하지 않음."
+        },
+        {
+          "pages": [
+            42,
+            42
+          ],
+          "topic": "References",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The 2023 descendants",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "DDOM — reweight the data, then guide a conditional diffusion model",
+              "slide_at_review": 47
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "BootGen — generated labels do not become new measurements",
+              "slide_at_review": 48
+            }
+          ],
+          "note": "해당 방법별 인용 유지."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/7. Markov Decision Process and Dynamic Programming.pdf",
+      "pages": 54,
+      "sha256": "7b2ce88e7f6bdad8e5d49537978bc2bcd00183f35c4b4f0f1dfd988a5d66c511",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            15
+          ],
+          "topic": "MDP·Markov property·return/policy",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The arena — a Markov decision process",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The Markov property — and the licence it grants",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The goal — return, and the discount",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "A policy is a rule, not a point",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The discount is a decision, not bookkeeping",
+              "slide_at_review": 15
+            }
+          ],
+          "note": "shop에서 sequential decision으로 연결. reward timing 통일."
+        },
+        {
+          "pages": [
+            16,
+            28
+          ],
+          "topic": "V/Q·Bellman expectation",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The value of a state, and the value of an action",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Collapse the tree",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The Bellman expectation equation",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Calculate one backup — reward now plus value later",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "$Q$ and $V$ — one lookahead apart",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Backup 1 — the Bellman equation, derived",
+              "slide_at_review": 52
+            }
+          ],
+          "note": "한 번의 numerical backup 추가."
+        },
+        {
+          "pages": [
+            29,
+            32
+          ],
+          "topic": "Bellman optimality",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Bellman optimality — choose now, then choose again later",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The principle of optimality, and the policy read off",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Check the timing — guessing a coin before or after the toss",
+              "slide_at_review": 24
+            }
+          ],
+          "note": "max와 expectation 순서를 coin 예시로 설명."
+        },
+        {
+          "pages": [
+            33,
+            37
+          ],
+          "topic": "Policy evaluation·gridworld",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Policy evaluation — sweeping the backup",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Two sweeps — how a delayed reward changes the action",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The gridworld — the source deck's worked example",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Watching the value propagate",
+              "slide_at_review": 31
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The policy is optimal long before the value is",
+              "slide_at_review": 32
+            }
+          ],
+          "note": "반복 evaluation 그림을 widget으로 통합."
+        },
+        {
+          "pages": [
+            38,
+            44
+          ],
+          "topic": "Policy improvement",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Policy improvement — greedy on your own value",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Backup 3 — policy improvement never hurts",
+              "slide_at_review": 54
+            }
+          ],
+          "note": "정책 개선 논리와 조건 보존."
+        },
+        {
+          "pages": [
+            45,
+            49
+          ],
+          "topic": "Policy iteration",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Policy iteration, and its bottleneck",
+              "slide_at_review": 34
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Two schedules, counted",
+              "slide_at_review": 36
+            }
+          ],
+          "note": "여러 sweep 패널을 schedule 비교로 통합."
+        },
+        {
+          "pages": [
+            50,
+            51
+          ],
+          "topic": "Value iteration",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Value iteration — one optimality backup per sweep",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Two schedules, counted",
+              "slide_at_review": 36
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Why the meeting point is unique — the contraction",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "What the contraction bound actually says",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "The rate is the discount",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Backup 2 — the contraction proof",
+              "slide_at_review": 53
+            }
+          ],
+          "note": "contraction proof와 numerical error bound는 보충."
+        },
+        {
+          "pages": [
+            52,
+            54
+          ],
+          "topic": "Asynchronous DP·GPI",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Generalised policy iteration — the dance behind both",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Order does not matter either — asynchronous DP",
+              "slide_at_review": 43
+            },
+            {
+              "deck": "ch07_mdp_dp",
+              "heading": "Backup 4 — asynchronous and in-place DP",
+              "slide_at_review": 55
+            }
+          ],
+          "note": "fair update 조건 명시."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/8. Value Based Reinforcement Learning.pdf",
+      "pages": 114,
+      "sha256": "ec47d466088a2b302b4e09141e684b3800e7d204d18b097afe97b11396fdce3b",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            12
+          ],
+          "topic": "Bandit·RL 설정",
+          "treatment": "재배치·압축",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The arena — from MDP to experience",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The tax, paid — $\\varepsilon$-greedy, and the bandit underneath",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The tax, seen — what a greedy agent never learns",
+              "slide_at_review": 23
+            }
+          ],
+          "note": "bandit 세부는 Lecture 4에서 먼저 소개하고 control 탐색에서 재사용."
+        },
+        {
+          "pages": [
+            13,
+            16
+          ],
+          "topic": "Model estimation 대안",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "One honest detour — why not just learn the model?",
+              "slide_at_review": 6
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Backup 4 — model-based RL, the alternative we set aside",
+              "slide_at_review": 55
+            }
+          ],
+          "note": "Lecture 11로 연결."
+        },
+        {
+          "pages": [
+            17,
+            29
+          ],
+          "topic": "MC prediction",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Monte Carlo prediction — average what actually happened",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "One episode can visit a state twice — define the Monte Carlo sample",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "One transition, two targets — calculate the update",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Both estimators, the same episodes",
+              "slide_at_review": 16
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Backup 1 — MC vs. TD, the bias–variance ledger",
+              "slide_at_review": 52
+            }
+          ],
+          "note": "first/every-visit 및 한 episode 계산 명시. blackjack 전체 사례는 압축."
+        },
+        {
+          "pages": [
+            30,
+            40
+          ],
+          "topic": "MC control",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Why $V$ is not enough — the hidden $P$",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Generalized Policy Iteration, now from samples",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Monte Carlo control — evaluate an episode, then improve the policy",
+              "slide_at_review": 24
+            }
+          ],
+          "note": "episode evaluation→epsilon-soft improvement 순서 복원."
+        },
+        {
+          "pages": [
+            41,
+            49
+          ],
+          "topic": "TD prediction",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Temporal Difference — learn a guess from a guess",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "One transition, two targets — calculate the update",
+              "slide_at_review": 15
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Both estimators, the same episodes",
+              "slide_at_review": 16
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The triangle — MC, DP, and TD",
+              "slide_at_review": 17
+            }
+          ],
+          "note": "MC와 같은 data로 목표 비교."
+        },
+        {
+          "pages": [
+            50,
+            58
+          ],
+          "topic": "SARSA·random walk·windy gridworld",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Two control rules, one tiny difference",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Same data, different policy in the target",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The original windy gridworld — learn the transition through experience",
+              "slide_at_review": 31
+            }
+          ],
+          "note": "windy figure 재작성. 원본 p57의 random-walk 그림을 windy task로 잘못 설명하지 않음."
+        },
+        {
+          "pages": [
+            59,
+            66
+          ],
+          "topic": "Q-learning",
+          "treatment": "유지",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Two control rules, one tiny difference",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Same data, different policy in the target",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The 2×2 that organizes everything",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Why Q-learning is \"off-policy,\" precisely",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Backup 2 — when does tabular Q-learning converge?",
+              "slide_at_review": 53
+            }
+          ],
+          "note": "off-policy 의미와 수렴 조건 명시."
+        },
+        {
+          "pages": [
+            67,
+            73
+          ],
+          "topic": "Six-room Q-learning 예제",
+          "treatment": "복원·정정",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The original six-room example — follow the actual numerical updates",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Terminal versus continuing — why the source also shows a value of 500",
+              "slide_at_review": 33
+            }
+          ],
+          "note": "source의 terminal F와 rewarded self-loop F를 분리: 극한값 각각100/500."
+        },
+        {
+          "pages": [
+            74,
+            77
+          ],
+          "topic": "Cliff walking·on/off-policy",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The cliff — where the difference becomes visible",
+              "slide_at_review": 34
+            }
+          ],
+          "note": "sampled next action과 greedy backup의 차이."
+        },
+        {
+          "pages": [
+            78,
+            84
+          ],
+          "topic": "Function approximation",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The wall — a table cannot hold the world",
+              "slide_at_review": 37
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Q-learning as regression — the semi-gradient step",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The deadly triad — why naive deep Q-learning blows up",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The triad, switched on and off",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Backup 3 — the function-approximation gradient, in full",
+              "slide_at_review": 54
+            }
+          ],
+          "note": "semi-gradient와 deadly triad."
+        },
+        {
+          "pages": [
+            85,
+            96
+          ],
+          "topic": "DQN·CNN·frame history",
+          "treatment": "복원·압축",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "Why DQN stacks frames — position alone may hide velocity",
+              "slide_at_review": 38
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "DQN — the two tricks",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The DQN loop — everything from today, assembled",
+              "slide_at_review": 44
+            }
+          ],
+          "note": "frame history의 이유 복원. CNN architecture 세부·Atari 모든 screenshot은 없음."
+        },
+        {
+          "pages": [
+            97,
+            103
+          ],
+          "topic": "Replay buffer",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "DQN — the two tricks",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The DQN loop — everything from today, assembled",
+              "slide_at_review": 44
+            }
+          ],
+          "note": "반복 replay diagram 통합."
+        },
+        {
+          "pages": [
+            104,
+            110
+          ],
+          "topic": "Target network",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "DQN — the two tricks",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "DQN as regression — freeze the label, fit the prediction",
+              "slide_at_review": 43
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The DQN loop — everything from today, assembled",
+              "slide_at_review": 44
+            }
+          ],
+          "note": "terminal mask와 regression label 계산 명시."
+        },
+        {
+          "pages": [
+            111,
+            114
+          ],
+          "topic": "DQN 성능·ablation",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "DQN — the two tricks",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "The DQN loop — everything from today, assembled",
+              "slide_at_review": 44
+            },
+            {
+              "deck": "ch08_value_based_rl",
+              "heading": "What comes after DQN — one slide of horizon",
+              "slide_at_review": 45
+            }
+          ],
+          "note": "stabilizer 역할은 유지. 원본 전체 game별 결과 패널은 재현하지 않음."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/9. Optimal Control and Policy Based Reinforcement Learning (simple).pdf",
+      "pages": 89,
+      "sha256": "6f1c3e90adc430bcaa9077c4d41062deaa5277d3ba34770583d3e8a4c570375c",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            9
+          ],
+          "topic": "Discrete-time optimal control",
+          "treatment": "분할·유지",
+          "targets": [
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Same problem, different dialect",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Discrete-time optimal control — the problem, stated",
+              "slide_at_review": 10
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Dynamic programming, in control's notation",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Where the expectation went",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "One-step control — spend effort now to reduce the final error",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "The key computational difference — optimize over a continuum",
+              "slide_at_review": 15
+            }
+          ],
+          "note": "이 PDF는 HTML Lectures9/10으로 분할."
+        },
+        {
+          "pages": [
+            10,
+            14
+          ],
+          "topic": "Discrete-time LQR",
+          "treatment": "재배치·유지",
+          "targets": [
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "LQR — the harmonic oscillator of control",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Read the gain with numbers — a scalar infinite-horizon example",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "The Riccati recursion *is* value iteration",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Backup 3 — LQR: the Riccati derivation, both times",
+              "slide_at_review": 49
+            }
+          ],
+          "note": "HTML은 HJB 뒤 LQR act에서 두 시간 형식을 비교."
+        },
+        {
+          "pages": [
+            15,
+            20
+          ],
+          "topic": "Continuous-time control·HJB",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Continuous time — the problem, and the cost-to-go",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Shrink the step — and a backup becomes a PDE",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "The claim, checked",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "What HJB buys — a certificate, not just a formula",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "And what it costs",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Backup 1 — the HJB equation, derived in one step",
+              "slide_at_review": 47
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Backup 2 — why HJB is *sufficient*: the verification argument",
+              "slide_at_review": 48
+            }
+          ],
+          "note": "verification 조건과 terminal condition 보충."
+        },
+        {
+          "pages": [
+            21,
+            21
+          ],
+          "topic": "Continuous-time LQR",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "LQR — the harmonic oscillator of control",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "The Riccati equation, and a gain that stops moving",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Conditions behind the tidy answer",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "LQR, run",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch09_optimal_control",
+              "heading": "Backup 3 — LQR: the Riccati derivation, both times",
+              "slide_at_review": 49
+            }
+          ],
+          "note": "PMP act와 costate 설명은 이 원본 PDF 이외 보충."
+        },
+        {
+          "pages": [
+            22,
+            30
+          ],
+          "topic": "Policy-based RL 동기",
+          "treatment": "분할·유지",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The handoff — delete the dynamics",
+              "slide_at_review": 2
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "What we keep, and what we lose",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The translation table — optimal control, learned",
+              "slide_at_review": 5
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Learning route — make a good action more likely",
+              "slide_at_review": 8
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The objective, and a gradient we cannot see",
+              "slide_at_review": 10
+            }
+          ],
+          "note": "policy parameterization과 continuous action 연결."
+        },
+        {
+          "pages": [
+            31,
+            34
+          ],
+          "topic": "Policy gradient theorem",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The score-function trick — the dynamics vanish",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Reading the estimator — it is weighted maximum likelihood",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The policy gradient theorem, and REINFORCE",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "One policy parameter — see the update direction",
+              "slide_at_review": 14
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 1 — the policy gradient theorem, the DP route (i): a recursion",
+              "slide_at_review": 50
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 2 — the policy gradient theorem, the DP route (ii): unrolled",
+              "slide_at_review": 51
+            }
+          ],
+          "note": "trajectory proof를 먼저, DP proof를 appendix에 배치."
+        },
+        {
+          "pages": [
+            35,
+            43
+          ],
+          "topic": "Variance·REINFORCE·actor-critic·off-policy",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Why the estimate is so noisy",
+              "slide_at_review": 18
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Fix 1 — causality: half the terms were pure noise",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Fix 2 — a baseline: subtract anything action-independent",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The baseline, measured",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Fix 3 — the advantage, and the actor–critic",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Baseline versus bootstrap — separate the two operations",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Two dials on the same idea",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Off-policy policy gradients — correct the distribution you sampled",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 3 — the baseline: unbiased, and the best one",
+              "slide_at_review": 52
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 4 — GAE, and the $\\lambda$ dial",
+              "slide_at_review": 53
+            }
+          ],
+          "note": "off-policy action ratio만으로 state-distribution correction이 끝나지 않음을 명시."
+        },
+        {
+          "pages": [
+            44,
+            47
+          ],
+          "topic": "A3C",
+          "treatment": "복원",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "A3C and A2C — collect several short rollouts, then learn",
+              "slide_at_review": 25
+            }
+          ],
+          "note": "A3C/A2C 구분, n-step target, parameter lag."
+        },
+        {
+          "pages": [
+            48,
+            61
+          ],
+          "topic": "Deterministic PG·DDPG",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The wall Lecture 8 left",
+              "slide_at_review": 29
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The wall, measured",
+              "slide_at_review": 30
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The deterministic fix — the actor climbs the critic",
+              "slide_at_review": 31
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "DDPG — deterministic policy gradient, plus every DQN stabiliser",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Follow a critic uphill — a scalar actor calculation",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "$\\mu_\\theta(s)$ and $K$ — compare their feedback role",
+              "slide_at_review": 35
+            }
+          ],
+          "note": "state sampling은 남고 action derivative가 달라짐."
+        },
+        {
+          "pages": [
+            62,
+            70
+          ],
+          "topic": "Exploration·DDPG experiments",
+          "treatment": "압축",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "A deterministic actor explores nothing",
+              "slide_at_review": 34
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "$\\mu_\\theta(s)$ and $K$ — compare their feedback role",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 6 — the policy-based zoo, placed",
+              "slide_at_review": 55
+            }
+          ],
+          "note": "exploration과 알고리즘 위치 유지, 원본 전 실험 그래프는 없음."
+        },
+        {
+          "pages": [
+            71,
+            74
+          ],
+          "topic": "MADDPG",
+          "treatment": "복원·재배치",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Source extension — MADDPG changes the number of decision makers",
+              "slide_at_review": 56
+            }
+          ],
+          "note": "single-agent 본 흐름 뒤 appendix에 IE579 preview로 배치."
+        },
+        {
+          "pages": [
+            75,
+            78
+          ],
+          "topic": "TRPO·PPO",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The step-size trap unique to RL",
+              "slide_at_review": 38
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "A trust region, in policy space",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "PPO — discourage large changes with a clipped objective",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Calculate the clip — the sign of advantage matters",
+              "slide_at_review": 41
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The clip, and the asymmetry nobody mentions",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 5 — TRPO's natural-gradient step, in closed form",
+              "slide_at_review": 54
+            }
+          ],
+          "note": "PPO clip은 hard KL constraint가 아님."
+        },
+        {
+          "pages": [
+            79,
+            89
+          ],
+          "topic": "Trajectory proof·REINFORCE variance 상세",
+          "treatment": "재배치·유지",
+          "targets": [
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The score-function trick — the dynamics vanish",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Reading the estimator — it is weighted maximum likelihood",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "The policy gradient theorem, and REINFORCE",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Fix 1 — causality: half the terms were pure noise",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Fix 2 — a baseline: subtract anything action-independent",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch10_policy_based_rl",
+              "heading": "Backup 3 — the baseline: unbiased, and the best one",
+              "slide_at_review": 52
+            }
+          ],
+          "note": "원본 후반 유도를 Act1의 prerequisite로 이동. 보충 appendix와 연결."
+        }
+      ]
+    },
+    {
+      "path": "lecture_slides/10. Model Based Reinforcement Learning.pdf",
+      "pages": 141,
+      "sha256": "0e8b75e1e83f2b35fbe9d2f33cd8324d8f5d6fd2d5b463872d655e4577ef4404",
+      "blocks": [
+        {
+          "pages": [
+            1,
+            9
+          ],
+          "topic": "MBRL 목표·functional bias",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The handoff — the model returns",
+              "slide_at_review": 2
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "What each of the four gave up, and what it cost",
+              "slide_at_review": 4
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The thesis — learn the dynamics, and both parents come back",
+              "slide_at_review": 5
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The unknowns doubled — and this is the third answer",
+              "slide_at_review": 6
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Lecture 8 promised this lecture, in three lines",
+              "slide_at_review": 7
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Two ways to come by a model",
+              "slide_at_review": 11
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The ladder of model use",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The same ladder, as a ledger",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The price, named — the model is only right where the data was",
+              "slide_at_review": 14
+            }
+          ],
+          "note": "real/synthetic data 구분, sample efficiency와 model bias."
+        },
+        {
+          "pages": [
+            10,
+            23
+          ],
+          "topic": "Version1·system identification·one-shot planning",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Version 1 — fit, then plan once",
+              "slide_at_review": 17
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "What system identification actually offers",
+              "slide_at_review": 18
+            }
+          ],
+          "note": "known/learned dynamics, open-loop 문제."
+        },
+        {
+          "pages": [
+            24,
+            30
+          ],
+          "topic": "Version2/3·iterative learning·MPC",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Version 2 — put the loop back",
+              "slide_at_review": 19
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Version 3 — re-plan every step, and MPC is born",
+              "slide_at_review": 20
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Plan twice — first from a prediction, then from a measurement",
+              "slide_at_review": 21
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "What does “plan through the model” actually compute?",
+              "slide_at_review": 22
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Backup 3 — the four versions of model-based planning, side by side",
+              "slide_at_review": 61
+            }
+          ],
+          "note": "내부 계획 탐색을 구체화. CEM은 설명용 대안으로 보충."
+        },
+        {
+          "pages": [
+            31,
+            43
+          ],
+          "topic": "Uncertainty·ensemble·moment/particle propagation",
+          "treatment": "복원·보충",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "What a rollout does to a model's error",
+              "slide_at_review": 23
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Why rollout error grows — count the propagation",
+              "slide_at_review": 24
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Version 3+ — plan with the model's uncertainty",
+              "slide_at_review": 25
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Three ways to get $\\sigma_m$, all of them borrowed",
+              "slide_at_review": 26
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Uncertain inputs require a distribution of rollouts",
+              "slide_at_review": 27
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Backup 4 — the sample-efficiency versus model-bias trade, made precise",
+              "slide_at_review": 62
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Backup 4b — the five mitigations, and where each appeared",
+              "slide_at_review": 63
+            }
+          ],
+          "note": "E[f(X)]와 f(E[X]) 차이 수치 예시 추가."
+        },
+        {
+          "pages": [
+            44,
+            49
+          ],
+          "topic": "Latent planning",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Version 4 — plan in a latent space",
+              "slide_at_review": 28
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Backup 3 — the four versions of model-based planning, side by side",
+              "slide_at_review": 61
+            }
+          ],
+          "note": "representation을 학습해 계획하는 목적 유지."
+        },
+        {
+          "pages": [
+            50,
+            56
+          ],
+          "topic": "ICNN for MPC",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "A model built to be planned in — convexity, learned",
+              "slide_at_review": 29
+            }
+          ],
+          "note": "ICNN만으로 nonlinear dynamics equality가 convex가 되지 않음을 명시."
+        },
+        {
+          "pages": [
+            57,
+            70
+          ],
+          "topic": "Direct policy optimization·PILCO",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Three routes from a model to a policy",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Route 1 — backpropagate the model into the policy",
+              "slide_at_review": 40
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Why route 1 is not the answer",
+              "slide_at_review": 41
+            }
+          ],
+          "note": "정책 sensitivity와 Gaussian 근사 범위. 모든 empirical curve는 없음."
+        },
+        {
+          "pages": [
+            71,
+            91
+          ],
+          "topic": "Guided policy search",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Route 2 — let optimal control teach",
+              "slide_at_review": 42
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Guided policy search — solve it by alternation",
+              "slide_at_review": 43
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "What makes it work — and where the trust region reappears",
+              "slide_at_review": 44
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Backup 2 — guided policy search, the constrained program",
+              "slide_at_review": 60
+            }
+          ],
+          "note": "teacher/student distribution matching와 alternating updates. 세부 robot demo 패널 압축."
+        },
+        {
+          "pages": [
+            92,
+            97
+          ],
+          "topic": "PLATO",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The teacher that watches the student — PLATO",
+              "slide_at_review": 45
+            }
+          ],
+          "note": "student-visited states를 teacher가 교정한다는 차이 유지."
+        },
+        {
+          "pages": [
+            98,
+            109
+          ],
+          "topic": "Dyna·model-based acceleration",
+          "treatment": "유지·보충",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Route 3 — imagine the data",
+              "slide_at_review": 46
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Dyna — the same update from two different sources",
+              "slide_at_review": 47
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Real steps against imagined steps",
+              "slide_at_review": 48
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The hazard, admitted by the method's own authors",
+              "slide_at_review": 49
+            }
+          ],
+          "note": "real vs imagined Q-update 수치 예시. 실제 정보 추가와 synthetic reuse 구분."
+        },
+        {
+          "pages": [
+            110,
+            112
+          ],
+          "topic": "Method summary",
+          "treatment": "재배치·유지",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The ladder of model use",
+              "slide_at_review": 12
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The same ladder, as a ledger",
+              "slide_at_review": 13
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Three routes from a model to a policy",
+              "slide_at_review": 39
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "The reunion, and the limits",
+              "slide_at_review": 50
+            }
+          ],
+          "note": "도입 ladder와 마지막 비교로 나눔."
+        },
+        {
+          "pages": [
+            113,
+            123
+          ],
+          "topic": "End-to-end learning·decision loss",
+          "treatment": "재배치·유지",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Treat the planner as a policy class",
+              "slide_at_review": 32
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "A model fitted to be wrong in the right places",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Why it matters, and where the evidence is",
+              "slide_at_review": 36
+            }
+          ],
+          "note": "원본 후반 내용을 Act3로 앞당겨 planner 자체 학습이라는 질문에 모음."
+        },
+        {
+          "pages": [
+            124,
+            136
+          ],
+          "topic": "Differentiable MPC",
+          "treatment": "재배치·보충",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Is the $\\arg\\min$ differentiable? Partially, yes",
+              "slide_at_review": 33
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Differentiate a solution — first do it with one number",
+              "slide_at_review": 34
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "A model fitted to be wrong in the right places",
+              "slide_at_review": 35
+            },
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Why it matters, and where the evidence is",
+              "slide_at_review": 36
+            }
+          ],
+          "note": "implicit gradient의 scalar 예시를 먼저 제시."
+        },
+        {
+          "pages": [
+            137,
+            141
+          ],
+          "topic": "KKT/QP sensitivity 유도",
+          "treatment": "유지·압축",
+          "targets": [
+            {
+              "deck": "ch11_model_based_rl",
+              "heading": "Backup 1 — differentiating the QP / LQR $\\arg\\min$, in full",
+              "slide_at_review": 59
+            }
+          ],
+          "note": "local regularity와 adjoint 부호 명시, appendix에 고급 유도."
+        }
+      ]
+    }
+  ],
+  "supplemental_sources": [
+    {
+      "path": "pptx/0.Introduction.pptx",
+      "sha256": "1e2c1e09cec730c961424ea03300712d19af99661721775930e43020abef23c1",
+      "note": "121 slides; newer research/outlook structure, condensed in HTML0. Sym-NCO/NCE/LS-GFN case studies are not all reproduced."
+    },
+    {
+      "path": "pptx/1. Optimization Problem Modeling.pptx",
+      "sha256": "c7de93a5cd181344436df3482e88b8f2d8275d65d70e6e998c98e8ee06ff6450",
+      "note": "62 slides; additional modelling and engineering cases supplement original PDF1."
+    },
+    {
+      "path": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+      "sha256": "c3ea5d2250cd4faf8039fe4e51e7adbd6bbe9903331ae09421069d49db786070",
+      "note": "70 pages; text-extraction hash matches lecture_slides/2, not an independent additional source."
+    },
+    {
+      "path": "tex/Lecture99_Appendix_Probability_Review.tex",
+      "sha256": "f930233b0c840259dd8eefa221c1dacd72c2385c8b3f1f231c75af338e535c87",
+      "note": "Probability appendix basis; no standalone original PDF in workspace."
+    },
+    {
+      "path": "md/_source/ch12_spec.md",
+      "sha256": "88e71ef378be21b411018730acdf104beab391510ecebbcf8b3517d078b5e7d1",
+      "note": "Offline-RL authoring specification; no corresponding original PDF. tex/Lecture12_Dynamic_Games.tex is a different course topic."
+    }
+  ]
+}

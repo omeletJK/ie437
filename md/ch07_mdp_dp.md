@@ -102,7 +102,7 @@ Which forces a new object. Instead of a number $f(x)$ attached to a decision, we
 
 ::: reveal
 ::: small
-And the second parent. Lecture 3 closed on the decision network — belief, action and value in one object — and wrote its answer as $\mathrm{EU}(a\mid o)=\sum_{s'}P(s'\mid o,a)\,U(s')$ with $a^*=\argmax_a \mathrm{EU}(a\mid o)$. It then said out loud that this is ==a one-step Bellman backup, three lectures before there is a name for it==, and that nothing would change except that $s'$ would acquire a successor. That debt falls due today: ==this lecture is the influence diagram with the horizon released from one.==
+Lecture 3 introduced expected utility and sequential decisions under an information structure. Here we add the assumptions needed for an MDP: a Markov state, known transition and reward models, and an explicit horizon or discount. The continuation utility is now the value of decisions still to come.
 :::
 :::
 
@@ -886,7 +886,7 @@ $$\begin{aligned}
 since $\sum_{s'}T(s,a,s')=1$. Taking the maximum over $s$ gives the claim. $\blacksquare$
 
 ::: small
-**Consequence (Banach).** For $\gamma<1$, $\mathcal T$ has a unique fixed point $V^*$, and $V_{k+1}=\mathcal T V_k$ converges to it from any $V_0$ with $\lVert V_k - V^*\rVert_\infty \le \gamma^k\lVert V_0-V^*\rVert_\infty$. The $\max$ inequality is the only step that needs care. Finiteness ensures maxima are attained; analogous suprema also work under suitable continuous-space assumptions — Lecture 9 works in a setting where that maximum is over a continuum. The same argument applied to a *sampled* operator underlies Q-learning's convergence (Lecture 8, Backup 2).
+**Consequence (Banach).** For $\gamma<1$, $\mathcal T$ has a unique fixed point $V^*$, and $V_{k+1}=\mathcal T V_k$ converges to it from any $V_0$ with $\lVert V_k - V^*\rVert_\infty \le \gamma^k\lVert V_0-V^*\rVert_\infty$. The $\max$ inequality is the only step that needs care. Finiteness ensures maxima are attained; analogous suprema also work under suitable continuous-space assumptions — Lecture 9 works in a setting where that maximum is over a continuum. Q-learning combines this contraction with stochastic-approximation, coverage and step-size conditions (Lecture 8, Backup 2).
 :::
 
 ### Backup 3 — policy improvement never hurts

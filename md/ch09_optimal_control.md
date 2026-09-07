@@ -82,7 +82,7 @@ The goal is identical to Lecture 7's: not a *plan*, but a ==feedback law== $u = 
 ### One wall Lecture 8 left, and where it actually lands
 {sub: the continuous-argmax problem — a meeting point, not the premise}
 
-Lecture 8 ended at a wall: with a continuum of actions, $\max_{a'} Q(s',a')$ is itself an intractable search, so a generic action maximum needs an optimizer rather than finite enumeration.
+Lecture 8 ended at a wall: with a continuum of actions, $\max_{a'} Q(s',a')$ cannot be found by enumerating a finite action list. A generic action maximum may require a costly numerical optimization.
 
 ::: reveal
 That wall is not this lecture's starting point — we begin from Lecture 7, not Lecture 8. But it *is* one of the seams where the two lineages meet, and it is worth naming now because it recurs three times today:
@@ -475,7 +475,7 @@ $$P_{k+1} = Q + A^\top P_k A - A^\top P_k B\big(R + B^\top P_k B\big)^{-1} B^\to
 | $V_{k+1} \leftarrow \max_a \E[R + \gamma V_k]$ | $P_{k+1} \leftarrow$ the Riccati map |
 | $V_k$ is a **table**, one entry per state | $P_k$ is an $n\times n$ **matrix** |
 | converges to the unique fixed point $V^*$ | converges to the ==unique PSD solution== of the ARE |
-| a sweep touches every state | a sweep is $O(n^3)$ — over a *continuum* of states |
+| a sweep touches every state | a matrix recursion represents values over a *continuum* of states |
 :::
 :::
 
@@ -612,7 +612,7 @@ A costate is a **marginal future cost**. Pontryagin carries this sensitivity alo
 The same problem the HJB widget solved: $\dot x = x+u$, $\int_0^2(x^2+u^2)dt$. Guess $\lambda(0)$, integrate the coupled equations forward, and check whether $\lambda(2)=0$ as the transversality condition demands. Exactly one guess lands — and it is ==$\lambda^*(0)=2P(0)x_0$==, the value gradient from the *other* method. The dashed trace is a control that does *not* minimise $H$ pointwise — and its Hamiltonian, conserved to fourteen digits when the principle is obeyed, drifts.
 :::
 
-### HJB versus Pontryagin — two solvers, one optimum
+### HJB versus Pontryagin — distinguish what each certifies
 
 ::: table center
 |   | HJB *(dynamic programming)* | Pontryagin *(minimum principle)* |
@@ -622,7 +622,7 @@ The same problem the HJB widget solved: $\dot x = x+u$, $\int_0^2(x^2+u^2)dt$. G
 | output | a feedback law $\gamma(t,x)$ | an open-loop $u^*(t)$, from a costate ODE |
 | mathematics | a nonlinear **PDE** | a two-point boundary-value **ODE** |
 | stochastic | second-order HJB | stochastic maximum principles exist; beyond this lecture |
-| cost | the curse of dimensionality | one trajectory, but only local |
+| cost | the curse of dimensionality | one trajectory; necessity alone does not certify a minimum |
 :::
 
 ::: reveal
@@ -647,7 +647,7 @@ The two lineages lose their model in exactly the same way, one lecture apart. De
 
 Both model-based origins are now on the table. Each one leaned entirely on knowing $f$.
 
-### Where we are — both parents, both exact
+### Where we are — three tools, different guarantees
 
 ::: lineage mb-B
 :::
@@ -672,21 +672,21 @@ HJB can verify an admissible solution; LQR solves its special case; Pontryagin p
 
 ::: flow | 
 - **Lecture 9 leaves** | the feedback law $\gamma(x)$, and $u = -Kx$
-- !**Lecture 10 deletes $f$** | and learns the same controller from data
+- !**Lecture 10 deletes $f$** | and learns a parameterised feedback controller from data
 :::
 
 ::: reveal
-Lecture 10 will be built to the identical shape as Lecture 8: *optimal control is the model-based origin of the control lineage; delete the dynamics $f$ and you get policy-based RL.* The gain $K$ that Act 3 solved for becomes a network $\mu_\theta(s)$ that is ==trained to output what the Riccati equation used to compute==.
+Lecture 10 will be built to the identical shape as Lecture 8: *optimal control is the model-based origin of the control lineage; delete the dynamics $f$ and you get policy-based RL.* The linear gain $K$ is one feedback policy. A network $\mu_\theta(s)$ is a more general policy class trained using sampled performance; it is not guaranteed to recover the LQR solution or a global optimum.
 
 ::: small
-And the continuous $\arg\min$ of Act 1 — the wall Lecture 8 met — is answered there for good: stop searching for the minimiser and learn a function that emits it.
+A learned actor can avoid a fresh continuous action search at every step. The difficulty moves into training and evaluating that actor.
 :::
 :::
 
-### Lecture 7 solved the dynamic optimum with the tools of operations research. Lecture 9 solved *the same optimum* with the tools of control.
+### Bellman and optimal control study the same sequential decision structure.
 {layout: standout}
 
-A value field (HJB), a closed form (LQR), and a trajectory law (Pontryagin) — three routes to one feedback rule $u=\gamma(t,x)$, best from wherever the system lands.
+HJB can verify a value function and feedback law; LQR solves a structured special case; Pontryagin supplies necessary conditions for candidate trajectories. Their guarantees and computational requirements differ.
 
 ### Questions?
 {layout: standout}

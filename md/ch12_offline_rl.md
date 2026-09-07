@@ -599,7 +599,7 @@ In an industrial deployment this act comes *first*. Before anyone asks whether t
 - The model axis, since offline RL is neither model-based nor data-driven
 - None — all three are crossed by Lecture 12
 - =The agents axis — single to multi-agent, which is where IE579 begins
-Every method in this course optimises **one** objective on behalf of **one** decision maker. Put a second agent in the world and the objective stops being fixed: the thing you are optimising against is now also optimising, an optimum becomes an equilibrium, and dynamic programming has to become game theory. The far face of the cube is real, named here, and crossed in IE579.
+Our main optimization and RL methods use one decision maker's objective. With several decision makers, outcomes also depend on their interaction: objectives may align, conflict, or partly overlap. Equilibrium concepts become relevant, but adding an agent does not automatically turn every optimization problem into a Nash-equilibrium problem. IE579 develops these strategic models.
 :::
 
 ## Closing
@@ -643,7 +643,7 @@ Take that away and estimated Bellman targets become unreliable — because the t
 ### Questions?
 {layout: standout}
 
-Four crossings were possible and this course made three. What it leaves is the fourth: cross **agents** and the optimum becomes an *equilibrium*, and the far face of Lecture 0's cube is the territory of ==IE579 Game Theory and Multi-Agent Reinforcement Learning==. Everything you carry there was assembled here — a belief that data sharpens, a value you can only sample, a policy you can only nudge, and the discipline to distrust all three exactly where the evidence runs out.
+The map has three axes. We studied static versus dynamic decisions and given versus learned models while keeping one decision maker. The remaining axis is **agents**: multiple decision makers introduce strategic interaction and solution concepts such as equilibria. That face belongs to ==IE579 Game Theory and Multi-Agent Reinforcement Learning==. Everything you carry there was assembled here — a belief that data sharpens, a value you can only sample, a policy you can only nudge, and the discipline to distrust all three exactly where the evidence runs out.
 
 ## Appendix — backup slides
 {short: APPENDIX}

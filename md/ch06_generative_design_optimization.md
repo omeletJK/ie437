@@ -310,7 +310,7 @@ $$p(x) = \int_z p(x\mid z)\,p(z)\,dz$$
 The data is governed by a simple latent distribution $p(z)$ — the source deck draws six axes labelled *smile, skin tone, gender, beard, glasses, hair colour*, each a plain Gaussian. The observed $x$ is generated from $z$ by a conditional $p(x\mid z)$: a decoder.
 :::
 ::: col.accent The translation to design
-The latent axes are the ==degrees of freedom a valid design actually has==. A protein has far fewer meaningful degrees of freedom than it has atoms; a truss has far fewer than it has nodes. The generative model's job is to find that coordinate system.
+The latent axes provide a ==learned representation of design variation==. They may capture useful structure with fewer coordinates, but a generative model does not guarantee that each axis is a true physical factor or that every decoded design is valid.
 :::
 :::
 
@@ -392,7 +392,7 @@ That is the whole sampler. It never touches the data, and it never runs an optim
 ::: col.accent Inference process — how the code is *found*
 The encoder $q_\phi(z\mid x)=\mathcal{N}\big(\mu_\phi(x),\operatorname{diag}(\sigma_\phi^2(x))\big)$ approximates the intractable posterior $p(z\mid x)$.
 
-It exists only to make training possible.
+It approximates the latent posterior for training and can also encode new observations after training.
 :::
 :::
 
@@ -486,6 +486,36 @@ That Gaussian kernel is not asserted; it is *derived*. The source deck asks what
 :::
 :::
 
+### DDPM training — corrupt once, learn the noise that was added
+{sub: original Part 1 pp. 19–22 and 48–63 · a concrete training step}
+
+Let $\alpha_t=1-\beta_t$ and $\bar\alpha_t=\prod_{j=1}^t\alpha_j$. Draw a data example $x_0$, a time index $t$, and $\epsilon\sim\mathcal N(0,I)$.
+
+$$x_t=\sqrt{\bar\alpha_t}\,x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\qquad L_{\mathrm{simple}}=\mathbb E\|\epsilon-\epsilon_\theta(x_t,t)\|^2.$$
+
+For a scalar check, $x_0=2$, $\bar\alpha_t=0.64$, and $\epsilon=1$ give $x_t=0.8(2)+0.6(1)=2.2$. Predicting $\hat\epsilon=0.5$ incurs squared error **0.25**.
+
+::: flow
+- **Clean example** | use a measured design from the dataset
+- **Known corruption** | choose a noise level and add sampled noise
+- **Supervised target** | predict the noise that was actually added
+:::
+
+The simple noise loss is the practical reweighted objective. The full variational derivation, including its weights, remains in the appendix.
+
+### DDPM generation — reverse the noise one step at a time
+{sub: original Part 1 pp. 48–63 · training and generation use different inputs}
+
+Generation starts with $x_T\sim\mathcal N(0,I)$, not with a clean training design. For $t=T,\ldots,1$, use the learned noise prediction in the reverse mean:
+
+$$\mu_\theta(x_t,t)=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right),\qquad x_{t-1}=\mu_\theta(x_t,t)+\sigma_t z.$$
+
+Use independent $z\sim\mathcal N(0,I)$ at stochastic reverse steps and no added noise at the final output step; the reverse variance schedule is a model choice.
+
+::: keypoint
+The network predicts **a local denoising step**, not the entire inverse process in one shot. Repeating those steps produces a sample; it does not certify that the sample is a feasible or optimal design.
+:::
+
 ### The score view, and a failure you have met before
 {sub: why the same model can be trained by a bound or by a gradient field}
 
@@ -509,6 +539,25 @@ The error is weighted by $p(x)$, so it is ==largely ignored wherever the data is
 ::: small
 This is Lecture 5's thesis, in a different half of the subject: ==a learned object is unconstrained where there is no evidence==. The cure is even the mirror image of conservatism — where Lecture 5 pushed the model *down* off-distribution, score-based models perturb the data with noise at several scales to push the data outwards until the empty region is populated, then anneal the noise away.
 :::
+:::
+
+### Conditioning a score — tell generation which outcome is wanted
+{sub: original Part 1 pp. 28–39 · noise levels and controllable generation}
+
+A score model learns $s_\theta(x_t,t)\approx\nabla_{x_t}\log p_t(x_t)$. Training at several noise levels teaches it about regions between data modes as well as near the data.
+
+For a desired label or property $y$, Bayes' rule gives
+
+$$\nabla_{x_t}\log p_t(x_t\mid y)=\nabla_{x_t}\log p_t(x_t)+\nabla_{x_t}\log p_t(y\mid x_t).$$
+
+| Term | Role |
+|---|---|
+| Unconditional score | point toward plausible noisy data |
+| Noisy-data classifier gradient | point toward the requested property |
+| Reverse denoising process | combine these directions across noise levels |
+
+::: keypoint
+The classifier must work at the **current noise level**. A stronger guidance scale changes the sampling distribution and can trade diversity for condition alignment; it is not an optimality guarantee.
 :::
 
 ### Check — turning the KL weight
@@ -711,6 +760,43 @@ The answer is Lecture 5's, twice over: **rank-based** reweighting, so the weight
 ::: small
 Read the right-hand column again. The generative half, pushed hard enough, meets ==the optimiser-as-adversary== all over again — and answers it with an ensemble and a conservative re-ranker. The two routes of Part III do not stay separate for long.
 :::
+:::
+
+### DDOM — reweight the data, then guide a conditional diffusion model
+{sub: original Part 2 pp. 30–34 · the source algorithm in three steps}
+
+::: flow
+- **Reweight** | give high-scoring observed designs more training weight
+- **Train** | learn a score-conditioned diffusion model
+- **Generate** | ask for a high score and denoise with guidance
+:::
+
+Classifier-free guidance combines conditional and unconditional noise predictions:
+
+$$\hat\epsilon=(1+g)\epsilon_\theta(x_t,t,y)-g\epsilon_\theta(x_t,t),\qquad g\ge0.$$
+
+The source's reweighting ablation reports D'Kitty scores **0.926 → 0.930** and ANT **0.907 → 0.941**; improvements are task dependent. These are the paper's benchmark results, not a guarantee for a new dataset.
+
+::: keypoint
+The score supplied to the generator is a **condition**, not a measured outcome of the generated design. The returned design still needs independent evaluation.
+:::
+
+### BootGen — generated labels do not become new measurements
+{sub: original Part 2 pp. 35–41 · rank weighting and iterative augmentation}
+
+::: flow
+- **Fit** | train a score-conditioned generator with rank weights
+- **Propose** | generate candidates for a requested high score
+- **Relabel** | use a proxy to score and select candidates
+- **Augment** | retrain with the selected pseudo-labelled examples
+:::
+
+The source uses weights proportional to $[k|D|+\operatorname{rank}(y,D)]^{-1}$ before normalisation: higher-ranked designs receive greater weight. This differs from weighting directly by the numerical score gap.
+
+BootGen can expand its training pool without new oracle evaluations. That pool contains **model-generated evidence**, so proxy errors can be reinforced as the loop repeats.
+
+::: keypoint
+This bootstrapping is iterative **pseudo-labelling and augmentation**. It is not the same operation as resampling the original dataset to construct a bootstrap ensemble.
 :::
 
 ### Check — the rhyme worth remembering

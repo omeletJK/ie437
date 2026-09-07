@@ -6,7 +6,7 @@ tagline: Structure tames the joint — and once a decision hangs off the graph, 
 blurb: >-
   A belief about many variables at once, drawn as a graph. Factorization is what makes an
   intractable joint tractable, d-separation says what the graph implies about independence, and
-  adding decision and utility nodes turns it into an influence diagram — a one-stage MDP, and the
+  adding decision and utility nodes turns it into an influence diagram — a decision model that leads toward MDPs, and the
   seed of the entire second half of the course.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
@@ -16,7 +16,7 @@ cube:
   model: data-driven
   agents: single agent
 inherits: a belief over one parameter (Lecture 2)
-handoff: structured belief, plus decision and utility nodes — the influence diagram, which is a one-stage MDP (Lectures 4 and 7)
+handoff: structured belief, plus decision and utility nodes — the influence diagram, a precursor to MDPs (Lectures 4 and 7)
 questions:
   - Why a graph?
   - What does it encode?
@@ -77,7 +77,7 @@ Conditional independence, drawn as a directed graph, turns one exponential table
 
 ::: reveal
 ::: block.accent Claim two | Act 4
-Add a **decision node** and a **utility node** to that graph and you have belief, action, and value in one object for the first time in this course. That object — the ==decision network== — is a single-shot decision under uncertainty. Unroll it through time and it is the Markov Decision Process of Lecture 7.
+Add a **decision node** and a **utility node** to that graph and you have belief, action, and value in one object for the first time in this course. That object — the ==decision network== — is a single-shot decision under uncertainty. Repeat decisions through time, specify a Markov state and the available information, and we reach the models of Lecture 7.
 :::
 :::
 
@@ -159,7 +159,7 @@ $\mathrm{pa}_{x}$ denotes the set of parents of $x$ — the only piece of notati
 ::: col.accent Why acyclic
 A cycle would make a variable its own ancestor. Arbitrary local conditional tables on a cycle do not necessarily multiply to a normalised joint; a DAG provides an order in which to generate each variable from already generated parents.
 
-Acyclicity is what guarantees ==a topological order==: a sequence in which every node comes after its parents. Sampling, elimination and learning all walk that order.
+Acyclicity is what guarantees ==a topological order==: a sequence in which every node comes after its parents. Ancestral sampling follows that order. Variable elimination may use a different order to reduce computation.
 :::
 :::
 
@@ -252,7 +252,7 @@ The chain rule $p(x_1)p(x_2 \mid x_1)p(x_3 \mid x_1,x_2)\cdots$ is **always** tr
 ## Act 2 — what the graph encodes
 {short: ACT 2, num: Act 2}
 
-**Q2.** A missing edge is a conditional independence. Reading them off is easy in two cases out of three — and the third is where intuition fails.
+**Q2.** The full graph specifies conditional independences. A missing direct arrow alone does not rule out dependence through another path.
 
 ### Conditional independence — the meaning of a missing edge
 {q: 2}
@@ -279,7 +279,7 @@ The DAG's basic promise is the **local Markov property**: a variable is independ
 
 ::: reveal
 ::: small
-That single sentence is what the missing edges $B \to C$ and $S \to D$ mean. It is also why $p(C \mid E)$ has two numbers instead of sixteen.
+That single sentence is what the missing edges $B \to C$ and $S \to D$ mean. This is also why the binary conditional $p(C \mid E)$ has two free numbers; conditioning on four binary variables would require sixteen.
 :::
 :::
 
@@ -511,6 +511,81 @@ The cure is to stop sampling variables independently: **Gibbs sampling** sweeps 
 :::
 :::
 
+### Hybrid networks — a table is not the only local model
+{sub: original PDF pp. 39–42 · the aircraft example}
+
+The source network mixes **wing span** $W$ (continuous), **military type** $M$ (binary), **radar cross section** $C$ (continuous), and **detection** $D$ (binary).
+
+$$p(w,m,c,d)=p(w)\,p(m)\,p(c\mid w,m)\,p(d\mid c).$$
+
+| Node | A possible local model | Meaning |
+|---|---|---|
+| $W$ | $\mathcal N(\mu_W,\sigma_W^2)$ | distribution of wing spans |
+| $M$ | Bernoulli probability $\theta$ | frequency of the aircraft type |
+| $C\mid W,M=m$ | $\mathcal N(a_mW+b_m,\sigma_m^2)$ | each type has its own regression |
+| $D\mid C$ | $P(D=1\mid C)=1/(1+e^{-(C-c_0)/b})$, $b>0$ | detection becomes more likely as the cross section grows |
+
+::: keypoint
+The **graph factorisation stays the same**. Sum discrete hidden variables and integrate continuous ones. Non-Gaussian factors can require approximate inference.
+:::
+
+### Naive Bayes — classification is posterior inference
+{sub: original PDF p. 43 · a familiar use of the same graph}
+
+Let $C$ be a class and $O_1,\ldots,O_n$ its observed features. The graph has $C\to O_i$ for every feature and assumes the features are conditionally independent **given the class**.
+
+$$P(C=c\mid o_1,\ldots,o_n)\propto P(C=c)\prod_i P(o_i\mid C=c).$$
+
+For an illustrative two-class, two-feature problem:
+
+| Class | Prior × first-feature likelihood × second-feature likelihood | Unnormalised score |
+|---|---|---|
+| $A$ | $0.4\times0.8\times0.5$ | $0.16$ |
+| $B$ | $0.6\times0.2\times0.5$ | $0.06$ |
+
+Thus $P(A\mid o_1,o_2)=0.16/0.22\approx0.727$. Choose $A$ under equal misclassification costs.
+
+::: keypoint
+“Naive” describes the **conditional-independence assumption**. It does not mean that the observed features must be marginally independent.
+:::
+
+### Learning the tables — reuse Lecture 2 locally
+{sub: original PDF p. 44 · parameter learning, with the graph fixed}
+
+For complete discrete data, count each node separately for each configuration of its parents:
+
+$$\hat p(X_i=k\mid\mathrm{pa}_i=j)=\frac{N_{ijk}}{\sum_{k'}N_{ijk'}}.$$
+
+In the illustrative fault model, suppose 8 of 10 faulty machines and 18 of 90 healthy machines trigger the alarm.
+
+| Conditional row | MLE | Posterior mean with a separate Beta(1,1) prior |
+|---|---|---|
+| $P(A=1\mid F=1)$ | $8/10=0.8$ | $9/12=0.75$ |
+| $P(A=1\mid F=0)$ | $18/90=0.2$ | $19/92\approx0.207$ |
+
+::: keypoint
+A Bayesian network gives **many small estimation problems**. Missing or latent variables require inference as part of learning; counting observed rows alone is then insufficient.
+:::
+
+### Learning the graph — compare explanations, not just fitted tables
+{sub: original PDF p. 45 · structure learning}
+
+If the arrows are unknown, the candidate model is the graph $G$ as well as its parameters $\theta$:
+
+$$P(G\mid D)\propto P(G)\underbrace{\int p(D\mid\theta,G)p(\theta\mid G)\,d\theta}_{p(D\mid G)\text{, the model evidence}}.$$
+
+::: flow
+- **Propose a graph** | add, remove, or reverse an edge while keeping a DAG
+- **Score it** | combine prior preference and fit averaged over parameters
+- **Compare** | keep a better candidate and continue the search
+:::
+
+Exhaustively checking every DAG is usually impractical. Search can stop at a local solution, and different graphs may encode the same observational independences.
+
+::: keypoint
+**Inference:** unknown variables in a fixed model. **Parameter learning:** unknown tables. **Structure learning:** unknown arrows. An observational graph alone does not establish causality.
+:::
+
 ### The same graph, unrolled through time
 
 Nothing so far said the variables were simultaneous. Index them by time and the identical machinery becomes a model of a system evolving.
@@ -535,6 +610,50 @@ one transition table, shared by every time step, instead of $T$ of them.
 Lecture 7 will open by *assuming* both of these. Markov structure is a conditional-independence assumption. Time homogeneity is a separate parameter-sharing assumption: the transition table does not change with time.
 :::
 :::
+
+### Fit a transition matrix — count where each state goes
+{sub: original PDF p. 53 · the same count-and-normalise rule}
+
+Use the source convention $M_{ij}=P(S_{t+1}=i\mid S_t=j)$: **column $j$ is the distribution of the next state given the current state**.
+
+For the illustrative observed sequence $A,A,B,A,B,B$, the four transition counts are $N_{AA}=1$, $N_{BA}=2$, $N_{AB}=1$, $N_{BB}=1$.
+
+$$\hat M=\begin{bmatrix}1/3&1/2\\2/3&1/2\end{bmatrix},\qquad p_{t+1}=\hat M p_t.$$
+
+Starting at $A$ gives $p_t=[1,0]^\top$, so the next-state probabilities are $[1/3,2/3]^\top$. Every column sums to one.
+
+::: keypoint
+This is **model learning** from a trajectory. Predicting with $p_{t+1}=Mp_t$ is a different operation, performed after the matrix is specified or estimated.
+:::
+
+### A stationary model need not start in a stationary distribution
+{sub: original PDF p. 52 · separate two uses of “stationary”}
+
+**Time-homogeneous transitions:** the same matrix $M$ is used at each step. **Stationary distribution:** a probability vector $p_\infty$ satisfying $Mp_\infty=p_\infty$.
+
+For a separate illustrative two-state model,
+
+$$M=\begin{bmatrix}0.9&0.2\\0.1&0.8\end{bmatrix},\qquad p_\infty=\begin{bmatrix}2/3\\1/3\end{bmatrix}.$$
+
+From $p_0=[1,0]^\top$, the first two distributions are $p_1=[0.9,0.1]^\top$ and $p_2=[0.83,0.17]^\top$: the marginal distribution changes even though $M$ stays fixed.
+
+::: keypoint
+For a finite irreducible, aperiodic chain, the distribution converges to its unique stationary distribution. A general Markov chain need not have that convergence property.
+:::
+
+### Hidden Markov models — name the question before computing
+{sub: original PDF pp. 54–61 · the same hidden states, different information sets}
+
+::: figure hidden-state-chain | 780
+The state $X_t$ evolves; the sensor reveals $Y_t$. Filtering does not observe $X_t$ directly.
+:::
+
+| Question | Target | What the answer uses |
+|---|---|---|
+| Filtering | $p(x_t\mid y_{1:t})$ | observations available now |
+| Prediction | $p(x_{t+h}\mid y_{1:t})$ | current belief, propagated into the future |
+| Smoothing | $p(x_t\mid y_{1:T})$, $t<T$ | later observations to revise the past |
+| Sequence likelihood / best hidden path | $p(y_{1:T})$ / $\argmax_{x_{1:T}}p(x_{1:T}\mid y_{1:T})$ | model comparison / Viterbi decoding |
 
 ### Filtering — Bayes' rule, once per time step
 
@@ -569,6 +688,44 @@ $$P(F_t\mid A_t)=\frac{0.9(0.24)}{0.9(0.24)+0.1(0.76)}\approx0.740.$$
 
 ::: keypoint
 The transition changes 0.20 to 0.24; the measurement changes 0.24 to 0.74. ==The corrected belief becomes the starting belief at the next time step.==
+:::
+
+### Continuous time-series data — regression becomes a transition model
+{sub: original PDF pp. 63–67 · time is still discrete; the state is continuous}
+
+An autoregressive model of order $L$ predicts a scalar from its last $L$ values:
+
+$$x_t=a^\top h_t+\epsilon_t,\qquad h_t=[x_{t-1},\ldots,x_{t-L}]^\top,\quad\epsilon_t\sim\mathcal N(0,\sigma^2).$$
+
+| Same regression, different role | Interpretation |
+|---|---|
+| Lecture 2 | features $h_t$ predict an output $x_t$ |
+| This lecture | lagged observations define $p(x_t\mid h_t)$ |
+| Gaussian MLE | minimise $\sum_t(x_t-a^\top h_t)^2$ |
+
+An AR(2) process is not generally first-order Markov in $x_t$ alone. It **is** first-order Markov in the augmented state $[x_t,x_{t-1}]$.
+
+::: keypoint
+The choice of state is part of modelling. This is the step behind Lecture 7's requirement that the state contain the information needed to predict the next step.
+:::
+
+### Linear Gaussian state space — the Kalman version of the same update
+{sub: original PDF pp. 71–73 · transition and observation are different models}
+
+$$x_t=Ax_{t-1}+w_t,\qquad y_t=Cx_t+v_t,\qquad w_t\sim\mathcal N(0,Q),\quad v_t\sim\mathcal N(0,R).$$
+
+With a Gaussian initial belief and independent Gaussian noises, the posterior remains Gaussian. Track its mean and covariance instead of a table.
+
+| Stage | Calculation |
+|---|---|
+| Predict state | $m_t^-=Am_{t-1}$, $P_t^-=AP_{t-1}A^\top+Q$ |
+| Weight the measurement | $K_t=P_t^-C^\top(CP_t^-C^\top+R)^{-1}$ |
+| Correct belief | $m_t=m_t^-+K_t(y_t-Cm_t^-)$, $P_t=(I-K_tC)P_t^-$ |
+
+A scalar example with $m^-=10$, $P^-=4$, $C=1$, $R=1$, and $y=12$ gives $K=0.8$, **$m=11.6$ and $P=0.8$**.
+
+::: keypoint
+The Kalman filter is **predict → observe → update**, just like the discrete fault example. Gaussian conditioning makes those steps closed form.
 :::
 
 ### Check — cheap to store, cheap to use?
@@ -640,6 +797,41 @@ $$\mathrm{EU}(a)=\sum_i p_iU(s_i).$$
 
 ::: small
 Utility need not equal money. A concave utility of money represents risk aversion; the same expected-utility calculation still applies.
+:::
+
+### Utility is not necessarily money — the original lottery example
+{sub: original PDF pp. 77–80 · probabilities describe beliefs; utilities describe preferences}
+
+Compare **A: receive 1 dollar for sure** with **B: receive 100 dollars with probability 0.01, otherwise 0**. Both have expected money 1 dollar.
+
+| Utility of money $m\ge0$ | $\mathbb E[U(A)]$ | $\mathbb E[U(B)]$ | Preferred |
+|---|---|---|---|
+| $U(m)=\sqrt m$ | $1$ | $0.01(10)=0.1$ | A: risk averse |
+| $U(m)=m$ | $1$ | $0.01(100)=1$ | indifferent: risk neutral |
+| $U(m)=m^2$ | $1$ | $0.01(10\,000)=100$ | B: risk seeking |
+
+Expected-utility modelling assumes consistent lottery preferences, including completeness, transitivity, continuity, and independence. Under these assumptions, preferences admit an expected-utility representation; they are **not probabilities of the outcomes**.
+
+::: keypoint
+Choose by $\mathbb E[U(M)]$, which need not equal $U(\mathbb E[M])$. State the utility model before comparing decisions.
+:::
+
+### Several consequences — when can utilities be added?
+{sub: original PDF pp. 81–82 · collision avoidance}
+
+The original example distinguishes horizontal closeness $H$, vertical closeness $V$, and whether an alarm is raised $A$.
+
+$$U(h,v,a)=U_{\mathrm{separation}}(h,v)+U_{\mathrm{alarm}}(a).$$
+
+The first term represents the consequence of unsafe separation; the second can represent alarm cost. This **additive preference assumption** is separate from any independence assumption about the random variables.
+
+| Representation for $n$ binary variables | Entries to specify before accounting for utility scaling |
+|---|---|
+| Arbitrary joint utility $U(x_1,\ldots,x_n)$ | $2^n$ |
+| Additive utility $\sum_i U_i(x_i)$ | $2n$ |
+
+::: keypoint
+Probability factorisation makes beliefs manageable. Utility factorisation can make preferences manageable. Both gain simplicity by making explicit modelling assumptions.
 :::
 
 ### Maximum expected utility
@@ -723,7 +915,7 @@ If the decision can wait, it may pay to observe something first. Let $\mathrm{EU
 $$\mathrm{VOI}(O^{\text{new}}\mid o) = \Big(\sum_{o^{\text{new}}} P(o^{\text{new}}\mid o)\,\mathrm{EU}^{*}(o^{\text{new}}, o)\Big) \;-\; \mathrm{EU}^{*}(o)$$
 
 ::: reveal
-the expected value of the *better decision* the observation lets you make, minus what you would have got anyway. It is never negative — information cannot hurt a rational agent — and it must be weighed against the ==cost of the observation==, which the formula does not include.
+the expected value of the *better decision* the observation lets you make, minus what you would have got anyway. With the same available actions and the option to ignore the observation, its expected value is nonnegative. It must be weighed against the ==cost of the observation==, which the formula does not include.
 
 :::
 
@@ -757,30 +949,23 @@ The information is worth $8-2=\mathbf6$ before paying for the test.
 ==Information matters because it can change the action.== A test costing 7 utility units is not worth buying here; a cost of 3 gives a net gain of 3.
 :::
 
-### Why this is the hinge of the whole course
+### From an influence diagram to an MDP — state the extra assumptions
 
-A decision network is the first object in this course to hold all three ingredients of sequential decision making at once:
+A sequential influence diagram records **what is known before each decision**. For additive utility, let $h_t$ contain the observed history and define the best remaining value by
 
-::: center
-**belief** (chance nodes) $+$ **action** (decision node) $+$ **value** (utility node)
+$$V_t(h_t)=\max_{a_t}\mathbb E\big[r_{t+1}+V_{t+1}(h_{t+1})\mid h_t,a_t\big],\qquad V_T=0.$$
+
+::: cols
+::: col Fully observed Markov state
+If $s_t$ contains all information relevant to the next transition and reward, replace the history with $s_t$. This gives the finite-horizon MDP recursion used in Lecture 7.
+:::
+::: col.accent Hidden physical state
+An observation may not be a sufficient state. A belief $b_t(s)=P(s_t=s\mid h_t)$ can serve as the information state in a partially observed model. This is why filtering matters.
+:::
 :::
 
-::: reveal
-Now allow several decisions. An influence diagram fixes a partial ordering $\mathcal{X}_0 \prec D_1 \prec \mathcal{X}_1 \prec D_2 \prec \cdots \prec D_n \prec \mathcal{X}_n$ — what is revealed between choices — and the optimal first decision is
-
-$$U(d_1\mid x_1) = \sum_{x_2}\max_{d_2}\sum_{x_3}\max_{d_3}\cdots \prod_{t} p(x_{t+1}\mid x_t, d_t)\ \sum_{t} u(x_t), \qquad d_1^{*} = \argmax_{d_1} U(d_1\mid x_1)$$
-:::
-
-::: reveal
 ::: keypoint
-That alternating $\sum \max \sum \max$ is ==the Bellman equation==, four lectures early.
-:::
-:::
-
-::: reveal
-::: small
-$p(x_{t+1}\mid x_t,d_t)$ is the transition $P(s'\mid s,a)$; the additive $\sum_t u(x_t)$ is the return; the inner $\max$ is the optimal policy assumed for the future. Lecture 7 will give this a name, add a discount, and solve it by dynamic programming. Lecture 8 will delete $p$ and learn it from samples. ==Everything in Part IV is this one slide, extended through time and stripped of its model.==
-:::
+The common structure is **choose an action, average unknown outcomes, then choose again with the new information**. A general influence diagram does not become a fully observed MDP merely by adding a time index.
 :::
 
 ### Check — the Bellman equation, four lectures early
@@ -791,7 +976,7 @@ $p(x_{t+1}\mid x_t,d_t)$ is the transition $P(s'\mid s,a)$; the additive $\sum_t
 - Summing over both, weighted by utility
 - Maximising over both, in topological order
 - =Summing over chance nodes and maximising over decision nodes
-You **average** over what you cannot control and **maximise** over what you can, in the order the information actually arrives. That alternating $\sum \max \sum \max$ is the structure of the Bellman equation, met here in a one-shot setting. Lecture 7 does nothing more than let the chain run for many stages and give the pattern a name.
+You **average** over what you cannot control and **maximise** over what you can, in the order the information actually arrives. That alternating $\sum \max \sum \max$ is the structure of the Bellman equation, met here in a one-shot setting. Lecture 7 adds a Markov state, a transition model, and a return objective so that this pattern becomes an MDP recursion.
 :::
 
 ## Closing
@@ -810,13 +995,13 @@ Belief structured, and action attached. Two roads lead out of here, and they are
 ::: reveal
 We can now represent belief over a whole system as a graph, read its independences off the missing edges, answer questions within it by elimination or by sampling, and — newly — attach a decision and a value to it.
 
-This lecture hands on ==structured belief, plus decision and utility nodes — the influence diagram, which is a one-stage MDP.==
+This lecture hands on ==structured belief, plus decision and utility nodes — the influence diagram, a precursor to MDPs.==
 :::
 
 ::: reveal
 ::: cols
 ::: col Lecture 4 — belief that acts
-Put belief to work on an *unknown function*. A Gaussian process is a Bayesian network over a continuum of variables; a Bayesian optimiser chooses where to look next by ==value of information==, which Act 4 already wrote down.
+Put belief to work on an *unknown function*. A Gaussian process specifies consistent Gaussian distributions over function values. A Bayesian optimiser uses that uncertainty to choose measurements; EI and value-of-information criteria answer related but different questions.
 :::
 ::: col.accent Lecture 7 — belief through time
 Unroll the decision network. One decision becomes a sequence, the utility node becomes a reward per step, and $\argmax_a \mathrm{EU}$ becomes ==the Bellman optimality operator.==
@@ -906,4 +1091,20 @@ with $\mathcal{L}$ the chance variables and $\mathcal{T}$ the utility variables.
 
 ::: small
 **The translation.** Let each decision move a state, $p(x_{t+1}\mid x_t,d_t)$; let utility accumulate as a per-step reward, $\sum_t u(x_t)$. Then $\mathrm{MEU}$ becomes the value function $V^{*}$, the alternating $\sum\max$ becomes the dynamic-programming recursion, and $\argmax_d \mathrm{EU}$ becomes the Bellman optimality operator. Lecture 7 adds a discount factor $\gamma$ and an infinite horizon; Lecture 8 removes $p$ and estimates the expectation from samples. The object itself was built here.
+:::
+
+
+### Backup — when the time-series model itself changes
+{sub: original PDF pp. 68–70 · extensions to the AR model}
+
+| What changes? | A model for the change | Interpretation |
+|---|---|---|
+| AR coefficients | $a_t=a_{t-1}+\eta_t$, $x_t=h_t^\top a_t+\epsilon_t$ | infer slowly changing coefficients as hidden states |
+| Innovation variance: ARCH | $\sigma_t^2=\omega+\sum_i\alpha_i\epsilon_{t-i}^2$ | recent large residuals predict more variability |
+| Innovation variance: GARCH | $\sigma_t^2=\omega+\sum_i\alpha_i\epsilon_{t-i}^2+\sum_j\beta_j\sigma_{t-j}^2$ | past variance also persists |
+
+Use $\omega>0$ and nonnegative variance coefficients; stationarity requires additional parameter restrictions. A changing coefficient, a changing state, and changing observation noise are **different modelling choices**.
+
+::: keypoint
+These are extensions of the same graphical model. Bayesian updating estimates the quantities the model allows to vary; it does not make a fixed model automatically adapt to every kind of change.
 :::

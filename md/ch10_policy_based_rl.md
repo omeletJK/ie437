@@ -2,7 +2,7 @@
 ch: 10
 title: Policy-Based Reinforcement Learning
 subtitle: Optimal control with the dynamics replaced by data
-tagline: Lecture 9 *solved* for the feedback law. This lecture *learns* the same law.
+tagline: Lecture 9 derived feedback from a model; this lecture learns a feedback policy from experience.
 blurb: >-
   Lecture 9 with the dynamics replaced by data. Optimise the policy directly by gradient ascent,
   cut the variance with a baseline, and control the size of policy updates — the machinery
@@ -306,7 +306,7 @@ An action at time $t$ cannot affect a reward at time $t' < t$. So those cross-te
 $$\nabla_\theta J = \E\Big[\sum_{t}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\ \hl{\sum_{k=t}^{T-1}r_{k+1}}\Big] \;=\; \E\Big[\sum_t \nabla_\theta\log\pi_\theta(a_t\mid s_t)\;\hat Q_t\Big]$$
 
 ::: reveal
-The inner sum is the **reward-to-go** $\hat Q_t$ — an unbiased sample of $Q^\pi(s_t,a_t)$, which is why the trajectory derivation and the DP derivation meet here.
+For an on-policy rollout continued to termination (or including the full discounted future), the inner sum is the **reward-to-go** $\hat Q_t$, an unbiased sample of $Q^\pi(s_t,a_t)$. A truncated or bootstrapped return needs a separate bias analysis.
 
 ::: small
 The cost of this fix is one index. It is the cheapest variance reduction in reinforcement learning, and in the numbers of the Act 1 widget it removes about half.
@@ -380,14 +380,45 @@ At a true terminal state, continuation value is zero. GAE combines multiple TD e
 ### Two dials on the same idea
 {sub: what the field does with the actor–critic once it has one}
 
-- **A3C / A2C** — run many actors in parallel on separate copies of the environment. At any instant they occupy different states, so their data is decorrelated *without* a replay buffer: ==parallelism plays the role of replay==, and lets the method stay on-policy. {p}(Mnih et al., 2016)
-- **$n$-step returns** — bootstrap after $n$ steps rather than at the end: $\;R_t = \sum_{i=1}^{n}\gamma^{i-1}r_{t+i} + \gamma^{n}V(s_{t+n})$. REINFORCE is $n=T$, one-step actor–critic is $n=1$.
+- **A3C / A2C** — run many actors in parallel on separate copies of the environment. Their rollouts provide more diverse recent experience without a large replay buffer. A2C synchronises updates; A3C permits parameter lag, so neither parallelism nor freshness means exact sample independence. {p}(Mnih et al., 2016)
+- **$n$-step returns** — bootstrap after $n$ steps rather than at the end: $\;R_t = \sum_{i=1}^{n}\gamma^{i-1}r_{t+i} + \gamma^{n}V(s_{t+n})$. A full Monte Carlo return continues to termination with zero bootstrap; one-step actor–critic uses $n=1$.
 - **GAE** — do not pick $n$; average all of them geometrically, $\;\hat A_t^{\mathrm{GAE}(\gamma,\lambda)} = \sum_{l\ge0}(\gamma\lambda)^l\,\delta^V_{t+l}$. {p}(Schulman et al., 2016)
 
 ::: reveal
 ::: keypoint
 GAE is ==TD($\lambda$) for the advantage== — Lecture 8's bias–variance dial, moved from the value to the thing that trains the policy.
 :::
+:::
+
+### A3C and A2C — collect several short rollouts, then learn
+{sub: original policy-RL PDF pp. 44–47 · parallel collection, not arbitrary replay}
+
+Each worker interacts with its own environment copy and forms an $n$-step target. For the main lecture's undiscounted episodic convention,
+
+$$G_t^{(n)}=\sum_{j=0}^{n-1}r_{t+j+1}+V_w(s_{t+n}),\qquad \hat A_t=G_t^{(n)}-V_w(s_t).$$
+
+If an episode terminates within the window, stop the reward sum there and use zero continuation value. Discounted versions retain the corresponding powers of $\gamma$.
+
+| Method | Coordination |
+|---|---|
+| **A3C** | workers apply updates asynchronously; local parameters can lag behind the shared ones |
+| **A2C** | collect a batch from workers, then update synchronously |
+
+::: keypoint
+Parallel workers diversify recent experience. This does **not** make samples independent or justify uncorrected use of arbitrarily old off-policy data.
+:::
+
+### Off-policy policy gradients — correct the distribution you sampled
+{sub: original policy-RL PDF pp. 39–40 · why reusing data needs care}
+
+At a fixed state, data from behaviour policy $\beta$ can estimate an expectation under $\pi_\theta$ using importance ratios:
+
+$$\mathbb E_{a\sim\pi_\theta}[h(s,a)]=\mathbb E_{a\sim\beta}\!\left[\frac{\pi_\theta(a\mid s)}{\beta(a\mid s)}h(s,a)\right].$$
+
+This requires $\beta(a\mid s)>0$ wherever the target policy assigns probability. If $\pi(A\mid s)=0.8$ but $\beta(A\mid s)=0.4$, observed A actions receive weight **2**.
+
+::: keypoint
+That ratio corrects the **action distribution at this state**. It does not by itself correct which states the behaviour policy visits or give an exact gradient of the original on-policy return. Off-policy actor–critic methods need their own objective and assumptions.
 :::
 
 ### Check — what a baseline does
@@ -520,10 +551,10 @@ Hence the ==Ornstein–Uhlenbeck== process, $\,dx_t = -\kappa\,x_t\,dt + \sigma\
 :::
 :::
 
-### $\mu_\theta(s)$ is the learned $K$ — the lineage, made literal
+### $\mu_\theta(s)$ and $K$ — compare their feedback role
 
 ::: lede
-Put Lecture 9's Act 3 and this act side by side. They are the same object, twice.
+Put Lecture 9's Act 3 and this act side by side. Both produce feedback, using different assumptions and procedures.
 :::
 
 ::: table center
@@ -538,11 +569,11 @@ Put Lecture 9's Act 3 and this act side by side. They are the same object, twice
 
 ::: reveal
 ::: keypoint
-Same feedback law, two ways to find it: ==solve the dynamics, or sample their gradient.==
+Same **role** — a state-to-action feedback rule — but different learning procedures and optimality guarantees.
 :::
 
 ::: small
-Lecture 9 closed by asking you to hold $u=-Kx$ in view as "the closed form that policy gradient learns to approximate blind". That is this table, and the Act 1 widget is that sentence run as an experiment: a gain that walks to the Riccati answer without ever meeting $A$ or $B$.
+The Act 1 widget uses a simple LQ benchmark with a known Riccati answer to assess a learned gain. Success on this example illustrates the feedback role; it is not a general convergence guarantee for policy gradients or DDPG.
 :::
 :::
 
@@ -554,7 +585,7 @@ Lecture 9 closed by asking you to hold $u=-Kx$ in view as "the closed form that 
 - By sampling actions and weighting them by their returns, as in REINFORCE
 - =By backpropagating through the critic: $\nabla_\theta Q(s, \mu_\theta(s))$ — the critic is differentiable, so the actor climbs it
 - By solving the $\argmax$ exactly at each step and regressing onto the result
-The critic is a differentiable surrogate for "how good is this action here", so the actor can be moved uphill on it by the chain rule — no sampling, no score function. Notice what has just been re-created: an optimiser climbing a **learned model of the objective**, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
+The critic is a differentiable surrogate for "how good is this action here", so the actor can be moved uphill on it by the chain rule — no action sampling inside this deterministic actor derivative; the state samples still come from data. Notice what has just been re-created: an optimiser climbing a **learned model of the objective**, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
 :::
 
 ## Act 4 — stepping without falling
@@ -640,7 +671,7 @@ PPO removes the incentive to increase a good action too much or decrease a bad o
 The clipped objective as a function of the ratio, for a good action ($\hat A>0$) and a bad one ($\hat A<0$). Read the slopes: for $\hat A>0$ the gradient is ==exactly zero above $1+\epsilon$== — no reward for making a good action still likelier. For $\hat A<0$ it is zero *below* $1-\epsilon$ but ==stays alive above $1+\epsilon$==: an action already too probable and known to be bad keeps being pushed down. The clip only removes the incentive that would take you out of the region.
 :::
 
-### Check — why the step size is bounded
+### Check — why large policy changes are discouraged
 {q: 4}
 
 ::: quiz PPO discourages some large policy updates through its clipped surrogate. Why are large changes risky?
@@ -684,14 +715,14 @@ One orphaning move, made twice: ==delete the model, sample instead.==
 :::
 
 ::: reveal
-The trust region travels further than it looks. It is Lecture 1's ratio test in behaviour space; it is what makes PPO the default workhorse of modern policy-based RL; and it is the discipline every method needs the moment ==its own output decides what it will see next== — which is exactly the condition Lecture 12 will face with no interaction at all.
+Lecture 1 and TRPO both control where a local approximation is trusted, using different metrics and acceptance rules. PPO clipping instead changes incentives in its sampled objective; it does not impose a hard KL bound. Lecture 12 adds another issue: evaluating a changed policy using a fixed log.
 
 ::: small
 Lecture 11 asks the question both extensions have been avoiding: if deleting the model cost us this much, what happens if we *learn* it — and plan with it, and let an optimal-control teacher train a policy student?
 :::
 :::
 
-### Lecture 9 found the feedback law by solving the dynamics. Lecture 10 finds *the same law* by sampling its gradient.
+### Policy gradients learn feedback from experience; their guarantees differ from model-based optimal control.
 {layout: standout}
 
 The dynamics never solved, only experienced — and the controller learned, not derived.
@@ -789,3 +820,21 @@ All of them are $\E[\nabla_\theta\log\pi_\theta\,\hat A]$, or its deterministic 
 | TRPO | approximate KL trust-region update | Schulman et al., 2015 |
 | PPO | clipped surrogate; the workhorse | Schulman et al., 2017 |
 | SAC | maximum-entropy off-policy actor–critic | Haarnoja et al., 2018 |
+
+
+### Source extension — MADDPG changes the number of decision makers
+{sub: original policy-RL PDF pp. 71–74 · preview for IE579}
+
+With several agents, a critic can use the joint state and actions during training, while each actor uses its own observation when deployed.
+
+::: flow
+- **Centralised training** | critic for agent i sees joint information and actions
+- **Actor improvement** | differentiate the critic through agent i's action
+- **Decentralised execution** | each actor acts from its permitted observation
+:::
+
+This is **centralised training with decentralised execution**. Other agents' changing policies make the learning problem different from single-agent DDPG; actor gradients do not by themselves guarantee convergence to a Nash equilibrium.
+
+::: keypoint
+The original PDF includes this extension. It belongs to the multi-agent face of the course map and is a preview, rather than an assumed prerequisite for Lecture 11.
+:::

@@ -2,6 +2,8 @@
 
 Scope: all 14 decks (Lectures 0–12 and the probability appendix). This review extends the recent Lecture 1 KKT and Lecture 2 Bayesian revisions to the whole course. The audience target is third-year undergraduates. This is an editorial, mathematical, and rendering review, not a measured student-comprehension study.
 
+> Scope clarification after the source-by-source audit: “original topic order” and “original directives” below mean the pre-existing **HTML/Markdown** structure. This earlier pass did not establish complete coverage of every original PDF topic. See [the subsequent source-fidelity review](source_fidelity_review.md) and [page-range traceability](source_fidelity_traceability.md) for omissions found, restorations, deliberate compression and reordered material.
+
 ## Common teaching structure
 
 Each deck now states prerequisites and a learning route. New worked calculations connect definitions to the existing experiments; interpretations explain what a number means for a decision. The four existing concept quizzes remain in every deck. The original topic order, section divisions, figures, videos, and widget placements are retained; a few misleading headings and mathematical statements are rewritten in place.

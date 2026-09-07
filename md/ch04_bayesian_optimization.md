@@ -202,7 +202,7 @@ This is the step up in object. A Gaussian process says: before seeing any data, 
 ## Act 2 — the Gaussian process
 {short: ACT 2, num: Act 2}
 
-**Q2.** A prior over functions whose posterior is available in closed form — and one free choice, the kernel, which carries every assumption you are making.
+**Q2.** A GP prior and Gaussian observation model give a closed-form posterior. The mean, kernel and noise model each express a modelling assumption.
 
 ### The Gaussian process — a prior over functions
 {q: 2}
@@ -225,7 +225,7 @@ $k(x,x')=\E\big[(f(x)-m(x))(f(x')-m(x'))\big]$ — how strongly nearby points ar
 
 ::: reveal
 ::: small
-A function drawn from a GP prior is, in the source's own phrase, *an extremely high-dimensional vector drawn from an extremely high-dimensional multivariate Gaussian*. It is Lecture 3's graph over a **continuum** of variables, with the kernel standing in for the edge structure.
+A function drawn from a GP prior is, in the source's own phrase, *an extremely high-dimensional vector drawn from an extremely high-dimensional multivariate Gaussian*. A finite set of function values has a Gaussian joint distribution. The kernel specifies **covariances**, not the missing-edge conditional independences of a Bayesian network.
 :::
 :::
 
@@ -345,6 +345,55 @@ The first term rewards explaining the data, the second rewards a *rigid* model. 
 The same seven observations, one kernel, one knob. Short length scale: the posterior spikes at each datum and falls back to the prior between them — the model believes nothing carries. Long length scale: a near-straight line that cannot bend to the data. The right panel is the marginal likelihood split into its two terms, and ==the total peaks where neither term is happy== — that is the Occam balance, drawn.
 :::
 
+### The original regression exercise — fit $x\sin x$ before optimising
+{sub: original PDF pp. 40–45 · rebuilt illustration with stated settings}
+
+::: figure gp-source-regression | 910
+True function $f(x)=x\sin x$; five observations at $x=0,2,4,6,8$. This redrawing uses observed values equal to $f(x)$, a zero-mean SE prior, amplitude 5, length scale 1.5, and assumed observation-noise standard deviation 0.2.
+:::
+
+The line is the posterior mean. The band is **latent-function mean ± 2 standard deviations** under this model. An interval for a new noisy reading would be wider.
+
+::: keypoint
+Regression answers **what might the function be?** The next act adds the separate decision: **which input should we measure next?**
+:::
+
+### More than one output — share information through a latent function
+{sub: original PDF pp. 46–59 · intrinsic coregionalisation}
+
+Suppose one design has two measured responses. A simple shared latent model is $u\sim\mathcal{GP}(0,k)$, $f_1(x)=u(x)$ and $f_2(x)=2u(x)$.
+
+$$\operatorname{cov}\!\left(\begin{bmatrix}f_1(x)\\f_2(x)\end{bmatrix},\begin{bmatrix}f_1(x')\\f_2(x')\end{bmatrix}\right)=\underbrace{\begin{bmatrix}1&2\\2&4\end{bmatrix}}_{B}\,k(x,x').$$
+
+| Object | What it relates |
+|---|---|
+| Scalar kernel $k(x,x')$ | different input locations |
+| Output matrix $B$ | different responses |
+| Independent observation noise | uncertainty in each measurement; added separately |
+
+::: keypoint
+Measuring one response can inform another **if the cross-output covariance model is appropriate**. Predicting several outputs is distinct from deciding how to trade off several objectives.
+:::
+
+### ICM, SLFM and LMC — change which latent patterns are shared
+{sub: original PDF pp. 54–68 · retain the model hierarchy}
+
+Write each output as a linear combination of independent latent GPs. Their covariance always has the form
+
+$$\operatorname{cov}(f_d(x),f_{d'}(x'))=\sum_q (B_q)_{dd'}\,k_q(x,x').$$
+
+| Model | Restriction | What the extra freedom buys |
+|---|---|---|
+| **ICM** | one shared input kernel, $B\,k(x,x')$ | all output relationships share one spatial pattern |
+| **SLFM** | several kernels, each $B_q=a_qa_q^\top$ | each latent factor can have its own length scale |
+| **LMC** | several kernels and PSD matrices $B_q$ | several shared factors can use each kernel |
+
+For $D$ outputs, every $B_q$ is **$D\times D$**. With $R_q$ latent factors, $B_q=A_qA_q^\top$ has rank at most $\min(D,R_q)$.
+
+::: keypoint
+The source's many covariance derivations implement one rule: **independent latent contributions add their covariances**. The appendix gives the stacked matrix.
+:::
+
 ### Check — what the length scale controls
 {q: 2}
 
@@ -432,6 +481,27 @@ A offers a likely small gain. B offers a less certain but potentially larger gai
 One posterior, five observations, three scores drawn underneath it, each with its own $\argmax$ marked. At $\xi=0$, PI points at $x=0.630$ — hard against the incumbent at $0.65$, buying a near-certain sliver. EI points at $x=0.470$, into the wide-uncertainty valley where the true maximum actually is. Turn $\xi$ up and PI walks out to meet EI; turn $\kappa$ down and UCB collapses onto the greedy mean. ==The knob is the same knob in all three.==
 :::
 
+### Optimise the acquisition — spend computation before spending an experiment
+{sub: original PDF pp. 139–149 · the inner optimisation problem}
+
+The physical experiment is expensive. Evaluating the acquisition $a_t(x)$ uses the current surrogate and is comparatively cheap.
+
+| Method from the source | How it searches $a_t(x)$ | What to check |
+|---|---|---|
+| Gradient methods / BFGS | climb from an initial point | use multiple starts for a nonconvex score |
+| **DIRECT** | divide a bounded domain into promising rectangles | does not require gradients; scales poorly with dimension |
+| **CMA-ES** | sample candidates and adapt a Gaussian search distribution | respect bounds and allow enough candidate evaluations |
+
+::: flow
+- **Many cheap scores** | compare candidate inputs using the surrogate
+- **One selected input** | approximately maximise the acquisition
+- !**One expensive measurement** | query the real objective and update the data
+:::
+
+::: keypoint
+A locally optimised acquisition can miss a better query. Solving this inner problem does **not** reveal the unknown objective without an experiment.
+:::
+
 ### The loop
 {fill: center}
 
@@ -486,7 +556,7 @@ Both are rules mapping ==history to the next action==. Their goals can differ: c
 
 ::: reveal
 ::: small
-So say plainly what the acquisition function is. It is not a scoring heuristic bolted onto a regression — it is a **policy over a belief state**, and every policy in Part IV is its descendant. Lecture 8's $\varepsilon$-greedy rule chooses $\argmax_a Q(a)$ with probability $1-\varepsilon$ and explores otherwise; UCB there is $\mu_i + \sqrt{2\ln t/n_i}$, which is $\mu+\kappa\sigma$ with the count standing in for the width. ==Change the belief from a GP to a $Q$-table and the acquisition function *is* the exploration rule.==
+An acquisition rule and an RL exploration rule both turn current information into the next action. Their stored objects differ: a GP posterior describes uncertainty about a function; a standard $Q$-table estimates expected returns and is not itself a posterior distribution. In Lecture 8, an exploration rule acts on those estimates.
 :::
 :::
 
@@ -517,7 +587,7 @@ Put a slot machine under every point of the domain. Pulling arm $x$ pays $f(x)$ 
 ::: reveal
 ::: cols
 ::: col What the bandit contributes
-The word *policy*, and the trade-off in its bare form: **acquiring new information** against **capitalising on the information already held**. With finitely many arms the belief is one number per arm; here it is a whole GP.
+The word *policy*, and the trade-off in its bare form: **acquiring new information** against **capitalising on the information already held**. A Bayesian finite-bandit model can carry a posterior for each arm; the GP additionally couples rewards across input locations.
 :::
 ::: col.accent What BO contributes
 Structure. A kernel lets an observation inform other inputs. This can reduce the number of required evaluations when the smoothness assumptions fit the problem; there is no universal small-query guarantee.
@@ -530,6 +600,23 @@ Structure. A kernel lets an observation inform other inputs. This can reduce the
 The lineage runs both ways. The bandit's Bayesian form is Chapter 2 exactly: after $w$ wins and $l$ losses, arm $i$ has posterior $\mathrm{Beta}(1+w_i,\,1+l_i)$ and mean $\rho_i=\frac{w_i+1}{w_i+l_i+2}$ — the pseudo-count update from Lecture 2, now serving as ==a belief state that an action will change.==
 :::
 :::
+
+### The finite-bandit calculation underneath the loop
+{sub: original PDF pp. 69–94 · evaluative feedback and incremental learning}
+
+A pull reveals the reward of **the chosen arm**, not the reward every alternative would have given. Suppose arm A has three observed rewards $1,0,1$, so $Q_3(A)=2/3$.
+
+After one more reward of 0,
+
+$$Q_4(A)=Q_3(A)+\tfrac14(0-Q_3(A))=\tfrac12.$$
+
+| Choice rule | What it uses | Remaining issue |
+|---|---|---|
+| Greedy / optimistic initial values | largest estimated reward / initially hopeful estimates | early luck can mislead; optimism is not a permanent exploration guarantee |
+| $\varepsilon$-greedy / softmax | uniform exploration / reward-based randomisation | exploration depends on the rate or temperature |
+| UCB | mean plus an uncertainty bonus | confidence assumptions and reward scale matter |
+
+A constant step size tracks changing rewards by forgetting old observations; $1/k$ computes a sample average in a stationary problem. Preference and pursuit updates are in the appendix.
 
 ### How much exploration is the right amount?
 
@@ -553,17 +640,113 @@ $$k\big((x,c),(x',c')\big) = k_X(x,x')\cdot k_C(c,c')$$
 which couples function values at similar inputs and contexts. Similar values do not guarantee similar argmax locations, especially when two peaks nearly tie.
 :::
 ::: col.accent What we have just built
-A rule that at each round takes all past $(c,x,y)$, maintains a belief state $B_t(f)$ over the unknown function, and acts to maximise cumulative reward.
+A rule that takes past $(c,x,y)$ data, maintains a belief over the function, and chooses the next action for the observed context. The objective may be cumulative reward or the quality of a final recommendation.
 
-That is an ==MDP over the belief state== — Lecture 3's decision network, unrolled in time.
+With a context-arrival model and a horizon, the decisions can be formulated over a belief state. A myopic acquisition rule is not generally the optimal policy of that planning problem.
 :::
 :::
 :::
 
 ::: reveal
 ::: small
-And it costs something up front. In the professor's own wind-farm study, the contextual learner starts at 0.79 average power efficiency against a greedy controller's 0.93, crosses it at roughly 2 500 iterations, and finishes ahead at 0.94. ==Exploration is a debt you take on early and are repaid for later==, which is exactly the shape of every learning curve in Part IV.
+And it costs something up front. In the professor's own wind-farm study, the contextual learner starts at 0.79 average power efficiency against a greedy controller's 0.93, crosses it at roughly 2 500 iterations, and finishes ahead at 0.94. ==This reported run illustrates a short-term exploration cost and a later benefit==. Other problems and exploration rules need not show the same pattern.
 :::
+:::
+
+### Unknown constraints — model feasibility as well as reward
+{sub: original PDF pp. 176–185 · the constrained BO problem}
+
+Lecture 1 wrote constraints as known functions. Now both performance $f(x)$ and a constraint $c(x)\le0$ may require an expensive measurement.
+
+$$\max_x f(x)\quad\text{subject to }c(x)\le0.$$
+
+| Surrogate | Question answered |
+|---|---|
+| Posterior for $f(x)$ | how much could this design improve performance? |
+| Posterior for $c(x)$ | how likely is this design to be feasible? |
+
+If $c(x)\mid D\sim\mathcal N(\mu_c(x),\sigma_c^2(x))$, with $\sigma_c(x)>0$, then
+
+$$P(\text{feasible}\mid x,D)=\Phi\!\left(\frac{-\mu_c(x)}{\sigma_c(x)}\right).$$
+
+::: keypoint
+A good predicted objective is not enough. **Feasibility is also uncertain**, and an acquisition score is not a guarantee that every tested design is safe.
+:::
+
+### Constrained improvement — one numerical choice
+{sub: original PDF pp. 181–183 · independence assumptions made explicit}
+
+Use a feasible incumbent $f^+$ and define $I(x)=\max(0,f(x)-f^+)$. If objective and constraint posteriors are independent,
+
+$$\operatorname{CEI}(x)=\mathbb E[I(x)\mathbf1\{c(x)\le0\}\mid D]=\operatorname{EI}(x)\,P(c(x)\le0\mid D).$$
+
+| Candidate | Expected improvement | Probability of feasibility | CEI |
+|---|---:|---:|---:|
+| A | 2.0 | 0.20 | 0.40 |
+| B | 1.0 | 0.90 | **0.90** |
+
+B has less potential improvement but more **expected feasible improvement**. For several posterior-independent constraints, multiply their feasibility probabilities. With dependence, use their **joint** distribution instead.
+
+::: keypoint
+This calculation assumes a feasible incumbent exists. If none has been found, a feasibility-search rule is needed before ordinary improvement over that incumbent is defined.
+:::
+
+### Several objectives — a Pareto set replaces one best number
+{sub: original PDF pp. 186–195 · same geometry, drawn for maximisation}
+
+For this illustration, **maximise both objectives**. A point dominates another if it is at least as good in both and strictly better in one. The Pareto set contains points not dominated by any other candidate.
+
+::: cols
+::: col
+::: figure pareto-hypervolume | 540
+The source draws minimisation toward the lower left. Here maximisation is toward the upper right; the dominated hypervolume extends back to reference $r=(0,0)$.
+:::
+:::
+::: col.accent Count the area
+For $A=(3,1)$ and $B=(1,3)$:
+
+$$\operatorname{HV}(\{A,B\})=3+3-1=5.$$
+
+Adding $C=(2,2)$ contributes the green unit square:
+
+$$\operatorname{HVI}(C)=6-5=1.$$
+
+Neither A nor B is the single best design. Choosing one finally requires a preference or trade-off.
+:::
+:::
+
+### Expected hypervolume improvement — EI for a set of trade-offs
+{sub: original PDF pp. 190–208 · distinguish probability, amount, and approximation}
+
+Let $P$ be the current Pareto set and $r$ a fixed reference point worse than the outcomes of interest.
+
+$$\operatorname{EHVI}(x)=\mathbb E\!\left[\operatorname{HV}(P\cup\{\mathbf f(x)\};r)-\operatorname{HV}(P;r)\mid D\right].$$
+
+| Acquisition | What is averaged? |
+|---|---|
+| Probability of hypervolume improvement | whether the new point adds any dominated volume |
+| **EHVI** | how much new volume it adds |
+| Source's HVPI heuristic | improvement at the posterior mean × probability of improvement; generally **not equal** to EHVI |
+
+Estimate EHVI by drawing possible output vectors from the posterior, computing each added volume, and averaging. Cross-output dependence belongs in those joint draws.
+
+::: keypoint
+**Contextual multiobjective BO** adds the observed context $c$ to this same model and acquisition. Multiple outputs describe what is predicted; multiple objectives describe what is valued.
+:::
+
+### Two different scaling limits — data count and input dimension
+{sub: original PDF pp. 209–225 · why the original lecture continues beyond standard BO}
+
+| Bottleneck | Why it arises | Source directions |
+|---|---|---|
+| Many observations $n$ | dense GP factorisation costs $O(n^3)$, storage $O(n^2)$ | sparse/inducing-point GPs, online approximations, neural surrogates |
+| Many input dimensions | measurements cover the domain poorly; acquisition search becomes harder | low-dimensional embeddings, learned latent coordinates, partitions/ensembles |
+| Expensive repeated fitting | updating hyperparameters can cost more than a cheap query | schedule refits; update the posterior between refits |
+
+A latent representation helps only if it preserves the variables relevant to the objective and constraints. A neural predictor helps BO only if its uncertainty is useful for choosing experiments.
+
+::: keypoint
+There is no universal “BO works in any dimension” guarantee. **Representation, inference, and query selection** each have their own approximation error.
 :::
 
 ### The bridge — one table, four lectures
@@ -648,7 +831,7 @@ $$Y_2\mid Y_1 = y \sim \mathcal N\big(\mu_2 + \Sigma_{21}\Sigma_{11}^{-1}(y-\mu_
 $$\mu(x\mid\mathcal D) = \mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y, \qquad \sigma^2(x\mid\mathcal D) = k(x,x)-\mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf k \quad\blacksquare$$
 
 ::: small
-Three readings. The mean is a **linear combination** of observed $y$ values; its weights need not form an average. The variance shrinks near data and returns to the prior $k(x,x)$ far from it. For fixed hyperparameters, the variance depends on the inputs and noise level, not directly on $\mathbf y$ — which is why a GP can plan an experiment before running it. The cost is the inverse: $O(n^3)$ once, $O(n^2)$ per prediction, which is the entire reason BO stops at a few thousand evaluations.
+Three readings. The mean is a **linear combination** of observed $y$ values; its weights need not form an average. The variance shrinks near data and returns to the prior $k(x,x)$ far from it. For fixed hyperparameters, the variance depends on the inputs and noise level, not directly on $\mathbf y$ — which is why a GP can plan an experiment before running it. The cost is the factorisation: $O(n^3)$ once, $O(n^2)$ per prediction, one reason dense exact GPs become expensive as the dataset grows.
 :::
 
 ### Backup 2 — kernels, and hyperparameters by marginal likelihood
@@ -672,7 +855,7 @@ $$\mathrm{EI}(x)=\int_{f^{+}}^{\infty}\big(f-f^{+}\big)\,p(f\mid\mathcal D)\,df 
 with $\Phi,\phi$ the standard normal CDF and PDF. Adding a margin $\xi$ gives the general form $\mathrm{EI}=(\mu-f^{+}-\xi)\Phi(Z)+\sigma\phi(Z)$, $Z=(\mu-f^{+}-\xi)/\sigma$, and at $\sigma=0$ use $\mathrm{EI}=\max(0,\mu-f^{+}-\xi)$.
 
 ::: small
-**Reading the two terms.** $(\mu-f^{+})\Phi(z)$ is large where the mean already beats the incumbent; $\sigma\phi(z)$ is large where the uncertainty is high, even if the mean is unremarkable. **Why EI beats PI.** PI integrates the *density* above the line — it counts whether an improvement happens. EI integrates the density *weighted by how far above the line it lands* — it counts how big. That single difference removes the need for a tuning parameter, and on the Act 3 posterior it moves the query from $x=0.630$ (worth $1.075$) to $x=0.470$ (worth $1.301$, against a true maximum of $1.303$).
+**Reading the two terms.** $(\mu-f^{+})\Phi(z)$ is large where the mean already beats the incumbent; $\sigma\phi(z)$ is large where the uncertainty is high, even if the mean is unremarkable. **Why EI and PI differ.** PI integrates the *density* above the line — it counts whether an improvement happens. EI integrates the density *weighted by how far above the line it lands* — it counts how big. The basic EI formula needs no explicit exploration margin, although variants use one. On the illustrative Act 3 posterior it moves the query from $x=0.630$ (worth $1.075$) to $x=0.470$ (worth $1.301$, against a true maximum of $1.303$).
 :::
 
 ### Backup 4 — the bandit toolkit, three lectures early
@@ -685,9 +868,76 @@ The source lecture develops the finite-armed bandit in full before reaching BO. 
 | **Incremental update** | $Q_{k+1}=Q_k+\alpha_k\big[r_{k+1}-Q_k\big]$, with $\alpha_k=\tfrac{1}{k+1}$ or a constant | *new ← old $+$ step $\times$ (target $-$ old)* — every RL update, and a constant $\alpha$ gives exponential recency weighting |
 | **$\varepsilon$-greedy** | $\pi(a)=1-\varepsilon+\tfrac{\varepsilon}{\lvert A\rvert}$ if $a=a^*$, else $\tfrac{\varepsilon}{\lvert A\rvert}$ | Lecture 8's exploration rule, unchanged |
 | **Softmax** | $\pi_t(a)=e^{Q_t(a)/\tau}\big/\sum_b e^{Q_t(b)/\tau}$ | the Boltzmann policy; $\tau\to0$ recovers greedy |
-| **Preference rules** | reinforcement comparison $p_{t+1}(a_t)=p_t(a_t)+\beta[r_t-\bar r_t]$; pursuit, keeping both $Q_t$ and $\pi_t$ | REINFORCE **with a baseline**, and actor–critic — Lecture 10 |
+| **Preference rules** | reinforcement comparison $p_{t+1}(a_t)=p_t(a_t)+\beta[r_t-\bar r_t]$; pursuit, keeping both $Q_t$ and $\pi_t$ | preference learning anticipates policy gradients; see the distinction in the later backup slide |
 | **UCB** | $a_t=\argmax_i\big(\mu_i+\sqrt{2\ln t / n_i}\big)$ | $\mu(x)+\kappa\sigma(x)$, this lecture, continuous |
 
 ::: small
 For a stationary finite bandit with sufficient sampling, sample averages converge to action means. Under uniform fixed-$\varepsilon$ exploration and a unique best arm, its selection probability approaches $1-\varepsilon+\varepsilon/|A|$, so exploration still incurs a continuing cost.
+:::
+
+
+### Backup — the multi-output covariance, with dimensions visible
+{sub: original PDF pp. 56–68 · Kronecker product and the latent-factor construction}
+
+For $D$ outputs measured at the same $N$ inputs, stack $\mathbf f=[\mathbf f_1^\top,\ldots,\mathbf f_D^\top]^\top$ in **output-major order**.
+
+$$K_{\mathrm{ICM}}=B\otimes K_X,\qquad K_{\mathrm{LMC}}=\sum_q B_q\otimes K_q.$$
+
+| Matrix | Size |
+|---|---|
+| $B_q=A_qA_q^\top$ | $D\times D$ |
+| $K_q=[k_q(x_i,x_j)]$ | $N\times N$ |
+| Stacked covariance | $DN\times DN$ |
+
+Each independent latent group contributes one PSD covariance; adding them preserves positive semidefiniteness. Independent output-specific noise adds $\operatorname{diag}(\sigma_1^2,\ldots,\sigma_D^2)\otimes I_N$.
+
+For different input sets per output, use the corresponding covariance entries; the simple complete-grid Kronecker layout need not remain available.
+
+### Backup — preference and pursuit are different bandit updates
+{sub: original PDF pp. 87–91 · keep their relationship to policy gradients precise}
+
+| Method | Stored object | Update idea |
+|---|---|---|
+| Reinforcement comparison | preferences $h(a)$ and a reward baseline $\bar r$ | increase the chosen arm's preference when its reward exceeds the baseline |
+| Pursuit | action-value estimates $Q(a)$ **and** probabilities $\pi(a)$ | move probabilities toward the currently greedy action $a^*$ |
+
+For pursuit, $\pi_{t+1}=(1-\beta)\pi_t+\beta e_{a^*}$ with $0<\beta<1$. This preserves nonnegative probabilities summing to one.
+
+The exact softmax bandit policy gradient instead updates **every** preference:
+
+$$h_b\leftarrow h_b+\alpha(r-\bar r)\big[\mathbf1\{b=a\}-\pi(b)\big].$$
+
+::: keypoint
+Reward-relative preference learning anticipates Lecture 10, but the source's chosen-arm-only reinforcement-comparison rule is **not the full softmax policy-gradient formula**.
+:::
+
+### Backup — the source's computational exercises
+{sub: original PDF pp. 164–175 and 207–208 · GPflowOpt-era lab material}
+
+| Original exercise | Learning task retained here |
+|---|---|
+| Branin / polynomial functions | distinguish a local search result from the global best; plot best measured value versus query count |
+| Goldstein and other test functions | compare acquisitions using the same starting observations and evaluation budget |
+| Airline-passenger regression | compare initial and fitted kernel hyperparameters; evaluate held-out predictions |
+| Modified Binh multiobjective problem | identify the Pareto set and compare hypervolume before and after a query |
+
+The source's package installation screens are historical implementation material. The mathematical exercises do not depend on that specific library. Record the function, bounds, initial points, noise model, budget, and random seed before comparing methods.
+
+::: keypoint
+An experiment compares **the same problem under controlled settings**. A good-looking posterior plot alone does not measure optimisation performance.
+:::
+
+### Backup — three ways to combine Gaussian processes and neural networks
+{sub: original PDF pp. 222–225 · these are different model families}
+
+| Source direction | Construction | What changes |
+|---|---|---|
+| Deep Gaussian process | compose latent GP layers | nonlinear latent transformation; inference is generally approximate |
+| Deep kernel learning | $k_\theta(x,x')=k(\phi_\theta(x),\phi_\theta(x'))$ | a neural network learns the features used by a GP |
+| Conditional neural process | encode a context dataset and predict distributions at query inputs | learn a conditional predictor; it is not automatically a GP posterior |
+
+The source also connects variational autoencoders to latent GP models and low-dimensional search. Lecture 6 develops the latent-variable machinery.
+
+::: keypoint
+“Uses a neural network” does not specify the uncertainty model. Ask what is random, what is fitted, and which posterior calculation is exact or approximate.
 :::

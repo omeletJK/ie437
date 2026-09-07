@@ -534,7 +534,7 @@ $$p_{\text{NML}}(y\mid x) = \frac{p\big(y \mid x;\ \hat\theta_{D\cup(x,y)}\big)}
 
 ::: reveal
 ::: small
-Far from the data, *every* candidate label can be accommodated almost perfectly — one extra point barely moves a flexible model — so the normalised distribution comes out wide. Near the data, only labels close to the trend survive the refit, and it comes out narrow. ==Uncertainty is measured as how easily the model could have been talked into any answer.== The integral is intractable, so NEMO quantises $y$ into $K$ bins, keeps $K$ models, and updates them incrementally *while* it optimises $x$ rather than rebuilding them at each iterate.
+Far from the data, *every* candidate label can be accommodated almost perfectly — one extra point barely moves a flexible model — so the normalised distribution can be wide, provided the refits and normalisation are well defined. Near the data, only labels close to the trend survive the refit, and it can be narrower. ==Uncertainty is measured as how easily the model could have been talked into any answer.== The integral is intractable, so NEMO quantises $y$ into $K$ bins, keeps $K$ models, and updates them incrementally *while* it optimises $x$ rather than rebuilding them at each iterate.
 :::
 :::
 
@@ -581,14 +581,14 @@ The source figure says it in two panels: without the prior, a jagged surrogate's
 | *Dataset max* | 3.152 | 6.558 | 73.90 | 1361.6 | 108.5 | 215.9 | *1.000* |
 | Gradient ascent | 2.894 | 6.636 | 89.64 | 1050.8 | 399.9 | 390.7 | 1.237 |
 | MINs | 3.315 | 6.508 | 80.23 | 746.1 | 388.5 | 352.9 | 1.304 |
-| CbAS | **3.408** | 6.301 | 72.17 | 547.1 | 393.0 | **396.1** | 1.324 |
-| COMs | 3.305 | 6.876 | 110.0 | **2395.7** | 378.8 | 341.4 | 1.589 |
+| CbAS | **3.408** | 6.301 | 72.17 | 547.1 | 393.0 | 396.1 | 1.324 |
+| COMs | 3.305 | 6.876 | 110.0 | 2395.7 | 378.8 | 341.4 | 1.589 |
 | NEMO | 3.359 | 6.682 | **127.0** | 2130.1 | 393.7 | **431.6** | 1.687 |
 | **RoMA** | 3.357 | **6.890** | 103.9 | **2466.5** | **468.5** | 384.3 | ==**1.705**== |
 :::
 
 ::: small
-Naive gradient ascent is not useless — it is the *worst* of the six, and on HopperController it returns less than the best trajectory already in the dataset. Every method that beats it does so by ==adding a constraint on what the surrogate is allowed to believe==, not by searching harder.
+Naive gradient ascent is not useless — it has the lowest aggregate score among the six methods shown, and on HopperController it returns less than the best trajectory already in the dataset. Every method that beats it does so by ==adding a constraint on what the surrogate is allowed to believe==, not by searching harder.
 :::
 
 ### All three say the same thing
@@ -601,10 +601,10 @@ Respect uncertainty off-distribution, or ==the optimiser will weaponise it.==
 ::: reveal
 ::: cols
 ::: col Bayesian optimisation *(Lec 4)*
-Uncertainty is an **opportunity**: go where the band is wide, because a query there teaches you the most. A wrong belief costs one round.
+Uncertainty is an **opportunity**: go where the band is wide, when the expected benefit justifies the evaluation cost. Uncertainty alone does not determine information gain or the best query.
 :::
 ::: col.accent Offline MBO *(Lec 5)*
-Uncertainty is a **hazard**: stay away from where the band is wide, because nothing will contradict you there. A wrong belief is ==the answer you ship==.
+Uncertainty is a **hazard**: stay away from where the band is wide, because the fixed dataset cannot supply new evidence there. A wrong belief can become ==the answer you ship==.
 :::
 :::
 :::

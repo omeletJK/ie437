@@ -206,6 +206,22 @@ MC also *wastes* the structure of the MDP: it learns each state separately and n
 :::
 :::
 
+### One episode can visit a state twice — define the Monte Carlo sample
+{sub: original PDF pp. 19–29 · make the averaging convention explicit}
+
+Consider an illustrative episode $A\to B\to A\to\text{terminal}$ with rewards $1,2,3$ and $\gamma=1$. The two returns observed after visiting A are **6** and **3**.
+
+| Estimator of $V^\pi(A)$ | Contributions from this episode |
+|---|---|
+| First-visit Monte Carlo | use 6, from the first visit to A |
+| Every-visit Monte Carlo | use 6 and 3; their average for this episode is 4.5 |
+
+Across episodes, keep the count of included visits and update the running average. Neither estimate from this single episode is guaranteed to equal the true value.
+
+::: keypoint
+A Monte Carlo target is a **sampled return after a specified visit**. State values are averages over repeated experience, not a rule that every visit has the same realised return.
+:::
+
 ### Temporal Difference — learn a guess from a guess
 
 Don't wait. After a *single* transition $(s_t, r_{t+1}, s_{t+1})$, update:
@@ -343,6 +359,20 @@ This is the ==exploration–exploitation trade-off== of the $n$-armed bandit, no
 Two Q-learning agents, identical but for $\varepsilon$. The greedy one locks onto the near ==$+1$== it stumbled into first and stops looking — read its coverage figure: the actions it dislikes are never tried, so their values are never corrected. The exploring one pays a little return per episode and finds the far ==$+5$==.
 :::
 
+### Monte Carlo control — evaluate an episode, then improve the policy
+{sub: original PDF pp. 30–40 · the algorithm between prediction and TD control}
+
+1. Generate a complete episode using the current exploratory policy.
+2. Work backwards to compute $G_t=r_{t+1}+\gamma G_{t+1}$.
+3. Average the selected returns for each visited $(s_t,a_t)$ into $Q(s_t,a_t)$.
+4. Make the policy $\varepsilon$-greedy with respect to the updated Q values.
+
+For four actions and $\varepsilon=0.2$, a unique greedy action gets probability **0.85** and each other action gets **0.05**.
+
+::: keypoint
+**Exploring starts** assumes we can start episodes in every relevant state-action pair. When that is impractical, use an exploratory policy to collect coverage. A fixed positive $\varepsilon$ keeps the executed policy stochastic.
+:::
+
 ### Check — the price of exploring
 {q: 2}
 
@@ -439,6 +469,68 @@ This convergence statement is tabular: finite stationary MDP, bounded rewards, $
 :::
 :::
 
+### The original windy gridworld — learn the transition through experience
+{sub: original PDF p. 58 · four-action version, redrawn}
+
+::: cols
+::: col
+::: figure windy-grid | 550
+Start S, goal G. The numbers below the columns give upward wind strength; grid boundaries clip the resulting position.
+:::
+:::
+::: col.accent What SARSA learns
+An intended move and the resulting displacement differ. For this convention, the wind at the **departure column** acts with the chosen move.
+
+From row 3, column 3, moving right with wind 1 ends at row 2, column 4. Rows increase downward; indices start at 0.
+
+Use reward $-1$ until arrival at G. SARSA learns from the **actual next state and the next exploratory action**, without being handed the wind model.
+:::
+:::
+
+::: keypoint
+The source's preceding page 57 depicts the random-walk prediction example; page 58 is the windy control task. Prediction of a fixed policy and learning a control policy are different experiments.
+:::
+
+### The original six-room example — follow the actual numerical updates
+{sub: original PDF pp. 67–72 · initial Q values 0, step size 0.5, discount 0.8}
+
+::: cols
+::: col
+::: figure six-room-graph | 510
+Original door connectivity. Here F ends the episode, as stated on source pp. 70 and 72. Entering F pays 100; other moves pay 0.
+:::
+:::
+::: col.accent Three source updates
+| Observed transition | Update | New Q |
+|---|---|---|
+| B → F | $0+0.5(100-0)$ | **50** |
+| D → B | $0+0.5(0+0.8(50)-0)$ | **20** |
+| B → F again | $50+0.5(100-50)$ | **75** |
+
+Only the visited entry changes. The reward at F starts affecting actions taken **before** reaching F through bootstrapping.
+:::
+:::
+
+::: keypoint
+The target on a terminal transition is the immediate reward. The next slide separates this episodic rule from the source's different continuing-state table.
+:::
+
+### Terminal versus continuing — why the source also shows a value of 500
+{sub: source pp. 68 and 73 use a rewarded F self-loop; pp. 70–72 terminate at F}
+
+Those conventions define different MDPs. They must not share the same claimed converged Q table.
+
+| Convention | Value after reaching F | Limiting $Q(B,F)$ |
+|---|---|---|
+| **Terminal F**: episode ends | $V(F)=0$ | $100+0.8(0)=\mathbf{100}$ |
+| **Continuing F**: staying pays 100 each step | $V(F)=100+0.8V(F)=500$ | $100+0.8(500)=\mathbf{500}$ |
+
+With terminal F, the best D → B → F continuation has $Q^*(D,B)=80$, and C → D → B → F has $Q^*(C,D)=64$. These are limits, unlike the intermediate values 50, 20 and 75 on the previous slide.
+
+::: keypoint
+A terminal mask is part of the **problem definition**. Changing it changes the correct answer, even when the room diagram and discount remain the same.
+:::
+
 ### The cliff — where the difference becomes visible
 ::: widget cliff-walk {"eps":0.1,"seed":3}
 **Q-learning** learns the *optimal* path — along the edge — but it *acts* $\varepsilon$-greedily, and the occasional random step plunges it off the cliff: higher reward in theory, worse online. **SARSA** accounts for its own exploration and learns a ==cautious== detour. Neither is "better" — the cliff teaches the design choice.
@@ -480,6 +572,22 @@ $$Q(s,a) \;\approx\; \hat Q(s,a;w), \qquad \text{e.g. } \hat Q(s,a;w)=w^\top \ph
 ::: small
 Now "learning" means fitting $w$ — and similar states share answers.
 :::
+:::
+
+### Why DQN stacks frames — position alone may hide velocity
+{sub: original PDF pp. 83 and 90–96 · representation is part of the state definition}
+
+Two situations can have the same current image but require different actions:
+
+| Previous ball position | Current position | Inferred horizontal motion |
+|---:|---:|---|
+| 10 | 20 | moving right |
+| 30 | 20 | moving left |
+
+A single frame at position 20 cannot distinguish them. DQN's input stacks **four recent 84 × 84 grayscale frames**, and a convolutional network extracts spatial features from that stack.
+
+::: keypoint
+The network approximates $Q$ **after a state representation has been chosen**. Frame stacking supplies short-term motion information; it does not guarantee a Markov state in every environment.
 :::
 
 ### Q-learning as regression — the semi-gradient step

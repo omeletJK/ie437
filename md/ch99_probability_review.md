@@ -179,7 +179,7 @@ The residual $U-\E[U\mid V]$ has mean **zero**, not the original mean. Policy-gr
 
 ::: reveal
 ::: small
-One identity, three readings: *how much did I learn*, *what can I never learn*, and *how do I stop the estimator from shaking*. Whenever a later chapter claims a quantity is "smaller on average" or "unbiased but less noisy", this is the line being invoked.
+Total variance explains the first two readings: *how much did I learn* and *what uncertainty remains in an observation*. For a policy-gradient baseline, also use the score identity and a variance calculation; total variance alone does not prove unbiasedness.
 :::
 :::
 
@@ -196,7 +196,7 @@ Writing $V(s) = \mathbb{E}[r + \gamma V(s')]$ is the tower property with the con
 ## Bayes and the two views
 {short: BAYES}
 
-One line of algebra that turns a belief and a measurement into a new belief — and two incompatible ways of saying what "uncertain" means.
+One line of algebra that turns a belief and a measurement into a new belief — and two interpretations of probability and uncertainty.
 
 ### Bayes' rule — the whole of inference on one line
 

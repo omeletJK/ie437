@@ -276,7 +276,7 @@ Lecture 2 carries the belief over one parameter; Lecture 3 gives it structure, a
 {sub: p. 18 of the source — a chance node, a decision node, a utility node}
 
 ::: figure decision-network | 900
-Add a **decision** node and a **utility** node to a Bayesian network and you have an ==influence diagram== — which is already a one-stage MDP. Lecture 7 does nothing but add time to this picture.
+Add a **decision** node and a **utility** node to a Bayesian network and you have an ==influence diagram==. Lecture 7 adds repeated decisions, a Markov state and an explicit transition model to build an MDP.
 :::
 
 ### ② Data-driven static — three routes when the model is gone
@@ -562,7 +562,7 @@ Appendix: a probability review — the toolbox underneath all of it.
 ## What comes next
 {num: 06}
 
-Everything above assumed a human writes the formulation. That assumption is the one now breaking — and it is what your class project is about.
+This final section is a **research and deployment outlook**. Connect each example to a decision, objective and constraint; detailed solver architectures are extensions to the core course map.
 
 ### The bottleneck was never the solver
 {sub: p. 69 of the source — the modelling loop, seen again with fresh eyes}
@@ -599,6 +599,22 @@ The source deck's own phrase for where this goes: ==“ChatGPT for Optimization 
 
 ::: figure nco-definition | 900
 Learn a ==solver==, not a solution: $f_\theta: \mathcal{X}\to\mathcal{Y}$, trained over a *distribution* of instances $x \sim g(\cdot)$ with the aim of generalizing to $x'\sim g'(\cdot)$; a changed instance distribution must be tested. Because the training signal spans tasks, ==learning an NCO solver is inherently multi-task learning== — which is why the meta-learning of Case B returns here.
+:::
+
+### What is learned in neural combinatorial optimisation?
+{sub: original introduction PDF pp. 69–75 · separate the solver role from the training method}
+
+| Role of the learned component | What it does | Example |
+|---|---|---|
+| Construct a solution | choose the next element until a solution is complete | add the next customer to a route |
+| Improve a solution | propose a change to an existing solution | exchange two route segments |
+| Assist mathematical programming | guide a component of an exact solver | suggest branching or variable selection |
+| Configure a solver | select settings for a problem instance | choose an algorithm or its parameters |
+
+**Imitation learning** and **reinforcement learning** are ways to train these components. They are a different classification from construction versus improvement.
+
+::: keypoint
+Ask **which decision the network makes inside the solver**. A learned heuristic's speed or solution quality does not by itself prove global optimality.
 :::
 
 ### Two ways to train it

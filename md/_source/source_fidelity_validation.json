@@ -1,0 +1,309 @@
+{
+  "date": "2026-09-07",
+  "scope": "Local final validation. Browser tests check rendering and interactions, not student comprehension or a proof of all mathematical claims.",
+  "source_and_examples": {
+    "sourcePDFs": 13,
+    "pages": 1102,
+    "topicBlocks": 123,
+    "slideReferences": 528,
+    "numericalChecks": 25,
+    "checks": [
+      {
+        "name": "Naive Bayes posterior",
+        "actual": 0.7272727272727273,
+        "expected": 0.7272727272727273
+      },
+      {
+        "name": "BN alarm row: Beta posterior",
+        "actual": 0.75,
+        "expected": 0.75
+      },
+      {
+        "name": "BN healthy row: Beta posterior",
+        "actual": 0.20652173913043478,
+        "expected": 0.20652173913043478
+      },
+      {
+        "name": "Transition fit A to A",
+        "actual": 0.3333333333333333,
+        "expected": 0.3333333333333333
+      },
+      {
+        "name": "Transition fit B to A",
+        "actual": 0.5,
+        "expected": 0.5
+      },
+      {
+        "name": "Stationary mass of A",
+        "actual": 0.6666666666666666,
+        "expected": 0.6666666666666666
+      },
+      {
+        "name": "Kalman gain",
+        "actual": 0.8,
+        "expected": 0.8
+      },
+      {
+        "name": "Kalman posterior mean",
+        "actual": 11.6,
+        "expected": 11.6
+      },
+      {
+        "name": "Kalman posterior variance",
+        "actual": 0.7999999999999998,
+        "expected": 0.8
+      },
+      {
+        "name": "Constrained EI: candidate A",
+        "actual": 0.4,
+        "expected": 0.4
+      },
+      {
+        "name": "Constrained EI: candidate B",
+        "actual": 0.9,
+        "expected": 0.9
+      },
+      {
+        "name": "Pareto hypervolume",
+        "actual": 5,
+        "expected": 5
+      },
+      {
+        "name": "Added hypervolume",
+        "actual": 1,
+        "expected": 1
+      },
+      {
+        "name": "DDPM noisy sample",
+        "actual": 2.2,
+        "expected": 2.2
+      },
+      {
+        "name": "DDPM noise-prediction loss",
+        "actual": 0.25,
+        "expected": 0.25
+      },
+      {
+        "name": "First-visit MC return",
+        "actual": 6,
+        "expected": 6
+      },
+      {
+        "name": "Every-visit MC mean",
+        "actual": 4.5,
+        "expected": 4.5
+      },
+      {
+        "name": "Room B to terminal F, first update",
+        "actual": 50,
+        "expected": 50
+      },
+      {
+        "name": "Room D to B",
+        "actual": 20,
+        "expected": 20
+      },
+      {
+        "name": "Room B to terminal F, second update",
+        "actual": 75,
+        "expected": 75
+      },
+      {
+        "name": "Terminal room fixed point",
+        "actual": 100,
+        "expected": 100
+      },
+      {
+        "name": "Continuing rewarded room fixed point",
+        "actual": 500.0000000000001,
+        "expected": 500
+      },
+      {
+        "name": "E of nonlinear dynamics",
+        "actual": 1,
+        "expected": 1
+      },
+      {
+        "name": "Dynamics of expected state",
+        "actual": 0,
+        "expected": 0
+      },
+      {
+        "name": "Epsilon-soft greedy probability",
+        "actual": 0.8500000000000001,
+        "expected": 0.85
+      }
+    ]
+  },
+  "rendered_pages_visually_reviewed": 74,
+  "browser": [
+    {
+      "file": "ch00_introduction.html",
+      "slides": 65,
+      "quizzes": 4,
+      "widgets": 6,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch01_optimization_modeling.html",
+      "slides": 88,
+      "quizzes": 4,
+      "widgets": 10,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch02_bayesian_statistics.html",
+      "slides": 86,
+      "quizzes": 4,
+      "widgets": 13,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch03_bayesian_network.html",
+      "slides": 66,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch04_bayesian_optimization.html",
+      "slides": 59,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch05_surrogate_design_optimization.html",
+      "slides": 48,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch06_generative_design_optimization.html",
+      "slides": 62,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch07_mdp_dp.html",
+      "slides": 55,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch08_value_based_rl.html",
+      "slides": 55,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch09_optimal_control.html",
+      "slides": 50,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch10_policy_based_rl.html",
+      "slides": 56,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch11_model_based_rl.html",
+      "slides": 63,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch12_offline_rl.html",
+      "slides": 47,
+      "quizzes": 4,
+      "widgets": 6,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    },
+    {
+      "file": "ch99_probability_review.html",
+      "slides": 38,
+      "quizzes": 4,
+      "widgets": 4,
+      "screen": [],
+      "print": [],
+      "broken": [],
+      "errors": [],
+      "lifecycle": [],
+      "hidden": 0
+    }
+  ]
+}

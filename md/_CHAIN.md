@@ -11,7 +11,7 @@ words.
 | 0 | — | the three-axis cube, and the route through it |
 | 1 | the three-axis map (Lecture 0) | the template `min f s.t. g ≤ 0` |
 | 2 | the template `min f s.t. g ≤ 0` (Lecture 1) | belief as a distribution |
-| 3 | a belief over one parameter (Lecture 2) | structured belief, plus decision and utility nodes — the influence diagram, which is a one-stage MDP |
+| 3 | a belief over one parameter (Lecture 2) | structured belief, plus decision and utility nodes — the influence diagram, a precursor to MDPs |
 | 4 | structured belief, and a prior over functions (Lecture 3) | the acquisition policy — the seed of an RL policy — and the bandit |
 | 5 | `argmax f` with a GP, but the oracle removed (Lecture 4) | a forward model then search, and the warning that the optimiser is an adversary |
 | 6 | the same problem, inverted (Lecture 5) | an inverse model then sampling — the rhyme that returns as value ↔ policy |
@@ -46,3 +46,7 @@ The appendix has no position on the cube and takes no tracker.
 **Lecture 12 closes the course.** It is the finale, so its closing does two jobs rather than one:
 it states the chapter's own result, and it stands the whole course back up — the cube toured, the
 two lineages joined, and the single axis deliberately left uncrossed, named as IE579's.
+
+## Interpretation of the teaching map
+
+The OR/control columns are a teaching comparison, not disjoint historical or mathematical categories. Both traditions use values, policies and dynamic programming. Removing access to a model motivates sample-based methods; it does not prove that their learned policy equals a model-based global optimum. A sequential influence diagram becomes an MDP only after specifying an appropriate Markov information state, observations and return structure.

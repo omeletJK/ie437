@@ -25,7 +25,7 @@ IE437.widget('course-cube', function (host, opts) {
   var V = [
     { i: 0, j: 0, k: 0, lec: 'Lec 1', name: ['Optimization'], at: 'below' },
     { i: 1, j: 0, k: 0, lec: 'Lec 7 · 9', name: ['Markov Decision Process', 'Optimal Control'], at: 'below-r' },
-    { i: 0, j: 1, k: 0, lec: 'Lec 2–6', name: ['Model-free', 'Optimization'], at: 'left' },
+    { i: 0, j: 1, k: 0, lec: 'Lec 2–6', name: ['Data-driven', 'Optimization'], at: 'left' },
     { i: 1, j: 1, k: 0, lec: 'Lec 8 · 10 · 11', name: ['Reinforcement Learning'], at: 'above' },
     { i: 0, j: 0, k: 1, lec: '', name: ['Static Game'], at: 'right', muted: 1 },
     { i: 1, j: 0, k: 1, lec: 'IE579', name: ['Markov Game', 'Stochastic Game', 'Differential Game'], at: 'right', muted: 1 },
@@ -38,11 +38,11 @@ IE437.widget('course-cube', function (host, opts) {
   var STEPS = [
     { badges: [], axis: null, cap: 'Any decision problem sits somewhere in this cube. Three axes, eight cells — and the course is a tour of it.' },
     { badges: [[0, 0, 0]], axis: null, cap: '<b>①  Optimization.</b> One decision, a known objective, no rivals — the origin. <i>Lecture 1.</i>' },
-    { badges: [[0, 0, 0], [0, 1, 0]], axis: 'Y', from: [0, 0, 0], cap: '<b>②  Model-free optimization.</b> Up the <b>data-driven</b> axis: the objective <i>f</i> becomes unknown. <b>One</b> unknown to learn. <i>Lectures 2–6.</i>' },
+    { badges: [[0, 0, 0], [0, 1, 0]], axis: 'Y', from: [0, 0, 0], cap: '<b>②  Data-driven optimization.</b> Up the <b>data-driven</b> axis: the objective <i>f</i> becomes unknown. <b>One</b> unknown to learn. <i>Lectures 2–6.</i>' },
     { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0]], axis: 'X', from: [0, 0, 0], cap: '<b>③  MDP and optimal control.</b> Along <b>multi stages</b>: decisions unfold in time, and the model is handed back. <i>Lectures 7 and 9.</i>' },
-    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]], axis: 'Y', from: [1, 0, 0], cap: '<b>④  Reinforcement learning.</b> The data-driven axis again — but now <b>two</b> unknowns, reward <i>r</i> and transition <i>P</i>. The count doubles. <i>Lectures 8, 10, 11.</i>' },
+    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]], axis: 'Y', from: [1, 0, 0], cap: '<b>④  Reinforcement learning.</b> The data-driven axis again: learn from transitions. Both reward <i>r</i> and transition <i>P</i> can be unknown; some tasks specify the reward. <i>Lectures 8, 10, 11.</i>' },
     { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0], [1, 1, 0]], axis: null, cap: '<b>⑤  And then the interaction goes too.</b> Same cell, but the right to try is withdrawn: only a fixed log of someone else&rsquo;s decisions. <i>Lecture 12 — offline RL.</i>' },
-    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]], axis: 'Z', from: [1, 1, 0], dash: 1, cap: '<b>The far face is not ours.</b> Cross <b>multi agents</b> and the optimum becomes an <b>equilibrium</b> — the subject of <b>IE579</b>, Game Theory and Multi-Agent RL. This course stops at the near face.' }
+    { badges: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]], axis: 'Z', from: [1, 1, 0], dash: 1, cap: '<b>The far face is not ours.</b> Multiple decision makers introduce <b>strategic interaction</b> and solution concepts such as <b>equilibria</b> — the subject of <b>IE579</b>, Game Theory and Multi-Agent RL. This course stops at the near face.' }
   ];
   var step = 0, timer = null;
 
