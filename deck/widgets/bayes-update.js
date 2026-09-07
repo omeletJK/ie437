@@ -7,9 +7,9 @@
    ============================================================ */
 IE437.widget('bayes-update', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', AMBER = '#D97706', RED = '#D64545';
-  var TRUE = opts.theta || 0.62;
+  var TRUE = opts.theta === undefined ? 0.62 : opts.theta;
   var PRIORS = [
-    { a: 1, b: 1, name: 'uniform · Beta(1,1)', note: 'no opinion' },
+    { a: 1, b: 1, name: 'uniform · Beta(1,1)', note: 'flat density; still a prior' },
     { a: 2, b: 2, name: 'weak · Beta(2,2)', note: 'worth 4 tosses' },
     { a: 20, b: 20, name: 'strong fair · Beta(20,20)', note: 'worth 40 tosses' },
     { a: 2, b: 8, name: 'sceptical · Beta(2,8)', note: 'expects tails' }
@@ -37,13 +37,13 @@ IE437.widget('bayes-update', function (host, opts) {
 
   /* Beta density, normalised numerically so no gamma function is needed */
   function betaPdf(a, b) {
-    var N = 400, xs = [], raw = [], i, t, v, area = 0;
+    var N = 800, xs = [], raw = [], logs = [], peak = -Infinity, i, t, v, area = 0;
     for (i = 0; i <= N; i++) {
       t = i / N;
-      v = (a === 1 && b === 1) ? 1 : Math.exp((a - 1) * Math.log(Math.max(t, 1e-12)) +
-                                              (b - 1) * Math.log(Math.max(1 - t, 1e-12)));
-      xs.push(t); raw.push(v);
+      v = (a - 1) * Math.log(Math.max(t, 1e-12)) + (b - 1) * Math.log(Math.max(1 - t, 1e-12));
+      xs.push(t); logs.push(v); peak = Math.max(peak, v);
     }
+    for (i = 0; i <= N; i++) raw.push(Math.exp(logs[i] - peak));
     for (i = 0; i < N; i++) area += (raw[i] + raw[i + 1]) / 2 * (1 / N);
     return xs.map(function (t, k) { return [t, raw[k] / area]; });
   }
@@ -56,7 +56,7 @@ IE437.widget('bayes-update', function (host, opts) {
   function draw() {
     var P = PRIORS[pi], a0 = P.a, b0 = P.b, a1 = a0 + y, b1 = b0 + n - y;
     var pri = betaPdf(a0, b0), pos = betaPdf(a1, b1);
-    var hi = 1.15 * Math.max(2, Math.max.apply(null, pos.map(function (p) { return p[1]; })));
+    var hi = 1.15 * Math.max(2, Math.max.apply(null, pos.concat(pri).map(function (p) { return p[1]; })));
 
     var m = IE437.plot(sv, {
       w: CW, h: CH, pad: { l: 34, r: 12, t: 14, b: 30 },
@@ -93,11 +93,11 @@ IE437.widget('bayes-update', function (host, opts) {
     host.querySelector('[data-bal]').innerHTML =
       '<div class="wlabel" style="margin-bottom:8px">the posterior mean is a weighted average</div>' +
       '<div style="font:400 13px/1.7 var(--sans)">' +
-      '<b>' + postMean.toFixed(3) + '</b> &nbsp;=&nbsp; ' +
+      (n ? '<b>' + postMean.toFixed(3) + '</b> &nbsp;=&nbsp; ' +
       '<span style="color:' + AMBER + '">' + wPrior.toFixed(2) + '</span> &times; ' +
       priorMean.toFixed(2) + ' &nbsp;+&nbsp; ' +
       '<span style="color:' + RED + '">' + wData.toFixed(2) + '</span> &times; ' +
-      (n ? mlPart.toFixed(3) : '—') + '</div>' +
+      mlPart.toFixed(3) : 'No tosses yet: posterior equals prior.') + '</div>' +
       '<div style="display:flex;height:12px;margin-top:9px;border:1px solid rgba(22,24,29,.14)">' +
       '<div style="width:' + (wPrior * 100) + '%;background:' + AMBER + ';opacity:.55"></div>' +
       '<div style="width:' + (wData * 100) + '%;background:' + RED + ';opacity:.55"></div></div>' +
@@ -105,12 +105,14 @@ IE437.widget('bayes-update', function (host, opts) {
       'letter-spacing:.1em;color:var(--ink4);margin-top:5px">' +
       '<span>PRIOR ' + Math.round(wPrior * 100) + '%</span>' +
       '<span>DATA ' + Math.round(wData * 100) + '%</span></div>';
+    host.dataset.tosses = n; host.dataset.heads = y;
+    host.dataset.alpha = a1; host.dataset.beta = b1; host.dataset.mean = postMean;
   }
 
   host.querySelector('[data-t1]').onclick = function () { toss(1); };
   host.querySelector('[data-t10]').onclick = function () { toss(10); };
   host.querySelector('[data-t50]').onclick = function () { toss(50); };
-  var __reset = function () { n = 0; y = 0; rand = IE437.rng(opts.seed || 39); draw(); };
+  var __reset = function () { pi = 0; n = 0; y = 0; rand = IE437.rng(opts.seed || 39); draw(); };
   host.querySelector('[data-prior]').onclick = function () { pi = (pi + 1) % PRIORS.length; draw(); };
 
   draw();

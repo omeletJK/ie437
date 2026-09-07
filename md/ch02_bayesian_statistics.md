@@ -1,12 +1,11 @@
 ---
 ch: 2
 title: Fundamentals on Bayesian Statistics
-subtitle: Don't pick a number — carry a belief
-tagline: The first crossing — from a world handed to us to a world inferred from data
+subtitle: From observations to a belief you can calculate with
+tagline: Learn the model, quantify uncertainty, then predict
 blurb: >-
-  The first thing taken away is certainty about the objective. Instead of committing to one
-  number, carry a distribution and let data update it — and watch regularization stop being a
-  trick and become a prior.
+  Work through coins, event counts and regression to see how likelihood and prior form a
+  posterior. Derive MLE, MAP and regularisation, then carry uncertainty into predictions.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST
@@ -29,95 +28,91 @@ questions:
 ### Fundamentals on Bayesian Statistics
 {layout: title}
 
-## The handoff — the objective was uncertain
+## The handoff — learning the model we optimise
 {short: HANDOFF}
 
-Lecture 1 minimised a *known* $f$. In practice $f$ is fitted to noisy data — and its parameters are uncertain.
+Lecture 1 optimised a specified model. Now we ask what noisy data tells us about its parameters.
 
-### Where we are — the model stops being exact
+### Where we are — the coefficients must be learned
 
 ::: tracker
 :::
 
 ::: table center
-|   | Model-based (certain) | Data-driven (uncertain) |
+|   | Model-based | Data-driven |
 |---|---|---|
 | **Static, single** | optimisation *(Lec 1)* | ==Bayesian statistics *(Lec 2)*== |
 :::
 
-Lecture 1 minimised a *known* $f$. But in practice $f$ comes from a ==model fit to noisy data== — its parameters are uncertain. A single "best" decision then rests on a single, possibly wrong, parameter estimate.
+Lecture 1 treated the chosen model and its coefficients as given while solving it. Now suppose the objective is $f(x;\theta)$ and $\theta$ must be learned from noisy observations.
 
 ::: reveal
-::: small
-So this lecture steps back from *deciding* to *modelling under uncertainty*: how to represent, and update, what we believe about a model's parameters given data. It is the first encounter with the course's central axis — ==from a world handed to us, to a world inferred from data==.
+::: keypoint
+Before asking **which decision is best**, ask ==how well we know the model that makes it best.==
 :::
 :::
 
-### Statistics infers the cause that generated the data
+### Statistics works backwards from data to a model
 
-::: flow | 
-- **Model** | $\theta$ — the characteristics of a model
-- **Data** | $y = (y_1,\dots,y_n)$ — the observed consequence
+::: flow
+- **Model** | $\theta$: probability of heads
+- **Data** | $D=(H,H,T)$: observed tosses
 :::
 
-For a tossed coin: $\theta$ is the probability of a head; the data is the sequence *(Head, Head, Tail, …)*. The arrow runs left to right in the world and ==right to left in statistics== — we see consequences and must infer the cause.
+Given $\theta$, the model tells us which data are plausible. Given data, inference asks which values of $\theta$ remain plausible. This alone is not a claim of causal identification.
 
 ::: reveal
-::: cols
-::: col Two views on probability
-- **Frequentist** — probability has meaning only as the limiting case of *repeated measurements*; it is a frequency of events.
-- **Bayesian** — probability is a *degree of certainty* about a statement; it is about our own knowledge of an event.
+::: cols c2
+::: col Observation uncertainty
+$$Y_i\mid\theta\sim\mathrm{Bernoulli}(\theta).$$
+
+Even if $\theta$ were known, the next toss would remain random.
 :::
-::: col.accent Two views on statistics
-- **Frequentist** — data is a repeatable random sample; ==parameters are fixed and unchanging==.
-- **Bayesian** — data is fixed, observed from the realised sample; ==parameters are unknown and described probabilistically==.
+::: col.accent Parameter uncertainty
+We do not know $\theta$. A Bayesian distribution over $\theta$ represents **our uncertainty about it**; it does not require the physical coin to change on every toss.
 :::
 :::
 :::
 
-### The coin, and what each view struggles with
+### Two approaches, both able to quantify uncertainty
 
-::: cols
+::: cols c2
 ::: col Frequentist
-$\theta$ is the relative frequency of heads in a "large number" of "identical flips". Nothing matters more than repeatability.
+$\theta$ is fixed but unknown. Evaluate an estimator or interval over repeated datasets from the model.
 
-**The trouble.** With small $n$ the estimate is wildly unstable —
+For $S$ heads in $n$ independent tosses, $\hat\theta=S/n$ is unbiased, with
 
-$$\frac{\#\text{Success}}{\#\text{Trials}} = \frac{1}{3},\; \frac{5}{6},\; \frac{5}{13},\; \frac{129}{313},\; \frac{61423}{123400}$$
+$$\mathrm{Var}(\hat\theta\mid\theta)=\frac{\theta(1-\theta)}{n}.$$
 
-and an "identical flip" is not a thing that exists.
+Small samples give **high variance**, not automatic bias. Confidence intervals and bootstrap distributions also express uncertainty.
 :::
 ::: col.accent Bayesian
-$\theta$ is itself uncertain. Express the belief as a distribution $p(\theta)$ — each $\theta$ can correspond to a different orientation, force, surface.
+Specify a prior $p(\theta)$, then condition on the observed dataset to obtain $p(\theta\mid D)$.
 
-**The trouble.** $p(\theta)$ is ==subjective==. How do you specify it, and how much does the answer depend on it?
-:::
-:::
+This supports posterior intervals and predictions averaged over plausible parameters.
 
-::: reveal
-::: small
-Act 2 answers the Bayesian objection quantitatively: the prior's influence is not a matter of taste but a *weight*, and that weight is $\beta/(\beta+n)$ — it vanishes as data accumulates.
+The prior and likelihood are modelling choices. Check their implications and compare reasonable alternatives.
 :::
 :::
-
-### The thesis — a belief, not a guess
-{fill: center}
 
 ::: keypoint
-When you don't know a parameter, don't pick one value — ==carry a distribution over all of them.==
+The distinction is ==what the probability statement describes==, not whether uncertainty matters.
 :::
 
-::: reveal
-| | Frequentist | Bayesian |
+### The Bayesian move — carry a distribution
+
+::: table
+| Object | Question it answers | Coin example |
 |---|---|---|
-| the parameter $\theta$ | fixed but unknown | a random variable |
-| what you estimate | by maximising the likelihood | a full posterior distribution |
-| what you get | one point estimate $\hat\theta$ | a balance of prior belief and evidence |
+| **Prior** $p(\theta)$ | What is plausible before these data? | How biased might the coin be? |
+| **Likelihood** $p(D\mid\theta)$ | How compatible is each candidate with the data? | How likely is HHT for this bias? |
+| **Posterior** $p(\theta\mid D)$ | What is plausible after these data? | Which biases still have support? |
+| **Predictive** $p(\tilde Y\mid D)$ | What might happen next? | How many heads in future tosses? |
 :::
 
 ::: reveal
-::: small
-The Bayesian move — treating the unknown itself as a distribution that data sharpens — is the engine behind Gaussian processes (Ch 4), surrogate uncertainty (Ch 5), and belief-state decision making (Ch 3 onward). Learn it once, reuse it all term.
+::: keypoint
+The parameter and the next observation are different unknowns. ==A distribution over one is not a distribution over the other.==
 :::
 :::
 
@@ -126,17 +121,17 @@ The Bayesian move — treating the unknown itself as a distribution that data sh
 ::: qstrip 0
 :::
 
-- **Q1 — Why represent belief as a distribution?** Bayes' rule and the prior–posterior picture.
-- **Q2 — How does data update belief?** The posterior as a ==balance== of prior and evidence; conjugacy.
-- **Q3 — What if I must commit to one value?** MLE vs. MAP — and why ==regularisation is a prior==.
-- **Q4 — How do I predict with my uncertainty intact?** The ==posterior predictive== distribution.
+- **Q1 — Why a distribution?** Read Bayes' rule and distinguish probability from likelihood.
+- **Q2 — How does data update belief?** Calculate coin, count and categorical examples.
+- **Q3 — What if one value is required?** Derive MLE, MAP, least squares and regularisation.
+- **Q4 — How do we predict?** Average over parameter uncertainty and check the model.
 
 ## Act 1 — belief as a distribution
 {short: ACT 1, num: Act 1}
 
-**Q1.** One line of algebra that turns a belief and a measurement into a new belief.
+**Q1.** Multiply prior belief by compatibility with the data, then normalise.
 
-### Bayes' rule — the whole of inference on one line
+### Bayes' rule — name each part before using it
 {q: 1}
 
 ::: qstrip
@@ -147,454 +142,1113 @@ The Bayesian move — treating the unknown itself as a distribution that data sh
 
 ::: reveal
 ::: keypoint
-Belief in $=$ prior; belief out $=$ posterior; ==the data does the turning.==
+Prior in, posterior out. ==The likelihood tells us how to reweight the candidates.==
 :::
 :::
 
-### The procedure, not the formula
-{fill: center}
+### Why Bayes' rule works
+
+The same joint probability can be factored in two orders:
+
+$$p(\theta,D)=p(D\mid\theta)p(\theta)=p(\theta\mid D)p(D).$$
+
+::: reveal
+Divide by the evidence $p(D)>0$:
+
+$$p(\theta\mid D)=\frac{p(D\mid\theta)p(\theta)}{p(D)}.$$
+:::
+
+::: reveal
+::: keypoint
+**Multiply** prior by likelihood, then **normalise** so the posterior sums or integrates to 1.
+:::
+:::
+
+### Two candidate coins — Bayes' rule with numbers
+{sub: an illustrative calculation before the continuous case}
+
+A coin is either fair ($\theta=0.5$) or head-biased ($\theta=0.8$), with equal prior probabilities. We observe **two heads**, conditionally independently.
+
+::: table
+| Candidate | Prior | Likelihood of HH | Product | Posterior |
+|---|---|---|---|---|
+| $\theta=0.5$ | $0.5$ | $0.5^2=0.25$ | $0.125$ | $0.125/0.445=0.281$ |
+| $\theta=0.8$ | $0.5$ | $0.8^2=0.64$ | $0.320$ | $0.320/0.445=0.719$ |
+:::
+
+::: reveal
+The evidence is $p(HH)=0.125+0.320=0.445$. Dividing by it makes the posterior probabilities add to 1.
+:::
+
+::: keypoint
+Two heads favour the biased coin, but ==do not prove which coin we have.==
+:::
+
+### Likelihood scores the candidate parameters
+
+For the observed sequence $D=(H,H,T)$, conditional independence gives
+
+$$L(\theta;D)=p(D\mid\theta)=\theta\cdot\theta\cdot(1-\theta)=\theta^2(1-\theta).$$
+
+::: cols c2
+::: col Fix the parameter
+$p(D\mid\theta)$ is a probability over possible datasets. For a fixed $\theta$, these probabilities add to 1.
+:::
+::: col.accent Fix the observed data
+$L(\theta;D)$ compares candidate values of $\theta$. It need not integrate to 1 over $\theta$ and is not yet a posterior.
+:::
+:::
+
+::: small
+For continuous $\theta$, $p(\theta)$ is a **density**: interval areas are probabilities and $P(\theta=\theta_0)=0$. A density may exceed 1. This differs from the two discrete candidates on the previous slide.
+:::
+
+### The procedure, not just the formula
 
 ::: flow
-- **1 · Model** | choose a structure for the data
-- **2 · Prior** | place $p(\theta)$ on its parameters
-- **3 · Likelihood** | write $p(y\mid\theta)$
-- !**4 · Posterior** | turn the crank: $p(\theta\mid y)\propto p(y\mid\theta)p(\theta)$
-- **5 · Predict** | if needed, forecast the unobserved
+- **1 · Model** | what process could produce the data?
+- **2 · Prior** | which parameter values are plausible?
+- **3 · Likelihood** | how does the data depend on those parameters?
+- !**4 · Posterior** | update: $p(\theta\mid D)\propto p(D\mid\theta)p(\theta)$
+- **5 · Predict and check** | forecast new observations and compare with reality
 :::
 
-::: reveal
-::: small
-Bayes' rule is not a formula to memorise but a ==procedure==. Every lecture in Part II is this same five-step loop with a different model in step 1 — a Bernoulli here, a graph in Ch 3, a whole function in Ch 4.
-:::
+::: keypoint
+Bayes' rule updates a specified model. ==It does not choose or validate that model for us.==
 :::
 
-### The picture — belief sharpening with evidence
-{fill: top}
+### The picture — the same data, different priors
 
 ::: widget bayes-update
-A flat prior over a coin's bias; each toss reshapes it. Watch epistemic uncertainty shrink in front of you — and read the two weights below the chart: the posterior mean is always ==a weighted average of the prior mean and the data's estimate==. That is Act 2, arrived at early.
+Change the prior while keeping the observed tosses. In this Beta–Binomial model, the posterior mean is a weighted average of the prior mean and the sample proportion. Uncertainty need not decrease after every single observation.
 :::
 
-### What a distribution buys that a point cannot
+### What does a 95% interval mean?
 
-Early on the posterior is wide — and an honest decision-maker acts cautiously. That "width" becomes the explore/exploit signal of Bayesian optimisation (Ch 4), the uncertainty penalty of Ch 5, and the belief state of every sequential method after that.
+Both approaches can report intervals. The key is which probability statement an interval supports.
 
-::: reveal
-It also changes what a "95% interval" *means*, and the two meanings are not interchangeable:
-:::
-
-::: reveal
 ::: widget ci-vs-cr
 :::
+
+### Read the two 95% statements carefully
+
+::: cols c2
+::: col Confidence interval
+Before drawing data, the random interval $C(D)$ covers a fixed parameter in 95% of repeated experiments:
+
+$$P_\theta\{\theta\in C(D)\}=0.95.$$
+
+Once $D$ is observed, the interval is fixed. Coverage alone does not assign 95% probability to that particular interval containing $\theta$.
+:::
+::: col.accent Credible interval
+After observing $D$, an interval $C$ contains 95% of the **posterior probability**:
+
+$$P(\theta\in C\mid D)=0.95.$$
+
+This is conditional on the prior, likelihood and data. Its repeated-sampling coverage need not be 95%.
+:::
+:::
+
+::: small
+The previous picture uses Normal observations with known noise and a flat prior on the mean. The endpoints coincide in that special case; the interpretations still differ.
 :::
 
 ### Check — what the distribution is over
 {q: 1}
 
-::: quiz A Bayesian writes $p(\theta)$ for a physical constant $\theta$ that has one true, fixed value. What is that distribution describing?
-- =Our uncertainty about a fixed unknown — the distribution lives in the observer, not the world
-- That $\theta$ itself fluctuates from measurement to measurement
-- The histogram the data would form if we collected enough of it
-- Nothing meaningful — a constant cannot have a distribution
-This is the move the whole course rests on. The randomness modelled by a prior is **epistemic** — it is what *we* do not know — and it shrinks as data arrives. The randomness that stays no matter how much data you gather is **aleatoric**, and it belongs to the world. Confusing the two is how a model comes to claim certainty it has not earned.
+::: quiz A Bayesian writes $p(\theta)$ for a physical constant with one true, fixed value. What does the distribution describe?
+- =Our uncertainty about the fixed unknown
+- The constant changing on every measurement
+- The histogram of future observations
+- Nothing: a fixed quantity cannot be described probabilistically
+The distribution represents **epistemic** uncertainty. Data can reduce it when informative. **Aleatoric** uncertainty is variation in future observations conditional on the model's parameters; learning the parameter alone does not remove that variation.
 :::
 
-## Act 2 — how data updates belief
+## Act 2 — work through the update
 {short: ACT 2, num: Act 2}
 
-**Q2.** The update is not a matter of taste. It is a weighted average, and the weights are explicit.
+**Q2.** Start with a coin, then reuse the same calculation for counts and categories.
 
-### The coin, done both ways
+### One toss, a sequence, and a count
 {q: 2}
 
 ::: qstrip
 :::
 
-::: cols
-::: col Frequentist — maximum likelihood
-With $Y_i\sim\mathrm{B}(\theta)$ the likelihood of $n$ tosses is
+Assume $Y_i\mid\theta$ are independent Bernoulli variables. Let $S=\sum_{i=1}^nY_i$.
 
-$$L(\theta)=p(y_1,\dots,y_n\mid\theta)=\theta^{\sum y_i}(1-\theta)^{n-\sum y_i}$$
-
-Setting $dL/d\theta = 0$ gives
-
-$$\hat\theta_{\mathrm{ML}}=\frac{\sum y_i}{n}$$
-
-==MLE returns the relative frequency.== $\sum y_i$ is a *sufficient statistic*: the order of the tosses never mattered.
-:::
-::: col.accent Bayesian — conjugate update
-Likelihood $Y\sim\mathrm{Bin}(n,\theta)$, prior $\theta\sim\mathrm{Beta}(\alpha,\beta)$:
-
-$$p(\theta\mid y)\;\propto\;\theta^{y}(1-\theta)^{n-y}\cdot\theta^{\alpha-1}(1-\theta)^{\beta-1}$$
-
-$$=\;\hl{\mathrm{Beta}(\theta\mid \alpha+y,\;\beta+n-y)}$$
-
-$\alpha$ is a ==pseudo-count of successes==, $\beta$ a pseudo-count of failures. The prior is simply data you already believed you had.
-:::
+::: table
+| What is observed? | Probability given $\theta$ | For two heads in three tosses |
+|---|---|---|
+| One toss $Y_i$ | $\theta^{Y_i}(1-\theta)^{1-Y_i}$ | Head: $\theta$ |
+| One particular sequence | $\theta^S(1-\theta)^{n-S}$ | HHT: $\theta^2(1-\theta)$ |
+| Only the total $S$ | $\binom nS\theta^S(1-\theta)^{n-S}$ | HHT, HTH, THH: $3\theta^2(1-\theta)$ |
 :::
 
-### The posterior is a balance — prior vs. evidence
+::: keypoint
+The factor $\binom nS$ counts the sequences. It is constant in $\theta$, so it changes the data probability but ==not the MLE or posterior shape.==
+:::
 
-$$\E[\theta\mid y] = \frac{\alpha + y}{\alpha+\beta+n} = \underbrace{\frac{\alpha+\beta}{\alpha+\beta+n}}_{\text{weight on prior}}\,\E[\theta] \;+\; \underbrace{\frac{n}{\alpha+\beta+n}}_{\text{weight on data}}\,\hat\theta_{\mathrm{ML}}$$
+### The coin MLE — maximise the log likelihood
+
+For $0<S<n$, taking logs turns the product into a sum:
+
+$$\ell(\theta)=S\log\theta+(n-S)\log(1-\theta)+\text{constant}.$$
+
+::: reveal
+$$\ell'(\theta)=\frac{S}{\theta}-\frac{n-S}{1-\theta}=0
+\quad\Longrightarrow\quad S(1-\theta)=(n-S)\theta
+\quad\Longrightarrow\quad \hat\theta_{\rm ML}=\frac Sn.$$
+:::
+
+::: reveal
+The second derivative is negative on $(0,1)$, so this is the maximum. For HHT, $\hat\theta_{\rm ML}=2/3$.
+:::
+
+::: small
+If $S=0$ or $S=n$, the maximum is at the boundary, $0$ or $1$; there is no interior derivative-zero solution. Here $S$ is sufficient for $\theta$: the order adds no information under this model.
+:::
+
+### A Beta prior — location and strength
+
+Use a density supported on the possible coin biases, $0<\theta<1$:
+
+$$p(\theta)=\frac{1}{B(\alpha,\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1},\qquad \alpha,\beta>0.$$
+
+::: cols c2
+::: col Where is the belief centred?
+$$\E[\theta]=\frac{\alpha}{\alpha+\beta}.$$
+
+$\mathrm{Beta}(2,2)$ centres at $1/2$; $\mathrm{Beta}(2,8)$ centres at $1/5$.
+:::
+::: col.accent How strong is that belief?
+At a fixed mean, larger $\alpha+\beta$ gives smaller variance. $\mathrm{Beta}(20,20)$ is much more concentrated than $\mathrm{Beta}(2,2)$.
+:::
+:::
+
+::: small
+$B(\alpha,\beta)$ makes the density integrate to 1. The parameters act like pseudo-counts in the update; they need not represent actual past flips. Uniform $\mathrm{Beta}(1,1)$ is still a choice of prior.
+:::
+
+### Derive the posterior by collecting powers
+
+Start with a Beta prior and observe $S$ heads in $n$ tosses:
+
+$$\begin{aligned}
+p(\theta\mid D)&\propto\underbrace{\theta^S(1-\theta)^{n-S}}_{\text{likelihood}}
+\underbrace{\theta^{\alpha-1}(1-\theta)^{\beta-1}}_{\text{prior}}\\[4pt]
+&=\theta^{\alpha+S-1}(1-\theta)^{\beta+n-S-1}.
+\end{aligned}$$
+
+::: reveal
+Recognise a Beta density and restore its normalising constant:
+
+$$\hl{\theta\mid D\sim\mathrm{Beta}(\alpha+S,\ \beta+n-S).}$$
+:::
+
+::: keypoint
+==Add heads to the first parameter; add tails to the second.== For a $\mathrm{Beta}(2,2)$ prior and HHT, the posterior is $\mathrm{Beta}(4,3)$.
+:::
+
+### What does Beta(4,3) actually tell us?
+
+The same HHT dataset and $\mathrm{Beta}(2,2)$ prior give several useful summaries:
+
+::: table
+| Summary | Calculation | Meaning |
+|---|---|---|
+| Posterior mean | $4/(4+3)=0.571$ | Average bias under the posterior |
+| Posterior mode (MAP) | $(4-1)/(4+3-2)=0.600$ | Most dense part of the posterior |
+| 95% credible interval | approximately $[0.223,\ 0.882]$ | Middle 95% of posterior probability |
+| Probability of next head | $\E[\theta\mid D]=4/7$ | A prediction about a future toss |
+:::
 
 ::: reveal
 ::: keypoint
-The posterior mean is a ==weighted average== of the prior mean and the data's estimate.
+Three tosses leave substantial uncertainty. ==The mean, mode and interval answer different questions.==
 :::
 :::
+
+### The posterior mean is a balance — in numbers
+
+For the coin model,
+
+$$\E[\theta\mid D]=\frac{\alpha+S}{\alpha+\beta+n}
+=\frac{\alpha+\beta}{\alpha+\beta+n}\frac{\alpha}{\alpha+\beta}
++\frac{n}{\alpha+\beta+n}\frac Sn.$$
 
 ::: reveal
-- small $n$ — the *prior* dominates; belief barely moves;
-- large $n$ — the *data* dominates, the prior washes out and $\E[\theta\mid y]\to\hat\theta_{\mathrm{ML}}$;
-- $\alpha+\beta$ tunes the ==strength== of the prior — how many pseudo-observations it is worth.
+For $\mathrm{Beta}(2,2)$ and HHT, this becomes
+
+$$\underbrace{\frac47}_{\text{posterior mean}}
+=\underbrace{\frac47}_{\text{prior weight}}\underbrace{\frac12}_{\text{prior mean}}
++\underbrace{\frac37}_{\text{data weight}}\underbrace{\frac23}_{\text{sample proportion}}.$$
 :::
 
-### Two laws that say the same thing, exactly
-
-::: block The prior mean is the average of every posterior mean
-$$\E[\theta] = \E\big[\,\E[\theta\mid y]\,\big]$$
-Before seeing data, your belief is already the average of every belief you might end up with.
+::: keypoint
+Compare **sample size $n$** with **prior strength $\alpha+\beta$**. Small $n$ alone does not tell us which dominates.
 :::
 
-::: block The posterior is on average tighter than the prior
-$$\mathrm{Var}(\theta) = \E\big[\mathrm{Var}(\theta\mid y)\big] + \mathrm{Var}\big(\E[\theta\mid y]\big)$$
-The posterior variance is smaller than the prior variance by exactly the variation in posterior means across possible datasets. ==Data cannot, on average, make you less certain.==
-:::
+### Sequential updating — do not count old data twice
 
-::: reveal
-::: small
-The posterior sits at a compromise between prior information and data, and the compromise is controlled more and more by the data as the sample grows.
-:::
-:::
-
-### Conjugacy — why any of this is computable
-
-A prior is ==conjugate== to a likelihood when the posterior lands in the same family as the prior. The update then has a closed form and there is no integral to evaluate.
+The posterior after one batch becomes the prior before the next batch:
 
 ::: flow
-- Prior | $\mathcal{P}$
-- Likelihood | $\mathcal{F}$
-- !Posterior | $\mathcal{P}$ — the same family
+- **Prior** | $\mathrm{Beta}(2,2)$
+- **Observe HH** | $\mathrm{Beta}(4,2)$
+- !**Observe T** | $\mathrm{Beta}(4,3)$
 :::
 
 ::: reveal
-- you know the posterior's form in advance, so mean, mode and variance are immediate;
-- the prior has a readable meaning — a Beta prior is just adding pseudo-counts;
-- and the evidence $p(y)=\int p(y\mid\theta)p(\theta)\,d\theta$ can actually be carried out.
+Updating once with HHT gives exactly the same answer. More generally,
+
+$$p(\theta\mid D_1,D_2)\propto p(D_2\mid\theta)\,p(\theta\mid D_1),$$
+
+when the batches are conditionally independent given $\theta$.
 :::
 
-### The conjugate pairs worth knowing
-{fill: top}
+::: keypoint
+The old data is already in $p(\theta\mid D_1)$. ==Multiply by the new likelihood once.==
+:::
 
-| Likelihood | Conjugate prior | Posterior |
+### Read the original coin-update picture
+
+::: cols c2
+::: col
+::: figure coin-updates-source | 440
+Original PDF, p. 19: one sequence of observations and its successive Beta posteriors.
+:::
+:::
+::: col What changes from panel to panel?
+**Location:** the estimate follows the accumulated balance of heads and tails.
+
+::: reveal
+**Concentration:** 500 observations constrain the bias more strongly than a few tosses in this example.
+:::
+
+::: reveal
+**Interpretation:** the red curve is a density over $\theta$, not a histogram of heads and tails.
+:::
+
+::: small
+The final panels use 26 heads in 50 tosses and 259 in 500, both starting from $\mathrm{Beta}(1,1)$. A tall density is compatible with total area 1.
+:::
+:::
+:::
+
+### Does more data always make a posterior narrower?
+
+**On average, yes**, in the following precise sense. The average is over possible datasets under the joint model:
+
+$$\mathrm{Var}(\theta)=\E_D[\mathrm{Var}(\theta\mid D)]+\mathrm{Var}_D(\E[\theta\mid D]).$$
+
+::: reveal
+The last term is non-negative, so the expected posterior variance cannot exceed the prior variance. Also $\E_D[\E(\theta\mid D)]=\E(\theta)$.
+:::
+
+::: reveal
+::: block One surprising observation can widen it
+A $\mathrm{Beta}(1,20)$ prior has variance $0.00206$. After one head, $\mathrm{Beta}(2,20)$ has variance $0.00359$. The surprising head challenges a strong belief in tails.
+:::
+:::
+
+### Conjugacy — recognise the same family after updating
+
+A prior is **conjugate** to a likelihood when the posterior stays in the prior's family. We can recognise and normalise the result analytically.
+
+::: table
+| Data model and unknown quantity | Prior | Posterior |
 |---|---|---|
-| Binomial · Negative binomial · Geometric | Beta | Beta |
-| Poisson · Exponential | Gamma | Gamma |
-| Normal, mean unknown | Normal | Normal |
-| Normal, variance unknown | Inverse Gamma | Inverse Gamma |
-| Normal, both unknown | Normal–Gamma | Normal–Gamma |
-| Multinomial | Dirichlet | Dirichlet |
+| Binomial success probability | Beta | Beta |
+| Poisson rate | Gamma (shape, rate) | Gamma |
+| Normal mean, variance known | Normal | Normal |
+| Normal variance, mean known | Inverse Gamma | Inverse Gamma |
+| Normal mean and precision both unknown | Normal–Gamma | Normal–Gamma |
+| Multinomial category probabilities | Dirichlet | Dirichlet |
+:::
 
 ::: small
-In every case the posterior parameters are the prior's **plus a sufficient statistic of the data** — which is exactly why the posterior mean is always a prior-vs-data weighted average, and why a prior behaves like a stock of pseudo-observations.
+Conjugacy is algebraic convenience. It does not establish model fit or make every posterior mean a simple average of prior and sample means. Unknown Normal mean and variance require an appropriate joint prior.
 :::
 
-### A worked example — counting Pokémon
-{sub: Example 2.1 · Poisson likelihood, Gamma prior}
+### Counting events — why Poisson and Gamma?
 
-Counts in 20 districts of San Francisco: 14, 13, 7, 10, 15, 15, 2, 13, 13, 11, 10, 13, 5, 13, 9, 12, 9, 12, 8, 7.
+Let $Y_i$ count events in equal observation windows, with a common unknown rate $\lambda$:
 
-::: cols
-::: col The model
-$Y_i\sim\mathrm{Poisson}(\lambda)$, and a Gamma prior with mean 20 and standard deviation 10:
+::: cols c2
+::: col Poisson likelihood
+$$p(Y_i=y_i\mid\lambda)=\frac{\lambda^{y_i}e^{-\lambda}}{y_i!}.$$
 
-$$\E[\lambda]=\frac{\alpha}{\beta}=20,\quad \mathrm{Var}(\lambda)=\frac{\alpha}{\beta^2}=10^2 \;\Rightarrow\; \alpha=4,\ \beta=0.2$$
+$Y_i$ is a non-negative integer. Its conditional mean and variance both equal $\lambda$.
 :::
-::: col.accent The update
-$$p(\lambda\mid y)=\mathrm{Gamma}(\alpha+n\bar y,\ \beta+n)=\mathrm{Gamma}(215,\ 20.2)$$
+::: col.accent Gamma prior
+$$p(\lambda)=\frac{b^a}{\Gamma(a)}\lambda^{a-1}e^{-b\lambda}.$$
 
-$$\E[\lambda\mid y]=\frac{215}{20.2}=10.64,\qquad \mathrm{Var}=\frac{215}{20.2^2}=0.527$$
+$\lambda>0$. Here $a$ is **shape** and $b$ is **rate**, with mean $a/b$ and variance $a/b^2$.
+:::
+:::
+
+::: small
+We use $a,b$ for Gamma to distinguish them from the coin's Beta parameters. A Gamma **scale** would be $1/b$, not $b$.
+:::
+
+### Poisson–Gamma updating — counts and exposure add
+
+For conditionally independent, equal-exposure counts,
+
+$$\begin{aligned}
+p(\lambda\mid D)&\propto\lambda^{\sum_i y_i}e^{-n\lambda}\cdot\lambda^{a-1}e^{-b\lambda}\\
+&=\lambda^{a+\sum_i y_i-1}e^{-(b+n)\lambda}.
+\end{aligned}$$
+
+::: reveal
+$$\lambda\mid D\sim\mathrm{Gamma}(a+\textstyle\sum_i y_i,\ b+n),\qquad
+\E[\lambda\mid D]=\frac{b}{b+n}\frac ab+\frac{n}{b+n}\bar y.$$
+:::
+
+::: keypoint
+==Add events to the shape; add exposure to the rate.== If $Y_i\mid\lambda\sim\mathrm{Poisson}(t_i\lambda)$, replace $n$ by total exposure $\sum_i t_i$.
+:::
+
+### The original example — Pokémon counts in 20 districts
+
+::: cols c2
+::: col
+::: figure pokemon-map-source | 370
+Map from the original PDF, p. 36. Counts are the source's teaching dataset.
+:::
+:::
+::: col The observations
+14, 13, 7, 10, 15, 15, 2, 13, 13, 11, 10, 13, 5, 13, 9, 12, 9, 12, 8, 7.
+
+**Twenty districts:** $n=20$, total $\sum_i y_i=211$, average $\bar y=10.55$.
 :::
 :::
 
 ::: reveal
-::: small
-The prior said 20 and the data says 10.55. The posterior says ==10.64== — the twenty observations have all but erased a prior worth $\beta = 0.2$ pseudo-observations. The same weighted average, in numbers.
-:::
-:::
+The source specifies prior mean 20 and standard deviation 10. In shape–rate notation,
 
-### Three steps, and a loop
-{fill: center}
-
-::: flow | | 
-- **1 · Modelling** | a full joint probability model over everything observable and unobservable
-- **2 · Inference** | compute and read the posterior over the unobserved quantities of interest
-- !**3 · Checking** | does the model fit, and how sensitive is it to the assumptions of step 1?
+$$\frac ab=20,\qquad \frac{a}{b^2}=100
+\quad\Longrightarrow\quad b=0.2,\qquad a=4.$$
 :::
 
 ::: small
-Step 3 loops back to step 1. A Bayesian analysis is not finished when the posterior is computed — it is finished when the model has survived being doubted.
+The model treats districts as comparable units with one common rate. Unequal areas, search effort or spatial dependence require a richer model or exposure adjustment.
 :::
 
-### Check — who wins as the data piles up
+### The count estimate — calculate, then interpret
+
+$$\lambda\mid D\sim\mathrm{Gamma}(4+211,\ 0.2+20)=\mathrm{Gamma}(215,20.2).$$
+
+::: cols c2
+::: col What is the estimated rate?
+$$\E[\lambda\mid D]=\frac{215}{20.2}=10.644.$$
+
+The prior weight is $0.2/20.2\approx0.99\%$. The data pulls the estimate close to 10.55.
+:::
+::: col.accent How uncertain is that rate?
+$$\mathrm{Var}(\lambda\mid D)=\frac{215}{20.2^2}=0.527.$$
+
+Posterior standard deviation: **0.726**. Central 95% credible interval: approximately **[9.27, 12.11]**.
+:::
+:::
+
+::: keypoint
+This interval describes the **common rate $\lambda$**. It is not a prediction interval for the count in one new district.
+:::
+
+### More than two outcomes — the Dirichlet update
+{sub: the original PDF's categorical model, pp. 46–47}
+
+Suppose each service request is **delivery**, **pickup** or **return**. The probabilities form a vector $\theta$ with non-negative entries adding to 1.
+
+$$\theta\sim\mathrm{Dirichlet}(\alpha_1,\alpha_2,\alpha_3),\qquad
+(Y_1,Y_2,Y_3)\mid\theta\sim\mathrm{Multinomial}(n,\theta).$$
+
+::: reveal
+The likelihood adds one count to the corresponding exponent for each observation:
+
+$$\theta\mid D\sim\mathrm{Dirichlet}(\alpha_1+Y_1,\alpha_2+Y_2,\alpha_3+Y_3).$$
+:::
+
+::: keypoint
+==The Beta update with a longer list of categories.== With two categories, the Dirichlet reduces to a Beta distribution for the first probability.
+:::
+
+### An unseen category need not get zero probability
+
+Start from $\mathrm{Dirichlet}(1,1,1)$ and observe ten requests: **6 deliveries, 4 pickups, 0 returns**.
+
+::: table
+| Category | Count | MLE | Posterior parameter | Next-request probability |
+|---|---|---|---|---|
+| Delivery | 6 | $6/10$ | $1+6=7$ | $7/13$ |
+| Pickup | 4 | $4/10$ | $1+4=5$ | $5/13$ |
+| Return | 0 | $0/10$ | $1+0=1$ | $1/13$ |
+:::
+
+::: reveal
+The posterior is $\mathrm{Dirichlet}(7,5,1)$ and predictive probabilities add to 1. The prior gives an unseen but possible category some support.
+:::
+
+::: keypoint
+This update can estimate the rows of a transition matrix. ==Ten observations without a return do not prove returns are impossible.==
+:::
+
+### When does the prior's influence fade?
+
+In the Beta–Binomial model, for a fixed proper Beta prior,
+
+$$\text{prior weight}=\frac{\alpha+\beta}{\alpha+\beta+n}\longrightarrow0.$$
+
+::: reveal
+This does not mean any prior can be overcome in any model:
+
+- An identifiable model needs informative observations about the parameter.
+- A prior excluding a whole region cannot acquire posterior mass there by multiplication.
+- Model misspecification can produce confident but misleading conclusions.
+:::
+
+::: keypoint
+Check prior sensitivity when data is limited. ==More data is not a substitute for a plausible model.==
+:::
+
+### Check — who wins as the data piles up?
 {q: 2}
 
-::: quiz The posterior mean is a weighted average of the prior mean and the estimate from the data. As the number of observations $n$ grows, what happens to the weight on the prior?
-- It stays fixed — the prior was chosen before the data and does not change
-- =It shrinks toward zero, so the data eventually overwhelms any proper prior
-- It grows, because the posterior becomes more confident
-- It shrinks only if the prior was chosen to be conjugate
-The weights are set by **precisions**, and the data's precision grows with $n$ while the prior's does not. So a prior is a thumb on the scale that a sufficiently large sample lifts off. This is the reassuring half; the other half is that when data is scarce — which is when you actually need help — the prior is doing most of the work, so it had better be honest.
+::: quiz With a fixed $\mathrm{Beta}(\alpha,\beta)$ prior and independent Bernoulli observations, what happens to the prior weight in the posterior mean as $n$ grows?
+- It stays fixed because the prior was chosen first
+- =It tends to zero: $(\alpha+\beta)/(\alpha+\beta+n)\to0$
+- It grows because the posterior becomes more concentrated
+- It becomes exactly zero after $n=\alpha+\beta$
+This is exact for the specified Beta–Binomial model. At $n=\alpha+\beta$, prior and data weights are equal. At finite $n$ the prior still has positive weight. General claims about posterior concentration require additional assumptions.
 :::
 
-## Act 3 — collapsing to a point: MLE, MAP, regularisation
+## Act 3 — point estimates and regression
 {short: ACT 3, num: Act 3}
 
-**Q3.** Sometimes one number is required. There are two principled ways to extract one — and one of them has a familiar face.
+**Q3.** MLE uses the likelihood; MAP uses the posterior. For regression, this connects directly to Lecture 1.
 
-### When you must commit — MLE vs. MAP
+### MLE, MAP and posterior mean answer different questions
 {q: 3}
 
 ::: qstrip
 :::
 
-::: cols
-::: col Maximum likelihood
-$$\hat\theta = \argmax_\theta\; p(y\mid\theta)$$
-
-Ignores the prior. The frequentist's point estimate — and, as the coin showed, the relative frequency.
-:::
-::: col.accent Maximum a posteriori
-$$\hat\theta = \argmax_\theta\; p(\theta\mid y) \;\propto\; \argmax_\theta\; p(y\mid\theta)\,p(\theta)$$
-
-The peak of the posterior. MLE ==plus a prior term==.
-:::
+::: table
+| Estimate | Definition | Beta(2,2) prior + HHT |
+|---|---|---|
+| **MLE** | $\argmax_\theta p(D\mid\theta)$ | $2/3$ |
+| **MAP** | $\argmax_\theta p(\theta\mid D)=\argmax_\theta p(D\mid\theta)p(\theta)$ | $3/5$ |
+| **Posterior mean** | $\E[\theta\mid D]$ | $4/7$ |
 :::
 
 ::: reveal
-With abundant data the two coincide — the likelihood swamps the prior. With scarce data the prior is what keeps the estimate sane.
+MAP picks the posterior's mode. The posterior mean minimises posterior expected squared-error loss; the posterior median minimises expected absolute-error loss.
 :::
+
+::: small
+The posterior mode depends on the parameterisation. With abundant informative data and suitable regularity, MLE and MAP may become close; they need not be identical for a finite sample.
+:::
+
+### A concrete task — predict a house price
+
+::: figure housing-model-source | 1000
+Original PDF, p. 50: a real task becomes a regression model and then a fitting problem.
+:::
+
+::: cols c3
+::: col Data
+$x_i$: house features. $y_i$: observed sale price.
+:::
+::: col Model
+$y_i=w_0+w_1x_i+\epsilon_i$ for one feature.
+:::
+::: col.accent Prediction
+At a new $x_*$, estimate the mean price and the uncertainty of an individual sale.
+:::
+:::
+
+### Put a line into matrix form
+
+Include the intercept by adding a constant feature 1. For the illustrative data $(x,y)=(0,1),(1,2),(2,2)$,
+
+$$X=\begin{pmatrix}1&0\\1&1\\1&2\end{pmatrix},\qquad
+w=\begin{pmatrix}w_0\\w_1\end{pmatrix},\qquad
+y=\begin{pmatrix}1\\2\\2\end{pmatrix},\qquad
+Xw=\begin{pmatrix}w_0\\w_0+w_1\\w_0+2w_1\end{pmatrix}.$$
 
 ::: reveal
 ::: keypoint
-And that prior term has ==a familiar face.==
+Each row is one observation. Each column is one feature. ==The residual vector is $y-Xw$.==
 :::
 :::
 
-### Linear regression, and the same fit four times
-
-::: lede
-The rest of this act is one worked problem — fit a line — approached from four directions that turn out to be the same direction.
+::: small
+In general $X\in\mathbb R^{n\times d}$, $w\in\mathbb R^d$ and $y\in\mathbb R^n$. Here $d$ includes the intercept. Keep this orientation throughout the derivation.
 :::
 
-| # | Starting point | Result |
-|---|---|---|
-| 1 | **Optimisation.** $\min_w \tfrac12\lVert y-\mathbf{X}w\rVert_2^2$ | normal equation $\hat w = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top y$ |
-| 2 | **MLE.** $y_i = w^\top x_i + \epsilon_i$, $\epsilon_i\sim\mathcal{N}(0,\sigma^2)$ | $\log p(y\mid \mathbf{X},w) = \text{const} - \tfrac{1}{\sigma^2}J(w)$ — ==the same $\hat w$== |
-| 3 | **MAP.** add a Gaussian prior on $w$ | ridge, $\hat w = (\mathbf{X}^\top\mathbf{X}+\lambda I)^{-1}\mathbf{X}^\top y$ |
-| 4 | **Full Bayes.** keep the whole posterior over $w$ | a predictive *distribution*, with error bars |
+### Least squares — use Lecture 1's optimality condition
+
+Choose weights to minimise squared residuals:
+
+$$J(w)=\frac12\lVert y-Xw\rVert^2,\qquad \nabla J(w)=X^\top(Xw-y).$$
 
 ::: reveal
+The Hessian is $X^\top X\succeq0$, so $J$ is convex. Therefore
+
+$$\hat w\text{ minimises }J\quad\Longleftrightarrow\quad X^\top X\hat w=X^\top y.$$
+:::
+
+::: keypoint
+This is the **normal equation**. The zero-gradient condition is exact here because the problem is convex, differentiable and unconstrained.
+:::
+
 ::: small
-Maximising the log likelihood with respect to $w$ ==is== minimising the squared error. Least squares was never a separate idea from maximum likelihood; it is Gaussian-noise MLE wearing different clothes.
+Only when $X$ has full column rank is the minimiser unique and $(X^\top X)^{-1}X^\top y$ valid. Otherwise minimisers are not unique; use QR or SVD methods for the linear algebra instead of explicitly forming an inverse.
+:::
+
+### Solve the three-point regression by hand
+
+For the previous three observations,
+
+$$X^\top X=\begin{pmatrix}3&3\\3&5\end{pmatrix},\qquad X^\top y=\begin{pmatrix}5\\6\end{pmatrix}.$$
+
+::: reveal
+The normal equation gives $3w_0+3w_1=5$ and $3w_0+5w_1=6$. Subtract to get $w_1=1/2$, then $w_0=7/6$.
+:::
+
+::: reveal
+$$\hat y=\begin{pmatrix}7/6\\5/3\\13/6\end{pmatrix},\qquad
+y-\hat y=\begin{pmatrix}-1/6\\1/3\\-1/6\end{pmatrix},\qquad
+\lVert y-\hat y\rVert^2=1/6.$$
+:::
+
+::: keypoint
+A best-fitting line need not pass through every point. ==It balances the residuals to minimise their squared total.==
+:::
+
+### Why Gaussian noise turns MLE into least squares
+
+Assume independent noise $\epsilon_i\sim\mathcal N(0,\sigma^2)$, with known $\sigma^2>0$:
+
+$$p(y\mid X,w)=\prod_{i=1}^n\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\!\left[-\frac{(y_i-x_i^\top w)^2}{2\sigma^2}\right].$$
+
+::: reveal
+Take the negative log:
+
+$$-\log p(y\mid X,w)=\underbrace{\frac n2\log(2\pi\sigma^2)}_{\text{constant in }w}
++\frac{1}{2\sigma^2}\lVert y-Xw\rVert^2.$$
+:::
+
+::: keypoint
+For fixed $\sigma^2$, ==maximising this likelihood is exactly minimising squared error.== Least squares itself does not require Gaussian noise; this probabilistic interpretation does.
+:::
+
+### Add a Gaussian prior — derive ridge, not just name it
+
+Let $w\sim\mathcal N(0,\tau^2I)$ with known $\tau^2>0$. The negative log posterior is
+
+$$-\log p(w\mid X,y)=\frac{1}{2\sigma^2}\lVert y-Xw\rVert^2
++\frac{1}{2\tau^2}\lVert w\rVert^2+\text{constant}.$$
+
+::: reveal
+Multiply by $2\sigma^2$, which does not change the minimiser:
+
+$$\hat w_{\rm MAP}=\argmin_w\left\{\lVert y-Xw\rVert^2+\lambda_2\lVert w\rVert^2\right\},\qquad
+\hl{\lambda_2=\sigma^2/\tau^2.}$$
+:::
+
+::: keypoint
+A smaller prior variance penalises large weights more strongly. The regulariser is the **negative log prior**, with the noise scale accounted for.
+:::
+
+### Why shrinkage helps — and what it changes
+
+Ridge changes the normal equation to
+
+$$\big(X^\top X+\lambda_2 I\big)\hat w=X^\top y.$$
+
+::: cols c2
+::: col Small or correlated datasets
+Several weight vectors may fit almost equally well. Small data perturbations can then produce large changes in the OLS weights.
+
+Adding $\lambda_2I$ makes the system positive definite for $\lambda_2>0$ and stabilises these directions.
+:::
+::: col.accent The tradeoff
+Shrinkage introduces bias toward the prior mean for potentially lower variance. It can help prediction but does not guarantee better test performance.
+
+Choose strength with prior knowledge and appropriate validation; inspect feature scaling.
+:::
+:::
+
+::: small
+In these derivations and the live regression example, all coefficients, including the intercept, have the stated prior. Applications often give the intercept a separate prior or leave it unpenalised.
+:::
+
+### Lasso — a different prior changes the penalty
+
+Independent Laplace priors with scale $b_L>0$ have
+
+$$p(w)=\prod_j\frac{1}{2b_L}e^{-|w_j|/b_L}.$$
+
+::: reveal
+With the same Gaussian likelihood,
+
+$$\hat w_{\rm MAP}=\argmin_w\left\{\lVert y-Xw\rVert^2+\lambda_1\lVert w\rVert_1\right\},\qquad
+\lambda_1=\frac{2\sigma^2}{b_L}.$$
+:::
+
+::: keypoint
+The absolute-value penalty has a corner at zero, so some **MAP coefficients** can be exactly zero. A continuous Laplace prior has **no probability mass at the single point zero**.
+:::
+
+### Two views of the same regularised fit
+
+::: widget ridge-lasso-prior
+Change the penalty strength, then switch between ridge and lasso. The left panel shows the corresponding constraint set; the right shows the prior shape. Curves on the right are scaled to peak height 1 for shape comparison, and the illustration fixes $\sigma^2=1$.
+:::
+
+### Full Bayes keeps the distribution over weights
+
+With Gaussian noise and a Gaussian prior, the posterior is also Gaussian:
+
+$$w\mid X,y\sim\mathcal N(\mu_w,\Sigma_w).$$
+
+::: cols c2
+::: col The centre
+$$\mu_w=\Sigma_w\frac{X^\top y}{\sigma^2}.$$
+
+Here the mean and mode coincide, so $\mu_w$ is also the ridge/MAP estimate.
+:::
+::: col.accent The uncertainty
+$$\Sigma_w^{-1}=\frac{X^\top X}{\sigma^2}+\frac{I}{\tau^2}.$$
+
+Data precision plus prior precision. Large posterior variance marks directions in the weights that remain uncertain.
+:::
+:::
+
+::: small
+Complete the square in the log posterior to obtain these expressions; the derivation is in the appendix. Known positive $\sigma^2$ and $\tau^2$ are assumed.
+:::
+
+### Read the original regression posterior picture
+
+::: cols c2
+::: col
+::: figure regression-beliefs-source | 465
+Original PDF, p. 62: fits and parameter posteriors for 2, 10 and 100 training cases.
+:::
+:::
+::: col Two rows, two spaces
+**Top:** each faint line is a plausible regression mean function, obtained by drawing weights from the posterior.
+
+::: reveal
+**Bottom:** the density lives in coefficient space. A tighter region means less uncertainty about intercept and slope.
+:::
+
+::: reveal
+**New observations:** to sample an actual future response, also add observation noise. Drawing a line alone does not do that.
+:::
 :::
 :::
 
 ### The Bayesian fit, as the data arrives
-{fill: top}
 
 ::: widget bayes-regression
-Draw $w\sim p(w\mid \mathbf{X},y)=\mathcal{N}(\mu_w,\Sigma_w)$ and plot the line. With two points the posterior is broad and the sampled lines fan out; with a hundred it has collapsed onto one answer and ML and MAP agree. ==What full Bayes keeps and the point estimates throw away is exactly that fan.==
-:::
-
-### The unification — regularisation *is* a prior
-
-| Estimator | Optimisation view | Bayesian view (MAP with a prior) |
-|---|---|---|
-| ordinary least squares | $\min_w \lVert y-\mathbf{X}w\rVert_2^2$ | MLE, Gaussian noise, no prior |
-| **Ridge** | $\min_w \lVert y-\mathbf{X}w\rVert_2^2 + \lambda\lVert w\rVert_2^2$ | MAP with a ==Gaussian== prior on $w$ |
-| **Lasso** | $\min_w \lVert y-\mathbf{X}w\rVert_2^2 + \lambda\lVert w\rVert_1$ | MAP with a ==Laplace== prior on $w$ |
-
-::: reveal
-::: block The punchline
-A regulariser is not an ad-hoc penalty — it is ==the log of a prior==. Ridge's $\ell_2$ term is a Gaussian prior; Lasso's $\ell_1$ term is a Laplace prior, whose sharp peak at zero is what produces sparsity.
-:::
-:::
-
-### Two views of the same picture
-{fill: top}
-
-::: widget ridge-lasso-prior
-On the left, the optimisation view: level sets of the squared error meeting a budget set — a ball for $\ell_2$, a diamond for $\ell_1$, whose corners are why Lasso zeroes coefficients. On the right, the Bayesian view: the very same $\lambda$ read as ==the width of a prior==. Turn the dial and watch both stories move together.
-:::
-
-::: reveal
-::: small
-This is the lecture's deepest bridge: ==the optimisation world and the Bayesian world are the same world==, seen through different lenses. "Add a penalty to avoid overfitting" and "encode a prior belief about the weights" are one act.
-:::
+Compare 2, 10 and 100 training cases using nested simulated datasets. The faint lines are draws of the **mean function**, not a predictive interval for individual observations. In this example the posterior concentrates and ML and MAP become close as informative data accumulates.
 :::
 
 ### Check — the prior wearing a disguise
 {q: 3}
 
-::: quiz Ridge regression adds $\lambda \lVert w \rVert^2$ to the least-squares objective. Seen through Bayes, that penalty *is*:
-- A Laplace prior on $w$, which is what drives coefficients to exactly zero
-- A uniform prior on $w$ over a ball of radius $1/\lambda$
-- =A zero-mean Gaussian prior on $w$, with $\lambda$ setting its inverse variance
-- Not a prior at all — regularisation is a purely frequentist device
-Take $-\log$ of the posterior and the likelihood gives the squared error while the prior gives the penalty. A **Gaussian** prior yields the squared $\ell_2$ penalty of ridge; a **Laplace** prior yields the $\ell_1$ penalty of lasso, whose sharp peak at the origin is exactly why lasso sets coefficients to zero and ridge only shrinks them. Regularisation was never atheoretical — it was a prior all along.
+::: quiz Under Gaussian noise, what prior gives MAP the ridge objective $\lVert y-Xw\rVert^2+\lambda_2\lVert w\rVert^2$?
+- A Laplace prior, because ridge selects exact zeros
+- A uniform prior over all of $\mathbb R^d$
+- =A zero-mean Gaussian prior with variance $\tau^2=\sigma^2/\lambda_2$
+- No prior can produce a regularisation term
+Taking the negative log turns the Gaussian likelihood into squared residuals and the Gaussian prior into a squared-weight penalty. For this unaveraged objective, $\lambda_2=\sigma^2/\tau^2$. Averaging the data loss by $n$ changes the coefficient convention.
 :::
 
 ## Act 4 — predicting with uncertainty intact
 {short: ACT 4, num: Act 4}
 
-**Q4.** A point estimate predicts with the best $\theta$. Full Bayes predicts with all of them.
+**Q4.** A fitted parameter, a mean response and a future observation are different objects.
 
-### Full Bayes — integrate, don't plug in
+### Prior, posterior, predictive — keep the target clear
 {q: 4}
 
 ::: qstrip
 :::
 
-MLE and MAP collapse the posterior to a point and then predict, discarding everything else. The fully Bayesian prediction ==averages over the entire posterior==:
-
-$$p(\hat y \mid y) = \int p(\hat y\mid\theta)\; \underbrace{p(\theta\mid y)}_{\text{posterior}}\; d\theta$$
-
-::: reveal
-::: keypoint
-Don't predict with the *best* $\theta$ — predict with ==all $\theta$, weighted by belief.==
-:::
-:::
-
-### What the integral buys, and what it costs
-
-- it ==propagates uncertainty== into the prediction: the predictive distribution is wider exactly when the posterior is;
-- it guards against the overconfidence of a single fitted parameter;
-- the price is the integral — closed form for conjugate models, otherwise approximated by ==sampling== (MCMC) or variational methods.
-
-::: reveal
-And for conjugate pairs the answer is a named distribution, every time:
-
-| Model | Prior predictive $p(y)$ | Posterior predictive $p(\hat y\mid y)$ |
+::: table
+| Distribution | Random quantity | Information used |
 |---|---|---|
-| Binomial–Beta | Beta–Binomial$(y\mid n,\alpha,\beta)$ | Beta–Binomial$(\hat y\mid n,\alpha+y,\beta+n-y)$ |
-| Poisson–Gamma | Negative binomial$(y\mid\alpha,\beta)$ | Negative binomial$(\hat y\mid \alpha+n\bar y,\beta+n)$ |
-| Normal–Normal | $\mathcal{N}(y\mid\mu_0,\ \sigma_Y^2+\tau_0^2)$ | $\mathcal{N}(\hat y\mid\mu_1,\ \sigma_Y^2+\tau_1^2)$ |
+| Prior $p(\theta)$ | parameter | before observing $D$ |
+| Prior predictive $p(\tilde y)$ | possible data | prior + sampling model |
+| Posterior $p(\theta\mid D)$ | parameter | prior + observed data |
+| Posterior predictive $p(\tilde y\mid D)$ | future observation | posterior + sampling model |
 :::
 
-### The Normal case, read as precision
+::: keypoint
+Posterior: **what might the parameter be?** Predictive: **what might we observe?**
+:::
 
-For $Y_i\sim\mathcal{N}(\theta,\sigma_Y^2)$ with $\theta\sim\mathcal{N}(\mu_0,\tau_0^2)$, the posterior is $\mathcal{N}(\mu_1,\tau_1^2)$ with
+### A predictive integral is a weighted average
 
-$$\mu_1 = \frac{\dfrac{\mu_0}{\tau_0^2}+\dfrac{n\bar y}{\sigma_Y^2}}{\dfrac{1}{\tau_0^2}+\dfrac{n}{\sigma_Y^2}}, \qquad \hl{\frac{1}{\tau_1^2} = \frac{1}{\tau_0^2}+\frac{n}{\sigma_Y^2}}$$
+Assume the new observation $\tilde Y$ is independent of past data $D$ conditional on $\theta$:
+
+$$p(\tilde y\mid D)=\int p(\tilde y\mid\theta)\,p(\theta\mid D)\,d\theta.$$
 
 ::: reveal
-==Precisions add.== The posterior mean is the prior mean and the data mean weighted by their precisions; the posterior precision is the prior's plus the data's. Sharpen the prior ($\tau_0\downarrow$) and it pulls harder; sharpen the measurements ($\sigma_Y\downarrow$) or take more of them ($n\uparrow$) and the data pulls harder.
+For the earlier two-coin example after HH, the next-head probability is a weighted sum:
+
+$$P(\tilde Y=H\mid HH)=0.5\frac{25}{89}+0.8\frac{64}{89}\approx0.716.$$
+:::
+
+::: keypoint
+The integral performs the same averaging with a continuum of candidates. ==Weight each prediction by posterior belief.==
+:::
+
+### One future toss — sometimes plugging in the mean agrees
+
+For the $\mathrm{Beta}(4,3)$ posterior from HHT,
+
+$$P(\tilde Y=1\mid D)=\int_0^1\theta\,p(\theta\mid D)\,d\theta=\frac47.$$
+
+::: reveal
+Thus $\tilde Y\mid D\sim\mathrm{Bernoulli}(4/7)$. Plugging the **posterior mean** into a Bernoulli model gives exactly the same distribution for one toss.
 :::
 
 ::: reveal
+Multiple future tosses share the same uncertain $\theta$. After integrating it out, their outcomes are dependent:
+
+$$\mathrm{Cov}(\tilde Y_1,\tilde Y_2\mid D)=\mathrm{Var}(\theta\mid D)>0.$$
+:::
+
+::: keypoint
+The value of retaining parameter uncertainty becomes clear when predicting **a batch**, not just one binary outcome.
+:::
+
+### A batch of future tosses — see the extra spread
+
+::: widget bayes-predictive {"mode":"coin"}
+The posterior is fixed at $\mathrm{Beta}(4,3)$. Compare full Bayes with a Binomial model using $\theta=4/7$, as the number of future tosses changes. For one toss they coincide; for a batch, full Bayes has greater variance.
+:::
+
+### Where the Beta–Binomial comes from
+{math: compact}
+
+Write $\alpha'=\alpha+S$, $\beta'=\beta+n-S$. For $K$ heads in **$m$ future tosses**,
+
+$$\begin{aligned}
+P(K=k\mid D)&=\int_0^1\binom mk\theta^k(1-\theta)^{m-k}
+\frac{\theta^{\alpha'-1}(1-\theta)^{\beta'-1}}{B(\alpha',\beta')}\,d\theta\\[4pt]
+&=\binom mk\frac{B(\alpha'+k,\beta'+m-k)}{B(\alpha',\beta')}.
+\end{aligned}$$
+
+::: reveal
+For $m=2$ and $\mathrm{Beta}(4,3)$, probabilities of $K=0,1,2$ are $3/14,6/14,5/14$. They sum to 1.
+:::
+
 ::: small
-And the predictive variance is $\sigma_Y^2+\tau_1^2$ — measurement noise you can never remove, plus parameter uncertainty you can. The two kinds of uncertainty Lecture 0 named, arriving as two separate terms in one formula. When the "parameter" is an entire function, this same predictive integral becomes Gaussian-process regression — the core of Lecture 4.
+Before observing data, use $\alpha,\beta$ to obtain the **prior predictive**. With a $\mathrm{Beta}(2,2)$ prior and two tosses, its probabilities are $0.3,0.4,0.3$. Future batch size $m$ need not equal training size $n$.
+:::
+
+### Predict one new district — rate uncertainty is not count noise
+
+Return to $\lambda\mid D\sim\mathrm{Gamma}(215,20.2)$. For one comparable new district, $\tilde Y\mid\lambda\sim\mathrm{Poisson}(\lambda)$.
+
+::: reveal
+The law of total variance gives
+
+$$\begin{aligned}
+\E[\tilde Y\mid D]&=\E[\lambda\mid D]=10.644,\\
+\mathrm{Var}(\tilde Y\mid D)&=\underbrace{\E[\lambda\mid D]}_{\text{count noise}}
++\underbrace{\mathrm{Var}(\lambda\mid D)}_{\text{rate uncertainty}}\\
+&\approx10.644+0.527\approx11.17.
+\end{aligned}$$
+:::
+
+::: keypoint
+The rate's posterior standard deviation is **0.726**; a new count's predictive standard deviation is **3.342**. ==Knowing the rate well does not make every district identical.==
+:::
+
+::: small
+The predictive distribution is Negative Binomial, a Poisson–Gamma mixture. Its probability mass function and parameter convention are in the appendix.
+:::
+
+### Normal observations — combine information by precision
+
+Let $Y_i\mid\theta\sim\mathcal N(\theta,\sigma^2)$ independently, with known noise variance, and $\theta\sim\mathcal N(\mu_0,\tau_0^2)$.
+
+::: cols c2
+::: col Data information
+The sample mean satisfies
+
+$$\bar Y\mid\theta\sim\mathcal N(\theta,\sigma^2/n).$$
+
+Its **precision**, inverse variance, is $n/\sigma^2$.
+:::
+::: col.accent Prior information
+Prior precision is $1/\tau_0^2$. Completing the square gives posterior precision
+
+$$\frac{1}{\tau_1^2}=\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}.$$
 :::
 :::
 
-### Check — why not just use the best $\theta$
+::: reveal
+$$\mu_1=\frac{(1/\tau_0^2)\mu_0+(n/\sigma^2)\bar y}{1/\tau_0^2+n/\sigma^2},\qquad
+\theta\mid D\sim\mathcal N(\mu_1,\tau_1^2).$$
+:::
+
+### Four temperature readings — calculate the update
+
+Prior: the unknown temperature is $\theta\sim\mathcal N(20,2^2)$. Measurement noise has standard deviation 3. Four readings have average 23.
+
+::: table
+| Information | Mean | Variance | Precision |
+|---|---|---|---|
+| Prior | 20 | $2^2=4$ | $1/4$ |
+| Average of four readings | 23 | $3^2/4=2.25$ | $4/9$ |
+| Posterior | **21.92** | **1.44** | $1/4+4/9=25/36$ |
+:::
+
+::: reveal
+$$\mu_1=\frac{(1/4)20+(4/9)23}{1/4+4/9}=21.92,\qquad \tau_1=1.2.$$
+:::
+
+::: keypoint
+The readings pull the estimate upward. They do not erase the prior after only four measurements.
+:::
+
+### More readings sharpen the mean; observation noise remains
+
+::: widget bayes-predictive {"mode":"normal"}
+Keep the sample average at 23 and vary the number of readings. The posterior over temperature narrows; prediction of a new noisy reading retains the observation-noise floor. At $n=4$, predictive variance is $9+1.44=10.44$.
+:::
+
+### Regression prediction — a line and a noisy observation
+
+At a new feature vector $x_*$, the fitted mean is $f_*=x_*^\top w$. Since $w\mid D\sim\mathcal N(\mu_w,\Sigma_w)$,
+
+$$f_*\mid D\sim\mathcal N\!\left(x_*^\top\mu_w,\ x_*^\top\Sigma_w x_*\right).$$
+
+::: reveal
+An individual response also includes noise, $\tilde Y_*=f_*+\epsilon_*$:
+
+$$\tilde Y_*\mid D\sim\mathcal N\!\left(x_*^\top\mu_w,
+\underbrace{x_*^\top\Sigma_w x_*}_{\text{parameter uncertainty}}+\underbrace{\sigma^2}_{\text{observation noise}}\right).$$
+:::
+
+::: keypoint
+Drawing posterior lines shows uncertainty about the mean function. ==Add noise to predict actual observations.== Both depend on the linear model being appropriate.
+:::
+
+### When the integral is hard — simulate the two stages
+
+For $s=1,\dots,M$:
+
+::: flow
+- **1 · Draw a parameter** | $\theta^{(s)}\sim p(\theta\mid D)$
+- !**2 · Draw an observation** | $\tilde y^{(s)}\sim p(\tilde y\mid\theta^{(s)})$
+- **3 · Summarise** | histogram, quantiles, event probabilities
+:::
+
+::: reveal
+For regression, draw $w^{(s)}$ from its Gaussian posterior, then draw noise and set $\tilde y_*^{(s)}=x_*^\top w^{(s)}+\epsilon_*^{(s)}$.
+:::
+
+::: small
+Conjugate examples allow direct sampling. Other models may require MCMC or an approximation, whose accuracy must be checked. See the [Stan posterior prediction guide](https://mc-stan.org/docs/stan-users-guide/posterior-prediction.html) for the same two-stage construction.
+:::
+
+### A posterior is the start of checking, not the end
+
+::: cols c2
+::: col Before fitting: prior predictive check
+Draw parameters from the prior, then simulate data. Do plausible parameters produce plausible counts, prices or temperatures?
+:::
+::: col.accent After fitting: posterior predictive check
+Draw parameters from the posterior and simulate replicated datasets of the same design. Compare their spread, extremes and patterns with the observations.
+:::
+:::
+
+::: reveal
+**For the Pokémon example:** compare the observed mean 10.55 and sample variance 11.94 with replicated 20-district datasets. Also examine exposure and spatial patterns. Mean–variance similarity alone does not establish the Poisson assumptions.
+:::
+
+::: keypoint
+Use a mismatch to improve the model. Evaluate future prediction on held-out data too; checking training data is not a test of generalisation.
+:::
+
+::: small
+Workflow reference: [Stan, posterior and prior predictive checks](https://mc-stan.org/docs/stan-users-guide/posterior-predictive-checks.html).
+:::
+
+### Check — what uncertainty belongs in a prediction?
 {q: 4}
 
-::: quiz You have a posterior over $\theta$ but want a single prediction. Why integrate over all $\theta$ rather than plug in the MAP estimate?
-- Integration is more accurate on the mean; the two differ only in the average predicted
-- Because the MAP estimate is biased and the posterior mean is not
-- There is no real difference — the posterior predictive equals the MAP prediction
-- =Because plugging in one $\theta$ throws away parameter uncertainty, so the prediction claims to be more certain than it is
-The two often agree closely on the **centre** of the prediction and disagree badly on its **width**. A plug-in estimate reports only the noise the model expects at a known $\theta$; the posterior predictive also carries the fact that $\theta$ is not known. That extra width is what Lecture 4 goes on to use as a *reason to act* — you sample where the model admits it is unsure.
+::: quiz In Gaussian regression with known noise variance, why is predictive variance $\sigma^2+x_*^\top\Sigma_w x_*$ for a new response?
+- Because MAP is always biased and posterior means never are
+- Because every predictive distribution is wider than every plug-in distribution
+- Because the posterior samples already include measurement noise
+- =Because uncertainty in the weights and noise in the new observation both contribute
+The sampled mean $x_*^\top w$ varies because weights are uncertain. Independent observation noise adds $\sigma^2$. For this Gaussian model the variances add exactly. The one-toss Bernoulli example shows why saying integration always widens every prediction would be too broad.
 :::
 
 ## Closing
 {short: CLOSING}
 
-Belief established. Now: what if there are many unknowns, and they interact?
+We can learn and predict with one parameter or a vector. Next: many interacting random variables.
 
-### Where we are — belief established, complexity ahead
+### What we can now calculate
 
-::: table center
-|   | Model-based | Data-driven |
+::: table
+| Task | Calculation | Example |
 |---|---|---|
-| **Static, single** | optimisation *(Lec 1 ✓)* | ==Bayesian statistics *(Lec 2 ✓)*== → Lec 3–4 |
+| Update a belief | posterior $\propto$ prior $\times$ likelihood | Beta(2,2) + HHT → Beta(4,3) |
+| Choose a point | MLE, MAP or a loss-based posterior summary | Gaussian prior + Gaussian noise → ridge |
+| Predict data | average the sampling model over the posterior | uncertain Poisson rate → Negative Binomial |
+| Check the model | simulate, compare and revise | replicated counts or regression residuals |
 :::
 
 ::: reveal
-We can now hold and update a belief over a parameter, collapse it when forced (MLE / MAP), and predict with it intact (full Bayes). But we modelled belief over ==one parameter (vector)==.
-:::
-
-::: reveal
-::: small
-Real systems have *many* interacting random variables — failures that cause failures, symptoms that imply causes. A joint distribution over them is exponentially large. How do we represent, and reason within, belief over a whole system? That is Lecture 3: ==a belief about many things is a graph.==
+::: keypoint
+Lecture 3 asks how to represent many interacting variables. ==Conditional independence makes a large probabilistic model manageable.==
 :::
 :::
 
-### Frequentists estimate a number; Bayesians carry a distribution.
+### Learn the parameter. Keep its uncertainty. Predict the observation.
 {layout: standout}
 
-A prior turned by data into a posterior, collapsed to a point only when forced — and even then, a prior in disguise — and integrated over when prediction must stay honest.
+Prior → likelihood → posterior → predictive distribution → model check.
 
 ### Questions?
 {layout: standout}
 
-The single idea — *the unknown is itself a distribution that data sharpens* — is the seed of everything data-driven this term. Regularisation was a prior; a Gaussian process will be a prior over functions; a belief state will be a prior carried through time.
+Can you explain which uncertainty is over a parameter, which is over an observation, and where each appears in the calculation?
 
-## Appendix — backup slides
+## Appendix — backup derivations
 {short: APPENDIX}
 
-Complete derivations, kept out of the narrative.
+Normalising constants and algebra for reference, after the intuition.
 
-### Backup 1 — the Beta–Binomial pipeline, end to end
-{fill: top}
+### Backup — Beta–Binomial normalisation and moments
+{math: compact}
 
-**Likelihood.** $Y\sim\mathrm{Bin}(n,\theta)$, so $p(y\mid\theta)=\binom{n}{y}\theta^y(1-\theta)^{n-y}$.
-**Prior.** $\theta\sim\mathrm{Beta}(\alpha,\beta)$, so $p(\theta)=\dfrac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}$.
+Let $S$ heads be observed in $n$ tosses and let $\alpha'=\alpha+S$, $\beta'=\beta+n-S$.
 
-**Posterior.** Drop every factor free of $\theta$:
+$$p(\theta\mid D)=\frac{\theta^{\alpha'-1}(1-\theta)^{\beta'-1}}{B(\alpha',\beta')},\qquad
+B(a,b)=\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.$$
 
-$$p(\theta\mid y)\propto \theta^{y}(1-\theta)^{n-y}\,\theta^{\alpha-1}(1-\theta)^{\beta-1} = \theta^{\alpha+y-1}(1-\theta)^{\beta+n-y-1} = \mathrm{Beta}(\alpha+y,\ \beta+n-y)$$
+$$\E[\theta\mid D]=\frac{\alpha'}{\alpha'+\beta'},\qquad
+\mathrm{Var}(\theta\mid D)=\frac{\alpha'\beta'}{(\alpha'+\beta')^2(\alpha'+\beta'+1)}.$$
 
-**Prior predictive.** Integrating the likelihood against the prior and collecting Gamma functions gives $p(y)=\text{Beta–Binomial}(y\mid n,\alpha,\beta)$ — a binomial whose success probability is itself random and Beta-distributed.
+For $K$ heads in $m$ future tosses and $\mu=\alpha'/(\alpha'+\beta')$,
 
-**Posterior predictive.** The same integral with $\alpha,\beta$ replaced by their updated values: $p(\hat y\mid y)=\text{Beta–Binomial}(\hat y\mid n,\alpha+y,\beta+n-y)$.
+$$P(K=k\mid D)=\binom mk\frac{B(\alpha'+k,\beta'+m-k)}{B(\alpha',\beta')},\qquad
+\mathrm{Var}(K\mid D)=m\mu(1-\mu)\frac{\alpha'+\beta'+m}{\alpha'+\beta'+1}.$$
 
 ::: small
-**Moments.** $\E[\theta\mid y]=\dfrac{\alpha+y}{\alpha+\beta+n}$ and $\mathrm{Var}(\theta\mid y)=\dfrac{\E[\theta\mid y](1-\E[\theta\mid y])}{\alpha+\beta+n+1}$, so as $n\to\infty$ the variance falls like $p(1-p)/n$ — the familiar frequentist rate, recovered.
+$\E[K\mid D]=m\mu$. The multiplier of Binomial variance is 1 at $m=1$ and greater than 1 at $m>1$. Future tosses share one latent bias; independently resampling a bias for each toss would be a different model.
 :::
 
-### Backup 2 — Lasso as MAP with a Laplace prior
-{fill: top}
+### Backup — the Poisson–Gamma predictive distribution
+{math: compact}
 
-Gaussian likelihood $p(y\mid \mathbf{X},w)=\prod_i \mathcal{N}(y_i\mid w^\top x_i,\sigma^2)$ and Laplace prior $p(w)=\prod_k \frac{\lambda}{2\sqrt{\tau^2}}\exp\!\big(-\frac{\lambda}{\sqrt{\tau^2}}|w_k|\big)$.
+With posterior $\lambda\mid D\sim\mathrm{Gamma}(a',b')$ in **shape–rate** form, a new unit-exposure count has
 
-Posterior $\propto$ likelihood $\times$ prior; take logs:
+$$\begin{aligned}
+P(\tilde Y=k\mid D)&=\int_0^\infty\frac{\lambda^ke^{-\lambda}}{k!}
+\frac{b'^{a'}}{\Gamma(a')}\lambda^{a'-1}e^{-b'\lambda}\,d\lambda\\[4pt]
+&=\frac{\Gamma(k+a')}{\Gamma(a')k!}
+\left(\frac{b'}{b'+1}\right)^{a'}\left(\frac{1}{b'+1}\right)^k,\quad k=0,1,\ldots
+\end{aligned}$$
 
-$$\log p(w\mid \mathbf{X},y) = -\frac{1}{2\sigma^2}\sum_i (y_i-w^\top x_i)^2 \;-\; \frac{\lambda}{\sqrt{\tau^2}}\sum_k |w_k| \;+\; \text{const}$$
-
-Maximising over $w$ is therefore
-
-$$\hat w = \argmax_w \log p(w\mid \mathbf{X},y) = \argmin_w \lVert y - \mathbf{X}w\rVert_2^2 + \lambda_1\lVert w\rVert_1 \qquad \blacksquare$$
-
-which is exactly Lasso; a Gaussian prior gives the $\ell_2$ (ridge) penalty by the identical argument.
+$$\E[\tilde Y\mid D]=\frac{a'}{b'},\qquad
+\mathrm{Var}(\tilde Y\mid D)=\frac{a'}{b'}+\frac{a'}{b'^2}.$$
 
 ::: small
-**Why $\ell_1$ is sparse.** The Laplace prior puts a sharp peak of mass at zero, so the MAP drives weak coefficients exactly to $0$ — automatic feature selection, arrived at from a belief rather than a heuristic.
+This is Negative Binomial with shape $a'$ and probability $b'/(b'+1)$ under the displayed convention; $a'$ need not be an integer. For future exposure $t$, the mean is $ta'/b'$ and variance $ta'/b'+t^2a'/b'^2$.
 :::
 
-### Backup 3 — the Bayesian posterior over regression weights
-{fill: top}
+### Backup — the Dirichlet predictive distribution
+{math: compact}
 
-With likelihood $p(y\mid w)=\frac{1}{(2\pi\sigma^2)^{m/2}}\exp\!\big(-\frac{1}{2\sigma^2}\sum_i (y_i-w^\top x_i)^2\big)$ and prior $p(w)=\mathcal{N}(w\mid \mathbf{0},\alpha^2 I)$, the log posterior collects into a quadratic in $w$:
+For category counts $y_j$, let $\alpha'_j=\alpha_j+y_j$ and $A'=\sum_j\alpha'_j$. Then
 
-$$\log p(w\mid \mathbf{X},y) = -\frac{1}{2\sigma^2}y^\top y + \frac{1}{\sigma^2}y^\top \mathbf{X}w - \frac12 w^\top\Big[\frac{1}{\sigma^2}\mathbf{X}^\top\mathbf{X} + \frac{1}{\alpha^2}I\Big]w + \text{const}$$
+$$p(\theta\mid D)\propto\prod_j\theta_j^{\alpha'_j-1},\qquad
+P(\tilde Y=j\mid D)=\frac{\alpha'_j}{A'}.$$
 
-A quadratic log density is a Gaussian, so
+For a future batch of size $m$ with counts $k_j$ adding to $m$,
 
-$$p(w\mid \mathbf{X},y)=\mathcal{N}(w\mid \mu_w,\Sigma_w),\qquad \Sigma_w = \Big[\tfrac{1}{\sigma^2}\mathbf{X}^\top\mathbf{X}+\tfrac{1}{\alpha^2}I\Big]^{-1},\qquad \mu_w = \Sigma_w\Big(\tfrac{1}{\sigma^2}\mathbf{X}^\top y\Big)$$
+$$P(K_1=k_1,\ldots,K_c=k_c\mid D)
+=\frac{m!}{\prod_j k_j!}\frac{\Gamma(A')}{\Gamma(A'+m)}
+\prod_j\frac{\Gamma(\alpha'_j+k_j)}{\Gamma(\alpha'_j)}.$$
+
+::: keypoint
+This is the **Dirichlet–Multinomial** distribution. Updated $\alpha'_j$ give the posterior predictive; original $\alpha_j$ give the prior predictive.
+:::
+
+### Backup — complete the square for the Normal mean
+{math: compact}
+
+Independent $Y_i\mid\theta\sim\mathcal N(\theta,\sigma^2)$, known $\sigma^2$, prior $\theta\sim\mathcal N(\mu_0,\tau_0^2)$:
+
+$$\begin{aligned}
+\log p(\theta\mid D)&=-\frac{1}{2\sigma^2}\sum_i(y_i-\theta)^2
+-\frac{1}{2\tau_0^2}(\theta-\mu_0)^2+C\\
+&=-\frac12\left[\left(\frac n{\sigma^2}+\frac1{\tau_0^2}\right)\theta^2
+-2\left(\frac{n\bar y}{\sigma^2}+\frac{\mu_0}{\tau_0^2}\right)\theta\right]+C'\\
+&=-\frac{(\theta-\mu_1)^2}{2\tau_1^2}+C''.
+\end{aligned}$$
+
+$$\tau_1^2=\left(\frac n{\sigma^2}+\frac1{\tau_0^2}\right)^{-1},\qquad
+\mu_1=\tau_1^2\left(\frac{n\bar y}{\sigma^2}+\frac{\mu_0}{\tau_0^2}\right).$$
 
 ::: small
-$\mu_w$ is the ridge solution with $\lambda=\sigma^2/\alpha^2$ — the MAP is the posterior's peak, as it must be. What the Gaussian adds is $\Sigma_w$: the *width* of the answer, which is what the sampled lines in the Act 3 widget are drawn from, and what Lecture 4 will use to decide where to sample next.
+$C,C',C''$ do not depend on $\theta$. A new observation is $\theta$ plus independent Gaussian noise, so its predictive distribution is $\mathcal N(\mu_1,\tau_1^2+\sigma^2)$.
+:::
+
+### Backup — complete the square for regression weights
+{math: compact}
+
+With $w\sim\mathcal N(0,\tau^2I)$ and $y\mid X,w\sim\mathcal N(Xw,\sigma^2I)$,
+
+$$\begin{aligned}
+\log p(w\mid X,y)&=-\frac{1}{2\sigma^2}(y-Xw)^\top(y-Xw)-\frac{1}{2\tau^2}w^\top w+C\\
+&=-\frac12w^\top\left(\frac{X^\top X}{\sigma^2}+\frac I{\tau^2}\right)w
++w^\top\frac{X^\top y}{\sigma^2}+C'\\
+&=-\frac12(w-\mu_w)^\top\Sigma_w^{-1}(w-\mu_w)+C''.
+\end{aligned}$$
+
+$$\Sigma_w=\left(\frac{X^\top X}{\sigma^2}+\frac I{\tau^2}\right)^{-1},\qquad
+\mu_w=\Sigma_w\frac{X^\top y}{\sigma^2}.$$
+
+::: small
+Positive noise and prior variances make the precision positive definite even if $X$ lacks full column rank. The Gaussian posterior mean equals its MAP. Posterior covariance is the information a point estimate omits.
+:::
+
+### Backup — why Lasso can select an exact zero
+
+For one coordinate, write the objective, up to a constant, as
+
+$$q(w_j)=a_jw_j^2-2r_jw_j+\lambda_1|w_j|,\qquad a_j>0.$$
+
+::: reveal
+At zero, $\partial|w_j|=[-1,1]$. The optimality condition is
+
+$$0\in-2r_j+\lambda_1[-1,1]\quad\Longleftrightarrow\quad |r_j|\le\lambda_1/2.$$
+:::
+
+::: reveal
+Otherwise the solution is the soft-thresholded value
+
+$$w_j=\frac{\operatorname{sign}(r_j)}{a_j}\max(|r_j|-\lambda_1/2,0).$$
+:::
+
+::: small
+This is a property of MAP optimisation. A continuous Laplace prior and the resulting continuous posterior have no atom at zero; full posterior samples are not sparse in this exact-zero sense.
 :::

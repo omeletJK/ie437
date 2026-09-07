@@ -27,7 +27,7 @@ IE437.widget('bayes-regression', function (host, opts) {
     '<div data-num style="font:400 12.5px/1.85 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 12px/1.6 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.075);padding-top:10px">' +
-    'μ<sub>w</sub> is the ridge solution with λ = σ²/α² &mdash; the MAP is the posterior&rsquo;s peak, as it must ' +
+    'μ<sub>w</sub> is the ridge solution with λ = σ²/τ² (σ = 2.4, τ = 6). The MAP is the posterior&rsquo;s peak, as it must ' +
     'be. What the Gaussian adds is Σ<sub>w</sub>: the width of the answer.</div></div></div>';
 
   var CW = 320, CH = 250;
@@ -79,19 +79,24 @@ IE437.widget('bayes-regression', function (host, opts) {
     function sg() { var u = Math.max(1e-9, srand()), v = srand(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
 
     /* ---------- left: data, sampled lines, ML and MAP ---------- */
-    var YD = [-8, 24];
+    var samples = [];
+    for (var s = 0; s < 60; s++) {
+      var z = [sg(), sg()];
+      samples.push([P.mu[0] + L[0] * z[0], P.mu[1] + L[2] * z[0] + L[3] * z[1]]);
+    }
+    var ends = Y.slice();
+    samples.concat([P.mu], P.ols ? [P.ols] : []).forEach(function (w) { ends.push(w[0] - w[1], w[0] + w[1]); });
+    var YD = [Math.min(-8, Math.min.apply(null, ends) - 1), Math.max(24, Math.max.apply(null, ends) + 1)];
     var m = IE437.plot(sv1, {
       w: CW, h: CH, pad: { l: 34, r: 12, t: 12, b: 28 },
       xdom: [-1, 1], ydom: YD, yticks: [-5, 0, 10, 20], xticks: [-1, 0, 1], xlabel: 'x',
       xfmt: function (v) { return v.toFixed(0); }, yfmt: function (v) { return String(v); },
       series: []
     });
-    for (var s = 0; s < 60; s++) {                    // w ~ N(mu, Sigma) via Cholesky
-      var z = [sg(), sg()];
-      var w = [P.mu[0] + L[0] * z[0], P.mu[1] + L[2] * z[0] + L[3] * z[1]];
+    samples.forEach(function (w) {                    // w ~ N(mu, Sigma) via Cholesky
       E('line', { x1: m.X(-1), y1: m.Y(w[0] - w[1]), x2: m.X(1), y2: m.Y(w[0] + w[1]),
-        stroke: INK, 'stroke-opacity': .085, 'stroke-width': 1 }, sv1);
-    }
+        stroke: INK, 'stroke-opacity': .085, 'stroke-width': 1, 'data-role': 'sample-line' }, sv1);
+    });
     if (P.ols) E('line', { x1: m.X(-1), y1: m.Y(P.ols[0] - P.ols[1]), x2: m.X(1), y2: m.Y(P.ols[0] + P.ols[1]),
       stroke: BLUE, 'stroke-width': 2.2 }, sv1);
     E('line', { x1: m.X(-1), y1: m.Y(P.mu[0] - P.mu[1]), x2: m.X(1), y2: m.Y(P.mu[0] + P.mu[1]),
@@ -102,11 +107,15 @@ IE437.widget('bayes-regression', function (host, opts) {
 
     /* ---------- right: the posterior over (w0, w1) ---------- */
     while (sv2.firstChild) sv2.removeChild(sv2.firstChild);
-    var D0 = [2, 14], D1 = [4, 18];
-    var PX = function (v) { return 36 + (v - D0[0]) / (D0[1] - D0[0]) * (CW - 50); };
-    var PY = function (v) { return CH - 30 - (v - D1[0]) / (D1[1] - D1[0]) * (CH - 46); };
-    E('line', { x1: 36, y1: CH - 30, x2: CW - 10, y2: CH - 30, stroke: INK, 'stroke-opacity': .3 }, sv2);
-    E('line', { x1: 36, y1: 12, x2: 36, y2: CH - 30, stroke: INK, 'stroke-opacity': .3 }, sv2);
+    var D0 = [Math.min(-6, P.mu[0] - 3 * Math.sqrt(P.Sig[0]) - 1, P.ols ? P.ols[0] - 1 : 0),
+      Math.max(18, P.mu[0] + 3 * Math.sqrt(P.Sig[0]) + 1, P.ols ? P.ols[0] + 1 : 0)];
+    var D1 = [Math.min(-8, P.mu[1] - 3 * Math.sqrt(P.Sig[3]) - 1, P.ols ? P.ols[1] - 1 : 0),
+      Math.max(24, P.mu[1] + 3 * Math.sqrt(P.Sig[3]) + 1, P.ols ? P.ols[1] + 1 : 0)];
+    var axes = IE437.plot(sv2, { w: CW, h: CH, pad: { l: 38, r: 12, t: 14, b: 30 },
+      xdom: D0, ydom: D1, xticks: [0, 8, 16], yticks: [0, 10, 20], xlabel: 'w₀',
+      xfmt: function (v) { return String(v); }, yfmt: function (v) { return String(v); }, series: [] });
+    var PX = axes.X, PY = axes.Y;
+    E('text', { x: 8, y: 12, text: 'w₁', 'font-size': 10, fill: INK }, sv2);
     [1, 2, 3].forEach(function (k) {                  // covariance ellipses at 1σ, 2σ, 3σ
       var pts = [];
       for (var t = 0; t <= 72; t++) {
@@ -122,9 +131,6 @@ IE437.widget('bayes-regression', function (host, opts) {
       'font-family': 'IBM Plex Mono, monospace', 'letter-spacing': .8, text: 'TRUE w' }, sv2);
     E('circle', { cx: PX(P.mu[0]), cy: PY(P.mu[1]), r: 4, fill: GREEN }, sv2);
     if (P.ols) E('circle', { cx: PX(P.ols[0]), cy: PY(P.ols[1]), r: 4, fill: BLUE }, sv2);
-    E('text', { x: CW / 2, y: CH - 10, 'text-anchor': 'middle', 'font-size': 9.5, fill: INK,
-      'fill-opacity': .45, 'font-family': 'IBM Plex Mono, monospace', text: 'w₀' }, sv2);
-
     host.querySelector('[data-n]').textContent = SIZES[si];
     host.querySelector('[data-num]').innerHTML =
       '<span style="color:' + BLUE + '">&#9473;&#9473; ML</span> ' +
@@ -133,11 +139,13 @@ IE437.widget('bayes-regression', function (host, opts) {
       P.mu[0].toFixed(1) + ', ' + P.mu[1].toFixed(1) + ')<br>' +
       'true w = (' + W0 + ', ' + W1 + ')<br>' +
       'posterior sd: ' + Math.sqrt(P.Sig[0]).toFixed(2) + ', ' + Math.sqrt(P.Sig[3]).toFixed(2);
+    host.dataset.posterior = JSON.stringify({ mean: P.mu, covariance: P.Sig, ols: P.ols, x: X, y: Y });
   }
 
   host.querySelector('[data-cyc]').onclick = function () { si = (si + 1) % SIZES.length; makeData(); draw(); };
   host.querySelector('[data-re]').onclick = function () { seed += 101; makeData(); draw(); };
 
   makeData(); draw();
-  return { finish: function () { si = 1; makeData(); draw(); } };
+  return { reset: function () { si = 0; seed = opts.seed || 9; makeData(); draw(); },
+    finish: function () { si = 1; seed = opts.seed || 9; makeData(); draw(); } };
 });

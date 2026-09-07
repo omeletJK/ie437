@@ -261,7 +261,7 @@ Currently available:
 |---|---|
 | Ch 0 | `ai-vs-decision` · `modeling-loop` · `course-cube` (3-D map, walked) · `given-ledger` |
 | Ch 1 | `formulation-balance` · `convex-set` · `convex-watershed` · `first-order-proof` (necessary / sufficient / counterexample) · `kkt-point` (draggable) · `kkt-wall` (balance / adjustable bound and shadow price) · `trust-region` |
-| Ch 2 | `bayes-anatomy` · `bayes-update` · `ci-vs-cr` · `bayes-regression` · `ridge-lasso-prior` |
+| Ch 2 | `bayes-anatomy` · `bayes-update` · `ci-vs-cr` · `bayes-regression` · `ridge-lasso-prior` · `bayes-predictive` (future coin batch / Normal mean and observation) |
 | Ch 3 | `factor-count` · `d-separation` · `inference-cost` · `influence-diagram` |
 | Ch 4 | `gp-posterior` · `acquisition-zoo` · `bo-run` · `explore-regret` |
 | Ch 5 | `two-failures` · `surrogate-exploit` · `conservative-coms` · `ensemble-alarm` |

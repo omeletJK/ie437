@@ -34,7 +34,7 @@ IE437.widget('ridge-lasso-prior', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">One dial, two stories</span><span class="wspacer"></span>' +
     '<label class="wtog" data-lasso><i></i><span>use the L¹ penalty (Lasso)</span></label>' +
-    '<span class="wlabel">λ</span><span class="wnum" data-l></span>' +
+    '<span class="wlabel" style="text-transform:none">λ</span><span class="wnum" data-l></span>' +
     '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center">' +
     '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0">' +
@@ -59,15 +59,24 @@ IE437.widget('ridge-lasso-prior', function (host, opts) {
 
     /* ---------- left: contours + budget set ---------- */
     while (sv1.firstChild) sv1.removeChild(sv1.firstChild);
-    var D = [-0.4, 2.0];
-    var PX = function (v) { return 34 + (v - D[0]) / (D[1] - D[0]) * (CW - 46); };
-    var PY = function (v) { return CH - 32 - (v - D[0]) / (D[1] - D[0]) * (CH - 48); };
-    E('line', { x1: PX(0), y1: 12, x2: PX(0), y2: CH - 24, stroke: INK, 'stroke-opacity': .3 }, sv1);
-    E('line', { x1: 26, y1: PY(0), x2: CW - 10, y2: PY(0), stroke: INK, 'stroke-opacity': .3 }, sv1);
+    var D = [-2, 2], side = 210, left = 44, top = 12;
+    var PX = function (v) { return left + (v - D[0]) / (D[1] - D[0]) * side; };
+    var PY = function (v) { return top + side - (v - D[0]) / (D[1] - D[0]) * side; };
+    var clip = 'ridge-lasso-plot-' + host.closest('.slide').dataset.i;
+    var defs = E('defs', {}, sv1), cp = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+    cp.setAttribute('id', clip); defs.appendChild(cp);
+    E('rect', { x: left, y: top, width: side, height: side }, cp);
+    E('rect', { x: left, y: top, width: side, height: side, fill: 'none', stroke: INK, 'stroke-opacity': .12 }, sv1);
+    E('line', { x1: PX(0), y1: top, x2: PX(0), y2: top + side, stroke: INK, 'stroke-opacity': .3 }, sv1);
+    E('line', { x1: left, y1: PY(0), x2: left + side, y2: PY(0), stroke: INK, 'stroke-opacity': .3 }, sv1);
+    [-1, 1].forEach(function (v) {
+      E('text', { x: PX(v), y: PY(0) + 13, text: String(v), 'font-size': 9, 'text-anchor': 'middle', fill: INK }, sv1);
+      E('text', { x: PX(0) - 7, y: PY(v) + 3, text: String(v), 'font-size': 9, 'text-anchor': 'end', fill: INK }, sv1);
+    });
     /* error contours through a few levels, drawn by marching the ellipse analytically */
     var Li = [[Math.sqrt(XTX[0]), 0], [XTX[1] / Math.sqrt(XTX[0]), 0]];
     Li[1][1] = Math.sqrt(Math.max(XTX[3] - Li[1][0] * Li[1][0], 1e-9));
-    [0.06, 0.2, 0.45, 0.85, 1.4].forEach(function (lev) {
+    [0.06, 0.2, 0.45, 0.85, 1.4, sse(w)].forEach(function (lev) {
       var r = Math.sqrt(lev), pts = [];
       for (var k = 0; k <= 96; k++) {
         var a = k / 96 * Math.PI * 2, u = [Math.cos(a) * r, Math.sin(a) * r];
@@ -76,29 +85,29 @@ IE437.widget('ridge-lasso-prior', function (host, opts) {
         pts.push([PX(OLS[0] + d0), PY(OLS[1] + d1)]);
       }
       E('path', { d: pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('') + 'Z',
-        fill: 'none', stroke: INK, 'stroke-opacity': .26, 'stroke-width': 1 }, sv1);
+        fill: 'none', stroke: INK, 'stroke-opacity': .26, 'stroke-width': 1, 'clip-path': 'url(#' + clip + ')' }, sv1);
     });
     /* the budget set */
     if (lasso) {
       E('path', { d: 'M' + PX(t) + ' ' + PY(0) + 'L' + PX(0) + ' ' + PY(t) +
         'L' + PX(-t) + ' ' + PY(0) + 'L' + PX(0) + ' ' + PY(-t) + 'Z',
-        fill: AMBER, 'fill-opacity': .17, stroke: AMBER, 'stroke-width': 1.6 }, sv1);
+        fill: AMBER, 'fill-opacity': .17, stroke: AMBER, 'stroke-width': 1.6, 'data-role': 'budget' }, sv1);
     } else {
       E('circle', { cx: PX(0), cy: PY(0), r: PX(t) - PX(0), fill: GREEN, 'fill-opacity': .15,
-        stroke: GREEN, 'stroke-width': 1.6 }, sv1);
+        stroke: GREEN, 'stroke-width': 1.6, 'data-role': 'budget' }, sv1);
     }
     E('circle', { cx: PX(OLS[0]), cy: PY(OLS[1]), r: 4, fill: 'none', stroke: INK, 'stroke-width': 1.8 }, sv1);
     E('text', { x: PX(OLS[0]) + 8, y: PY(OLS[1]) - 5, 'font-size': 9.5, fill: INK, 'fill-opacity': .5,
       'font-family': 'IBM Plex Mono, monospace', text: 'OLS' }, sv1);
-    E('circle', { cx: PX(w[0]), cy: PY(w[1]), r: 5.5, fill: col }, sv1);
-    E('text', { x: CW - 10, y: PY(0) - 7, 'text-anchor': 'end', 'font-size': 10, 'font-style': 'italic',
+    E('circle', { cx: PX(w[0]), cy: PY(w[1]), r: 5.5, fill: col, 'data-role': 'solution' }, sv1);
+    E('text', { x: left + side - 5, y: PY(0) - 7, 'text-anchor': 'end', 'font-size': 10, 'font-style': 'italic',
       fill: INK, 'fill-opacity': .5, text: 'w₁' }, sv1);
     E('text', { x: PX(0) + 7, y: 22, 'font-size': 10, 'font-style': 'italic', fill: INK,
       'fill-opacity': .5, text: 'w₂' }, sv1);
 
     /* ---------- right: the prior the penalty came from ---------- */
     while (sv2.firstChild) sv2.removeChild(sv2.firstChild);
-    var scale = lasso ? 2 / lam : Math.sqrt(1 / lam);   // Laplace rate vs Gaussian sd, up to σ²
+    var scale = lasso ? 2 / lam : Math.sqrt(1 / lam);   // Laplace scale / Gaussian sd for sigma^2 = 1
     var pts = [], top = 0;
     for (var i = 0; i <= 240; i++) {
       var x = -2.2 + 4.4 * i / 240;
@@ -136,17 +145,23 @@ IE437.widget('ridge-lasso-prior', function (host, opts) {
       ? 'The diamond has <b>corners on the axes</b>. The contours touch a corner for a wide range of λ, and a corner ' +
         'means a coefficient is exactly zero &mdash; selection, not just shrinkage.'
       : 'The ball is <b>smooth everywhere</b>, so the contact point almost never sits on an axis. Ridge shrinks ' +
-        'coefficients toward zero but does not set them to zero.';
+        'coefficients toward zero; unlike Lasso, it does not generally select exact zeros.';
+    host.dataset.solution = JSON.stringify({ kind: lasso ? 'lasso' : 'ridge', lambda: lam, w: w, budget: t, priorScale: scale });
   }
 
   host.querySelector('[data-lasso]').onclick = function () {
     lasso = !lasso; this.classList.toggle('on', lasso); draw();
   };
-  IE437.slider(host.querySelector('[data-sl]'), {
+  var dial = IE437.slider(host.querySelector('[data-sl]'), {
     bare: true, min: 0, max: LAM.length - 1, step: 1, value: li,
     on: function (v) { li = v; draw(); }
   });
+  dial.input.setAttribute('aria-label', 'Regularisation strength');
+  dial.input.addEventListener('keydown', function (event) {
+    if (/^(ArrowLeft|ArrowRight|ArrowUp|ArrowDown|Home|End|PageUp|PageDown)$/.test(event.key)) event.stopPropagation();
+  });
 
   draw();
-  return { finish: function () { lasso = true; host.querySelector('[data-lasso]').classList.add('on'); li = 3; draw(); } };
+  return { reset: function () { lasso = false; li = 3; dial.set(li, false); host.querySelector('[data-lasso]').classList.remove('on'); draw(); },
+    finish: function () { lasso = true; host.querySelector('[data-lasso]').classList.add('on'); li = 3; dial.set(li, false); draw(); } };
 });

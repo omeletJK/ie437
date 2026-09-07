@@ -32,7 +32,7 @@ IE437.widget('bayes-anatomy', function (host, opts) {
     '<div style="background:rgba(37,99,235,.07);padding:16px 20px;display:flex;flex-direction:column;gap:8px;' +
     'min-width:250px">' +
     '<div style="font:700 12px/1.4 var(--sans);color:' + BLUE + '">The posterior</div>' +
-    '<div style="font:400 11.5px/1.5 var(--sans);color:var(--ink2)">the probability of the parameter ' +
+    '<div style="font:400 11.5px/1.5 var(--sans);color:var(--ink2)">the density over the parameter ' +
     '<i>&theta;</i> given the evidence (data)</div>' +
     '<div style="display:flex;align-items:flex-end;gap:8px;margin-top:2px">' +
     '<span style="font:italic 13px/1 var(--serif);color:' + BLUE + '">p(&theta;|data)</span>' +
@@ -53,7 +53,7 @@ IE437.widget('bayes-anatomy', function (host, opts) {
     'min-width:230px">' +
     '<div style="font:700 12px/1.4 var(--sans);color:' + AMBER + '">The prior</div>' +
     '<div style="font:400 11.5px/1.5 var(--sans);color:var(--ink2)">the belief about <i>&theta;</i> ' +
-    'before any data</div>' +
+    'before these observations</div>' +
     '<div style="display:flex;align-items:flex-end;gap:8px;margin-top:2px">' +
     '<span style="font:italic 13px/1 var(--serif);color:' + AMBER + '">p(&theta;)</span>' +
     '<span data-prior></span></div></div>' +

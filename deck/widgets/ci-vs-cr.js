@@ -104,9 +104,9 @@ IE437.widget('ci-vs-cr', function (host, opts) {
         'The 95% is a property of <b>the procedure</b>, not of any one interval.'
       : 'press run — each line is one repetition of the whole experiment';
     host.querySelector('[data-s2]').innerHTML = runs.length
-      ? 'From <b>this one dataset</b>: Pr(θ &isin; CR) = 0.95.<br>' +
-        'The 95% is a property of <b>θ</b>, given what was seen.'
-      : 'the posterior from a single dataset';
+      ? 'From <b>this dataset</b>: Pr(θ &isin; CR | data) ≈ 0.95.<br>' +
+        'Known Gaussian noise; flat prior on the mean.'
+      : 'Known Gaussian noise; a flat prior gives this posterior after observing data.';
   }
 
   host.querySelector('[data-run]').onclick = run;

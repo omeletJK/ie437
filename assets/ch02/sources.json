@@ -1,0 +1,49 @@
+[
+  {
+    "asset": "coin-updates-source.png",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 19,
+    "transformation": "PDF figure region rendered at 144 dpi; no content redrawn",
+    "clip_points": [
+      223,
+      78,
+      738,
+      519
+    ],
+    "sha256": "912019e441cc5adb4957414b23ae40c58d27e1e9c6487bcf125f950426506772"
+  },
+  {
+    "asset": "housing-model-source.png",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 50,
+    "transformation": "PDF figure region rendered at 144 dpi; no content redrawn",
+    "clip_points": [
+      125,
+      140,
+      836,
+      384
+    ],
+    "sha256": "52a07f374065955bdabbabe5652833b19ee4cc3e1be0617ac17684993cd798d6"
+  },
+  {
+    "asset": "regression-beliefs-source.png",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 62,
+    "transformation": "PDF figure region rendered at 144 dpi; no content redrawn",
+    "clip_points": [
+      238,
+      128,
+      714,
+      531
+    ],
+    "sha256": "496688eaa3ec84ee983ee823deb1482b4767de210e7c70ad45308352cfc2e1da"
+  },
+  {
+    "asset": "pokemon-map-source.jpg",
+    "source_pdf": "pptx/2. Fundamentals on Bayesian Statistics.pdf",
+    "source_page": 36,
+    "transformation": "none; original embedded image extracted",
+    "xref": 135,
+    "sha256": "04c58aa574a729721a1a2e94bcccb9deb1602c87d9af2f74039fd68ce13d26c1"
+  }
+]
