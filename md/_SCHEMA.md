@@ -303,6 +303,22 @@ set well above body size, while inline maths tracks whatever it sits in and so s
 proportion inside an aside, a column or a caption. A slide that stacks several derivations
 and runs long takes `{math: compact}` rather than a hand-tuned size.
 
+**Size — set for the back row.** The type is sized to be read from the back of a hall, not from a
+laptop: body prose is 18.5px on the 1280x720 stage, table cells 16.5px, display equations 20.5px.
+Those are deliberately large, so a slide that runs long would reach the footer.
+
+**Fit — the slide shrinks before it collides.** So `deck.js` measures every slide on arrival and,
+if the content overruns, steps down a single custom property `--ts` until it clears the footer by
+8px. Only prose answers to `--ts` — paragraphs, lists, tables, block bodies, equations, the
+keypoint. A widget sizes its own SVG in real pixels and is **not** scaled, because shrinking it
+would undo the axis labels the widget was careful about.
+
+The floor is `0.86`. Past it a slide is not too large, it is too full, and quietly setting it at
+70% would hide an authoring problem rather than fix it — so the engine stops there, leaves
+`data-ts` on the slide, and lets `_qa.mjs` report it. **A slide carrying `data-ts` is a slide to
+consider splitting**, not a slide that is finished. Nothing needs to be written to use any of
+this; it is what happens when a slide is too long.
+
 **Rhythm — measured at runtime.** CSS cannot know how tall a paragraph will set, so `deck.js`
 measures each slide after the fonts load and gives the leftover height back in this order:
 

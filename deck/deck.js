@@ -150,7 +150,58 @@
      This is what stops a slide reading "cramped on top, empty below".  */
   var GAP_MIN = 14, GAP_MAX = 64;
   var GROW = 'table,.lgrid,.flow,.cols,.blk';   // blocks whose rows can absorb height
+  /* ---------- fit ---------------------------------------------------
+     The type is set for the back row of a hall, which means a slide that
+     runs long no longer merely looks tight — it reaches the footer. So
+     before the rhythm is balanced, the slide is measured once and, if its
+     content overruns, the prose scale --ts is stepped down just far enough
+     to bring it back. Only prose answers to --ts: a widget sizes its SVG
+     in real pixels and is left alone.
+
+     The floor is deliberate. Past it the slide is not too large, it is too
+     full, and quietly shrinking it to 70% would hide an authoring problem
+     rather than fix it — so it stops at TS_MIN, leaves data-ts on the
+     slide, and lets _qa.mjs report it. */
+  var TS_MIN = 0.86, CLEAR = 8;
+  function fitType(sl) {
+    var fill = sl.querySelector('.fill');
+    if (!fill) return;
+    sl.style.removeProperty('--ts');
+    sl.removeAttribute('data-ts');
+    var foot = sl.querySelector('.foot');
+    if (!foot) return;
+    var limit = foot.getBoundingClientRect().top;
+    function over() {                       /* how far the lowest thing runs past */
+      var worst = 0;
+      $$('.fill *', sl).forEach(function (el) {
+        if (!el.getClientRects().length) return;
+        var r = el.getBoundingClientRect();
+        if (r.height < 2) return;
+        if (r.bottom > worst) worst = r.bottom;
+      });
+      return worst - limit;
+    }
+    if (over() <= 0) return;
+    /* aim a few pixels clear of the footer rather than exactly at it: text
+       reflows as it shrinks, and landing on the line leaves a slide one
+       rounding error away from touching. CLEAR matches the margin _qa.mjs
+       calls too tight, so the engine and the check want the same thing. */
+    for (var pass = 0; pass < 3; pass++) {
+      var cur = parseFloat(sl.style.getPropertyValue('--ts')) || 1;
+      var box = fill.getBoundingClientRect();
+      if (box.height < 40) return;              /* not laid out yet — do not guess */
+      var need = box.height - over() - CLEAR;
+      var k = Math.max(TS_MIN, cur * Math.max(0.5, need / box.height));
+      if (k >= cur) break;
+      sl.style.setProperty('--ts', k.toFixed(3));
+      if (over() <= -CLEAR) break;
+    }
+    var applied = parseFloat(sl.style.getPropertyValue('--ts')) || 1;
+    if (applied < 1) sl.setAttribute('data-ts', applied.toFixed(3));
+  }
+
   function balance(sl) {
+    fitType(sl);                               /* every slide, .auto or not */
     var fill = sl.querySelector('.fill');
     if (!fill || !fill.classList.contains('auto')) return;
     $$('[data-grown]', fill).forEach(function (e) { e.style.height = ''; e.removeAttribute('data-grown'); });
@@ -345,6 +396,9 @@
       else if (w.leave) w.leave();
     });
     autoplay(sl);
+    /* the first pass measures a slide whose widgets have only just mounted,
+       so take it again once the frame is laid out and the heights are real */
+    requestAnimationFrame(function () { if (slides[cur] === sl) balance(sl); });
     $('#rail').style.width = ((cur + 1) / N * 100) + '%';
     var c = $('#hudn'); if (c) c.innerHTML = '<b>' + (cur + 1) + '</b> / ' + N;
     if (location.hash !== '#' + (cur + 1)) {

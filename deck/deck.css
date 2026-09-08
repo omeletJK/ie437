@@ -78,11 +78,11 @@ body{background:var(--dark2);font-family:var(--sans);color:var(--ink);
 h1.head{font:650 30px/1.32 var(--sans);letter-spacing:-.55px;max-width:1140px;flex:none}
 h1.head em{font-style:normal;color:var(--accent)}
 .dark h1.head em{color:var(--accent-d)}
-h1.head .sub{display:block;font:400 14.5px/1.5 var(--sans);color:var(--ink3);
+h1.head .sub{display:block;font:400 16px/1.5 var(--sans);font-size:calc(16px * var(--ts));color:var(--ink3);
   margin-top:6px;letter-spacing:0}
 .dark h1.head .sub{color:var(--wink3)}
 
-.lede{font:400 15.5px/1.65 var(--sans);color:var(--ink2);max-width:1100px;flex:none}
+.lede{font:400 17.5px/1.65 var(--sans);font-size:calc(17.5px * var(--ts));color:var(--ink2);max-width:1100px;flex:none}
 .dark .lede{color:var(--wink2)}
 
 .fill{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;
@@ -99,13 +99,19 @@ h1.head .sub{display:block;font:400 14.5px/1.5 var(--sans);color:var(--ink3);
 .dark .foot{color:var(--wink3)} .dark .foot .fbar{background:var(--wline2)}
 .dark .foot .fbar i{background:var(--wink3)}
 
+/* Text scale. 1 everywhere; deck.js steps it down, and only on a slide that
+   would otherwise run into the footer — see the fit pass in balance(). Only
+   prose answers to it: a widget sizes its own SVG in real pixels, so scaling
+   that would shrink the axis labels the widget spent effort getting right. */
+.slide{--ts:1}
+
 /* ---------- prose ---------- */
-.fill p{font:400 16.5px/1.68 var(--sans);color:var(--ink);max-width:1140px}
+.fill p{font:400 18.5px/1.68 var(--sans);font-size:calc(18.5px * var(--ts));color:var(--ink);max-width:1140px}
 .dark .fill p{color:var(--wink)}
-.fill p.small{font:400 14px/1.62 var(--sans);color:var(--ink2)}
+.fill p.small{font:400 15.5px/1.62 var(--sans);font-size:calc(15.5px * var(--ts));color:var(--ink2)}
 .dark .fill p.small{color:var(--wink2)}
 .fill ul,.fill ol{margin-left:20px;display:flex;flex-direction:column;gap:9px}
-.fill li{font:400 16px/1.6 var(--sans);padding-left:4px}
+.fill li{font:400 18px/1.6 var(--sans);font-size:calc(18px * var(--ts));padding-left:4px}
 .fill li::marker{color:var(--ink4);font-weight:600}
 .dark .fill li::marker{color:var(--wink3)}
 
@@ -113,7 +119,7 @@ h1.head .sub{display:block;font:400 14.5px/1.5 var(--sans);color:var(--ink3);
    full-width rows on hairlines, which fills the canvas honestly */
 .fill > ul,.fill > .frag > ul{margin-left:0;gap:0;border-top:1px solid var(--line)}
 .fill > ul > li,.fill > .frag > ul > li{list-style:none;padding:13px 2px 13px 26px;position:relative;
-  border-bottom:1px solid var(--line2);font-size:16px;line-height:1.6}
+  border-bottom:1px solid var(--line2);font-size:calc(18px * var(--ts));line-height:1.6}
 .fill > ul > li::before,.fill > .frag > ul > li::before{content:"";position:absolute;
   left:6px;top:22px;width:7px;height:1.5px;background:var(--ink4)}
 .dark .fill > ul,.dark .fill > .frag > ul{border-top-color:var(--wline)}
@@ -142,7 +148,7 @@ code{font:500 .92em/1.5 var(--mono);background:rgba(22,24,29,.06);
 .blk > .bt .bx{margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)}
 .dark .blk > .bt{border-color:var(--wline);color:var(--wink2);background:var(--wpanel2)}
 .blk > .bb{padding:17px 18px;display:flex;flex-direction:column;gap:10px}
-.blk > .bb > p{font-size:14.5px;line-height:1.65}
+.blk > .bb > p{font-size:calc(16.5px * var(--ts));line-height:1.65}
 .blk.accent{border-color:var(--ink)}
 .blk.accent > .bt{color:var(--ink);border-bottom-color:var(--line)}
 .dark .blk.accent{border-color:var(--wline)} .dark .blk.accent > .bt{color:var(--wink)}
@@ -152,10 +158,10 @@ code{font:500 .92em/1.5 var(--mono);background:rgba(22,24,29,.06);
 /* the closing line of a slide — when it is the last block, it pins to the
    bottom of the canvas, which is what stops short slides floating mid-air */
 .thesis{border-top:1px solid var(--line);padding-top:16px;
-  font:500 17px/1.55 var(--sans);letter-spacing:-.2px;color:var(--ink)}
+  font:500 19px/1.55 var(--sans);letter-spacing:-.2px;color:var(--ink);font-size:calc(19px * var(--ts));}
 .thesis strong{font-weight:700}
 .dark .thesis{border-color:var(--wline);color:var(--wink)}
-.thesis.serif{font-family:var(--serif);font-size:19px;font-weight:400}
+.thesis.serif{font-family:var(--serif);font-size:calc(21px * var(--ts));font-weight:400}
 
 
 /* a closing aside — the \footnotesize remark that ends so many of the
@@ -182,10 +188,10 @@ code{font:500 .92em/1.5 var(--mono);background:rgba(22,24,29,.06);
 .dark .col.accent > h3{color:var(--wink);border-color:var(--wline)}
 
 /* ---------- tables (index.html's `table.matrix`) ---------- */
-.fill table{border-collapse:collapse;width:100%;font:400 14.5px/1.55 var(--sans);
+.fill table{border-collapse:collapse;width:100%;font:400 16.5px/1.55 var(--sans);font-size:calc(16.5px * var(--ts));
   background:var(--panel);border:1px solid var(--line)}
 .fill th,.fill td{padding:16px 16px;text-align:left;vertical-align:middle}
-.fill th{font:600 10px/1.3 var(--mono);letter-spacing:.13em;text-transform:uppercase;
+.fill th{font:600 11px/1.3 var(--mono);font-size:calc(11px * var(--ts));letter-spacing:.13em;text-transform:uppercase;
   color:var(--ink3);border-bottom:1px solid var(--ink);white-space:nowrap;padding:0 16px 11px}
 .fill td{border-bottom:1px solid var(--line2)}
 .fill tr td:first-child{font-weight:600}
@@ -203,20 +209,20 @@ td.off{color:var(--red);font-weight:600}
    than the 1px above it used to sit at; inline maths tracks whatever it
    sits in, so it stays in proportion inside a small aside or a caption. */
 .katex{font-size:1.16em}
-.mathblock{text-align:center;overflow:visible;padding:19px 24px;font-size:20.5px;
+.mathblock{text-align:center;overflow:visible;padding:19px 24px;font-size:calc(20.5px * var(--ts));
   border:1px solid var(--line);background:var(--panel)}
 .mathblock .katex-display{margin:0}
 .dark .mathblock{border-color:var(--wline);background:var(--wpanel)}
 /* inside a panel, a column or a table cell the plate would be noise */
 .blk .mathblock,.col .mathblock,td .mathblock,.wcap .mathblock{border:0;background:none;padding:4px 0}
 /* tighter containers get a smaller step up, so nothing bursts its column */
-.blk .mathblock,.col .mathblock{font-size:18.5px}
-td .mathblock{font-size:16px}
+.blk .mathblock,.col .mathblock{font-size:calc(18.5px * var(--ts))}
+td .mathblock{font-size:calc(17.5px * var(--ts))}
 .wcap .mathblock{font-size:13.5px}
 /* {math: compact} — for a slide that stacks several derivations and would
    otherwise run into the footer. Still above the old size, just not the full step. */
-.slide.mcompact .mathblock{font-size:17.5px}
-.slide.mcompact .blk .mathblock,.slide.mcompact .col .mathblock{font-size:16.5px}
+.slide.mcompact .mathblock{font-size:calc(17.5px * var(--ts))}
+.slide.mcompact .blk .mathblock,.slide.mcompact .col .mathblock{font-size:calc(16.5px * var(--ts))}
 
 /* ---------- question strip ---------- */
 .qstrip{display:flex;align-items:center;justify-content:flex-start;margin:16px 0 0;flex:none}
@@ -262,14 +268,14 @@ td .mathblock{font-size:16px}
   border:1px solid var(--line);background:var(--panel)}
 .dark .lgrid{border-color:var(--wline);background:var(--wpanel)}
 .lgrid > div{padding:13px 18px;border-right:1px solid var(--line2);border-bottom:1px solid var(--line2);
-  font:400 13.5px/1.45 var(--sans);display:flex;flex-direction:column;gap:5px;justify-content:center;min-height:56px}
+  font:400 15px/1.45 var(--sans);display:flex;flex-direction:column;gap:5px;justify-content:center;min-height:56px;font-size:calc(15px * var(--ts));}
 .dark .lgrid > div{border-color:var(--wline2)}
 .lgrid > div:nth-child(3n){border-right:0}
 .lgrid .lh,.lgrid .rh{font:600 10px/1.35 var(--mono);letter-spacing:.13em;text-transform:uppercase;
   color:var(--ink3);background:var(--panel2)}
 .lgrid .rh{text-align:right;align-items:flex-end}
 .dark .lgrid .lh,.dark .lgrid .rh{color:var(--wink3);background:var(--wpanel2)}
-.lgrid .cell b{font-weight:650;font-size:13.5px}
+.lgrid .cell b{font-weight:650;font-size:calc(15px * var(--ts))}
 .lgrid .cell small{font:500 9.5px/1 var(--mono);letter-spacing:.1em;color:var(--ink4);text-transform:uppercase}
 .dark .lgrid .cell small{color:var(--wink3)}
 .lgrid .cell.here{background:var(--panel2);box-shadow:inset 0 0 0 1.5px var(--ink)}
@@ -283,8 +289,8 @@ td .mathblock{font-size:16px}
   display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;text-align:center;
   min-height:104px;max-height:158px}
 .dark .flow > .fbox{border-color:var(--wline);background:var(--wpanel)}
-.flow > .fbox b{font:650 14.5px/1.3 var(--sans)}
-.flow > .fbox small{font:400 12.5px/1.45 var(--sans);color:var(--ink3)}
+.flow > .fbox b{font:650 16px/1.3 var(--sans);font-size:calc(16px * var(--ts));}
+.flow > .fbox small{font:400 13.5px/1.45 var(--sans);font-size:calc(13.5px * var(--ts));color:var(--ink3)}
 .dark .flow > .fbox small{color:var(--wink3)}
 .flow > .fbox.accent{border-color:var(--ink);background:var(--panel2)}
 .dark .flow > .fbox.accent{border-color:var(--wink);background:var(--wpanel2)}
@@ -308,7 +314,7 @@ td .mathblock{font-size:16px}
 .dark .widget > .wbar .wt{color:var(--wink2)}
 .widget > .wbar .wspacer{flex:1}
 .widget > .wbody{padding:13px 15px;flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
-.wcap{font:400 12.5px/1.5 var(--sans);color:var(--ink3);text-align:center}
+.wcap{font:400 13.5px/1.5 var(--sans);font-size:calc(13.5px * var(--ts));color:var(--ink3);text-align:center}
 .dark .wcap{color:var(--wink3)}
 
 /* ---- figures and clips lifted from the source deck ---------------
@@ -318,7 +324,7 @@ td .mathblock{font-size:16px}
   min-width:0;max-width:100%}
 .fig img,.fig video{display:block;width:100%;height:auto;border-radius:2px;background:#fff;
   box-shadow:0 0 0 1px var(--line),0 1px 3px rgba(22,24,29,.055)}
-.fig figcaption{font:400 12.5px/1.5 var(--sans);color:var(--ink3);text-align:center;max-width:64ch}
+.fig figcaption{font:400 13.5px/1.5 var(--sans);font-size:calc(13.5px * var(--ts));color:var(--ink3);text-align:center;max-width:64ch}
 .fig figcaption strong{color:var(--ink2);font-weight:600}
 .dark .fig figcaption{color:var(--wink3)}
 .dark .fig img,.dark .fig video{box-shadow:0 0 0 1px rgba(255,255,255,.16)}
@@ -378,12 +384,12 @@ button.wb:disabled{opacity:.4;cursor:default}
 .quiz{border:1px solid var(--line);border-radius:5px;background:var(--panel);
   padding:20px 22px 18px;display:flex;flex-direction:column;gap:14px}
 .dark .quiz{border-color:var(--wline);background:var(--wpanel)}
-.qq{font:600 20px/1.35 var(--sans);color:var(--ink);letter-spacing:-.01em}
+.qq{font:600 21.5px/1.35 var(--sans);font-size:calc(21.5px * var(--ts));color:var(--ink);letter-spacing:-.01em}
 .dark .qq{color:var(--wink)}
 .qopts{display:flex;flex-direction:column;gap:8px}
 .qopt{display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;
   padding:11px 14px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);
-  color:var(--ink2);font:400 15.5px/1.45 var(--sans);cursor:pointer;
+  color:var(--ink2);font:400 17px/1.45 var(--sans);font-size:calc(17px * var(--ts));cursor:pointer;
   transition:border-color .15s ease,background .15s ease,color .15s ease}
 .dark .qopt{border-color:var(--wline);background:var(--wpanel2);color:var(--wink2)}
 .qopt:hover:not(:disabled){border-color:var(--ink);color:var(--ink)}
@@ -403,7 +409,7 @@ button.wb:disabled{opacity:.4;cursor:default}
 .quiz.done .qopt:not(.right):not(.wrong){opacity:.5}
 
 .qwhy{display:none;border-top:1px solid var(--line);padding-top:13px;
-  font:400 15px/1.62 var(--sans);color:var(--ink2)}
+  font:400 16.5px/1.62 var(--sans);font-size:calc(16.5px * var(--ts));color:var(--ink2)}
 .dark .qwhy{border-color:var(--wline);color:var(--wink2)}
 .quiz.done .qwhy{display:block}
 .qwhy p{margin:0} .qwhy p+p{margin-top:8px}
