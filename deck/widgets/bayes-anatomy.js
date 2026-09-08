@@ -1,83 +1,59 @@
 /* ============================================================
    widget: bayes-anatomy
-   Redrawn from the source deck: Bayes' rule with each term named
-   and pictured — a flat prior going in, a peaked posterior coming
-   out, and the evidence sitting underneath as a normaliser.
+   Redrawn from the source deck: the one picture the equation
+   cannot carry — a flat prior going in on the left, a peaked
+   posterior coming out on the right, and between them the two
+   operations the rule performs. The equation itself and the four
+   definitions are typeset in the markdown, as maths and a table,
+   so they set exactly like every other formula in the course.
    ============================================================ */
 IE437.widget('bayes-anatomy', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', GREEN = '#16A34A', AMBER = '#D97706';
+  var W = 760, H = 138;
 
-  function curve(w, h, fn, colour) {
-    var sv = IE437.svg(w, h), pts = [];
-    for (var i = 0; i <= 60; i++) {
-      var t = i / 60, v = fn(t);
-      pts.push([8 + t * (w - 16), h - 10 - v * (h - 22)]);
+  host.innerHTML = '<div class="wbody" style="align-items:center;padding:12px 14px"><div data-c></div></div>';
+  var sv = IE437.svg(W, H);
+  host.querySelector('[data-c]').appendChild(sv);
+
+  /* one small density panel: a curve on a baseline, its name beneath */
+  function panel(x0, fn, colour, name, formula, gloss) {
+    var w = 216, h = 78, top = 8, pts = [];
+    for (var i = 0; i <= 80; i++) {
+      var t = i / 80;
+      pts.push([x0 + 6 + t * (w - 12), top + h - 4 - fn(t) * (h - 14)]);
     }
     E('path', {
       d: pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('') +
-         'L' + (w - 8) + ' ' + (h - 10) + 'L8 ' + (h - 10) + 'Z',
-      fill: colour, 'fill-opacity': .14, stroke: colour, 'stroke-width': 1.6
+         'L' + (x0 + w - 6) + ' ' + (top + h - 4) + 'L' + (x0 + 6) + ' ' + (top + h - 4) + 'Z',
+      fill: colour, 'fill-opacity': .13, stroke: colour, 'stroke-width': 2, 'stroke-linejoin': 'round'
     }, sv);
-    E('line', { x1: 6, y1: h - 10, x2: w - 4, y2: h - 10, stroke: INK, 'stroke-opacity': .35 }, sv);
-    E('line', { x1: 8, y1: 6, x2: 8, y2: h - 8, stroke: INK, 'stroke-opacity': .35 }, sv);
-    return sv;
+    E('line', { x1: x0, y1: top + h - 4, x2: x0 + w, y2: top + h - 4, stroke: INK, 'stroke-opacity': .32 }, sv);
+    E('text', { x: x0 + w + 3, y: top + h, 'font-size': 11, 'font-style': 'italic', fill: INK,
+      'fill-opacity': .55, text: 'θ' }, sv);
+    var nm = E('text', { x: x0, y: top + h + 22, 'font-size': 13, 'font-weight': 700, fill: colour, text: name }, sv);
+    /* measure the name once it is in the tree, so the formula sits a fixed gap after it */
+    var nw = 0; try { nw = nm.getComputedTextLength(); } catch (e) { nw = name.length * 7; }
+    E('text', { x: x0 + nw + 9, y: top + h + 22, 'font-size': 13, 'font-style': 'italic',
+      fill: INK, 'fill-opacity': .72, text: formula }, sv);
+    E('text', { x: x0, y: top + h + 40, 'font-size': 11.5, fill: INK, 'fill-opacity': .55, text: gloss }, sv);
   }
 
-  host.innerHTML =
-    '<div class="wbody" style="padding:20px 18px;gap:0">' +
-    '<div style="display:grid;grid-template-columns:auto auto auto;gap:0;align-items:stretch;' +
-    'justify-content:center">' +
+  panel(24, function (t) { return (t > 0.04 && t < 0.96) ? 0.5 : 0; }, AMBER,
+    'prior', 'p(θ)', 'before the data: every θ about as plausible');
+  panel(W - 24 - 216, function (t) { return Math.exp(-Math.pow((t - 0.62) / 0.11, 2)); }, BLUE,
+    'posterior', 'p(θ | data)', 'after the data: the candidates reweighted');
 
-    /* --- posterior, left --- */
-    '<div style="background:rgba(37,99,235,.07);padding:16px 20px;display:flex;flex-direction:column;gap:8px;' +
-    'min-width:250px">' +
-    '<div style="font:700 12px/1.4 var(--sans);color:' + BLUE + '">The posterior</div>' +
-    '<div style="font:400 11.5px/1.5 var(--sans);color:var(--ink2)">the density over the parameter ' +
-    '<i>&theta;</i> given the evidence (data)</div>' +
-    '<div style="display:flex;align-items:flex-end;gap:8px;margin-top:2px">' +
-    '<span style="font:italic 13px/1 var(--serif);color:' + BLUE + '">p(&theta;|data)</span>' +
-    '<span data-post></span></div></div>' +
-
-    /* --- the equation --- */
-    '<div style="display:flex;align-items:center;gap:12px;padding:16px 24px;background:rgba(22,24,29,.03)">' +
-    '<span style="font:italic 22px/1 var(--serif);color:' + BLUE + '">p(&theta;|data)</span>' +
-    '<span style="font:400 22px/1 var(--serif)">=</span>' +
-    '<span style="display:flex;flex-direction:column;align-items:center;gap:5px">' +
-    '<span style="font:italic 19px/1 var(--serif)"><span style="color:' + GREEN + '">p(data|&theta;)</span>' +
-    '<span style="color:' + AMBER + '">&thinsp;p(&theta;)</span></span>' +
-    '<span style="height:1.5px;background:var(--ink);align-self:stretch"></span>' +
-    '<span style="font:italic 19px/1 var(--serif)">p(data)</span></span></div>' +
-
-    /* --- prior, right --- */
-    '<div style="background:rgba(217,119,6,.08);padding:16px 20px;display:flex;flex-direction:column;gap:8px;' +
-    'min-width:230px">' +
-    '<div style="font:700 12px/1.4 var(--sans);color:' + AMBER + '">The prior</div>' +
-    '<div style="font:400 11.5px/1.5 var(--sans);color:var(--ink2)">the belief about <i>&theta;</i> ' +
-    'before these observations</div>' +
-    '<div style="display:flex;align-items:flex-end;gap:8px;margin-top:2px">' +
-    '<span style="font:italic 13px/1 var(--serif);color:' + AMBER + '">p(&theta;)</span>' +
-    '<span data-prior></span></div></div>' +
-    '</div>' +
-
-    /* --- the two remaining terms --- */
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:20px;max-width:820px;' +
-    'align-self:center">' +
-    '<div style="border-top:2px solid ' + GREEN + ';padding-top:11px">' +
-    '<b style="font:700 12px/1.4 var(--sans);color:' + GREEN + '">The likelihood</b>' +
-    '<div style="font:400 12.5px/1.55 var(--sans);color:var(--ink2);margin-top:3px">how probable this data is ' +
-    'under each candidate <i>&theta;</i> — the only place the measurement enters</div></div>' +
-    '<div style="border-top:2px solid var(--ink3);padding-top:11px">' +
-    '<b style="font:700 12px/1.4 var(--sans)">The evidence &mdash; a normaliser</b>' +
-    '<div style="font:400 12.5px/1.55 var(--sans);color:var(--ink2);margin-top:3px">' +
-    'p(data) = &int; p(data|&theta;) p(&theta;) d&theta;, the probability of the data over every ' +
-    'possibility. It does not depend on <i>&theta;</i>, which is why ' +
-    '<b>posterior &prop; likelihood &times; prior</b> is usually enough</div></div>' +
-    '</div></div>';
-
-  host.querySelector('[data-post]').appendChild(
-    curve(112, 54, function (t) { return Math.exp(-Math.pow((t - 0.42) / 0.16, 2)); }, BLUE));
-  host.querySelector('[data-prior]').appendChild(
-    curve(112, 54, function (t) { return (t > 0.06 && t < 0.94) ? 0.62 : 0; }, AMBER));
+  /* the arrow between them, carrying the two operations of the rule */
+  var ax = 286, bx = W - 286, ay = 48;
+  E('line', { x1: ax, y1: ay, x2: bx - 10, y2: ay, stroke: INK, 'stroke-width': 2 }, sv);
+  E('path', { d: 'M' + bx + ' ' + ay + 'L' + (bx - 11) + ' ' + (ay - 5.5) + 'L' + (bx - 11) + ' ' + (ay + 5.5) + 'Z',
+    fill: INK }, sv);
+  E('text', { x: (ax + bx) / 2, y: ay - 12, 'text-anchor': 'middle', 'font-size': 12.5, 'font-weight': 700,
+    fill: GREEN, text: '× likelihood  p(data | θ)' }, sv);
+  E('text', { x: (ax + bx) / 2, y: ay + 20, 'text-anchor': 'middle', 'font-size': 12.5, fill: INK,
+    'fill-opacity': .6, text: '÷ evidence  p(data)' }, sv);
+  E('text', { x: (ax + bx) / 2, y: ay + 40, 'text-anchor': 'middle', 'font-size': 11.5, fill: INK,
+    'fill-opacity': .5, text: 'the data enter only here' }, sv);
 
   return {};
 });

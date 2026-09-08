@@ -114,7 +114,18 @@ For the temperature thread: **predict → calculate → reveal and check → cha
 ::: qstrip
 :::
 
+$$\underbrace{p(\theta\mid\mathrm{data})}_{\hl{\text{posterior}}}
+\;=\;
+\frac{\overbrace{p(\mathrm{data}\mid\theta)}^{\textcolor{#16A34A}{\text{likelihood}}}\;\;\overbrace{p(\theta)}^{\textcolor{#D97706}{\text{prior}}}}
+     {\underbrace{p(\mathrm{data})}_{\text{evidence}}}$$
+
 ::: widget bayes-anatomy
+:::
+
+::: reveal
+::: small
+The **evidence** $p(\mathrm{data})=\int p(\mathrm{data}\mid\theta)\,p(\theta)\,\mathrm{d}\theta$ is the probability of the data over every candidate at once. It does not depend on $\theta$, so it only rescales the curve — which is why *posterior $\propto$ likelihood $\times$ prior* is usually all you write.
+:::
 :::
 
 ::: reveal
