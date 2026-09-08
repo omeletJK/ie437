@@ -72,20 +72,25 @@ Source alignment: original Lecture 2 PDF 3.
 ### Two approaches, both able to quantify uncertainty
 ::: cols c2
 ::: col Frequentist
-$\theta$ is fixed but unknown. Evaluate an estimator or interval over repeated datasets from the model.
+$\theta$ is **fixed**; the *data* is what is random. So a probability describes the datasets you might have drawn — the long run of repeated, identical experiments.
 
-For $S$ heads in $n$ independent tosses, $\hat\theta=S/n$ is unbiased, with
+Estimate by relative frequency, $\hat\theta = S/n$. Running the experiment with more and more tosses:
 
-$$\mathrm{Var}(\hat\theta\mid\theta)=\frac{\theta(1-\theta)}{n}.$$
+$$\begin{array}{ccccc}
+\tfrac{1}{3} & \tfrac{5}{6} & \tfrac{5}{13} & \tfrac{129}{313} & \tfrac{61423}{123400}\\[3pt]
+\dm{0.33} & \dm{0.83} & \dm{0.38} & \dm{0.41} & \dm{0.50}
+\end{array}$$
 
-Small samples give **high variance**, not automatic bias. Confidence intervals and bootstrap distributions also express uncertainty.
+**The difficulty.** Small $n$ swings wildly — that is high ==variance==, not bias; $S/n$ is centred on $\theta$ at every $n$. And "identical flip" is an idealisation no real experiment quite meets.
 :::
 ::: col.accent Bayesian
-Specify a prior $p(\theta)$, then condition on the observed dataset to obtain $p(\theta\mid D)$.
+The **data** is fixed — you observed it. $\theta$ is what is uncertain, so a probability describes $\theta$ itself: a degree of belief.
 
-This supports posterior intervals and predictions averaged over plausible parameters.
+Specify a prior $p(\theta)$, condition on the observed $D$, and read off the posterior:
 
-The prior and likelihood are modelling choices. Check their implications and compare reasonable alternatives.
+$$p(\theta) \;\longrightarrow\; p(\theta \mid D)$$
+
+**The difficulty.** The prior is a modelling choice, and choosing it honestly is real work. Check what it implies and compare reasonable alternatives.
 :::
 :::
 
@@ -94,7 +99,14 @@ The distinction is ==what the probability statement describes==, not whether unc
 :::
 
 ::: note
-Source alignment: original Lecture 2 PDF 4–7.
+Source alignment: original Lecture 2 PDF 4–7. The estimate sequence is the
+source's own (PDF 6), as is the pairing of one difficulty against the other.
+Two deliberate departures: the source says small $n$ makes the estimate
+*biased*, which is wrong — $S/n$ is unbiased for every $n$, and what small $n$
+buys is variance; and the sampling-variance formula an earlier draft used to
+make that point has been dropped, since the binomial is not introduced until
+"One toss, a sequence, and a count". Experiment 1 demonstrates the scatter
+instead, and the two 95% statements are contrasted later on their own slide.
 :::
 
 ### The lecture route — keep each example together
