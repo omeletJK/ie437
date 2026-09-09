@@ -759,19 +759,42 @@ The model treats districts as comparable units with one common rate. Unequal are
 Source alignment: original Lecture 2 PDF 36.
 :::
 
-### The count estimate — calculate, then interpret
-$$\lambda\mid D\sim\mathrm{Gamma}(4+211,\ 0.2+20)=\mathrm{Gamma}(215,20.2).$$
+### The count estimate — calculate
+{sub: every number on this slide comes from a formula two slides back}
+
+Prior $\mathrm{Gamma}(a,b)=\mathrm{Gamma}(4,\,0.2)$; data $n=20$ districts with $\sum_i y_i=211$, so $\bar y=10.55$.
+
+::: table
+| Quantity | Formula | Put the numbers in | Value |
+|---|---|---|---|
+| Posterior | $\mathrm{Gamma}(a+\sum_i y_i,\ b+n)$ | $\mathrm{Gamma}(4+211,\ 0.2+20)$ | $\mathrm{Gamma}(215,\ 20.2)$ |
+| Posterior mean | $\dfrac{a+\sum_i y_i}{b+n}$ | $\dfrac{215}{20.2}$ | **10.644** |
+| Posterior variance | $\dfrac{a+\sum_i y_i}{(b+n)^2}$ | $\dfrac{215}{20.2^2}=\dfrac{215}{408.04}$ | **0.527** |
+| Standard deviation | $\sqrt{\mathrm{Var}}$ | $\sqrt{0.527}$ | **0.726** |
+| 95% credible interval | 2.5% and 97.5% quantiles of $\mathrm{Gamma}(215,\,20.2)$ | by software, or the normal approximation $10.644\pm1.96\times0.726$ | **[9.27, 12.11]** exact; $[9.22,\,12.07]$ approx. |
+:::
+
+::: reveal
+::: small
+The interval needs a quantile function — `qgamma` in R, `scipy.stats.gamma.ppf` in Python. The normal approximation lands within 0.05 of it here because the shape 215 is large; a Gamma is right-skewed, so the exact interval sits slightly to the right.
+:::
+:::
+
+### The count estimate — interpret
+{sub: the same numbers, read as statements about the rate}
 
 ::: cols c2
-::: col What is the estimated rate?
-$$\E[\lambda\mid D]=\frac{215}{20.2}=10.644.$$
+::: col Why the mean is 10.644
+Two slides back the posterior mean was written as a weighted average of the prior mean and the sample mean:
 
-The prior weight is $0.2/20.2\approx0.99\%$. The data pulls the estimate close to 10.55.
+$$\E[\lambda\mid D]=\underbrace{\tfrac{0.2}{20.2}}_{0.99\%}\times20\;+\;\underbrace{\tfrac{20}{20.2}}_{99.01\%}\times10.55=0.198+10.446.$$
+
+The prior rate $b=0.2$ is worth **0.2 of a district**. Twenty real districts outweigh it a hundred to one, so the estimate lands next to $\bar y$.
 :::
-::: col.accent How uncertain is that rate?
-$$\mathrm{Var}(\lambda\mid D)=\frac{215}{20.2^2}=0.527.$$
+::: col.accent What the interval says
+With 95% probability the **common rate** $\lambda$ lies in $[9.27,\ 12.11]$: about nine to twelve sightings per district, on average.
 
-Posterior standard deviation: **0.726**. Central 95% credible interval: approximately **[9.27, 12.11]**.
+It is a statement about $\lambda$, a parameter. It is **not** a range for the count in one new district — that count also carries Poisson noise, and its interval is wider. The next slides make that distinction exact.
 :::
 :::
 
