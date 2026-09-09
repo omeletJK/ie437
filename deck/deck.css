@@ -224,6 +224,18 @@ td .mathblock{font-size:calc(17.5px * var(--ts))}
 .slide.mcompact .mathblock{font-size:calc(17.5px * var(--ts))}
 .slide.mcompact .blk .mathblock,.slide.mcompact .col .mathblock{font-size:calc(16.5px * var(--ts))}
 
+/* Uppercase chrome must not reach the maths inside it.
+   The kicker, block titles, column headings, table heads, lineage labels
+   and widget labels are all set uppercase, and text-transform rewrites the
+   glyphs KaTeX produced: V^\pi came out as V^\Pi, $m=2$ as M = 2, and a
+   Greek label lost its case entirely. It is silent — the markup is right
+   and only the rendering is wrong — so switch the transform off wherever
+   maths lands, and leave the surrounding label alone. */
+.kicker .katex,.blk > .bt .katex,.col > h3 .katex,.chead .katex,
+.fill th .katex,.lgrid .lh .katex,.lgrid .rh .katex,
+.lgrid .cell small .katex,.widget > .wbar .wt .katex,.wlabel .katex,
+.axis .an .katex{text-transform:none}
+
 /* ---------- question strip ---------- */
 .qstrip{display:flex;align-items:center;justify-content:flex-start;margin:16px 0 0;flex:none}
 .qstrip .qn{border:1px solid var(--line);padding:8px 15px;border-radius:2px;

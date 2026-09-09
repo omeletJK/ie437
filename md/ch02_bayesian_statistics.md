@@ -574,31 +574,65 @@ Source alignment: original Lecture 2 PDF 14, 24.
 :::
 
 ### Predicting a batch — one uncertain coin is shared
-Let $K$ count heads in **$m$ future tosses**. All tosses use the same unknown $\theta$.
+Let $K$ count heads in **$m$ future tosses**. All of them are driven by the same unknown $\theta$, so the honest prediction averages over everything $\theta$ might be:
 
-::: cols c2
-::: col One fixed bias
-Plug in $\theta=4/7$:
+$$p(K\mid D)=\int_0^1 \underbrace{p(K\mid\theta)}_{\text{Binomial}(m,\theta)}\;\underbrace{p(\theta\mid D)}_{\text{Beta}(\alpha',\beta')}\,d\theta.$$
 
-$$K\sim\mathrm{Binomial}(m,4/7).$$
-
-The future trials are independent under this fixed-bias model.
-:::
-::: col.accent Average over plausible biases
-Use $\theta\mid D\sim\mathrm{Beta}(4,3)$:
-
-$$K\mid D\sim\mathrm{BetaBinomial}(m,4,3).$$
-
-The shared uncertainty creates extra variation in the total count.
-:::
+::: reveal
+This is Act 4's integral with a batch in place of a single $y^*$. Two things make it worth doing rather than plugging in $\hat\theta$: the answer is available in **closed form**, and it is a *different distribution*, not merely a wider one.
 :::
 
 ::: keypoint
-For two tosses, $P(K=0,1,2\mid D)=(3/14,6/14,5/14)$. ==Try one toss, then a batch, on the next slide.==
+The next slide evaluates that integral. The answer has a name — ==the Beta-Binomial.==
 :::
 
 ::: note
 Source alignment: original Lecture 2 PDF 24, 29–31.
+:::
+
+### Where the Beta-Binomial comes from
+{sub: the predictive integral, evaluated by recognising a Beta kernel}
+{math: compact}
+
+Write the binomial coefficient with gammas, $\binom my=\frac{\Gamma(m+1)}{\Gamma(y+1)\Gamma(m-y+1)}$, and collect the powers of $\theta$:
+
+$$\begin{aligned}
+p(y)&=\int_0^1\binom my\theta^y(1-\theta)^{m-y}\cdot\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}\,d\theta\\[2pt]
+&=\frac{\Gamma(m+1)}{\Gamma(y+1)\Gamma(m-y+1)}\frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\int_0^1\underbrace{\theta^{y+\alpha-1}(1-\theta)^{m-y+\beta-1}}_{\text{an unnormalised }\mathrm{Beta}(y+\alpha,\;m-y+\beta)}d\theta.
+\end{aligned}$$
+
+::: reveal
+The integral is not a new problem — it is a Beta density missing its constant. Supply the constant and it integrates to **1**, leaving only gammas:
+
+$$p(y)=\frac{\Gamma(m+1)\,\Gamma(\alpha+\beta)\,\Gamma(y+\alpha)\,\Gamma(m-y+\beta)}{\Gamma(y+1)\Gamma(m-y+1)\,\Gamma(\alpha)\Gamma(\beta)\,\Gamma(m+\alpha+\beta)}=\mathrm{BetaBinomial}(y\mid m,\alpha,\beta).$$
+:::
+
+::: keypoint
+==Nothing here used which Beta it was.== Feed it the prior and you get the *prior* predictive; feed it the posterior $\mathrm{Beta}(\alpha+S,\;\beta+n-S)$ and the same formula returns the *posterior* predictive.
+:::
+
+::: note
+This is the derivation on the original Lecture 2 PDF (prior predictive), reused for the posterior predictive two slides later. The trick — multiply and divide by the normaliser so the integrand becomes a density — is the same one used for the Gaussian in Lecture 4.
+:::
+
+### Which Beta you feed it is the whole difference
+For our coin the posterior was $\mathrm{Beta}(4,3)$, so the batch of $m$ future tosses is $\mathrm{BetaBinomial}(m,4,3)$ — while plugging in the posterior mean $\hat\theta=4/7$ would give $\mathrm{Binomial}(m,4/7)$.
+
+::: table center
+| Two future tosses | $P(K=0)$ | $P(K=1)$ | $P(K=2)$ | mean | variance |
+|---|---|---|---|---|---|
+| Plug in $\theta=4/7$ | $9/49=0.184$ | $24/49=0.490$ | $16/49=0.327$ | $8/7$ | $24/49$ |
+| Average over $\theta$ | $3/14=0.214$ | $6/14=0.429$ | $5/14=0.357$ | $8/7$ | $27/49$ |
+:::
+
+::: reveal
+::: keypoint
+==Identical means, and mass moved out of the middle onto both ends.== Averaging did not shift the prediction — it widened it, by exactly the $3/49$ the plug-in threw away when it pretended to know $\theta$.
+:::
+:::
+
+::: note
+Both rows computed by integration and by the closed form; they agree. Try one toss, then a batch, on the next slide.
 :::
 
 ### Experiment 4 — predict one toss, then a batch

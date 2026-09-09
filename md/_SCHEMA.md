@@ -69,8 +69,12 @@ Slide attributes:
 | `kicker` | any text | override the section's `short` chip |
 
 A value may contain commas — the parser splits only on a comma that begins the next `key:`.
-One thing to know when writing a widget: `.wlabel` is set in uppercase, which mangles Greek
-(ξ becomes Ξ). Spell such labels out in words rather than changing the stylesheet.
+
+The deck sets a lot of chrome in uppercase — the kicker, block titles, `::: col` headings, table
+header rows, lineage labels, widget labels. **Maths inside them is safe**: `deck.css` switches the
+transform off for anything KaTeX rendered, so `$V^\pi$` in a column heading stays $V^\pi$ and does
+not print as $V^\Pi$. What is *not* protected is a Greek letter typed as plain text rather than as
+maths — a bare `ξ` in a label still comes out `Ξ`. Write it as `$\xi$`, or spell it out.
 
 ## 3. Inline
 
