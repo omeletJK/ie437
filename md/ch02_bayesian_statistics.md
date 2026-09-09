@@ -195,17 +195,29 @@ Two heads favour the biased coin, but ==do not prove which coin we have.==
 Source alignment: original Lecture 2 PDF 8–10.
 :::
 
-### Likelihood scores the candidate parameters
+### One formula, two readings — probability and likelihood
+{sub: the same expression, according to which argument you hold fixed}
+
 For the observed sequence $D=(H,H,T)$, conditional independence gives
 
-$$L(\theta;D)=p(D\mid\theta)=\theta\cdot\theta\cdot(1-\theta)=\theta^2(1-\theta).$$
+$$p(D\mid\theta)=\theta\cdot\theta\cdot(1-\theta)=\theta^2(1-\theta).$$
+
+::: reveal
+That one expression has **two free arguments**, and which of them you hold fixed decides what kind of object you are looking at. Both readings below are of the formula above — they are not two different formulas.
+:::
 
 ::: cols c2
-::: col Fix the parameter
-$p(D\mid\theta)$ is a probability over possible datasets. For a fixed $\theta$, these probabilities add to 1.
+::: col Fix the parameter, vary the data — a probability
+Then it is $p(D\mid\theta)$, an ordinary probability over the $2^3=8$ sequences three tosses could produce. Those eight numbers ==sum to 1==, for every $\theta$.
 :::
-::: col.accent Fix the observed data
-$L(\theta;D)$ compares candidate values of $\theta$. It need not integrate to 1 over $\theta$ and is not yet a posterior.
+::: col.accent Fix the data, vary the parameter — a likelihood
+Then it is $L(\theta;D)$, a *score* on each candidate $\theta$. Nothing normalises it: $\int_0^1\theta^2(1-\theta)\,d\theta=\tfrac1{12}$, ==not 1==.
+:::
+:::
+
+::: reveal
+::: keypoint
+Summing to 1 along one axis says nothing about the other. That ==missing normalisation is exactly what $p(D)$ supplies== in Bayes' rule — which is why a likelihood is not yet a posterior.
 :::
 :::
 
