@@ -875,50 +875,132 @@ The predictive distribution is Negative Binomial, a Poisson–Gamma mixture. Its
 Source alignment: original Lecture 2 PDF 37.
 :::
 
-### Normal observations — combine information by precision
-Let $Y_i\mid\theta\sim\mathcal N(\theta,\sigma^2)$ independently, with known noise variance, and $\theta\sim\mathcal N(\mu_0,\tau_0^2)$.
+### Prior $\times$ likelihood — write down what is being multiplied
+Let $Y_i\mid\theta\sim\mathcal N(\theta,\sigma^2)$ independently with $\sigma^2$ known, and $\theta\sim\mathcal N(\mu_0,\tau_0^2)$.
 
 ::: cols c2
-::: col Data information
-The sample mean satisfies
-
-$$\bar Y\mid\theta\sim\mathcal N(\theta,\sigma^2/n).$$
-
-Its **precision**, inverse variance, is $n/\sigma^2$.
+::: col Likelihood
+$$p(y\mid\theta)=\prod_{i=1}^{n}\frac{1}{\sqrt{2\pi\sigma^2}}\exp\Big\{-\frac{(y_i-\theta)^2}{2\sigma^2}\Big\}$$
 :::
-::: col.accent Prior information
-Prior precision is $1/\tau_0^2$. Completing the square gives posterior precision
-
-$$\frac{1}{\tau_1^2}=\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}.$$
+::: col.accent Prior
+$$p(\theta)=\frac{1}{\sqrt{2\pi\tau_0^2}}\exp\Big\{-\frac{(\theta-\mu_0)^2}{2\tau_0^2}\Big\}$$
 :::
 :::
 
-::: reveal
-$$\mu_1=\frac{(1/\tau_0^2)\mu_0+(n/\sigma^2)\bar y}{1/\tau_0^2+n/\sigma^2},\qquad
-\theta\mid D\sim\mathcal N(\mu_1,\tau_1^2).$$
+Only the shape in $\theta$ matters, so every factor without a $\theta$ in it goes into the constant:
+
+$$p(\theta\mid y)\;\propto\;p(y\mid\theta)\,p(\theta)\;\propto\;\exp\Big\{-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(y_i-\theta)^2-\frac{1}{2\tau_0^2}(\theta-\mu_0)^2\Big\}$$
+
+::: keypoint
+Multiply two Gaussians and the exponent is ==a quadratic in $\theta$== — so the posterior has no choice but to be Gaussian.
 :::
 
 ::: note
-Source alignment: original Lecture 2 PDF 38–42.
+Source alignment: original Lecture 2 PDF 39–40.
 :::
 
-### Four temperature readings — calculate the update
-Prior: the unknown temperature is $\theta\sim\mathcal N(20,2^2)$. Measurement noise has standard deviation 3. Four readings have average 23.
+### Multiply out, collect, complete the square
+{math: compact}
 
-::: table
-| Information | Mean | Variance | Precision |
-|---|---|---|---|
-| Prior | 20 | $2^2=4$ | $1/4$ |
-| Average of four readings | 23 | $3^2/4=2.25$ | $4/9$ |
-| Posterior | **21.92** | **1.44** | $1/4+4/9=25/36$ |
+Expand both squares, writing $\bar y=\tfrac1n\sum_i y_i$ and keeping only the terms that carry a $\theta$:
+
+$$\begin{aligned}
+\sum_i (y_i-\theta)^2 &= n\theta^{2}-2\theta\,n\bar y+\textstyle\sum_i y_i^{2}\\[2pt]
+(\theta-\mu_0)^2 &= \theta^{2}-2\theta\mu_0+\mu_0^{2}
+\end{aligned}$$
+
+Divide each by its variance and gather the two powers of $\theta$:
+
+$$-\frac12\Big[\underbrace{\Big(\tfrac{n}{\sigma^2}+\tfrac{1}{\tau_0^2}\Big)}_{A}\,\theta^{2}\;-\;2\underbrace{\Big(\tfrac{n\bar y}{\sigma^2}+\tfrac{\mu_0}{\tau_0^2}\Big)}_{B}\,\theta\Big]$$
+
+::: reveal
+One completed square finishes it — and the leftover $B^2/A$ has no $\theta$, so it joins the constant:
+
+$$A\theta^{2}-2B\theta=A\Big(\theta-\tfrac BA\Big)^{2}-\tfrac{B^{2}}{A}
+\qquad\Longrightarrow\qquad
+p(\theta\mid y)\propto\exp\Big\{-\tfrac{A}{2}\Big(\theta-\tfrac BA\Big)^{2}\Big\}$$
+
+That is a Normal density with ==precision $A$ and mean $B/A$==. Nothing was assumed; it fell out.
+:::
+
+::: note
+Source alignment: original Lecture 2 PDF 40–41. The appendix repeats the same
+completion in log space for anyone who prefers it that way.
+:::
+
+### Normal observations — combine information by precision
+Reading $A$ and $B/A$ back gives the posterior in the form worth remembering.
+
+::: cols c2
+::: col Precisions add
+$$\frac{1}{\tau_1^{2}}=\underbrace{\frac{1}{\tau_0^{2}}}_{\text{prior}}+\underbrace{\frac{n}{\sigma^{2}}}_{\text{data}}$$
+
+$\bar Y\mid\theta\sim\mathcal N(\theta,\sigma^2/n)$, so the data carry precision $n/\sigma^2$ — **information adds, variances do not**.
+:::
+::: col.accent The mean is a weighted average
+$$\mu_1=\frac{(1/\tau_0^{2})\mu_0+(n/\sigma^{2})\bar y}{1/\tau_0^{2}+n/\sigma^{2}}$$
+
+Each side is weighted by exactly the precision it brings, and $\theta\mid D\sim\mathcal N(\mu_1,\tau_1^{2})$.
+:::
 :::
 
 ::: reveal
-$$\mu_1=\frac{(1/4)20+(4/9)23}{1/4+4/9}=21.92,\qquad \tau_1=1.2.$$
+::: cols c3
+::: col Sharper prior
+$\tau_0^{2}\downarrow$ — the prior mean $\mu_0$ is more trusted and pulls $\mu_1$ harder.
+:::
+::: col Quieter sensor
+$\sigma^{2}\downarrow$ — each reading is more precise, so $\bar y$ pulls harder.
+:::
+::: col.accent More data
+$n\uparrow$ — $\bar y$ pulls harder still, and eventually the prior stops mattering.
+:::
+:::
 :::
 
+::: note
+Source alignment: original Lecture 2 PDF 42. The three sensitivity readings are
+the source's own and were missing from the deck.
+:::
+
+### Four temperature readings — add the precisions
+{sub: the previous slide's two formulas, with numbers put in}
+
+Prior $\theta\sim\mathcal N(20,2^2)$; measurement noise has standard deviation $3$; four readings average $23$.
+
+**Step 1 — state each source as a precision**, since that is the currency that adds:
+
+$$\underbrace{\frac{1}{\tau_0^2}=\frac{1}{2^2}=\frac14}_{\text{the prior}}
+\qquad\text{and}\qquad
+\underbrace{\frac{n}{\sigma^2}=\frac{4}{3^2}=\frac49}_{\text{four readings, }\bar y=23}.$$
+
+::: reveal
+**Step 2 — add them, then invert** to come back to a variance:
+
+$$\frac{1}{\tau_1^2}=\frac14+\frac49=\frac{25}{36},
+\qquad \tau_1^2=\frac{36}{25}=1.44,\qquad \tau_1=1.2.$$
+:::
+
+::: note
+Source alignment: original Lecture 2 PDF 40–42.
+:::
+
+### Four temperature readings — weight the means
+{sub: 36% prior, 64% data — and the estimate lands at 21.92}
+
+**Step 3 — weight each mean by the precision that carries it.** Dividing through by the total precision $25/36$ turns the formula into an ordinary weighted average:
+
+$$\mu_1=\frac{\tfrac14(20)+\tfrac49(23)}{\tfrac{25}{36}}
+=\underbrace{\tfrac{9}{25}}_{0.36}(20)+\underbrace{\tfrac{16}{25}}_{0.64}(23)=21.92.$$
+
+::: reveal
 ::: keypoint
-The readings pull the estimate upward. They do not erase the prior after only four measurements.
+The four readings took ==64% of the weight and left the prior 36%==, so the estimate moved from 20 to 21.92 — most of the way to the data, but not all of it.
+:::
+
+::: small
+Precision decides the split, and four readings at $\sigma=3$ are worth just under twice a prior at $\tau_0=2$.
+:::
 :::
 
 ::: note
