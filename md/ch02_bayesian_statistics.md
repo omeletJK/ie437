@@ -354,8 +354,14 @@ $$\E[\theta]=\frac{\alpha}{\alpha+\beta}.$$
 $\mathrm{Beta}(2,2)$ centres at $1/2$; $\mathrm{Beta}(2,8)$ centres at $1/5$.
 :::
 ::: col.accent How strong is that belief?
-At a fixed mean, larger $\alpha+\beta$ gives smaller variance. $\mathrm{Beta}(20,20)$ is much more concentrated than $\mathrm{Beta}(2,2)$.
+$$\mathrm{Var}[\theta]=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}.$$
+
+Write $\mu=\E[\theta]$ and $\nu=\alpha+\beta$: this is $\mu(1-\mu)/(\nu+1)$. At a fixed centre the numerator is fixed, so ==spread falls like $1/\nu$.==
 :::
+:::
+
+::: reveal
+Both priors below centre at $1/2$, so only $\nu$ separates them: $\mathrm{Beta}(2,2)$ has variance $1/20$, $\mathrm{Beta}(20,20)$ has $1/164$ — ==8.2 times smaller==, and the standard deviation falls from $0.22$ to $0.08$. That is what “$\alpha+\beta$ is the strength of the prior” means, and in the next slide it is why they cost $\nu$ pseudo-counts to overturn.
 :::
 
 ::: small
