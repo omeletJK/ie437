@@ -1298,6 +1298,35 @@ MAP is its most dense point; full Bayes also keeps the spread and correlations.
 Source alignment: original Lecture 2 PDF 59–61.
 :::
 
+### Complete the square again — now with a matrix
+{math: compact}
+
+Same two factors as before, with $w$ in place of $\theta$. Keep only what carries a $w$:
+
+$$\log p(w\mid X,y)=-\frac{1}{2\sigma^2}(y-Xw)^\top(y-Xw)-\frac{1}{2\tau^2}w^\top w+C.$$
+
+Expand $(y-Xw)^\top(y-Xw)=y^\top y-2w^\top X^\top y+w^\top X^\top Xw$ and gather the two powers of $w$:
+
+$$-\frac12\Big[\,w^\top\underbrace{\Big(\tfrac{X^\top X}{\sigma^2}+\tfrac{I}{\tau^2}\Big)}_{A}w\;-\;2\,w^\top\underbrace{\tfrac{X^\top y}{\sigma^2}}_{b}\Big]$$
+
+::: reveal
+The scalar identity survives transposition — $A$ is symmetric, so
+
+$$w^\top Aw-2w^\top b=(w-A^{-1}b)^\top A\,(w-A^{-1}b)-b^\top A^{-1}b,$$
+
+and the leftover carries no $w$. What is left is a Gaussian with ==precision matrix $A$ and mean $A^{-1}b$.==
+:::
+
+::: keypoint
+Line for line the scalar derivation, with a matrix where the number was: $A$ was $\tfrac n{\sigma^2}+\tfrac1{\tau_0^2}$ and is now $\tfrac{X^\top X}{\sigma^2}+\tfrac I{\tau^2}$; the mean was $B/A$ and is now $A^{-1}b$. ==Precision still adds; the mean is still precision-weighted.==
+:::
+
+::: note
+Source alignment: original Lecture 2 PDF 60–61. This is the appendix's log-space
+completion, moved into the body — the result is unusable as a formula to remember
+unless you have seen where the two terms of $A$ came from.
+:::
+
 ### Full Bayes keeps the distribution over weights
 With independent noise $\epsilon_i\sim\mathcal N(0,\sigma^2)$ and prior $w\sim\mathcal N(0,\tau^2I)$, the posterior is also Gaussian:
 
@@ -1317,7 +1346,7 @@ Data precision plus prior precision. Large posterior variance marks directions i
 :::
 
 ::: small
-Complete the square in the log posterior to obtain these expressions; the derivation is in the appendix. Known positive $\sigma^2$ and $\tau^2$ are assumed.
+Read straight off the previous slide: $\Sigma_w=A^{-1}$ and $\mu_w=A^{-1}b$. Known positive $\sigma^2$ and $\tau^2$ are assumed, which is what makes $A$ positive definite — and therefore invertible — even when $X$ has fewer rows than columns.
 :::
 
 ::: note
@@ -1712,23 +1741,19 @@ $$\tau_1^2=\left(\frac n{\sigma^2}+\frac1{\tau_0^2}\right)^{-1},\qquad
 $C,C',C''$ do not depend on $\theta$. A new observation is $\theta$ plus independent Gaussian noise, so its predictive distribution is $\mathcal N(\mu_1,\tau_1^2+\sigma^2)$.
 :::
 
-### Backup — complete the square for regression weights
-{math: compact}
+### Backup — three remarks on the regression posterior
+The completion of the square now sits in the body, at *Complete the square again — now with a matrix*. Three things worth saying only if asked:
 
-With $w\sim\mathcal N(0,\tau^2I)$ and $y\mid X,w\sim\mathcal N(Xw,\sigma^2I)$,
-
-$$\begin{aligned}
-\log p(w\mid X,y)&=-\frac{1}{2\sigma^2}(y-Xw)^\top(y-Xw)-\frac{1}{2\tau^2}w^\top w+C\\
-&=-\frac12w^\top\left(\frac{X^\top X}{\sigma^2}+\frac I{\tau^2}\right)w
-+w^\top\frac{X^\top y}{\sigma^2}+C'\\
-&=-\frac12(w-\mu_w)^\top\Sigma_w^{-1}(w-\mu_w)+C''.
-\end{aligned}$$
-
-$$\Sigma_w=\left(\frac{X^\top X}{\sigma^2}+\frac I{\tau^2}\right)^{-1},\qquad
-\mu_w=\Sigma_w\frac{X^\top y}{\sigma^2}.$$
-
-::: small
-Positive noise and prior variances make the precision positive definite even if $X$ lacks full column rank. The Gaussian posterior mean equals its MAP. Posterior covariance is the information a point estimate omits.
+::: cols c3
+::: col Always invertible
+$X^\top X$ alone is singular whenever $X$ has fewer rows than columns. Adding $I/\tau^2$ makes $A$ positive definite, so a Bayesian fit is defined where least squares is not — the prior supplies the missing rank.
+:::
+::: col Mean equals MAP
+A Gaussian's mean, mode and median coincide, so $\mu_w$ is simultaneously the posterior mean and the MAP estimate. That is special to the Gaussian and does not survive a skewed posterior.
+:::
+::: col.accent What the point estimate drops
+$\Sigma_w$ is precisely what collapsing to $\mu_w$ throws away — and its large directions are the ones a prediction should hedge in.
+:::
 :::
 
 ### Backup — why Lasso can select an exact zero
