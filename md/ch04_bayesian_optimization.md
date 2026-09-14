@@ -294,7 +294,7 @@ The same seven observations, one kernel, one knob. Short length scale: the poste
 :::
 
 ### The original regression exercise — fit $x\sin x$ before optimising
-{sub: original PDF pp. 40–45 · rebuilt illustration with stated settings}
+{sub: Rebuilt illustration with stated settings}
 
 ::: figure gp-source-regression | 910
 True function $f(x)=x\sin x$; five observations at $x=0,2,4,6,8$. This redrawing uses observed values equal to $f(x)$, a zero-mean SE prior, amplitude 5, length scale 1.5, and assumed observation-noise standard deviation 0.2.
@@ -304,6 +304,10 @@ The line is the posterior mean. The band is **latent-function mean ± 2 standard
 
 ::: keypoint
 Regression answers **what might the function be?** The next act adds the separate decision: **which input should we measure next?**
+:::
+
+::: note
+Source alignment: original PDF pp. 40–45.
 :::
 
 ### Check — what the length scale controls
@@ -420,7 +424,7 @@ Distinguish a calculation about one acquisition choice from evidence about a who
 :::
 
 ### Optimise the acquisition — spend computation before spending an experiment
-{sub: original PDF pp. 139–149 · the inner optimisation problem}
+{sub: Inner optimisation problem}
 
 The physical experiment is expensive. Evaluating the acquisition $a_t(x)$ uses the current surrogate and is comparatively cheap.
 
@@ -438,6 +442,10 @@ The physical experiment is expensive. Evaluating the acquisition $a_t(x)$ uses t
 
 ::: keypoint
 A locally optimised acquisition can miss a better query. Solving this inner problem does **not** reveal the unknown objective without an experiment.
+:::
+
+::: note
+Source alignment: original PDF pp. 139–149.
 :::
 
 ### The loop
@@ -556,7 +564,7 @@ The lineage runs both ways. The bandit's Bayesian form is Chapter 2 exactly: aft
 :::
 
 ### The finite-bandit calculation underneath the loop
-{sub: original PDF pp. 69–94 · evaluative feedback and incremental learning}
+{sub: Evaluative feedback and incremental learning}
 
 A pull reveals the reward of **the chosen arm**, not the reward every alternative would have given. Suppose arm A has three observed rewards $1,0,1$, so $Q_3(A)=2/3$.
 
@@ -571,6 +579,10 @@ $$Q_4(A)=Q_3(A)+\tfrac14(0-Q_3(A))=\tfrac12.$$
 | UCB | mean plus an uncertainty bonus | confidence assumptions and reward scale matter |
 
 A constant step size tracks changing rewards by forgetting old observations; $1/k$ computes a sample average in a stationary problem. Preference and pursuit updates are in the appendix.
+
+::: note
+Source alignment: original PDF pp. 69–94.
+:::
 
 ### How much exploration is the right amount?
 ::: widget explore-regret {"seed":21}
@@ -606,7 +618,7 @@ And it costs something up front. In the professor's own wind-farm study, the con
 :::
 
 ### Unknown constraints — model feasibility as well as reward
-{sub: original PDF pp. 176–185 · the constrained BO problem}
+{sub: Constrained BO problem}
 
 Lecture 1 wrote constraints as known functions. Now both performance $f(x)$ and a constraint $c(x)\le0$ may require an expensive measurement.
 
@@ -625,8 +637,12 @@ $$P(\text{feasible}\mid x,D)=\Phi\!\left(\frac{-\mu_c(x)}{\sigma_c(x)}\right).$$
 A good predicted objective is not enough. **Feasibility is also uncertain**, and an acquisition score is not a guarantee that every tested design is safe.
 :::
 
+::: note
+Source alignment: original PDF pp. 176–185.
+:::
+
 ### Constrained improvement — one numerical choice
-{sub: original PDF pp. 181–183 · independence assumptions made explicit}
+{sub: Independence assumptions made explicit}
 
 Use a feasible incumbent $f^+$ and define $I(x)=\max(0,f(x)-f^+)$. If objective and constraint posteriors are independent,
 
@@ -643,8 +659,12 @@ B has less potential improvement but more **expected feasible improvement**. For
 This calculation assumes a feasible incumbent exists. If none has been found, a feasibility-search rule is needed before ordinary improvement over that incumbent is defined.
 :::
 
+::: note
+Source alignment: original PDF pp. 181–183.
+:::
+
 ### Several objectives — a Pareto set replaces one best number
-{sub: original PDF pp. 186–195 · same geometry, drawn for maximisation}
+{sub: Ame geometry, drawn for maximisation}
 
 For this illustration, **maximise both objectives**. A point dominates another if it is at least as good in both and strictly better in one. The Pareto set contains points not dominated by any other candidate.
 
@@ -667,8 +687,12 @@ Neither A nor B is the single best design. Choosing one finally requires a prefe
 :::
 :::
 
+::: note
+Source alignment: original PDF pp. 186–195.
+:::
+
 ### Two different scaling limits — data count and input dimension
-{sub: original PDF pp. 209–225 · why the original lecture continues beyond standard BO}
+{sub: Why the original lecture continues beyond standard BO}
 
 | Bottleneck | Why it arises | Source directions |
 |---|---|---|
@@ -680,6 +704,10 @@ A latent representation helps only if it preserves the variables relevant to the
 
 ::: keypoint
 There is no universal “BO works in any dimension” guarantee. **Representation, inference, and query selection** each have their own approximation error.
+:::
+
+::: note
+Source alignment: original PDF pp. 209–225.
 :::
 
 ### The bridge — one table, four lectures
@@ -816,7 +844,7 @@ For a stationary finite bandit with sufficient sampling, sample averages converg
 :::
 
 ### Backup — the multi-output covariance, with dimensions visible
-{sub: original PDF pp. 56–68 · Kronecker product and the latent-factor construction}
+{sub: Kronecker product and the latent-factor construction}
 
 For $D$ outputs measured at the same $N$ inputs, stack $\mathbf f=[\mathbf f_1^\top,\ldots,\mathbf f_D^\top]^\top$ in **output-major order**.
 
@@ -832,8 +860,12 @@ Each independent latent group contributes one PSD covariance; adding them preser
 
 For different input sets per output, use the corresponding covariance entries; the simple complete-grid Kronecker layout need not remain available.
 
+::: note
+Source alignment: original PDF pp. 56–68.
+:::
+
 ### Backup — preference and pursuit are different bandit updates
-{sub: original PDF pp. 87–91 · keep their relationship to policy gradients precise}
+{sub: Keep their relationship to policy gradients precise}
 
 | Method | Stored object | Update idea |
 |---|---|---|
@@ -850,8 +882,12 @@ $$h_b\leftarrow h_b+\alpha(r-\bar r)\big[\mathbf1\{b=a\}-\pi(b)\big].$$
 Reward-relative preference learning anticipates Lecture 10, but the source's chosen-arm-only reinforcement-comparison rule is **not the full softmax policy-gradient formula**.
 :::
 
+::: note
+Source alignment: original PDF pp. 87–91.
+:::
+
 ### Backup — the source's computational exercises
-{sub: original PDF pp. 164–175 and 207–208 · GPflowOpt-era lab material}
+{sub: GPflowOpt-era lab material}
 
 | Original exercise | Learning task retained here |
 |---|---|
@@ -866,8 +902,12 @@ The source's package installation screens are historical implementation material
 An experiment compares **the same problem under controlled settings**. A good-looking posterior plot alone does not measure optimisation performance.
 :::
 
+::: note
+Source alignment: original PDF pp. 164–175 and 207–208.
+:::
+
 ### Backup — three ways to combine Gaussian processes and neural networks
-{sub: original PDF pp. 222–225 · these are different model families}
+{sub: These are different model families}
 
 | Source direction | Construction | What changes |
 |---|---|---|
@@ -881,13 +921,17 @@ The source also connects variational autoencoders to latent GP models and low-di
 “Uses a neural network” does not specify the uncertainty model. Ask what is random, what is fitted, and which posterior calculation is exact or approximate.
 :::
 
+::: note
+Source alignment: original PDF pp. 222–225.
+:::
+
 ## Extensions — shared outputs and hypervolume acquisition
 {short: EXTENSION}
 
 Read after completing the main route.
 
 ### More than one output — share information through a latent function
-{sub: original PDF pp. 46–59 · intrinsic coregionalisation}
+{sub: Intrinsic coregionalisation}
 
 Suppose one design has two measured responses. A simple shared latent model is $u\sim\mathcal{GP}(0,k)$, $f_1(x)=u(x)$ and $f_2(x)=2u(x)$.
 
@@ -903,8 +947,12 @@ $$\operatorname{cov}\!\left(\begin{bmatrix}f_1(x)\\f_2(x)\end{bmatrix},\begin{bm
 Measuring one response can inform another **if the cross-output covariance model is appropriate**. Predicting several outputs is distinct from deciding how to trade off several objectives.
 :::
 
+::: note
+Source alignment: original PDF pp. 46–59.
+:::
+
 ### ICM, SLFM and LMC — change which latent patterns are shared
-{sub: original PDF pp. 54–68 · retain the model hierarchy}
+{sub: Retain the model hierarchy}
 
 Write each output as a linear combination of independent latent GPs. Their covariance always has the form
 
@@ -922,8 +970,12 @@ For $D$ outputs, every $B_q$ is **$D\times D$**. With $R_q$ latent factors, $B_q
 The source's many covariance derivations implement one rule: **independent latent contributions add their covariances**. The appendix gives the stacked matrix.
 :::
 
+::: note
+Source alignment: original PDF pp. 54–68.
+:::
+
 ### Expected hypervolume improvement — EI for a set of trade-offs
-{sub: original PDF pp. 190–208 · distinguish probability, amount, and approximation}
+{sub: Distinguish probability, amount, and approximation}
 
 Let $P$ be the current Pareto set and $r$ a fixed reference point worse than the outcomes of interest.
 
@@ -940,3 +992,8 @@ Estimate EHVI by drawing possible output vectors from the posterior, computing e
 ::: keypoint
 **Contextual multiobjective BO** adds the observed context $c$ to this same model and acquisition. Multiple outputs describe what is predicted; multiple objectives describe what is valued.
 :::
+
+::: note
+Source alignment: original PDF pp. 190–208.
+:::
+

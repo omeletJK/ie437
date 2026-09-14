@@ -29,10 +29,14 @@ questions:
 
 ### Where we are — one unknown becomes many
 ::: figure.plain original-system-modeling | 590
-Original PDF p. 3 · probability + statistics + graph theory.
+Probability + statistics + graph theory.
 :::
 
 Lecture 2 updated one unknown. A Bayesian network connects many interacting variables: **represent a system, infer its hidden parts, then decide**.
+
+::: note
+Source alignment: original PDF p. 3.
+:::
 
 ### Learning route — from a joint probability to a decision
 **Bring:** Bayes' rule and marginalization from Lecture 2.
@@ -83,7 +87,6 @@ A graph can say it. That is the whole content of this act.
 :::
 
 ### First read the arrows — directed and undirected graphs
-{sub: original PDF p. 6}
 
 ::: figure.plain original-directed-undirected | 770
 Original node positions and arrow directions, PDF p. 6.
@@ -93,9 +96,13 @@ Original node positions and arrow directions, PDF p. 6.
 An edge connects two nodes. An arrow also gives a direction. A Bayesian network uses directed edges.
 :::
 
+::: note
+Source alignment: original PDF p. 6.
+:::
+
 ### A directed acyclic graph, and the words for reading one
 ::: figure.plain original-cycle-dag | 820
-Original PDF p. 7 · follow the arrows and try to return to the starting node.
+Follow the arrows and try to return to the starting node.
 :::
 
 A **directed acyclic graph (DAG)** has no directed cycle. On the left, $A\to B\to C\to A$ returns to $A$; on the right it cannot.
@@ -104,38 +111,52 @@ A **directed acyclic graph (DAG)** has no directed cycle. On the left, $A\to B\t
 A DAG gives a **topological order**: generate each variable after its parents. Arbitrary tables on a directed cycle do not provide this guarantee.
 :::
 
+::: note
+Source alignment: original PDF p. 7.
+:::
+
 ### Read one graph three ways — nodes, edges and a matrix
-{sub: original PDF p. 8}
 
 ::: figure.plain original-graph-vocabulary | 1010
-Original PDF p. 8 · the same eight-node graph, edge list and adjacency matrix.
+The same eight-node graph, edge list and adjacency matrix.
 :::
 
 ::: keypoint
 Read arrows entering $x_4$: its parents are $x_1,x_2,x_3$. Follow arrows leaving it: its children are $x_5,x_6$.
 :::
 
+::: note
+Source alignment: original PDF p. 8.
+:::
+
 ### A satellite — two causes and two visible symptoms
-{sub: original PDF p. 11}
 
 ::: figure.plain original-satellite | 870
-Original PDF pp. 10–12 · retain the diamond-shaped system diagram.
+Retain the diamond-shaped system diagram.
 :::
 
 ::: keypoint
 Battery $B$ and solar panel $S$ feed electrical state $E$; $E$ feeds trajectory $D$ and communication $C$. Read each node as a random variable.
 :::
 
+::: note
+Source alignment: original PDF p. 11, pp. 10–12.
+:::
+
 ### The factorisation — one joint, written locally
 A **Bayesian network** specifies $p(x_1,\ldots,x_n)=\prod_i p(x_i\mid\mathrm{pa}_i)$ on a DAG.
 
 ::: figure.plain original-satellite-tables | 740
-Original PDF p. 13 · each table sits beside the node whose local distribution it specifies.
+Each table sits beside the node whose local distribution it specifies.
 :::
 
 $$p(B,S,E,D,C)=p(B)p(S)p(E\mid B,S)p(D\mid E)p(C\mid E).$$
 
 **Free parameters:** $1+1+4+2+2=10$, compared with $2^5-1=31$ in the full joint.
+
+::: note
+Source alignment: original PDF p. 13.
+:::
 
 ### Multiply first, then sum — a two-node calculation
 {sub: an illustrative sensor model; each row has a clear role}
@@ -244,14 +265,17 @@ That single sentence is what the missing edges $B \to C$ and $S \to D$ mean. Thi
 :::
 
 ### See why the collider is different
-{sub: original PDF p. 16}
 
 ::: figure.plain original-three-structures | 610
-Original PDF p. 16 · blue: conditioning separates; red: conditioning can couple.
+Blue: conditioning separates; red: conditioning can couple.
 :::
 
 ::: keypoint
 The three blue rows factor after observing $z$. In the red row, $p(z\mid x,y)$ still connects the two causes.
+:::
+
+::: note
+Source alignment: original PDF p. 16.
 :::
 
 ### Three structures, three verdicts
@@ -281,21 +305,24 @@ D-separation guarantees independence for **every** compatible probability table.
 :::
 
 ### Marginalize or condition — watch the connection change
-{sub: original PDF p. 17}
 
 ::: figure.plain original-marginalize-condition | 790
-Original PDF p. 17 · left: common cause; right: common effect.
+Left: common cause; right: common effect.
 :::
 
 ::: keypoint
 Crossed-out $z$: sum it out. Shaded $z$: observe it. A remaining line permits dependence; disconnected nodes are independent.
 :::
 
+::: note
+Source alignment: original PDF p. 17.
+:::
+
 ### Explaining away — the collider, in words
 {sub: nothing changed in the world; something changed in what you know}
 
 ::: figure.plain original-satellite-observed | 870
-Original PDF p. 24 · the electrical failure is observed; the competing causes are highlighted.
+The electrical failure is observed; the competing causes are highlighted.
 :::
 
 **Before:** $B$ and $S$ are independent. **Observe $E$:** the electrical system failed. **Then learn $B$ failed:** in a competing-causes model, less evidence is needed for $S$ to explain $E$.
@@ -304,15 +331,22 @@ Original PDF p. 24 · the electrical failure is observed; the competing causes a
 The collider permits **explaining away**. Its probability table determines the sign and size of the dependence.
 :::
 
+::: note
+Source alignment: original PDF p. 24.
+:::
+
 ### Wet grass — the graph and its probability tables
-{sub: original PDF p. 19}
 
 ::: figure.plain original-wet-grass | 690
-Original PDF p. 19 · graph above, local probability tables below; the table label is corrected to $p(T\mid R,S)$.
+Graph above, local probability tables below; the table label is corrected to $p(T\mid R,S)$.
 :::
 
 ::: keypoint
 First specify the model. Next ask whether wet grass supports the sprinkler, the rain, or both.
+:::
+
+::: note
+Source alignment: original PDF p. 19.
 :::
 
 ### Wet grass — explaining away, with numbers
@@ -353,14 +387,17 @@ Click a node to observe it. The two blue edges are the collider path $S \to T \l
 :::
 
 ### Burglar alarm — two competing explanations
-{sub: original PDF p. 21}
 
 ::: figure.plain original-alarm | 835
-Original PDF p. 21 · the first prior label is corrected to $P(B=1)=0.01$.
+The first prior label is corrected to $P(B=1)=0.01$.
 :::
 
 ::: keypoint
 The alarm has two parents. A radio report is evidence about earthquake $E$; after hearing the alarm, it can change our belief about burglary $B$.
+:::
+
+::: note
+Source alignment: original PDF p. 21.
 :::
 
 ### The burglar alarm — the same move, sharper
@@ -430,12 +467,16 @@ This is the collider, and it runs opposite to the chain and the fork. Learning t
 {q: 3}
 
 ::: figure.plain original-query-evidence | 860
-Original PDF p. 25 · orange: query; green: observed evidence; white: hidden variables.
+Orange: query; green: observed evidence; white: hidden variables.
 :::
 
 $$P(B\mid D=1,C=1)$$
 
 **Keep $B$** as the query. **Fix $D,C$** at their observed values. **Sum over $E,S$**, then normalise.
+
+::: note
+Source alignment: original PDF p. 25.
+:::
 
 ### Exact inference — and why it hurts
 Marginalise the joint over the hidden variables and normalise:
@@ -453,14 +494,17 @@ Storing the joint cheaply is not the same as ==summing over it cheaply.==
 :::
 
 ### A factor covers the variables in one local table
-{sub: original PDF p. 27}
 
 ::: figure.plain original-elimination-factors | 390
-Original PDF p. 27 · each outline groups the variables of one factor.
+Each outline groups the variables of one factor.
 :::
 
 ::: keypoint
 The large outline covers $E,B,S$: it is $p(E\mid B,S)$. Eliminating $E$ combines every factor that mentions $E$.
+:::
+
+::: note
+Source alignment: original PDF p. 27.
 :::
 
 ### Variable elimination — push each sum past what it cannot touch
@@ -488,73 +532,91 @@ Both columns compute the identical number. On the left, enumeration: one term pe
 :::
 
 ### Generate one sample — 1/5 · Draw the battery
-{sub: original PDF p. 28}
 
 ::: figure.plain original-sample-1 | 940
-Original PDF p. 28 · sample each variable once its parents are available.
+Sample each variable once its parents are available.
 :::
 
 ::: keypoint
 Draw $B$ from $p(B)$. This sample starts with $B=1$.
 :::
 
+::: note
+Source alignment: original PDF p. 28.
+:::
+
 ### Generate one sample — 2/5 · Draw the solar panel
-{sub: original PDF p. 29}
 
 ::: figure.plain original-sample-2 | 940
-Original PDF p. 29 · sample each variable once its parents are available.
+Sample each variable once its parents are available.
 :::
 
 ::: keypoint
 Draw $S$ from $p(S)$. The two root nodes have no parents.
 :::
 
+::: note
+Source alignment: original PDF p. 29.
+:::
+
 ### Generate one sample — 3/5 · Draw the electrical state
-{sub: original PDF p. 30}
 
 ::: figure.plain original-sample-3 | 940
-Original PDF p. 30 · sample each variable once its parents are available.
+Sample each variable once its parents are available.
 :::
 
 ::: keypoint
 Now both parents are available: draw $E$ from $p(E\mid B=1,S=1)$.
 :::
 
+::: note
+Source alignment: original PDF p. 30.
+:::
+
 ### Generate one sample — 4/5 · Draw the trajectory
-{sub: original PDF p. 31}
 
 ::: figure.plain original-sample-4 | 940
-Original PDF p. 31 · sample each variable once its parents are available.
+Sample each variable once its parents are available.
 :::
 
 ::: keypoint
 Draw $D$ from $p(D\mid E=1)$. A sampled outcome can be zero even when its parent is one.
 :::
 
+::: note
+Source alignment: original PDF p. 31.
+:::
+
 ### Generate one sample — 5/5 · Draw communication
-{sub: original PDF p. 32}
 
 ::: figure.plain original-sample-5 | 940
-Original PDF p. 32 · sample each variable once its parents are available.
+Sample each variable once its parents are available.
 :::
 
 ::: keypoint
 Draw $C$ from $p(C\mid E=1)$. The row is now one complete sample from the joint.
 :::
 
+::: note
+Source alignment: original PDF p. 32.
+:::
+
 ### Reject rows that disagree with the evidence
-{sub: original PDF p. 34}
 
 ::: figure.plain original-rejection-samples | 790
-Original PDF pp. 33–34 · three of the nine displayed rows match $D=C=1$.
+Three of the nine displayed rows match $D=C=1$.
 :::
 
 ::: keypoint
 Among the three matching rows, one has $B=1$: the sample estimate is $1/3$. This is an estimate, not an exact posterior.
 :::
 
+::: note
+Source alignment: original PDF p. 34, pp. 33–34.
+:::
+
 ### Weight the evidence instead of rejecting a row
-{sub: original PDF p. 35 · the evidence columns are fixed}
+{sub: Evidence columns are fixed}
 
 ::: figure.plain original-weighted-samples | 590
 The red $D,C$ columns are observed; the final column records the likelihood weight.
@@ -568,8 +630,12 @@ $$\widehat P(B=1\mid D=C=1)=\frac{\sum_k w_k\,\mathbf1[B_k=1]}{\sum_k w_k}.$$
 The displayed rows illustrate weighted samples. Generate fresh rows with clamped evidence; do not first reject samples using the observed values.
 :::
 
+::: note
+Source alignment: original PDF p. 35.
+:::
+
 ### Rare causes — why weighting can still struggle
-{sub: original PDF p. 36 · compare an exact posterior with rare prior draws}
+{sub: Compare an exact posterior with rare prior draws}
 
 ::: figure.plain original-rare-cause | 980
 A rare cause $C$ can have posterior probability 0.5 after observing $D=1$.
@@ -579,6 +645,10 @@ But likelihood weighting still proposes $C=1$ with probability 0.001. In 1,000 d
 
 ::: keypoint
 A run with no $C=1$ sample estimates zero. That is a sampling failure; the model's conditional probability has not become zero.
+:::
+
+::: note
+Source alignment: original PDF p. 36.
 :::
 
 ### When exact inference is hopeless — sample
@@ -616,12 +686,12 @@ Storing the joint cheaply and **summing over it** cheaply are different problems
 :::
 
 ### Naive Bayes — classification is posterior inference
-{sub: original PDF p. 43 · a familiar use of the same graph}
+{sub: A familiar use of the same graph}
 
 ::: cols
 ::: col
 ::: figure.plain original-naive-bayes | 260
-Original PDF p. 43 · one class node, many observed features.
+One class node, many observed features.
 :::
 :::
 ::: col
@@ -644,13 +714,17 @@ Thus $P(A\mid o_1,o_2)=0.16/0.22\approx0.727$. Choose $A$ under equal misclassif
 “Naive” describes the **conditional-independence assumption**. It does not mean that the observed features must be marginally independent.
 :::
 
+::: note
+Source alignment: original PDF p. 43.
+:::
+
 ## Learning a model from data
 {short: LEARNING}
 
 Inference assumes the local tables are given. Learning estimates those tables from observations.
 
 ### Learning the tables — reuse Lecture 2 locally
-{sub: original PDF p. 44 · parameter learning, with the graph fixed}
+{sub: Parameter learning, with the graph fixed}
 
 For complete discrete data, count each node separately for each configuration of its parents:
 
@@ -667,20 +741,27 @@ In the illustrative fault model, suppose 8 of 10 faulty machines and 18 of 90 he
 A Bayesian network gives **many small estimation problems**. Missing or latent variables require inference as part of learning; counting observed rows alone is then insufficient.
 :::
 
+::: note
+Source alignment: original PDF p. 44.
+:::
+
 ## Tracking a hidden state through time
 {short: FILTERING}
 
 Use the transition model to predict, then use a new observation to update.
 
 ### A dynamic Bayesian network — repeat the same local structure
-{sub: original PDF p. 47}
 
 ::: figure.plain original-dynamic-network | 790
-Original PDF p. 47 · input, hidden state and observation stay in three aligned rows.
+Input, hidden state and observation stay in three aligned rows.
 :::
 
 ::: keypoint
 The horizontal arrows carry the state forward. Vertical and curved arrows describe what happens within one time step.
+:::
+
+::: note
+Source alignment: original PDF p. 47.
 :::
 
 ### The same graph, unrolled through time
@@ -708,27 +789,30 @@ Lecture 7 will open by *assuming* both of these. Markov structure is a condition
 :::
 
 ### Markov order — how far back do the arrows reach?
-{sub: original PDF p. 49}
 
 ::: figure.plain original-full-history | 660
-Original PDF p. 49 · without an assumption, a state may depend on the whole past.
+Without an assumption, a state may depend on the whole past.
 :::
 
 ::: figure.plain original-markov-orders | 990
-Original PDF p. 50 · first-order and second-order chains, side by side.
+First-order and second-order chains, side by side.
 :::
 
 ::: keypoint
 A first-order model keeps only the previous state. A second-order model keeps the previous two.
 :::
 
+::: note
+Source alignment: original PDF p. 49, p. 50.
+:::
+
 ### Fit a transition matrix — count where each state goes
-{sub: original PDF p. 53 · the same count-and-normalise rule}
+{sub: Ame count-and-normalise rule}
 
 Use the source convention $M_{ij}=P(S_{t+1}=i\mid S_t=j)$: **column $j$ is the distribution of the next state given the current state**.
 
 ::: figure.plain original-transition-counts | 1000
-Original PDF p. 53 · five departures from state 1; three go to state 3, giving $\hat\theta_{3\mid1}=3/5$.
+Five departures from state 1; three go to state 3, giving $\hat\theta_{3\mid1}=3/5$.
 :::
 
 For the illustrative observed sequence $A,A,B,A,B,B$, the four transition counts are $N_{AA}=1$, $N_{BA}=2$, $N_{AB}=1$, $N_{BB}=1$.
@@ -741,8 +825,12 @@ Starting at $A$ gives $p_t=[1,0]^\top$, so the next-state probabilities are $[1/
 This is **model learning** from a trajectory. Predicting with $p_{t+1}=Mp_t$ is a different operation, performed after the matrix is specified or estimated.
 :::
 
+::: note
+Source alignment: original PDF p. 53.
+:::
+
 ### Predict a marginal — collect probability from every predecessor
-{sub: original PDF p. 52 · one destination receives mass from several possible previous states}
+{sub: One destination receives mass from several possible previous states}
 
 ::: figure.plain original-markov-marginal | 760
 Each blue arrow contributes transition probability times previous-state probability.
@@ -754,8 +842,12 @@ $$P(S_t=i)=\sum_j P(S_t=i\mid S_{t-1}=j)P(S_{t-1}=j),\qquad p_t=Mp_{t-1}.$$
 Add all routes into state $i$. Repeating this calculation evolves the marginal; a stationary distribution is one that the update leaves unchanged.
 :::
 
+::: note
+Source alignment: original PDF p. 52.
+:::
+
 ### A stationary model need not start in a stationary distribution
-{sub: original PDF p. 52 · separate two uses of “stationary”}
+{sub: Eparate two uses of “stationary”}
 
 **Time-homogeneous transitions:** the same matrix $M$ is used at each step. **Stationary distribution:** a probability vector $p_\infty$ satisfying $Mp_\infty=p_\infty$.
 
@@ -769,22 +861,29 @@ From $p_0=[1,0]^\top$, the first two distributions are $p_1=[0.9,0.1]^\top$ and 
 For a finite irreducible, aperiodic chain, the distribution converges to its unique stationary distribution. A general Markov chain need not have that convergence property.
 :::
 
+::: note
+Source alignment: original PDF p. 52.
+:::
+
 ### State transitions — a graph of possible next states
-{sub: original PDF p. 55}
 
 ::: figure.plain original-state-transition | 930
-Original PDF p. 55 · these four nodes are state values, not four time steps.
+These four nodes are state values, not four time steps.
 :::
 
 ::: keypoint
 From $X_2$, move to $X_3$ with probability 0.4 or $X_4$ with probability 0.6. Outgoing probabilities sum to one.
 :::
 
+::: note
+Source alignment: original PDF p. 55.
+:::
+
 ### Hidden Markov models — name the question before computing
-{sub: original PDF pp. 54–61 · the same hidden states, different information sets}
+{sub: Ame hidden states, different information sets}
 
 ::: figure.plain original-hmm | 640
-Original PDF p. 54 · blue transitions, red emissions and grey observed nodes.
+Blue transitions, red emissions and grey observed nodes.
 :::
 
 | Question | Target | What the answer uses |
@@ -794,8 +893,11 @@ Original PDF p. 54 · blue transitions, red emissions and grey observed nodes.
 | Smoothing | $p(x_t\mid y_{1:T})$, $t<T$ | later observations to revise the past |
 | Sequence likelihood / best hidden path | $p(y_{1:T})$ / $\argmax_{x_{1:T}}p(x_{1:T}\mid y_{1:T})$ | model comparison / Viterbi decoding |
 
+::: note
+Source alignment: original PDF pp. 54–61, p. 54.
+:::
+
 ### Filtering — locate the present
-{sub: original PDF p. 56}
 
 ::: figure.plain original-hmm-filtering | 780
 $p(x_t\mid y_{1:t})$ · original observation shading and target highlights.
@@ -805,8 +907,11 @@ $p(x_t\mid y_{1:t})$ · original observation shading and target highlights.
 The orange node is the current target. Use the grey observations up to now; the future observation is still unknown.
 :::
 
+::: note
+Source alignment: original PDF p. 56.
+:::
+
 ### Prediction — look beyond the observations
-{sub: original PDF p. 57}
 
 ::: figure.plain original-hmm-prediction | 780
 $p(x_t\mid y_{1:s}),\ t>s$ · original observation shading and target highlights.
@@ -816,8 +921,11 @@ $p(x_t\mid y_{1:s}),\ t>s$ · original observation shading and target highlights
 The observations stop at $s$. Push the current belief forward through transitions to the orange future node.
 :::
 
+::: note
+Source alignment: original PDF p. 57.
+:::
+
 ### Smoothing — use later evidence to revise the past
-{sub: original PDF p. 58}
 
 ::: figure.plain original-hmm-smoothing | 780
 $p(x_t\mid y_{1:u}),\ t<u$ · original observation shading and target highlights.
@@ -827,8 +935,11 @@ $p(x_t\mid y_{1:u}),\ t<u$ · original observation shading and target highlights
 The target stays at $t$, but grey observations extend to $u$. Later measurements can change what we believe happened earlier.
 :::
 
+::: note
+Source alignment: original PDF p. 58.
+:::
+
 ### Decoding — choose a whole hidden path
-{sub: original PDF p. 60}
 
 ::: figure.plain original-hmm-viterbi | 780
 $\argmax_{x_{1:u}}p(x_{1:u}\mid y_{1:u})$ · original observation shading and target highlights.
@@ -836,6 +947,10 @@ $\argmax_{x_{1:u}}p(x_{1:u}\mid y_{1:u})$ · original observation shading and ta
 
 ::: keypoint
 All hidden nodes are targets together. Find the most probable complete path; separate per-time guesses need not form that path.
+:::
+
+::: note
+Source alignment: original PDF p. 60.
 :::
 
 ### Filtering — Bayes' rule, once per time step
@@ -897,29 +1012,35 @@ When changing a condition, identify exactly which factors change. Do not reuse e
 :::
 
 ### Add an input — the original IOHMM
-{sub: original PDF p. 62}
 
 ::: figure.plain original-iohmm | 610
-Original PDF p. 62 · $A_t$ affects both the transition and the observation.
+$A_t$ affects both the transition and the observation.
 :::
 
 ::: keypoint
 This is an input-output HMM. Choosing inputs becomes a decision problem only after specifying utilities and the information available when acting.
 :::
 
+::: note
+Source alignment: original PDF p. 62.
+:::
+
 ### A continuous hidden state — the same two-row picture
-{sub: original PDF p. 71}
 
 ::: figure.plain original-kalman-model | 990
-Original PDF p. 71 · the source writes the emission matrix as $B_t$; the next slide uses $C$.
+The source writes the emission matrix as $B_t$; the next slide uses $C$.
 :::
 
 ::: keypoint
 The graph still separates transitions and measurements. Linear equations and Gaussian noise let us carry a mean and covariance instead of a probability table.
 :::
 
+::: note
+Source alignment: original PDF p. 71.
+:::
+
 ### Kalman filtering — carry the mean and covariance forward
-{sub: original PDF p. 73 · the source names the mean f and covariance F}
+{sub: Ource names the mean f and covariance F}
 
 ::: figure.plain original-kalman-update | 1040
 The old Gaussian belief becomes a new Gaussian belief after prediction and measurement correction.
@@ -931,8 +1052,12 @@ The update carries two objects: **where the state is likely to be**, and **how u
 The whole posterior changes. Linear Gaussian assumptions let us represent that distribution using only its mean and covariance.
 :::
 
+::: note
+Source alignment: original PDF p. 73.
+:::
+
 ### Linear Gaussian state space — the Kalman version of the same update
-{sub: original PDF pp. 71–73 · transition and observation are different models}
+{sub: Transition and observation are different models}
 
 $$x_t=Ax_{t-1}+w_t,\qquad y_t=Cx_t+v_t,\qquad w_t\sim\mathcal N(0,Q),\quad v_t\sim\mathcal N(0,R).$$
 
@@ -950,13 +1075,17 @@ A scalar example with $m^-=10$, $P^-=4$, $C=1$, $R=1$, and $y=12$ gives $K=0.8$,
 The Kalman filter is **predict → observe → update**, just like the discrete fault example. Gaussian conditioning makes those steps closed form.
 :::
 
+::: note
+Source alignment: original PDF pp. 71–73.
+:::
+
 ## Act 4 — from belief to decision
 {short: ACT 4, num: Act 4}
 
 **Q4.** Everything so far describes the world. Add two node types and the graph starts choosing.
 
 ### Bayesian network $+$ decision $+$ utility
-{q: 4, sub: original PDF pp. 75 and 83}
+{q: 4}
 
 ::: figure.plain original-decision-network | 605
 Circle: chance. Square: decision. Diamond: utility. Dashed blue: information known before choosing.
@@ -964,6 +1093,10 @@ Circle: chance. Square: decision. Diamond: utility. Dashed blue: information kno
 
 ::: keypoint
 Read the dashed arrow first: the result of test $O^1$ is known before treatment $T$ is chosen.
+:::
+
+::: note
+Source alignment: original PDF pp. 75 and 83.
 :::
 
 ### Utility — a number for comparing outcomes
@@ -989,18 +1122,21 @@ Utility need not equal money. A concave utility of money represents risk aversio
 :::
 
 ### Utility curves — the same money can have different value
-{sub: original PDF p. 80}
 
 ::: figure.plain original-utility-curves | 1010
-Original PDF p. 80 · compare the two utility shapes on the nonnegative money range.
+Compare the two utility shapes on the nonnegative money range.
 :::
 
 ::: keypoint
 On the nonnegative money range: blue bends downward (risk averse); red bends upward (risk seeking). Compare expected utility, not just expected money.
 :::
 
+::: note
+Source alignment: original PDF p. 80.
+:::
+
 ### Utility is not necessarily money — the original lottery example
-{sub: original PDF pp. 77–80 · probabilities describe beliefs; utilities describe preferences}
+{sub: Probabilities describe beliefs; utilities describe preferences}
 
 Compare **A: receive 1 dollar for sure** with **B: receive 100 dollars with probability 0.01, otherwise 0**. Both have expected money 1 dollar.
 
@@ -1016,19 +1152,26 @@ Expected-utility modelling assumes consistent lottery preferences, including com
 Choose by $\mathbb E[U(M)]$, which need not equal $U(\mathbb E[M])$. State the utility model before comparing decisions.
 :::
 
+::: note
+Source alignment: original PDF pp. 77–80.
+:::
+
 ### Utility factorisation — one large function or several small ones
-{sub: original PDF p. 81}
 
 ::: figure.plain original-additive-utility | 1010
-Original PDF p. 81 · one diamond with many parents versus separate utility diamonds.
+One diamond with many parents versus separate utility diamonds.
 :::
 
 ::: keypoint
 Additivity is an assumption about preferences. It does not say the random variables are independent.
 :::
 
+::: note
+Source alignment: original PDF p. 81.
+:::
+
 ### Several consequences — when can utilities be added?
-{sub: original PDF pp. 81–82 · collision avoidance}
+{sub: Collision avoidance}
 
 The original example distinguishes horizontal closeness $H$, vertical closeness $V$, and whether an alarm is raised $A$.
 
@@ -1045,28 +1188,39 @@ The first term represents the consequence of unsafe separation; the second can r
 Probability factorisation makes beliefs manageable. Utility factorisation can make preferences manageable. Both gain simplicity by making explicit modelling assumptions.
 :::
 
+::: note
+Source alignment: original PDF pp. 81–82.
+:::
+
 ### Collision avoidance — safety and alarm cost in one picture
-{sub: original PDF p. 82}
 
 ::: figure.plain original-collision-utility | 750
-Original PDF p. 82 · joint alarm/collision utility on the left; additive components on the right.
+Joint alarm/collision utility on the left; additive components on the right.
 :::
 
 ::: keypoint
 Unsafe horizontal and vertical separation contribute $U^1(h,v)$. Raising an alarm contributes $U^2(a)$. Add the two only if that preference model is intended.
 :::
 
+::: note
+Source alignment: original PDF p. 82.
+:::
+
 ### Maximum expected utility
 For action $a$ after observation $o$, combine the belief model with the value of each outcome:
 
 ::: figure.plain original-expected-utility | 630
-Original PDF p. 79 · green supplies the probability; red supplies the utility.
+Green supplies the probability; red supplies the utility.
 :::
 
 $$a^*=\argmax_a\mathrm{EU}(a\mid o).$$
 
 ::: keypoint
 The Bayesian network supplies probabilities. The utility function supplies values. **Average outcomes, then choose the best action.**
+:::
+
+::: note
+Source alignment: original PDF p. 79.
 :::
 
 ### Read the treatment diagram — compare two actions
@@ -1084,14 +1238,17 @@ Treat when $-1>-10p$, or **$p>0.1$**; at $p=0.1$ the actions tie. These are the 
 :::
 
 ### The PhD decision — follow cost and benefit through the graph
-{sub: original PDF p. 91}
 
 ::: figure.plain original-phd-network | 1020
-Original PDF pp. 90–91 · education changes both study cost and the income distribution.
+Education changes both study cost and the income distribution.
 :::
 
 ::: keypoint
 Choose education $E$ first. Average over prize $P$ and income $I$, then add study cost $U_C$ and income benefit $U_B$.
+:::
+
+::: note
+Source alignment: original PDF p. 91, pp. 90–91.
 :::
 
 ### Should I do a PhD?
@@ -1123,14 +1280,17 @@ The same network, live. Choose an action and the expected utility is computed by
 :::
 
 ### A later start-up decision — the information arrow matters
-{sub: original PDF p. 93}
 
 ::: figure.plain original-startup-network | 1020
-Original PDF pp. 92–93 · the dashed edge says the prize is known before the start-up decision.
+The dashed edge says the prize is known before the start-up decision.
 :::
 
 ::: keypoint
 Read the order $E\prec P\prec S\prec I$. The income parents also change to $S,P$, so this is a different income model.
+:::
+
+::: note
+Source alignment: original PDF p. 93, pp. 92–93.
 :::
 
 ### Add one option, and the answer flips
@@ -1202,14 +1362,17 @@ The information is worth $8-2=\mathbf6$ before paying for the test.
 :::
 
 ### Sequential decisions — average, observe, then choose again
-{sub: original PDF p. 87}
 
 ::: figure.plain original-sequential-decisions | 690
-Original PDF p. 87 · decisions above states, utilities below; later decisions are still pending.
+Decisions above states, utilities below; later decisions are still pending.
 :::
 
 ::: keypoint
 At $d_1$, average the uncertain $x_2$. Once $x_2$ is known, choose $d_2$. The order of sums and maxima follows this information sequence.
+:::
+
+::: note
+Source alignment: original PDF p. 87.
 :::
 
 ### From an influence diagram to an MDP — state the extra assumptions
@@ -1368,18 +1531,21 @@ with $\mathcal{L}$ the chance variables and $\mathcal{T}$ the utility variables.
 :::
 
 ### Changing coefficients — a hidden process above the observations
-{sub: original PDF p. 68}
 
 ::: figure.plain original-varying-coefficients | 780
-Original PDF p. 68 · the upper coefficient chain drives the lower autoregressive observations.
+The upper coefficient chain drives the lower autoregressive observations.
 :::
 
 ::: keypoint
 A changing coefficient is a hidden state to infer. It is different from fitting one fixed regression coefficient.
 :::
 
+::: note
+Source alignment: original PDF p. 68.
+:::
+
 ### Backup — when the time-series model itself changes
-{sub: original PDF pp. 68–70 · extensions to the AR model}
+{sub: Extensions to the AR model}
 
 | What changes? | A model for the change | Interpretation |
 |---|---|---|
@@ -1393,15 +1559,22 @@ Use $\omega>0$ and nonnegative variance coefficients; stationarity requires addi
 These are extensions of the same graphical model. Bayesian updating estimates the quantities the model allows to vary; it does not make a fixed model automatically adapt to every kind of change.
 :::
 
+::: note
+Source alignment: original PDF pp. 68–70.
+:::
+
 ### Changing variance — ARCH and GARCH side by side
-{sub: original PDF p. 70}
 
 ::: figure.plain original-arch-garch | 1030
-Original PDF p. 70 · variance is modelled explicitly in the upper row.
+Variance is modelled explicitly in the upper row.
 :::
 
 ::: keypoint
 ARCH uses past squared residuals. GARCH also carries past conditional variance forward.
+:::
+
+::: note
+Source alignment: original PDF p. 70.
 :::
 
 ## Extensions — model classes and structure learning
@@ -1410,7 +1583,7 @@ ARCH uses past squared residuals. GARCH also carries past conditional variance f
 Read after completing the main route.
 
 ### Hybrid networks — a table is not the only local model
-{sub: original PDF pp. 39–42 · the aircraft example}
+{sub: Aircraft example}
 
 The source network mixes **wing span** $W$ (continuous), **military type** $M$ (binary), **radar cross section** $C$ (continuous), and **detection** $D$ (binary).
 
@@ -1427,52 +1600,68 @@ $$p(w,m,c,d)=p(w)\,p(m)\,p(c\mid w,m)\,p(d\mid c).$$
 The **graph factorisation stays the same**. Sum discrete hidden variables and integrate continuous ones. Non-Gaussian factors can require approximate inference.
 :::
 
+::: note
+Source alignment: original PDF pp. 39–42.
+:::
+
 ### A continuous root — wing span
-{sub: original PDF p. 39}
 
 ::: figure.plain original-hybrid-wing | 1000
-Original PDF pp. 39–42 · the graph stays fixed while the highlighted local model changes.
+The graph stays fixed while the highlighted local model changes.
 :::
 
 ::: keypoint
 The highlighted root $W$ has a Gaussian density. It is a continuous variable, so its local model is not a finite table.
 :::
 
+::: note
+Source alignment: original PDF p. 39, pp. 39–42.
+:::
+
 ### A discrete root — aircraft type
-{sub: original PDF p. 40}
 
 ::: figure.plain original-hybrid-type | 1000
-Original PDF pp. 39–42 · the graph stays fixed while the highlighted local model changes.
+The graph stays fixed while the highlighted local model changes.
 :::
 
 ::: keypoint
 The highlighted root $M$ is binary, so one Bernoulli parameter specifies its local distribution.
 :::
 
+::: note
+Source alignment: original PDF p. 40, pp. 39–42.
+:::
+
 ### A conditional Gaussian — radar cross section
-{sub: original PDF p. 41}
 
 ::: figure.plain original-hybrid-radar | 1000
-Original PDF pp. 39–42 · the graph stays fixed while the highlighted local model changes.
+The graph stays fixed while the highlighted local model changes.
 :::
 
 ::: keypoint
 The highlighted $C$ depends on wing span and type. Each type selects its own linear Gaussian regression.
 :::
 
+::: note
+Source alignment: original PDF p. 41, pp. 39–42.
+:::
+
 ### A binary observation — detection probability
-{sub: original PDF p. 42}
 
 ::: figure.plain original-hybrid-detection | 700
-Original PDF pp. 39–42 · the graph stays fixed while the highlighted local model changes.
+The graph stays fixed while the highlighted local model changes.
 :::
 
 ::: keypoint
 The highlighted $D$ is binary. Its probability changes smoothly with continuous radar cross section $C$.
 :::
 
+::: note
+Source alignment: original PDF p. 42, pp. 39–42.
+:::
+
 ### Learning the graph — compare explanations, not just fitted tables
-{sub: original PDF p. 45 · structure learning}
+{sub: Tructure learning}
 
 If the arrows are unknown, the candidate model is the graph $G$ as well as its parameters $\theta$:
 
@@ -1490,11 +1679,15 @@ Exhaustively checking every DAG is usually impractical. Search can stop at a loc
 **Inference:** unknown variables in a fixed model. **Parameter learning:** unknown tables. **Structure learning:** unknown arrows. An observational graph alone does not establish causality.
 :::
 
+::: note
+Source alignment: original PDF p. 45.
+:::
+
 ### Continuous time-series data — regression becomes a transition model
-{sub: original PDF pp. 63–67 · time is discrete; the state is continuous}
+{sub: Time is discrete; the state is continuous}
 
 ::: figure.plain original-ar-graph | 500
-Original PDF p. 66 · lagged observations point to the next value.
+Lagged observations point to the next value.
 :::
 
 An AR($L$) model uses the last $L$ values as regression features:
@@ -1506,3 +1699,8 @@ Lecture 2's regression now specifies a **transition model**. Gaussian MLE still 
 ::: keypoint
 AR(2) is generally not first-order Markov in $x_t$. It is first-order in $[x_t,x_{t-1}]$. **Choose a state that keeps the information needed for prediction.**
 :::
+
+::: note
+Source alignment: original PDF pp. 63–67, p. 66.
+:::
+

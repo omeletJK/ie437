@@ -112,7 +112,7 @@ MC also *wastes* the structure of the MDP: it learns each state separately and n
 :::
 
 ### One episode can visit a state twice — define the Monte Carlo sample
-{sub: original PDF pp. 19–29 · make the averaging convention explicit}
+{sub: Make the averaging convention explicit}
 
 Consider an illustrative episode $A\to B\to A\to\text{terminal}$ with rewards $1,2,3$ and $\gamma=1$. The two returns observed after visiting A are **6** and **3**.
 
@@ -125,6 +125,10 @@ Across episodes, keep the count of included visits and update the running averag
 
 ::: keypoint
 A Monte Carlo target is a **sampled return after a specified visit**. State values are averages over repeated experience, not a rule that every visit has the same realised return.
+:::
+
+::: note
+Source alignment: original PDF pp. 19–29.
 :::
 
 ### Temporal Difference — learn a guess from a guess
@@ -260,7 +264,7 @@ Two Q-learning agents, identical but for $\varepsilon$. The greedy one locks ont
 :::
 
 ### Monte Carlo control — evaluate an episode, then improve the policy
-{sub: original PDF pp. 30–40 · the algorithm between prediction and TD control}
+{sub: Algorithm between prediction and TD control}
 
 1. Generate a complete episode using the current exploratory policy.
 2. Work backwards to compute $G_t=r_{t+1}+\gamma G_{t+1}$.
@@ -271,6 +275,10 @@ For four actions and $\varepsilon=0.2$, a unique greedy action gets probability 
 
 ::: keypoint
 **Exploring starts** assumes we can start episodes in every relevant state-action pair. When that is impractical, use an exploratory policy to collect coverage. A fixed positive $\varepsilon$ keeps the executed policy stochastic.
+:::
+
+::: note
+Source alignment: original PDF pp. 30–40.
 :::
 
 ### Check — the price of exploring
@@ -395,7 +403,7 @@ One good or bad observation does not identify the transition probability. Repeat
 :::
 
 ### The original windy gridworld — learn the transition through experience
-{sub: original PDF p. 58 · four-action version, redrawn}
+{sub: Four-action version, redrawn}
 
 ::: cols
 ::: col
@@ -416,8 +424,12 @@ Use reward $-1$ until arrival at G. SARSA learns from the **actual next state an
 The source's preceding page 57 depicts the random-walk prediction example; page 58 is the windy control task. Prediction of a fixed policy and learning a control policy are different experiments.
 :::
 
+::: note
+Source alignment: original PDF p. 58.
+:::
+
 ### The original six-room example — follow the actual numerical updates
-{sub: original PDF pp. 67–72 · initial Q values 0, step size 0.5, discount 0.8}
+{sub: Initial Q values 0, step size 0.5, discount 0.8}
 
 ::: cols
 ::: col
@@ -438,6 +450,10 @@ Only the visited entry changes. The reward at F starts affecting actions taken *
 
 ::: keypoint
 The target on a terminal transition is the immediate reward. The next slide separates this episodic rule from the source's different continuing-state table.
+:::
+
+::: note
+Source alignment: original PDF pp. 67–72.
 :::
 
 ### Terminal versus continuing — why the source also shows a value of 500
@@ -500,7 +516,7 @@ Now "learning" means fitting $w$ — and similar states share answers.
 :::
 
 ### Why DQN stacks frames — position alone may hide velocity
-{sub: original PDF pp. 83 and 90–96 · representation is part of the state definition}
+{sub: Representation is part of the state definition}
 
 Two situations can have the same current image but require different actions:
 
@@ -513,6 +529,10 @@ A single frame at position 20 cannot distinguish them. DQN's input stacks **four
 
 ::: keypoint
 The network approximates $Q$ **after a state representation has been chosen**. Frame stacking supplies short-term motion information; it does not guarantee a Markov state in every environment.
+:::
+
+::: note
+Source alignment: original PDF pp. 83 and 90–96.
 :::
 
 ### Q-learning as regression — the semi-gradient step

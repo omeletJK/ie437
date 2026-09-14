@@ -422,7 +422,7 @@ Source alignment: original Lecture 2 PDF 18–19.
 
 ### Bayesian coin updating — the first five tosses
 ::: figure coin-update-early | 1000
-Redrawn from original p. 19, retaining all six early states. Start from Beta(1,1): each head adds 1 to α and each tail adds 1 to β. The dashed line marks θ = 0.5.
+All six early states. Start from Beta(1,1): each head adds 1 to α and each tail adds 1 to β. The dashed line marks θ = 0.5.
 :::
 
 ::: keypoint
@@ -435,7 +435,7 @@ Source alignment: original Lecture 2 PDF 19.
 
 ### Bayesian coin updating — from 8 to 500 tosses
 ::: figure coin-update-late | 900
-Redrawn from original p. 19 with its exact counts: 5/8, 9/15, 26/50 and 259/500. Every curve has area 1; the vertical density scales differ.
+Heads out of tosses: 5/8, 9/15, 26/50 and 259/500. Every curve has area 1; the vertical density scales differ.
 :::
 
 ::: keypoint
@@ -768,7 +768,7 @@ Source alignment: original Lecture 2 PDF 34–35.
 ::: cols c2
 ::: col
 ::: figure pokemon-map-source | 370
-Map from the original PDF, p. 36. Counts are the source's teaching dataset.
+The twenty districts, with their counts.
 :::
 :::
 ::: col The observations
@@ -1074,7 +1074,7 @@ Source alignment: original Lecture 2 PDF 43–44.
 :::
 
 ### More than two outcomes — the Dirichlet update
-{sub: the original PDF's categorical model, pp. 46–47}
+{sub: the categorical model}
 
 Suppose each service request is **delivery**, **pickup** or **return**. The probabilities form a vector $\theta$ with non-negative entries adding to 1.
 
@@ -1149,7 +1149,7 @@ Follow the original regression route: formulate the task, solve least squares, i
 
 ### Problem solving — estimate a housing price
 ::: figure housing-model-flow | 1080
-Redrawn from the task → model → algorithm structure of original p. 50. The two house-price observations are illustrative, not an empirical housing dataset.
+Task → model → algorithm. The two house-price observations are illustrative, not an empirical housing dataset.
 :::
 
 ::: keypoint
@@ -1355,7 +1355,7 @@ Source alignment: original Lecture 2 PDF 60–61.
 
 ### Bayesian regression — one posterior in two spaces
 ::: figure regression-posterior-grid | 950
-Original p. 62’s two-row, three-column layout, recomputed with nested simulated datasets (n = 2, 10, 100). Blue: MLE; green: posterior mean/MAP and sampled lines; ×: true weights. Corresponding axes use common scales.
+Two rows, three columns, on nested simulated datasets (n = 2, 10, 100). Blue: MLE; green: posterior mean/MAP and sampled lines; ×: true weights. Corresponding axes use common scales.
 :::
 
 ::: keypoint

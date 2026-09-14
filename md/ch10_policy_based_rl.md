@@ -848,7 +848,7 @@ With several agents, a critic can use the joint state and actions during trainin
 This is **centralised training with decentralised execution**. Other agents' changing policies make the learning problem different from single-agent DDPG; actor gradients do not by themselves guarantee convergence to a Nash equilibrium.
 
 ::: keypoint
-The original PDF includes this extension. It belongs to the multi-agent face of the course map and is a preview, rather than an assumed prerequisite for Lecture 11.
+This extension belongs to the multi-agent face of the course map. It is a preview, not a prerequisite for Lecture 11.
 :::
 
 ### The translation table — optimal control, learned
