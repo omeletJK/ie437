@@ -681,22 +681,51 @@ Source alignment: original PDF p. 34, pp. 33–34.
 :::
 
 ### Weight the evidence instead of rejecting a row
-{sub: Evidence columns are fixed}
+{sub: every row is kept — but each one pays for the evidence it was handed}
 
-::: figure.plain original-weighted-samples | 590
-The red $D,C$ columns are observed; the final column records the likelihood weight.
+::: figure.plain original-weighted-samples | 430
+The red $D,C$ columns were never sampled; the last column is what each row pays.
 :::
 
-Draw the non-evidence variables $B,S,E$ in topological order. Set $D=C=1$ in **every** row and weight it by $w=P(D=1\mid E)P(C=1\mid E)$.
+Rejection threw away six rows in nine. The waste is in sampling $D$ and $C$ at all, only to check them against values we already know. So **do not sample them** — write $D=1$, $C=1$ straight into every row.
 
-$$\widehat P(B=1\mid D=C=1)=\frac{\sum_k w_k\,\mathbf1[B_k=1]}{\sum_k w_k}.$$
+::: reveal
+That is cheating, and the weight is the price. A row whose sampled $E$ would have produced $D=C=1$ on its own has earned them; a row whose $E$ makes them improbable was *handed* them. So each row counts in proportion to how plausibly it could have produced the evidence:
+
+$$w=\underbrace{P(D=1\mid E)}_{\text{how likely this row's }E\text{ makes }D=1}\;\cdot\;\underbrace{P(C=1\mid E)}_{\text{and }C=1}$$
+:::
 
 ::: keypoint
-The displayed rows illustrate weighted samples. Generate fresh rows with clamped evidence; do not first reject samples using the observed values.
+==Nothing is discarded: every row votes, and its vote is scaled by its weight== — full strength if it earned its evidence, faintly if it was forced.
 :::
 
 ::: note
-Source alignment: original PDF p. 35.
+Source alignment: original PDF p. 35. Only $E$ appears in the weight because, by the
+factorisation of Act 1, $E$ is the only parent $D$ or $C$ has.
+:::
+
+### Why the weighted vote is the right answer
+Two facts, and the method follows from their product. A row $(b,s,e)$ is drawn with the **prior** probability of its unclamped part, and it is then weighted by the evidence's probability given that part:
+
+$$\underbrace{P(b)\,P(s)\,P(e\mid b,s)}_{\text{how often the row is drawn}}\;\times\;\underbrace{P(D=1\mid e)\,P(C=1\mid e)}_{\text{its weight}}\;=\;P(b,s,e,D=1,C=1).$$
+
+::: reveal
+Drawn-frequency times weight is the **joint probability of the row together with the evidence** — the very quantity rejection sampling estimates by keeping only matching rows. So weighted rows carry the same information as surviving rows, and none had to be thrown away. Averaging the weights over rows with $B=1$, against the weights over all rows, cancels the constant $P(D=1,C=1)$:
+
+$$\widehat P(B=1\mid D=C=1)=\frac{\sum_k w_k\,\mathbf 1[B_k=1]}{\sum_k w_k}\;\longrightarrow\;\frac{P(B=1,\,D=1,C=1)}{P(D=1,C=1)}.$$
+:::
+
+::: reveal
+::: keypoint
+Rejection and weighting estimate the same posterior. The difference is only that ==weighting spends every sample== — and when the evidence is rare, that is the difference between an answer and none.
+:::
+:::
+
+::: note
+Checked numerically on the spacecraft network with illustrative tables: the identity holds
+row by row, and with 200 000 draws rejection kept 21 463 rows (89% discarded) while
+weighting used all of them; both landed on the exact posterior to three decimals. The
+next slide is the case weighting still handles badly — a rare cause.
 :::
 
 ### Rare causes — why weighting can still struggle
