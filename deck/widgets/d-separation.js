@@ -43,15 +43,28 @@ IE437.widget('d-separation', function (host, opts) {
     return den > 1e-12 ? num / den : NaN;
   }
 
+  /* The four canonical states the guided story walks through, and what
+     P(sprinkler) is at each one. Computed once, up front, so that a single
+     frame — a screenshot, the printed PDF, a student who stops clicking
+     after the first step — can still show the whole rise-and-fall rather
+     than whichever moment it happens to be paused on. */
+  var ARC = (function () {
+    var saved = ev, out = [];
+    STORY.forEach(function (s) { ev = s; out.push(posterior('S')); });
+    ev = saved;
+    return out;
+  })();
+  var ARC_LABEL = ['prior', '+ Tracey wet', '+ Jack wet too', '+ rain itself'];
+
   host.innerHTML =
-    '<div class="wbar"><span class="wt">Wet grass &mdash; click a node to observe it</span>' +
+    '<div class="wbar"><span class="wt">Wet grass &mdash; explaining away, live</span>' +
     '<span class="wspacer"></span>' +
-    '<span class="wlabel" data-hint></span>' +
     '<button class="wb" data-auto data-step>walk the story &#9656;</button>' +
     '<button class="wb" data-clr>clear</button></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:flex-start">' +
     '<div data-g style="flex:none"></div>' +
     '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:11px">' +
+    '<div data-arc></div>' +
     '<div data-bars></div>' +
     '<div data-verdict style="border-top:1px solid rgba(22,24,29,.14);padding-top:11px;' +
     'font:400 12.5px/1.55 var(--sans);color:var(--ink2)"></div>' +
@@ -140,12 +153,37 @@ IE437.widget('d-separation', function (host, opts) {
       'PRIOR ' + prior.toFixed(3) + '</div></div>';
   }
 
+  /* the whole arc at a glance: four cells, current one lit. This is what
+     makes the payoff legible even if the reader never clicks past step 1 --
+     the rise to 0.338 and the fall back are both already on screen. */
+  function arcStrip() {
+    var cells = ARC.map(function (v, i) {
+      var active = !free && i === step;
+      return '<div style="flex:1;text-align:center;padding:5px 2px;border-radius:4px;' +
+        (active ? 'background:rgba(37,99,235,.10);border:1px solid ' + BLUE
+                 : 'border:1px solid transparent') + '">' +
+        '<div style="font:500 8px/1.5 var(--mono);letter-spacing:.05em;text-transform:uppercase;' +
+        'color:var(--ink4);white-space:nowrap">' + ARC_LABEL[i] + '</div>' +
+        '<div style="font:700 14px/1.6 var(--mono);color:' + (active ? BLUE : INK) +
+        ';opacity:' + (active ? 1 : .65) + '">' + v.toFixed(3) + '</div></div>';
+    });
+    var row = [];
+    cells.forEach(function (c, i) {
+      row.push(c);
+      if (i < cells.length - 1) row.push('<div style="align-self:center;color:var(--ink4);' +
+        'font-size:11px;padding:0 1px">&#8594;</div>');
+    });
+    return '<div class="wlabel" style="margin-bottom:5px">P(sprinkler on), through the story</div>' +
+      '<div style="display:flex;align-items:stretch">' + row.join('') + '</div>';
+  }
+
   function render() {
     drawGraph();
     var ps = posterior('S'), pr = posterior('R');
     var listed = Object.keys(ev).filter(function (k) { return ev[k] !== null; })
       .map(function (k) { return k + '=' + ev[k]; });
 
+    host.querySelector('[data-arc]').innerHTML = arcStrip();
     host.querySelector('[data-bars]').innerHTML =
       '<div class="wlabel" style="margin-bottom:7px">evidence ' +
       (listed.length ? '<b style="color:' + INK + '">' + listed.join(' , ') + '</b>' : 'none') + '</div>' +
@@ -153,6 +191,7 @@ IE437.widget('d-separation', function (host, opts) {
       bar('P(raining | evidence)', pr, PR, AMBER);
 
     var v = host.querySelector('[data-verdict]');
+    var peak = ARC[1];   // P(S) right after Tracey's grass alone -- the high point to fall from
     if (isNaN(ps)) {
       v.innerHTML = '<b style="color:' + RED + '">That evidence has probability zero</b> under this model — ' +
         'the tables rule it out, so there is nothing to condition on. Clear a node.';
@@ -162,23 +201,22 @@ IE437.widget('d-separation', function (host, opts) {
         'moves the rain but leaves the sprinkler at its prior: <i>J</i> is a descendant of <i>R</i>, ' +
         'not of the collider.';
     } else if (Math.abs(ps - PS) < 5e-4) {
-      v.innerHTML = '<b style="color:' + AMBER + '">The collider is open, and nothing happened.</b> ' +
-        'The rain is observed directly, so wet grass is a foregone conclusion and carries no ' +
-        'information — the sprinkler sits exactly at its prior. D-separation says what ' +
-        '<b>must</b> hold, not everything that happens to.';
+      v.innerHTML = '<b style="color:' + AMBER + '">Explained away, completely.</b> ' +
+        'The rain is now known directly, so wet grass is a foregone conclusion and carries no ' +
+        'further information — the sprinkler’s posterior lands back exactly on its prior, ' +
+        '<b>' + PS.toFixed(3) + '</b>. D-separation says what <b>must</b> hold, not everything ' +
+        'that happens to.';
+    } else if (ev.J === null && ev.R === null) {
+      v.innerHTML = '<b style="color:' + BLUE + '">S and R are now dependent.</b> Observing the collider ' +
+        '<i>T</i> opened the path, so Tracey’s wet grass alone moves the sprinkler from its prior ' +
+        '<b>' + PS.toFixed(3) + '</b> up to <b>' + ps.toFixed(3) + '</b> — either cause could explain it. ' +
+        'Now observe <i>J</i> or <i>R</i> and watch the rival cause take some of that suspicion back.';
     } else {
-      var d = ps - PS;
-      v.innerHTML = '<b style="color:' + BLUE + '">S and R are now dependent</b> &mdash; observing the collider ' +
-        '<i>T</i> opened the path. The sprinkler has moved <b>' + (d >= 0 ? '+' : '') + d.toFixed(3) +
-        '</b> from its prior' +
-        (ev.J !== null || ev.R !== null
-          ? ', and the evidence about the <b>rain</b> is now moving it back — the rain ' +
-            '<b style="color:' + GREEN + '">explains it away</b>.'
-          : '. Now observe <i>J</i> or <i>R</i> and watch the rival cause take the blame.');
+      v.innerHTML = '<b style="color:' + GREEN + '">Explained away, partway.</b> ' +
+        'Tracey’s wet grass alone pushed the sprinkler up to <b>' + peak.toFixed(3) + '</b>; now that ' +
+        'the rain has its own evidence too, it has fallen back to <b>' + ps.toFixed(3) + '</b> — down ' +
+        Math.abs(ps - peak).toFixed(3) + ' — as the rain <b style="color:' + GREEN + '">takes the blame</b>.';
     }
-
-    host.querySelector('[data-hint]').textContent = free ? '' :
-      (['prior', 'Tracey wet', '+ Jack wet', '+ rain seen'][step] || '');
   }
 
   function cycle(key) {
@@ -198,5 +236,5 @@ IE437.widget('d-separation', function (host, opts) {
   host.querySelector('[data-clr]').onclick = function () { setStep(0); };
 
   setStep(0);
-  return { finish: function () { setStep(2); } };   // T=1, J=1 — the explaining-away frame
+  return { finish: function () { setStep(3); } };   // T=1, R=1 -- the resolved, explained-away frame
 });
