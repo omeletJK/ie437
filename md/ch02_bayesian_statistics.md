@@ -446,26 +446,64 @@ The final two observed proportions are similar. ==The larger dataset supports a 
 Source alignment: original Lecture 2 PDF 19.
 :::
 
-### What does Beta(4,3) actually tell us?
-The same HHT dataset and $\mathrm{Beta}(2,2)$ prior give several useful summaries:
+### Beta(4,3) — the mean and the mode, by hand
+{sub: HHT and a Beta(2,2) prior gave Beta(4,3); now read the numbers out of it}
+{math: compact}
 
-::: table
-| Summary | Calculation | Meaning |
-|---|---|---|
-| Posterior mean | $4/(4+3)=0.571$ | Average bias under the posterior |
-| Posterior mode (MAP) | $(4-1)/(4+3-2)=0.600$ | Most dense part of the posterior |
-| 95% credible interval | approximately $[0.223,\ 0.882]$ | Middle 95% of posterior probability |
-| Probability of next head | $\E[\theta\mid D]=4/7$ | A prediction about a future toss |
+With $\alpha=4,\ \beta=3$ the normaliser is $1/B(4,3)=60$, so the posterior is the polynomial $p(\theta\mid D)=60\,\theta^{3}(1-\theta)^{2}$.
+
+::: cols c2
+::: col The mean — integrate $\theta$ against it
+$$\E[\theta\mid D]=\int_0^1\theta\cdot60\,\theta^{3}(1-\theta)^{2}\,d\theta=\frac{\alpha}{\alpha+\beta}=\frac47=0.571$$
+
+The general Beta mean from earlier, with the numbers put in.
+:::
+::: col.accent The mode — set the log-derivative to zero
+$$\frac{d}{d\theta}\log p=\frac{3}{\theta}-\frac{2}{1-\theta}=0
+\;\Longrightarrow\;\theta^{*}=\frac{3}{5}=0.600$$
+
+In general $\frac{\alpha-1}{\alpha+\beta-2}$. Under a flat prior it would be the MLE $\tfrac23$; the $\mathrm{Beta}(2,2)$ prior pulled it toward $\tfrac12$.
+:::
 :::
 
 ::: reveal
 ::: keypoint
-Three tosses leave substantial uncertainty. ==The mean, mode and interval answer different questions.==
+Mean $0.571$ and mode $0.600$ differ because the posterior is ==skewed== — three tosses cannot make it symmetric.
 :::
 :::
 
 ::: note
-Source alignment: original Lecture 2 PDF 18–21.
+Source alignment: original Lecture 2 PDF 18–19.
+:::
+
+### Beta(4,3) — the interval and the next toss
+{math: compact}
+
+::: cols c2
+::: col A 95% credible interval — invert the CDF
+Integrating the polynomial gives the CDF in closed form,
+
+$$F(\theta)=\int_0^{\theta}60\,t^{3}(1-t)^{2}\,dt=15\theta^{4}-24\theta^{5}+10\theta^{6},$$
+
+and the interval is the pair of roots of $F(a)=0.025$ and $F(b)=0.975$, solved numerically: ==$[0.223,\ 0.882]$.==
+:::
+::: col.accent The next toss — average $\theta$ over the posterior
+$$P(H\mid D)=\int_0^1\underbrace{\theta}_{P(H\mid\theta)}\;p(\theta\mid D)\,d\theta=\E[\theta\mid D]=\frac47$$
+
+For a single toss the predictive integral collapses to the posterior mean. It is the $m=1$ case of the Beta-Binomial to come.
+:::
+:::
+
+::: reveal
+::: keypoint
+Three tosses leave substantial uncertainty — the interval spans two thirds of $[0,1]$. ==The mean, mode and interval answer different questions==, and none of them is the whole posterior.
+:::
+:::
+
+::: note
+Source alignment: original Lecture 2 PDF 19–21. Every number recomputed: the CDF
+polynomial agrees with direct integration at all three checkpoints, and the roots
+give 0.2228 and 0.8819.
 :::
 
 ### Experiment 2 — repeat an interval procedure
