@@ -508,20 +508,85 @@ Source alignment: original PDF p. 27.
 :::
 
 ### Variable elimination — push each sum past what it cannot touch
-$P(b^1)$ does not depend on $s$ or $e$. $P(s)$ does not depend on $e$. So slide each sum inward until it meets a factor that actually mentions its variable:
+{math: compact}
 
-$$P(b^1\mid d^1,c^1) \;\propto\; P(b^1)\sum_{e} P(d^1\mid e)P(c^1\mid e)\hl{\sum_{s} P(s)P(e\mid b^1,s)}$$
+A sum can slide past any factor that does not mention its variable. Do that twice:
+
+$$\begin{aligned}
+P(b^1\mid d^1,c^1)\;&\propto\;\sum_{s}\sum_{e}\;P(b^1)\,P(s)\,P(e\mid b^1,s)\,P(d^1\mid e)\,P(c^1\mid e)\\[3pt]
+&=\;P(b^1)\sum_{s}\sum_{e}\;P(s)\,P(e\mid b^1,s)\,P(d^1\mid e)\,P(c^1\mid e)
+&&\text{$P(b^1)$ has no $s$ and no $e$}\\[3pt]
+&=\;P(b^1)\sum_{s}P(s)\,\hl{\sum_{e}\;P(e\mid b^1,s)\,P(d^1\mid e)\,P(c^1\mid e)}
+&&\text{$P(s)$ has no $e$}
+\end{aligned}$$
 
 ::: reveal
-Done systematically, this is an algorithm. Treat every conditional table as a **factor** over its variables; fix the evidence; then eliminate hidden variables one at a time, each elimination multiplying together the factors that mention it and summing it out into a new, smaller factor.
-
-$$\underbrace{T_1(B)\,T_2(S)\,T_3(E,B,S)\,T_4(E)\,T_5(E)}_{\text{after fixing }d^1, c^1} \;\longrightarrow\; T_1(B)\,T_2(S)\,T_8(B,S) \;\longrightarrow\; T_1(B)\,T_9(B)$$
+The value has not changed. What has changed is **how often each product is formed**: the inner sum is a function of $s$ alone once $b^1$ is fixed, so it is computed once per value of $s$ — not once per pair $(s,e)$.
 :::
 
 ::: reveal
-::: small
-$T_8(B,S) = \sum_e T_3(e,B,S)T_4(e)T_5(e)$, then $T_9(B) = \sum_s T_2(s)T_8(B,s)$; normalise $T_1(B)T_9(B)$ and you have the answer. The cost is set by the largest intermediate factor, which depends on the **elimination order** — and finding the best order is itself NP-hard. So the ordering is a heuristic: often linear, ==sometimes still exponential.==
+::: keypoint
+Every rearrangement is a choice of ==which variable to sum out first==. Here $e$ goes first, then $s$; the other order is just as legal, and two slides on it becomes clear why that choice is the whole game.
 :::
+:::
+
+::: note
+Source alignment: original PDF p. 26. The source pushes the sums the other way, with
+$\sum_s$ innermost; the deck sums $e$ first so that this slide, the factor slide and
+the $T_8$ definition all use the same elimination order.
+:::
+
+### The same thing as tables — eliminate $E$, then $S$
+{math: compact}
+
+Write each conditional distribution as a **factor**, a table over the variables it mentions, and run the rearrangement as three table operations.
+
+$$\begin{aligned}
+&\text{start}&& T_1(B)\;T_2(S)\;T_3(E,B,S)\;T_4(D,E)\;T_5(C,E)\\[2pt]
+&\text{fix the evidence}&& T_1(B)\;T_2(S)\;T_3(E,B,S)\;T_6(E)\;T_7(E)
+&&\text{keep only the $d^1$ row of $T_4$, the $c^1$ row of $T_5$}\\[2pt]
+&\text{eliminate }E&& T_1(B)\;T_2(S)\;T_8(B,S)
+&&T_8(B,S)=\textstyle\sum_e T_3(e,B,S)\,T_6(e)\,T_7(e)\\[2pt]
+&\text{eliminate }S&& T_1(B)\;T_9(B)
+&&T_9(B)=\textstyle\sum_s T_2(s)\,T_8(B,s)
+\end{aligned}$$
+
+::: reveal
+Each elimination is the same move: **multiply every factor that mentions the variable, then sum it out**, leaving a smaller table. Two factors remain and neither mentions a hidden variable, so normalise:
+
+$$P(b\mid d^1,c^1)=\frac{T_1(b)\,T_9(b)}{\sum_{b'}T_1(b')\,T_9(b')}.$$
+:::
+
+::: note
+Source alignment: original PDF p. 27. The numbering is the source's: $T_6,T_7$ are the
+evidence-sliced versions of $T_4,T_5$, which is why the eliminations produce $T_8$ and $T_9$.
+:::
+
+### The cost is the largest table you build — and the order decides it
+{math: compact}
+
+Each elimination first **builds the product** of the factors that mention the variable, and that product is a table over their union of variables:
+
+::: table center
+| Step | Factors multiplied | Table built | Entries |
+|---|---|---|---|
+| eliminate $E$ | $T_3(E,B,S)\cdot T_6(E)\cdot T_7(E)$ | over $(E,B,S)$ | $2^3=8$ |
+| eliminate $S$ | $T_2(S)\cdot T_8(B,S)$ | over $(B,S)$ | $2^2=4$ |
+:::
+
+::: reveal
+The largest table was $8$ entries — the size of $P(E\mid B,S)$ itself. Nothing bigger than a table we already had was ever built. Brute enumeration instead forms one term per assignment of the hidden variables, ==and that count doubles with every hidden variable added.==
+:::
+
+::: reveal
+::: keypoint
+The largest intermediate table depends on the **elimination order**, and finding the best order is itself NP-hard. So the ordering is a heuristic: ==often linear, sometimes still exponential== — the sum has not been made cheap, it has been made cheap *when the graph allows it*.
+:::
+:::
+
+::: note
+Source alignment: original PDF p. 27, last two lines — promoted from a footnote, since it
+is the thesis of Act 3. The next slide's widget shows the two counts at twenty variables.
 :::
 
 ### What the ordering is worth
