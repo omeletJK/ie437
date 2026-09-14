@@ -1409,7 +1409,7 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 2 — d-separation, the complete rule",
-              "slide_at_review": 96,
+              "slide_at_review": 102,
               "placement_at_review": "appendix"
             },
             {
@@ -1489,25 +1489,25 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "What the ordering is worth",
-              "slide_at_review": 34,
+              "slide_at_review": 36,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "When exact inference is hopeless — sample",
-              "slide_at_review": 43,
+              "slide_at_review": 49,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 1 — variable elimination, step by step",
-              "slide_at_review": 95,
+              "slide_at_review": 101,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup 3 — approximate inference, and where each method breaks",
-              "slide_at_review": 97,
+              "slide_at_review": 103,
               "placement_at_review": "appendix"
             },
             {
@@ -1519,49 +1519,49 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Generate one sample — 1/5 · Draw the battery",
-              "slide_at_review": 35,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Generate one sample — 2/5 · Draw the solar panel",
-              "slide_at_review": 36,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Generate one sample — 3/5 · Draw the electrical state",
               "slide_at_review": 37,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Generate one sample — 4/5 · Draw the trajectory",
+              "heading": "Generate one sample — 2/5 · Draw the solar panel",
               "slide_at_review": 38,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Generate one sample — 5/5 · Draw communication",
+              "heading": "Generate one sample — 3/5 · Draw the electrical state",
               "slide_at_review": 39,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Reject rows that disagree with the evidence",
+              "heading": "Generate one sample — 4/5 · Draw the trajectory",
               "slide_at_review": 40,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Weight the evidence instead of rejecting a row",
+              "heading": "Generate one sample — 5/5 · Draw communication",
               "slide_at_review": 41,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Rare causes — why weighting can still struggle",
+              "heading": "Reject rows that disagree with the evidence",
               "slide_at_review": 42,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Weight the evidence instead of rejecting a row",
+              "slide_at_review": 43,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Rare causes — why weighting can still struggle",
+              "slide_at_review": 48,
               "placement_at_review": "main"
             }
           ],
@@ -1589,31 +1589,31 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Hybrid networks — a table is not the only local model",
-              "slide_at_review": 103,
+              "slide_at_review": 109,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A continuous root — wing span",
-              "slide_at_review": 104,
+              "slide_at_review": 110,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A discrete root — aircraft type",
-              "slide_at_review": 105,
+              "slide_at_review": 111,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A conditional Gaussian — radar cross section",
-              "slide_at_review": 106,
+              "slide_at_review": 112,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A binary observation — detection probability",
-              "slide_at_review": 107,
+              "slide_at_review": 113,
               "placement_at_review": "appendix"
             }
           ],
@@ -1636,7 +1636,7 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Naive Bayes — classification is posterior inference",
-              "slide_at_review": 45,
+              "slide_at_review": 51,
               "placement_at_review": "main"
             }
           ],
@@ -1656,13 +1656,13 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Learning the tables — reuse Lecture 2 locally",
-              "slide_at_review": 47,
+              "slide_at_review": 53,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Learning the graph — compare explanations, not just fitted tables",
-              "slide_at_review": 108,
+              "slide_at_review": 114,
               "placement_at_review": "appendix"
             }
           ],
@@ -1679,37 +1679,37 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "The same graph, unrolled through time",
-              "slide_at_review": 50,
+              "slide_at_review": 56,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Fit a transition matrix — count where each state goes",
-              "slide_at_review": 52,
+              "slide_at_review": 58,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A stationary model need not start in a stationary distribution",
-              "slide_at_review": 54,
+              "slide_at_review": 60,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A dynamic Bayesian network — repeat the same local structure",
-              "slide_at_review": 49,
+              "slide_at_review": 55,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Markov order — how far back do the arrows reach?",
-              "slide_at_review": 51,
+              "slide_at_review": 57,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Predict a marginal — collect probability from every predecessor",
-              "slide_at_review": 53,
+              "slide_at_review": 59,
               "placement_at_review": "main"
             }
           ],
@@ -1733,55 +1733,55 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Hidden Markov models — name the question before computing",
-              "slide_at_review": 56,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Filtering — Bayes' rule, once per time step",
-              "slide_at_review": 61,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "One filtering step — predict, observe, normalise",
               "slide_at_review": 62,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
+              "heading": "Filtering — Bayes' rule, once per time step",
+              "slide_at_review": 67,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "One filtering step — predict, observe, normalise",
+              "slide_at_review": 68,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
               "heading": "State transitions — a graph of possible next states",
-              "slide_at_review": 55,
+              "slide_at_review": 61,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Filtering — locate the present",
-              "slide_at_review": 57,
+              "slide_at_review": 63,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Prediction — look beyond the observations",
-              "slide_at_review": 58,
+              "slide_at_review": 64,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Smoothing — use later evidence to revise the past",
-              "slide_at_review": 59,
+              "slide_at_review": 65,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Decoding — choose a whole hidden path",
-              "slide_at_review": 60,
+              "slide_at_review": 66,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Add an input — the original IOHMM",
-              "slide_at_review": 65,
+              "slide_at_review": 71,
               "placement_at_review": "main"
             }
           ],
@@ -1807,43 +1807,43 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Continuous time-series data — regression becomes a transition model",
-              "slide_at_review": 109,
+              "slide_at_review": 115,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Linear Gaussian state space — the Kalman version of the same update",
-              "slide_at_review": 68,
+              "slide_at_review": 74,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup — when the time-series model itself changes",
-              "slide_at_review": 100,
+              "slide_at_review": 106,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A continuous hidden state — the same two-row picture",
-              "slide_at_review": 66,
+              "slide_at_review": 72,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Changing coefficients — a hidden process above the observations",
-              "slide_at_review": 99,
+              "slide_at_review": 105,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Changing variance — ARCH and GARCH side by side",
-              "slide_at_review": 101,
+              "slide_at_review": 107,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Kalman filtering — carry the mean and covariance forward",
-              "slide_at_review": 67,
+              "slide_at_review": 73,
               "placement_at_review": "main"
             }
           ],
@@ -1867,49 +1867,49 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Bayesian network $+$ decision $+$ utility",
-              "slide_at_review": 70,
+              "slide_at_review": 76,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Utility — a number for comparing outcomes",
-              "slide_at_review": 71,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Utility is not necessarily money — the original lottery example",
-              "slide_at_review": 73,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Several consequences — when can utilities be added?",
-              "slide_at_review": 75,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Maximum expected utility",
               "slide_at_review": 77,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
+              "heading": "Utility is not necessarily money — the original lottery example",
+              "slide_at_review": 79,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Several consequences — when can utilities be added?",
+              "slide_at_review": 81,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "Maximum expected utility",
+              "slide_at_review": 83,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
               "heading": "Utility curves — the same money can have different value",
-              "slide_at_review": 72,
+              "slide_at_review": 78,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Utility factorisation — one large function or several small ones",
-              "slide_at_review": 74,
+              "slide_at_review": 80,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Collision avoidance — safety and alarm cost in one picture",
-              "slide_at_review": 76,
+              "slide_at_review": 82,
               "placement_at_review": "main"
             }
           ],
@@ -1932,67 +1932,67 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Should I do a PhD?",
-              "slide_at_review": 80,
+              "slide_at_review": 86,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Pick a decision, watch the utility",
-              "slide_at_review": 81,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "Add one option, and the answer flips",
-              "slide_at_review": 83,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "The value of information",
-              "slide_at_review": 84,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "A decision and the value of looking first",
-              "slide_at_review": 85,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch03_bayesian_network",
-              "heading": "From an influence diagram to an MDP — state the extra assumptions",
               "slide_at_review": 87,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
+              "heading": "Add one option, and the answer flips",
+              "slide_at_review": 89,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "The value of information",
+              "slide_at_review": 90,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "A decision and the value of looking first",
+              "slide_at_review": 91,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
+              "heading": "From an influence diagram to an MDP — state the extra assumptions",
+              "slide_at_review": 93,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch03_bayesian_network",
               "heading": "Backup 4 — from maximum expected utility to Bellman",
-              "slide_at_review": 98,
+              "slide_at_review": 104,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Bayesian network $+$ decision $+$ utility",
-              "slide_at_review": 70,
+              "slide_at_review": 76,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "The PhD decision — follow cost and benefit through the graph",
-              "slide_at_review": 79,
+              "slide_at_review": 85,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A later start-up decision — the information arrow matters",
-              "slide_at_review": 82,
+              "slide_at_review": 88,
               "placement_at_review": "main"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Sequential decisions — average, observe, then choose again",
-              "slide_at_review": 86,
+              "slide_at_review": 92,
               "placement_at_review": "main"
             }
           ],

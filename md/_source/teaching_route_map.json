@@ -163,9 +163,9 @@
     "ch03_bayesian_network": {
       "previous_slides": 67,
       "previous_core_slides": 61,
-      "slides": 109,
-      "core_slides": 92,
-      "appendix_start": 93,
+      "slides": 115,
+      "core_slides": 98,
+      "appendix_start": 99,
       "first_topic_slide": 4,
       "widgets": [
         "factor-count",
@@ -173,8 +173,8 @@
         "inference-cost",
         "influence-diagram"
       ],
-      "worked_slide": 63,
-      "transfer_slide": 64,
+      "worked_slide": 69,
+      "transfer_slide": 70,
       "changed_slides": [
         2,
         3,
@@ -536,202 +536,202 @@
   },
   "heading_merges_and_renames": {
     "ch01_optimization_modeling": {
-      "The handoff — the purest decision": {
-        "target": "Where we are — the simplest cell of the map",
+      "The handoff \u2014 the purest decision": {
+        "target": "Where we are \u2014 the simplest cell of the map",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — formulate, solve, and certify",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 formulate, solve, and certify",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The thesis — formulation precedes solution": {
-        "target": "Learning route — formulate, solve, and certify",
+      "The thesis \u2014 formulation precedes solution": {
+        "target": "Learning route \u2014 formulate, solve, and certify",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch02_bayesian_statistics": {
-      "Learning goals — one repeatable Bayesian calculation": {
-        "target": "The lecture route — keep each example together",
+      "Learning goals \u2014 one repeatable Bayesian calculation": {
+        "target": "The lecture route \u2014 keep each example together",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch03_bayesian_network": {
-      "The handoff — belief over a whole system": {
-        "target": "Where we are — one unknown becomes many",
+      "The handoff \u2014 belief over a whole system": {
+        "target": "Where we are \u2014 one unknown becomes many",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — from a joint probability to a decision",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 from a joint probability to a decision",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The thesis — two claims, and the second is the quiet one": {
-        "target": "Learning route — from a joint probability to a decision",
+      "The thesis \u2014 two claims, and the second is the quiet one": {
+        "target": "Learning route \u2014 from a joint probability to a decision",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch04_bayesian_optimization": {
-      "The handoff — belief that acts": {
-        "target": "Where we are — belief stops observing and starts choosing",
+      "The handoff \u2014 belief that acts": {
+        "target": "Where we are \u2014 belief stops observing and starts choosing",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — predict, choose, pay for one measurement",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 predict, choose, pay for one measurement",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The thesis — model the unknown, then act on the model": {
-        "target": "Learning route — predict, choose, pay for one measurement",
+      "The thesis \u2014 model the unknown, then act on the model": {
+        "target": "Learning route \u2014 predict, choose, pay for one measurement",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch05_surrogate_design_optimization": {
-      "The handoff — optimisation with no oracle": {
-        "target": "Where we are — the query is taken away",
+      "The handoff \u2014 optimisation with no oracle": {
+        "target": "Where we are \u2014 the query is taken away",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — separate prediction quality from design quality",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 separate prediction quality from design quality",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The thesis — the surrogate's blind spots are where you will be sent": {
-        "target": "Learning route — separate prediction quality from design quality",
+      "The thesis \u2014 the surrogate's blind spots are where you will be sent": {
+        "target": "Learning route \u2014 separate prediction quality from design quality",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch06_generative_design_optimization": {
-      "The handoff — the same problem, read backwards": {
-        "target": "Where we are — the sentence Lecture 5 handed over",
+      "The handoff \u2014 the same problem, read backwards": {
+        "target": "Where we are \u2014 the sentence Lecture 5 handed over",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — represent several answers, then favour good ones",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 represent several answers, then favour good ones",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "Act 3 — the VAE": {
-        "target": "Act 3 — VAE and diffusion",
+      "Act 3 \u2014 the VAE": {
+        "target": "Act 3 \u2014 VAE and diffusion",
         "reason": "renamed"
       }
     },
     "ch07_mdp_dp": {
-      "The handoff — one choice becomes a sequence": {
-        "target": "Where we are — the deepest crossing",
+      "The handoff \u2014 one choice becomes a sequence": {
+        "target": "Where we are \u2014 the deepest crossing",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — one backup before a whole algorithm",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 one backup before a whole algorithm",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "Two inheritances — Lecture 1 stretched, Lecture 3 unrolled": {
-        "target": "Where we are — the deepest crossing",
+      "Two inheritances \u2014 Lecture 1 stretched, Lecture 3 unrolled": {
+        "target": "Where we are \u2014 the deepest crossing",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch08_value_based_rl": {
-      "The handoff — what Lecture 7 left us": {
-        "target": "Where we are — the OR lineage, made data-driven",
+      "The handoff \u2014 what Lecture 7 left us": {
+        "target": "Where we are \u2014 the OR lineage, made data-driven",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — change the target, then change the representation",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 change the target, then change the representation",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "What we keep, and what we lose": {
-        "target": "Where we are — the OR lineage, made data-driven",
+        "target": "Where we are \u2014 the OR lineage, made data-driven",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch09_optimal_control": {
-      "The handoff — the second parent": {
-        "target": "Where we are — the other column of the map",
+      "The handoff \u2014 the second parent": {
+        "target": "Where we are \u2014 the other column of the map",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — solve a small control problem first",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 solve a small control problem first",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "Act 3 — the one closed form": {
-        "target": "Act 2 — compute linear-quadratic feedback",
+      "Act 3 \u2014 the one closed form": {
+        "target": "Act 2 \u2014 compute linear-quadratic feedback",
         "reason": "renamed"
       },
-      "Act 2 — Bellman made infinitesimal": {
-        "target": "Act 3 — interpret continuous-time Bellman reasoning",
+      "Act 2 \u2014 Bellman made infinitesimal": {
+        "target": "Act 3 \u2014 interpret continuous-time Bellman reasoning",
         "reason": "renamed"
       },
-      "LQR — the harmonic oscillator of control": {
-        "target": "LQR — quadratic cost, linear feedback",
+      "LQR \u2014 the harmonic oscillator of control": {
+        "target": "LQR \u2014 quadratic cost, linear feedback",
         "reason": "renamed"
       }
     },
     "ch10_policy_based_rl": {
-      "The handoff — delete the dynamics": {
-        "target": "Where we are — the control lineage, made data-driven",
+      "The handoff \u2014 delete the dynamics": {
+        "target": "Where we are \u2014 the control lineage, made data-driven",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — make a good action more likely",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 make a good action more likely",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "What we keep, and what we lose": {
-        "target": "Where we are — the control lineage, made data-driven",
+        "target": "Where we are \u2014 the control lineage, made data-driven",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch11_model_based_rl": {
-      "The handoff — the model returns": {
-        "target": "Where we are — both lineages, each missing its model",
+      "The handoff \u2014 the model returns": {
+        "target": "Where we are \u2014 both lineages, each missing its model",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — use a learned model, then check what it changes",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 use a learned model, then check what it changes",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "What each of the four gave up, and what it cost": {
-        "target": "Where we are — both lineages, each missing its model",
+        "target": "Where we are \u2014 both lineages, each missing its model",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The thesis — learn the dynamics, and both parents come back": {
-        "target": "Where we are — both lineages, each missing its model",
+      "The thesis \u2014 learn the dynamics, and both parents come back": {
+        "target": "Where we are \u2014 both lineages, each missing its model",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The unknowns doubled — and this is the third answer": {
-        "target": "Where we are — both lineages, each missing its model",
+      "The unknowns doubled \u2014 and this is the third answer": {
+        "target": "Where we are \u2014 both lineages, each missing its model",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "Lecture 8 promised this lecture, in three lines": {
-        "target": "Where we are — both lineages, each missing its model",
+        "target": "Where we are \u2014 both lineages, each missing its model",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "Act 3 — differentiable control": {
-        "target": "Act 3 — learn from short simulated experience",
+      "Act 3 \u2014 differentiable control": {
+        "target": "Act 3 \u2014 learn from short simulated experience",
         "reason": "renamed"
       },
-      "Act 4 — the lineages teach each other": {
-        "target": "Act 4 — learn in latent imagination",
+      "Act 4 \u2014 the lineages teach each other": {
+        "target": "Act 4 \u2014 learn in latent imagination",
         "reason": "renamed"
       },
-      "The price, named — the model is only right where the data was": {
-        "target": "The price, named — model errors can change the plan",
+      "The price, named \u2014 the model is only right where the data was": {
+        "target": "The price, named \u2014 model errors can change the plan",
         "reason": "renamed"
       }
     },
     "ch12_offline_rl": {
-      "The handoff — the right to try, withdrawn": {
-        "target": "Where we are — the last thing taken away",
+      "The handoff \u2014 the right to try, withdrawn": {
+        "target": "Where we are \u2014 the last thing taken away",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "The roadmap — four questions": {
-        "target": "Learning route — improve a policy using only the log",
+      "The roadmap \u2014 four questions": {
+        "target": "Learning route \u2014 improve a policy using only the log",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "The course has crossed this line once already": {
-        "target": "Where we are — the last thing taken away",
+        "target": "Where we are \u2014 the last thing taken away",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "Act 4 — the other two routes, and how you would know": {
-        "target": "Act 4 — evaluate a policy using the fixed log",
+      "Act 4 \u2014 the other two routes, and how you would know": {
+        "target": "Act 4 \u2014 evaluate a policy using the fixed log",
         "reason": "renamed"
       },
-      "Where we are — three constraints, one instinct": {
-        "target": "Where we are — policy, value and evaluation",
+      "Where we are \u2014 three constraints, one instinct": {
+        "target": "Where we are \u2014 policy, value and evaluation",
         "reason": "renamed"
       },
       "Every algorithm in Part IV assumed it could try something.": {
@@ -740,26 +740,26 @@
       }
     },
     "ch99_probability_review": {
-      "Why an appendix — the few facts everything rested on": {
-        "target": "Learning route — four tools to calculate, not memorize",
+      "Why an appendix \u2014 the few facts everything rested on": {
+        "target": "Learning route \u2014 four tools to calculate, not memorize",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "Model to data, and the arrow inference runs backward": {
-        "target": "Learning route — four tools to calculate, not memorize",
+        "target": "Learning route \u2014 four tools to calculate, not memorize",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       }
     },
     "ch00_introduction": {
       "Engineering is all about decision making": {
-        "target": "What this course is about — in one sentence",
+        "target": "What this course is about \u2014 in one sentence",
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
-      "Check — the four unknowns, taken one at a time": {
-        "target": "Check — follow the changing assumptions",
+      "Check \u2014 the four unknowns, taken one at a time": {
+        "target": "Check \u2014 follow the changing assumptions",
         "reason": "renamed"
       },
-      "Check — two inventions of the same idea": {
-        "target": "Check — two views of sequential decisions",
+      "Check \u2014 two inventions of the same idea": {
+        "target": "Check \u2014 two views of sequential decisions",
         "reason": "renamed"
       }
     }

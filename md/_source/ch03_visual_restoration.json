@@ -1,5 +1,5 @@
 {
-  "review_date": "2026-09-08",
+  "review_date": "2026-09-14",
   "baseline_commit": "d9e6dfaab4366f4236c130a074305303aa452db9",
   "source": {
     "path": "lecture_slides/3. Bayesian Network.pdf",
@@ -9,9 +9,9 @@
   "method": "Crop the original PDF into SVG with glyph outlines. Retain viewBox geometry, node positions, colours, tables and embedded source pictures; set intrinsic width 1600 for readable display sizing. Only listed patches change visible content.",
   "svg_intrinsic_width": 1600,
   "slides_before": 69,
-  "slides_after": 109,
-  "core_slides": 92,
-  "appendix_start": 93,
+  "slides_after": 115,
+  "core_slides": 98,
+  "appendix_start": 99,
   "assets": [
     {
       "asset": "assets/ch03/original-system-modeling.svg",
@@ -344,7 +344,7 @@
       "targets": [
         {
           "heading": "Generate one sample — 1/5 · Draw the battery",
-          "slide": 35
+          "slide": 37
         }
       ],
       "sha256": "5f507e5108df9f6446ae0fc0b59b6507a878139e6362e9163a27e235a572a482"
@@ -363,7 +363,7 @@
       "targets": [
         {
           "heading": "Generate one sample — 2/5 · Draw the solar panel",
-          "slide": 36
+          "slide": 38
         }
       ],
       "sha256": "90c3338688d42a1bdfa674402c3dc55db268483012902cc4b0e802304333f302"
@@ -382,7 +382,7 @@
       "targets": [
         {
           "heading": "Generate one sample — 3/5 · Draw the electrical state",
-          "slide": 37
+          "slide": 39
         }
       ],
       "sha256": "2d17004a12fa388c8fa3cd671b17978e31c41a3fcd068a61dab24c5bb138340b"
@@ -401,7 +401,7 @@
       "targets": [
         {
           "heading": "Generate one sample — 4/5 · Draw the trajectory",
-          "slide": 38
+          "slide": 40
         }
       ],
       "sha256": "82a7b3dc625d1fa79d2774239c5043d55e341859f0fa73bb1ed02acf86f6a056"
@@ -420,7 +420,7 @@
       "targets": [
         {
           "heading": "Generate one sample — 5/5 · Draw communication",
-          "slide": 39
+          "slide": 41
         }
       ],
       "sha256": "cdadab58ef0b538cce6af7c438037090a98718fb032913230e178a96294963d6"
@@ -439,7 +439,7 @@
       "targets": [
         {
           "heading": "Reject rows that disagree with the evidence",
-          "slide": 40
+          "slide": 42
         }
       ],
       "sha256": "cc824dc0b113dc769d0844e450830901fe6c8a8e86286a2ec08b9b434e2e25ae"
@@ -458,7 +458,7 @@
       "targets": [
         {
           "heading": "Naive Bayes — classification is posterior inference",
-          "slide": 45
+          "slide": 51
         }
       ],
       "sha256": "c6bb370daceb6a11a66a1f47c949cc7e48b4395a093f6f94ecda1927f13025bc"
@@ -477,7 +477,7 @@
       "targets": [
         {
           "heading": "A dynamic Bayesian network — repeat the same local structure",
-          "slide": 49
+          "slide": 55
         }
       ],
       "sha256": "7c310a39b235c1a2e8c08c731b4bf1b01b0714aab2d91d5913e30f9a3c291737"
@@ -496,7 +496,7 @@
       "targets": [
         {
           "heading": "Markov order — how far back do the arrows reach?",
-          "slide": 51
+          "slide": 57
         }
       ],
       "sha256": "dc090751fa3bcafe2222d07c955b1e2abd100933d8e76f2ba0a2f127a80a84d9"
@@ -515,7 +515,7 @@
       "targets": [
         {
           "heading": "Markov order — how far back do the arrows reach?",
-          "slide": 51
+          "slide": 57
         }
       ],
       "sha256": "2ee89d43e2ab6475fca75e5d7125d09cf291718bfb7c8bbe9ad611dcc5723cc2"
@@ -534,7 +534,7 @@
       "targets": [
         {
           "heading": "Fit a transition matrix — count where each state goes",
-          "slide": 52
+          "slide": 58
         }
       ],
       "sha256": "04b262d132cf1cb6162eac25c2dac01928a22009d25185feed715c1db88bee2d"
@@ -553,7 +553,7 @@
       "targets": [
         {
           "heading": "State transitions — a graph of possible next states",
-          "slide": 55
+          "slide": 61
         }
       ],
       "sha256": "cd39cd78bebce9294272ab719ef471abd134ce44cd68a4eedd9559296a9bda53"
@@ -572,7 +572,7 @@
       "targets": [
         {
           "heading": "Hidden Markov models — name the question before computing",
-          "slide": 56
+          "slide": 62
         }
       ],
       "sha256": "0f6827e1456a1052ba58abb2c765f40d00a1500738e61378016d8b2008766669"
@@ -591,7 +591,7 @@
       "targets": [
         {
           "heading": "Filtering — locate the present",
-          "slide": 57
+          "slide": 63
         }
       ],
       "sha256": "f92fac56da799ad4f292dde2f28b24d14b70912b92c4a01bf3c0848726491fce"
@@ -610,7 +610,7 @@
       "targets": [
         {
           "heading": "Prediction — look beyond the observations",
-          "slide": 58
+          "slide": 64
         }
       ],
       "sha256": "ffd3b836ff8e91f2f9b9f2396f7e2688a465080483cf0a5bf556858e579edf29"
@@ -629,7 +629,7 @@
       "targets": [
         {
           "heading": "Smoothing — use later evidence to revise the past",
-          "slide": 59
+          "slide": 65
         }
       ],
       "sha256": "b0633218e9b212667798dc7d5d71ed60009cbfbcd8ebe8a5cdf6882b84f179e4"
@@ -648,7 +648,7 @@
       "targets": [
         {
           "heading": "Decoding — choose a whole hidden path",
-          "slide": 60
+          "slide": 66
         }
       ],
       "sha256": "34d36670e2283dae1d7ebedac9c8c38149bc1955e4e280f32ed8d7b5b6dc7920"
@@ -667,7 +667,7 @@
       "targets": [
         {
           "heading": "Add an input — the original IOHMM",
-          "slide": 65
+          "slide": 71
         }
       ],
       "sha256": "088d1636355f671ed2106be35637b3fc37abf58c9594e73b9a9c916195d41810"
@@ -686,7 +686,7 @@
       "targets": [
         {
           "heading": "A continuous hidden state — the same two-row picture",
-          "slide": 66
+          "slide": 72
         }
       ],
       "sha256": "169ce23e7a0e70108d736b641d240397620833e269bbbdc822cdf553c730e463"
@@ -705,7 +705,7 @@
       "targets": [
         {
           "heading": "Utility curves — the same money can have different value",
-          "slide": 72
+          "slide": 78
         }
       ],
       "sha256": "dd97c2836c00d380949fa2200a86b18dbddd66a3e8bd048bd4a2555cd00fc4df"
@@ -724,7 +724,7 @@
       "targets": [
         {
           "heading": "Utility factorisation — one large function or several small ones",
-          "slide": 74
+          "slide": 80
         }
       ],
       "sha256": "83a7fe4233515fc7d41dbcc020e8524bf3453aac777f8653500c99abad03bfca"
@@ -743,7 +743,7 @@
       "targets": [
         {
           "heading": "Collision avoidance — safety and alarm cost in one picture",
-          "slide": 76
+          "slide": 82
         }
       ],
       "sha256": "78b2393b980d299589dbc605d64d4f95711334e4e5607578d87c35e38fd2579c"
@@ -762,7 +762,7 @@
       "targets": [
         {
           "heading": "Bayesian network $+$ decision $+$ utility",
-          "slide": 70
+          "slide": 76
         }
       ],
       "sha256": "426c5766d4d2e105f1a3c1dfd489a8195600bd75c1441db5b62395e18fa362a3"
@@ -781,7 +781,7 @@
       "targets": [
         {
           "heading": "The PhD decision — follow cost and benefit through the graph",
-          "slide": 79
+          "slide": 85
         }
       ],
       "sha256": "5acad480adf13738597eab44290e8c18c65143aa34cdb9b5bc9d2d1dc389dd1e"
@@ -800,7 +800,7 @@
       "targets": [
         {
           "heading": "A later start-up decision — the information arrow matters",
-          "slide": 82
+          "slide": 88
         }
       ],
       "sha256": "d360847ea32cf552ef522b6cb7811f12d6752aca1b2f5bfb8a8f24135f1e2924"
@@ -819,7 +819,7 @@
       "targets": [
         {
           "heading": "Sequential decisions — average, observe, then choose again",
-          "slide": 86
+          "slide": 92
         }
       ],
       "sha256": "b68f8e087a38ee10b3867319c54b9c7a3339706b5bddec18107906f6f8ae9bd6"
@@ -838,7 +838,7 @@
       "targets": [
         {
           "heading": "A continuous root — wing span",
-          "slide": 104
+          "slide": 110
         }
       ],
       "sha256": "107c495c5a37172f4b9d5974679b825ed6407c74e91f68edb07fe899c195400a"
@@ -857,7 +857,7 @@
       "targets": [
         {
           "heading": "A discrete root — aircraft type",
-          "slide": 105
+          "slide": 111
         }
       ],
       "sha256": "6409c21d181c4342aac6de44dfea5090fad900168081697c0d18716733c5f4ef"
@@ -876,7 +876,7 @@
       "targets": [
         {
           "heading": "A conditional Gaussian — radar cross section",
-          "slide": 106
+          "slide": 112
         }
       ],
       "sha256": "370cd7fb9576a1c14b05af4b6605620c2ca9f9235bcce02e1607c04bd0d51616"
@@ -895,7 +895,7 @@
       "targets": [
         {
           "heading": "A binary observation — detection probability",
-          "slide": 107
+          "slide": 113
         }
       ],
       "sha256": "000bf277b8a6f210fa588ccf5d0486e013231c857e5933a391419e28dc0fb628"
@@ -914,7 +914,7 @@
       "targets": [
         {
           "heading": "Continuous time-series data — regression becomes a transition model",
-          "slide": 109
+          "slide": 115
         }
       ],
       "sha256": "d0e6a320a783afa43f7d51cf3cbd069eeb7cc1f1e1737db98574f15fa7339157"
@@ -933,7 +933,7 @@
       "targets": [
         {
           "heading": "Changing coefficients — a hidden process above the observations",
-          "slide": 99
+          "slide": 105
         }
       ],
       "sha256": "e1ebe49a39972b8d964491c713c7c54c9b0d93cb1902a6869cd31acc105e537e"
@@ -952,7 +952,7 @@
       "targets": [
         {
           "heading": "Changing variance — ARCH and GARCH side by side",
-          "slide": 101
+          "slide": 107
         }
       ],
       "sha256": "952551fa13821d261c53ccba911f651af554824eb1b72f95d8e04845a15faf02"
@@ -989,7 +989,7 @@
       "targets": [
         {
           "heading": "Weight the evidence instead of rejecting a row",
-          "slide": 41
+          "slide": 43
         }
       ],
       "sha256": "578de85f871ea8747758a610e610377f1576f95a01bf8fc0c6ed1ca6a0af3771"
@@ -1008,7 +1008,7 @@
       "targets": [
         {
           "heading": "Rare causes — why weighting can still struggle",
-          "slide": 42
+          "slide": 48
         }
       ],
       "sha256": "e89385eb765f8d9d6424a5cc0204f337394d0e0f1d4cbcdbb3b7f7c872de71a2"
@@ -1027,7 +1027,7 @@
       "targets": [
         {
           "heading": "Predict a marginal — collect probability from every predecessor",
-          "slide": 53
+          "slide": 59
         }
       ],
       "sha256": "813cd18ff364fcb32e046495d7942811265b6538ee232a9e919cbc361ef021ad"
@@ -1046,7 +1046,7 @@
       "targets": [
         {
           "heading": "Kalman filtering — carry the mean and covariance forward",
-          "slide": 67
+          "slide": 73
         }
       ],
       "sha256": "e0075387511858c3931e6dd0fde045c7ee1415cc886e97660e8ca6a1a61a6317"
@@ -1065,7 +1065,7 @@
       "targets": [
         {
           "heading": "Maximum expected utility",
-          "slide": 77
+          "slide": 83
         }
       ],
       "sha256": "d07bbaf1c5097b8a2775dda9154e8e6752224a72070fedfae7ea61de70ea5eca"

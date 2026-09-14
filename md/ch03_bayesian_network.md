@@ -704,6 +704,53 @@ Source alignment: original PDF p. 35. Only $E$ appears in the weight because, by
 factorisation of Act 1, $E$ is the only parent $D$ or $C$ has.
 :::
 
+### How different a 0.72 and a 0.02 really are
+{sub: two illustrative conditionals, the same evidence, very different weight}
+
+Give $E\to D$ and $E\to C$ illustrative tables: $P(D{=}1\mid E{=}1)=0.9$, $P(C{=}1\mid E{=}1)=0.8$, and $P(D{=}1\mid E{=}0)=0.1$, $P(C{=}1\mid E{=}0)=0.2$.
+
+$$w(E{=}1)=0.9\times0.8=0.72 \qquad\qquad w(E{=}0)=0.1\times0.2=0.02$$
+
+::: keypoint
+A row with $E=1$ explains $D=C=1$ ==thirty-six times more plausibly== than a row with $E=0$. Both rows are kept — one just earns its evidence, and the other barely does.
+:::
+
+::: note
+Illustrative numbers, chosen to make the contrast obvious. The source states the weight formula on p. 36 without evaluating it; the next slide does.
+:::
+
+### Three rows, weighed instead of counted
+{sub: the same three surviving rows from p. 36, now scored instead of tallied}
+
+| $B$ | $S$ | $E$ | weight $w=P(D{=}1\mid E)P(C{=}1\mid E)$ |
+|---|---|---|---|
+| $1$ | $0$ | $1$ | $0.9\times0.8=0.72$ |
+| $0$ | $1$ | $1$ | $0.9\times0.8=0.72$ |
+| $0$ | $1$ | $0$ | $0.1\times0.2=0.02$ |
+
+$$\widehat P(B{=}1\mid D{=}C{=}1)=\frac{0.72}{0.72+0.72+0.02}=\frac{0.72}{1.46}\approx\mathbf{0.493}.$$
+
+::: keypoint
+==Not $1/3$.== The earlier rejection-sampling count gave every surviving row one vote regardless of how well it explained the evidence. The row with $E=0$ survived too — but it barely earned its place, and its vote counts accordingly.
+:::
+
+::: note
+The three rows and the weight formula are original PDF p. 36; the illustrative $P(D\mid E)$, $P(C\mid E)$ are from the previous slide.
+:::
+
+### Why B, S and E carry no weight of their own
+{sub: they already paid — by how often they were drawn}
+
+Sample $B,S,E$ honestly from $P(B),\,P(S),\,P(E\mid B,S)$ and their probabilities are already built into *how many* rows carry each value. With $P(B{=}1)=0.1$, roughly one row in ten already has $B=1$ — not because a weight said so, but because that is how often the sampler drew it.
+
+::: reveal
+$D$ and $C$ get no such chance: they are never drawn, only *decreed* to be $1$ in every row. The only way their probability can still be counted is to pay it **afterwards**, as a weight. ==Sample a variable and it counts by frequency; clamp it and it counts by weight — never both.== That is why $P(B)$, $P(S)$ and $P(E\mid B,S)$ never reappear inside $w$.
+:::
+
+::: keypoint
+Likelihood weighting in one sentence: ==whatever you did not sample, you must pay for.==
+:::
+
 ### Why the weighted vote is the right answer
 Two facts, and the method follows from their product. A row $(b,s,e)$ is drawn with the **prior** probability of its unclamped part, and it is then weighted by the evidence's probability given that part:
 
