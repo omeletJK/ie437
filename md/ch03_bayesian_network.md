@@ -1255,7 +1255,7 @@ $$\mathrm{EU}(a)=\sum_i p_iU(s_i).$$
 :::
 
 ::: keypoint
-==Average utilities, then compare actions.== Completeness and transitivity alone do not derive probability or expected utility; the latter also uses assumptions such as continuity and independence over lotteries.
+==Average utilities under belief, then take the best action.== That is the entire operation a decision node performs — and, run over many stages, it is the Bellman equation of Lecture 7.
 :::
 
 ::: small
@@ -1287,10 +1287,10 @@ Compare **A: receive 1 dollar for sure** with **B: receive 100 dollars with prob
 | $U(m)=m$ | $1$ | $0.01(100)=1$ | indifferent: risk neutral |
 | $U(m)=m^2$ | $1$ | $0.01(10\,000)=100$ | B: risk seeking |
 
-Expected-utility modelling assumes consistent lottery preferences, including completeness, transitivity, continuity, and independence. Under these assumptions, preferences admit an expected-utility representation; they are **not probabilities of the outcomes**.
+Same money on average, three different decisions — the shape of $U$ is doing all the work.
 
 ::: keypoint
-Choose by $\mathbb E[U(M)]$, which need not equal $U(\mathbb E[M])$. State the utility model before comparing decisions.
+Choose by ==$\mathbb E[U(M)]$, which need not equal $U(\mathbb E[M])$.== The utility function is part of the model, and it has to be stated before two decisions can be compared.
 :::
 
 ::: note
