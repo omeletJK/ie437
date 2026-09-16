@@ -428,6 +428,60 @@ $R$ is not connected to $B$ by any edge, and the two are marginally independent.
 :::
 :::
 
+### d-separation — one rule for any pair, any evidence, any path
+{sub: the three verdicts, applied along every path at once}
+
+The three structures decide a **three-node** path. A real question — is $X\perp Y\mid\mathbf Z$? — has arbitrary sets, paths of any length, and usually several paths between the same two variables. And the local Markov property only speaks about a node given its *parents*, which is rarely the evidence you actually hold.
+
+::: reveal
+**d-separation** is the three verdicts run along every path. Walk each path from $X$ to $Y$; it is **blocked** at a node if
+
+- it is a **chain** or **fork** node and it is *observed*, or
+- it is a **collider** and *neither it nor any descendant* is observed.
+
+If every path is blocked, the DAG entails $X\perp Y\mid\mathbf Z$. If any path is open, the graph permits dependence.
+:::
+
+::: reveal
+::: keypoint
+This is the ==complete reading of the graph==: every independence the DAG implies, not just the parental ones — and in Act 3, every time a sum is pushed past a factor, this rule is the licence.
+:::
+:::
+
+::: note
+The "or any descendant" clause is the one the three-structure pictures cannot show,
+and the next slide's third question is built to exhibit it.
+:::
+
+### d-separation on the satellite — three questions, one node
+{sub: the same node E blocks one path and opens two others}
+
+$B\to E\leftarrow S$, $\;E\to D$, $\;E\to C$. Ask about three pairs.
+
+::: table
+| Question | Path | What sits at $E$ | Verdict |
+|---|---|---|---|
+| $C\perp B\mid E$ ? | $B\to E\to C$ | chain, **observed** | blocked — ==independent== |
+| $D\perp C$ ? | $D\leftarrow E\to C$ | fork, *unobserved* | open — dependent |
+| $B\perp S\mid D$ ? | $B\to E\leftarrow S$ | collider, unobserved — but its **descendant $D$ is** | open — dependent |
+:::
+
+::: reveal
+The first is the one that reads like a collider and is not: $B$ reaches $C$ only *through* $E$, so fixing $E$ cuts it. The third is the one the pictures miss: nobody looked at $E$, but a symptom downstream of it was seen, and that is enough to make the two causes compete.
+:::
+
+::: reveal
+::: keypoint
+==Whether $E$ blocks or opens is not a property of $E$ — it is a property of the path you are on and the evidence you hold.== d-separation is what keeps the books.
+:::
+:::
+
+::: note
+All four verdicts (the three above plus $B\perp S$ unconditionally, which is blocked)
+checked numerically on the network with illustrative tables: the blocked pairs differ by
+exactly zero across the conditioning value; the open pairs differ by 0.68 and 0.33.
+:::
+
 ### What the missing edges buy
 ::: flow | | 
 - **Storage** | $2^n-1$ numbers collapse to a sum of small local tables
@@ -436,14 +490,14 @@ $R$ is not connected to $B$ by any edge, and the two are marginally independent.
 :::
 
 ::: reveal
-::: block.accent The complete test | d-separation
-Chaining the three structures across a whole graph gives **d-separation**: a purely graphical criterion that decides, for any three disjoint sets $\mathbf{X}, \mathbf{Y}, \mathbf{Z}$, whether the DAG entails $\mathbf{X} \perp \mathbf{Y} \mid \mathbf{Z}$. A path is blocked by an observed chain or fork node, and by an *un*observed collider whose descendants are also unobserved. Block every path and the independence holds.
+::: keypoint
+All three are the same fact read three ways: ==a missing edge is a conditional independence==, and d-separation is how you read every one of them off the graph.
 :::
 :::
 
 ::: reveal
 ::: small
-A blocked path supports an independence claim. An open path allows dependence; extra independence can occur for special parameters. Also, arrows encode a factorisation, not a causal intervention unless a causal interpretation is explicitly assumed.
+Two cautions. An open path *permits* dependence; it does not force it, and special parameter values can cancel. And an arrow encodes a factorisation, not a causal intervention, unless a causal reading is explicitly assumed.
 :::
 :::
 
