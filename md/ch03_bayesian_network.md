@@ -5,9 +5,9 @@ subtitle: A belief about many things is a graph
 tagline: Structure tames the joint — and once a decision hangs off the graph, every later lecture is already in the room
 blurb: >-
   A belief about many variables at once, drawn as a graph. Factorization is what makes an
-  intractable joint tractable, d-separation says what the graph implies about independence, and
-  adding decision and utility nodes turns it into an influence diagram — a decision model that leads toward MDPs, and the
-  seed of the entire second half of the course.
+  intractable joint tractable, a missing edge is a conditional independence you can read straight
+  off the graph, and adding decision and utility nodes turns it into an influence diagram — a
+  decision model that leads toward MDPs, and the seed of the entire second half of the course.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST
@@ -300,7 +300,7 @@ $$\begin{aligned}
 
 ::: reveal
 ::: small
-D-separation guarantees independence for **every** compatible probability table. An open path gives no such guarantee; special tables can still make the variables independent.
+This structural test guarantees independence for **every** compatible probability table. An open path gives no such guarantee; special tables can still make the variables independent.
 :::
 :::
 
@@ -382,7 +382,7 @@ Note that $J$ is not on the collider path at all; it is a child of $R$. It moves
 ### Evidence, entered by hand
 {fill: top}
 
-::: widget d-separation
+::: widget explaining-away
 Click a node to observe it. The two blue edges are the collider path $S \to T \leftarrow R$; they light when observing $T$ opens it. The readout is the exact posterior over the sprinkler, computed by enumerating all sixteen states. Observe $T$ alone and the collider opens; ==add $J$ and the rain explains the sprinkler away==; observe $R$ directly and the sprinkler snaps back to its prior, because with the rain known, wet grass says nothing.
 :::
 
@@ -424,62 +424,8 @@ The alarm makes a burglary near-certain. One radio bulletin — which says nothi
 
 ::: reveal
 ::: small
-$R$ is not connected to $B$ by any edge, and the two are marginally independent. They become strongly dependent the instant the alarm is heard. If you wanted one slide to justify learning d-separation properly, this is it.
+$R$ is not connected to $B$ by any edge, and the two are marginally independent. They become strongly dependent the instant the alarm is heard — the same collider move as the wet grass, on a graph built to make it matter.
 :::
-:::
-
-### d-separation — one rule for any pair, any evidence, any path
-{sub: the three verdicts, applied along every path at once}
-
-The three structures decide a **three-node** path. A real question — is $X\perp Y\mid\mathbf Z$? — has arbitrary sets, paths of any length, and usually several paths between the same two variables. And the local Markov property only speaks about a node given its *parents*, which is rarely the evidence you actually hold.
-
-::: reveal
-**d-separation** is the three verdicts run along every path. Walk each path from $X$ to $Y$; it is **blocked** at a node if
-
-- it is a **chain** or **fork** node and it is *observed*, or
-- it is a **collider** and *neither it nor any descendant* is observed.
-
-If every path is blocked, the DAG entails $X\perp Y\mid\mathbf Z$. If any path is open, the graph permits dependence.
-:::
-
-::: reveal
-::: keypoint
-This is the ==complete reading of the graph==: every independence the DAG implies, not just the parental ones — and in Act 3, every time a sum is pushed past a factor, this rule is the licence.
-:::
-:::
-
-::: note
-The "or any descendant" clause is the one the three-structure pictures cannot show,
-and the next slide's third question is built to exhibit it.
-:::
-
-### d-separation on the satellite — three questions, one node
-{sub: the same node E blocks one path and opens two others}
-
-$B\to E\leftarrow S$, $\;E\to D$, $\;E\to C$. Ask about three pairs.
-
-::: table
-| Question | Path | What sits at $E$ | Verdict |
-|---|---|---|---|
-| $C\perp B\mid E$ ? | $B\to E\to C$ | chain, **observed** | blocked — ==independent== |
-| $D\perp C$ ? | $D\leftarrow E\to C$ | fork, *unobserved* | open — dependent |
-| $B\perp S\mid D$ ? | $B\to E\leftarrow S$ | collider, unobserved — but its **descendant $D$ is** | open — dependent |
-:::
-
-::: reveal
-The first is the one that reads like a collider and is not: $B$ reaches $C$ only *through* $E$, so fixing $E$ cuts it. The third is the one the pictures miss: nobody looked at $E$, but a symptom downstream of it was seen, and that is enough to make the two causes compete.
-:::
-
-::: reveal
-::: keypoint
-==Whether $E$ blocks or opens is not a property of $E$ — it is a property of the path you are on and the evidence you hold.== d-separation is what keeps the books.
-:::
-:::
-
-::: note
-All four verdicts (the three above plus $B\perp S$ unconditionally, which is blocked)
-checked numerically on the network with illustrative tables: the blocked pairs differ by
-exactly zero across the conditioning value; the open pairs differ by 0.68 and 0.33.
 :::
 
 ### What the missing edges buy
@@ -491,7 +437,7 @@ exactly zero across the conditioning value; the open pairs differ by 0.68 and 0.
 
 ::: reveal
 ::: keypoint
-All three are the same fact read three ways: ==a missing edge is a conditional independence==, and d-separation is how you read every one of them off the graph.
+All three are the same fact read three ways: ==a missing edge is a conditional independence==, and the chain, fork and collider rules read every one of them off the graph.
 :::
 :::
 
@@ -509,7 +455,7 @@ Two cautions. An open path *permits* dependence; it does not force it, and speci
 - =Independent before conditioning; observing $Z$ can make them dependent
 - Independent, and they stay independent whatever you condition on
 - Dependent, and no conditioning changes that
-This is the collider, and it runs opposite to the chain and the fork. Learning the alarm went off makes burglary and earthquake **compete** to explain it, so hearing that there was an earthquake lowers your belief in a burglary — they became dependent the moment you conditioned on their shared effect. *Explaining away* is the reason d-separation needs a special rule for colliders, and it is a standard way to introduce a correlation that is not there.
+This is the collider, and it runs opposite to the chain and the fork. Learning the alarm went off makes burglary and earthquake **compete** to explain it, so hearing that there was an earthquake lowers your belief in a burglary — they became dependent the moment you conditioned on their shared effect. *Explaining away* is why a collider behaves opposite to a chain or a fork, and it is a standard way to introduce a correlation that is not there.
 :::
 
 ## Act 3 — reasoning with the network
@@ -1672,30 +1618,7 @@ $$T_1(B)\;T_2(S)\;T_3(E,B,S)\;T_4(D,E)\;T_5(C,E)$$
 **Cost.** Each elimination creates an intermediate factor whose size is $2^{k}$ where $k$ is the number of variables it couples — the *induced width* of the chosen ordering. A good ordering keeps every factor small; a bad one can build a factor over most of the network. Finding the optimal ordering is NP-hard, so heuristics (min-fill, min-degree) are used. This is the practical ceiling of exact inference, and the reason sampling exists.
 :::
 
-### Backup 2 — d-separation, the complete rule
-{fill: top}
-
-A path between $\mathbf{X}$ and $\mathbf{Y}$ (ignoring edge directions) is **blocked** by an observed set $\mathbf{Z}$ if it contains a node $m$ such that either
-
-- $m$ is a **chain** ($\to m \to$) or a **fork** ($\leftarrow m \to$) on the path **and** $m \in \mathbf{Z}$; or
-- $m$ is a **collider** ($\to m \leftarrow$) on the path **and** neither $m$ nor any descendant of $m$ is in $\mathbf{Z}$.
-
-If **every** path is blocked, $\mathbf{Z}$ d-separates $\mathbf{X}$ from $\mathbf{Y}$, and the DAG entails $\mathbf{X}\perp\mathbf{Y}\mid\mathbf{Z}$.
-
-::: cols
-::: col What it guarantees
-D-separation is **sound**: if it says independent, every distribution factorising over the DAG has that independence. So a graphical check licenses an algebraic simplification, with no arithmetic.
-:::
-::: col.accent What it does not
-The converse fails in one direction: $\mathbf{X}$ and $\mathbf{Y}$ may happen to be independent in a particular distribution without being d-separated — an accident of the numbers rather than the structure. The graph states what *must* hold, not everything that does.
-:::
-:::
-
-::: small
-The "or any descendant" clause is why observing $J$ in the wet-grass example matters but observing it *without* $T$ does not: $J$ is a descendant of $R$, not of the collider $T$, so on its own it opens nothing.
-:::
-
-### Backup 3 — approximate inference, and where each method breaks
+### Backup 2 — approximate inference, and where each method breaks
 {fill: top}
 
 | method | how it works | where it breaks |
@@ -1708,7 +1631,7 @@ The "or any descendant" clause is why observing $J$ in the wet-grass example mat
 **The likelihood-weighting counter-example.** Take $C \to D$ with $p(c^1)=0.001$, $p(d^1\mid c^1)=0.999$, $p(d^1\mid c^0)=0.001$, so that exactly $p(c^1\mid d^1) = \frac{0.999 \times 0.001}{0.999\times 0.001 + 0.001\times 0.999} = 0.5$. A 1,000-draw run has probability $0.999^{1000}\approx0.368$ of never proposing $c^1$, in which case the estimate is zero. The normalised weighted estimator is generally biased at finite sample sizes but consistent under suitable support conditions; rare important samples can make convergence slow.
 :::
 
-### Backup 4 — from maximum expected utility to Bellman
+### Backup 3 — from maximum expected utility to Bellman
 {fill: top}
 
 **One decision.** Chance variables $X$ with a Bayesian network, a decision $D$, a utility $U(D,X)$. Given evidence $e$,

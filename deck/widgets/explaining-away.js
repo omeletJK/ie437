@@ -1,5 +1,5 @@
 /* ============================================================
-   widget: d-separation
+   widget: explaining-away
    Example 3.1 of the source deck (Wet Grass), made clickable.
    S -> T <- R -> J with the deck's own tables.  Click a node to
    observe it; the posterior over the sprinkler is recomputed by
@@ -7,7 +7,7 @@
    exact.  The collider at T is the point: it is the only node
    whose observation OPENS a path rather than blocking one.
    ============================================================ */
-IE437.widget('d-separation', function (host, opts) {
+IE437.widget('explaining-away', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', RED = '#D64545',
       GREEN = '#16A34A', SLATE = '#64748B', AMBER = '#D97706';
 
@@ -204,8 +204,8 @@ IE437.widget('d-separation', function (host, opts) {
       v.innerHTML = '<b style="color:' + AMBER + '">Explained away, completely.</b> ' +
         'The rain is now known directly, so wet grass is a foregone conclusion and carries no ' +
         'further information — the sprinkler’s posterior lands back exactly on its prior, ' +
-        '<b>' + PS.toFixed(3) + '</b>. D-separation says what <b>must</b> hold, not everything ' +
-        'that happens to.';
+        '<b>' + PS.toFixed(3) + '</b>. An open collider only <b>permits</b> dependence — this table ' +
+        'happens to erase it once the rival cause is confirmed.';
     } else if (ev.J === null && ev.R === null) {
       v.innerHTML = '<b style="color:' + BLUE + '">S and R are now dependent.</b> Observing the collider ' +
         '<i>T</i> opened the path, so Tracey’s wet grass alone moves the sprinkler from its prior ' +

@@ -73,7 +73,7 @@ decision.
 
 - `factor-count` — the joint table against the factorized parameter count. One number, and the
   entire motivation for graphical models.
-- `d-separation` — click nodes to observe them; active paths light, blocked paths grey. The
+- `explaining-away` — click nodes to observe them; active paths light, blocked paths grey. The
   explaining-away collider is the case worth pausing on.
 - `influence-diagram` — add decision and utility nodes, compute expected utility, pick the action.
   **This is the seed of every later chapter**, so the widget should say so: a one-stage MDP.

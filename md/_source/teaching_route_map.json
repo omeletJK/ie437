@@ -163,13 +163,13 @@
     "ch03_bayesian_network": {
       "previous_slides": 67,
       "previous_core_slides": 61,
-      "slides": 115,
+      "slides": 114,
       "core_slides": 98,
       "appendix_start": 99,
       "first_topic_slide": 4,
       "widgets": [
         "factor-count",
-        "d-separation",
+        "explaining-away",
         "inference-cost",
         "influence-diagram"
       ],

@@ -1,5 +1,5 @@
 {
-  "review_date": "2026-09-14",
+  "review_date": "2026-09-16",
   "baseline_commit": "d9e6dfaab4366f4236c130a074305303aa452db9",
   "source": {
     "path": "lecture_slides/3. Bayesian Network.pdf",
@@ -9,7 +9,7 @@
   "method": "Crop the original PDF into SVG with glyph outlines. Retain viewBox geometry, node positions, colours, tables and embedded source pictures; set intrinsic width 1600 for readable display sizing. Only listed patches change visible content.",
   "svg_intrinsic_width": 1600,
   "slides_before": 69,
-  "slides_after": 115,
+  "slides_after": 114,
   "core_slides": 98,
   "appendix_start": 99,
   "assets": [
@@ -838,7 +838,7 @@
       "targets": [
         {
           "heading": "A continuous root — wing span",
-          "slide": 110
+          "slide": 109
         }
       ],
       "sha256": "107c495c5a37172f4b9d5974679b825ed6407c74e91f68edb07fe899c195400a"
@@ -857,7 +857,7 @@
       "targets": [
         {
           "heading": "A discrete root — aircraft type",
-          "slide": 111
+          "slide": 110
         }
       ],
       "sha256": "6409c21d181c4342aac6de44dfea5090fad900168081697c0d18716733c5f4ef"
@@ -876,7 +876,7 @@
       "targets": [
         {
           "heading": "A conditional Gaussian — radar cross section",
-          "slide": 112
+          "slide": 111
         }
       ],
       "sha256": "370cd7fb9576a1c14b05af4b6605620c2ca9f9235bcce02e1607c04bd0d51616"
@@ -895,7 +895,7 @@
       "targets": [
         {
           "heading": "A binary observation — detection probability",
-          "slide": 113
+          "slide": 112
         }
       ],
       "sha256": "000bf277b8a6f210fa588ccf5d0486e013231c857e5933a391419e28dc0fb628"
@@ -914,7 +914,7 @@
       "targets": [
         {
           "heading": "Continuous time-series data — regression becomes a transition model",
-          "slide": 115
+          "slide": 114
         }
       ],
       "sha256": "d0e6a320a783afa43f7d51cf3cbd069eeb7cc1f1e1737db98574f15fa7339157"
@@ -933,7 +933,7 @@
       "targets": [
         {
           "heading": "Changing coefficients — a hidden process above the observations",
-          "slide": 105
+          "slide": 104
         }
       ],
       "sha256": "e1ebe49a39972b8d964491c713c7c54c9b0d93cb1902a6869cd31acc105e537e"
@@ -952,7 +952,7 @@
       "targets": [
         {
           "heading": "Changing variance — ARCH and GARCH side by side",
-          "slide": 107
+          "slide": 106
         }
       ],
       "sha256": "952551fa13821d261c53ccba911f651af554824eb1b72f95d8e04845a15faf02"

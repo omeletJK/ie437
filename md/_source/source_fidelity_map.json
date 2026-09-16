@@ -1408,12 +1408,6 @@
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Backup 2 — d-separation, the complete rule",
-              "slide_at_review": 102,
-              "placement_at_review": "appendix"
-            },
-            {
-              "deck": "ch03_bayesian_network",
               "heading": "The factorisation — one joint, written locally",
               "slide_at_review": 10,
               "placement_at_review": "main"
@@ -1506,8 +1500,8 @@
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Backup 3 — approximate inference, and where each method breaks",
-              "slide_at_review": 103,
+              "heading": "Backup 2 — approximate inference, and where each method breaks",
+              "slide_at_review": 102,
               "placement_at_review": "appendix"
             },
             {
@@ -1589,31 +1583,31 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Hybrid networks — a table is not the only local model",
-              "slide_at_review": 109,
+              "slide_at_review": 108,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A continuous root — wing span",
-              "slide_at_review": 110,
+              "slide_at_review": 109,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A discrete root — aircraft type",
-              "slide_at_review": 111,
+              "slide_at_review": 110,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A conditional Gaussian — radar cross section",
-              "slide_at_review": 112,
+              "slide_at_review": 111,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "A binary observation — detection probability",
-              "slide_at_review": 113,
+              "slide_at_review": 112,
               "placement_at_review": "appendix"
             }
           ],
@@ -1662,7 +1656,7 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Learning the graph — compare explanations, not just fitted tables",
-              "slide_at_review": 114,
+              "slide_at_review": 113,
               "placement_at_review": "appendix"
             }
           ],
@@ -1807,7 +1801,7 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Continuous time-series data — regression becomes a transition model",
-              "slide_at_review": 115,
+              "slide_at_review": 114,
               "placement_at_review": "appendix"
             },
             {
@@ -1819,7 +1813,7 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Backup — when the time-series model itself changes",
-              "slide_at_review": 106,
+              "slide_at_review": 105,
               "placement_at_review": "appendix"
             },
             {
@@ -1831,13 +1825,13 @@
             {
               "deck": "ch03_bayesian_network",
               "heading": "Changing coefficients — a hidden process above the observations",
-              "slide_at_review": 105,
+              "slide_at_review": 104,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch03_bayesian_network",
               "heading": "Changing variance — ARCH and GARCH side by side",
-              "slide_at_review": 107,
+              "slide_at_review": 106,
               "placement_at_review": "appendix"
             },
             {
@@ -1967,8 +1961,8 @@
             },
             {
               "deck": "ch03_bayesian_network",
-              "heading": "Backup 4 — from maximum expected utility to Bellman",
-              "slide_at_review": 104,
+              "heading": "Backup 3 — from maximum expected utility to Bellman",
+              "slide_at_review": 103,
               "placement_at_review": "appendix"
             },
             {
