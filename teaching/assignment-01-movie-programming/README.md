@@ -2,6 +2,8 @@
 
 버전 2.0 · 2026-09-23
 
+**제출 마감: 2026년 10월 9일(금) 23:59, 한국시간(KST, UTC+9).**
+
 작업 기준 위치: `/Users/jinkyoo/Projects/ie437-slides/teaching/assignment-01-movie-programming/`. 기존 `ie437-platform`의 과제 패키지를 이곳으로 이동했다. 이후 편집과 배포 준비는 이 위치에서 진행한다.
 
 IE437 과제 배포 자료. 학생은 LLM과 논의하며 문제를 정의하고, 그 정의에 근거한 가상 데모와 기업 대상 제안 발표를 만든다. 학생용 문서는 영어, 교수자용 문서는 한국어다.
@@ -37,6 +39,6 @@ IE437 과제 배포 자료. 학생은 LLM과 논의하며 문제를 정의하고
 
 **상위 폴더 전체를 학생에게 배포하지 않는다.** 교수자 폴더는 ZIP에 포함하지 않으며 `.gitignore`로 Git에서도 제외한다. 랜딩 페이지의 **Assignments** 섹션은 `md/_ASSIGNMENTS.md`에 명시한 학생용 네 문서와 자동 생성 ZIP만 연결한다. Pages는 `html/`만 공개하며, 배포 전에 파일 목록과 실제 다운로드 테스트를 실행한다.
 
-편집 원본은 `student/`이다. 변경 후 프로젝트 루트에서 `npm run site`를 실행하면 사이트 다운로드와 ZIP이 함께 갱신된다. `npm run test:assignments`로 검증한 뒤 `main`에 반영하면 자동 배포된다. 마감일은 확정 후 목록 설정의 `due`에 시간대와 함께 입력한다.
+편집 원본은 `student/`이다. 변경 후 프로젝트 루트에서 `npm run site`를 실행하면 사이트 다운로드와 ZIP이 함께 갱신된다. `npm run test:assignments`로 검증한 뒤 `main`에 반영하면 자동 배포된다. 마감일을 변경할 때에는 목록 설정의 `due`와 학생용 `assignment.md`를 함께 갱신한다.
 
 이관 당시의 `student-assignment-01.zip`과 압축 해제 폴더 `student-assignment-01/`는 보관용 사본이다. 현재 배포에는 자동 생성된 `html/assignments/assignment-01-movie-programming/IE437-Assignment-01.zip`을 사용한다.

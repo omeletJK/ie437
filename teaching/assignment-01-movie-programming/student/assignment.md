@@ -2,6 +2,8 @@
 
 **IE437 · Student assignment brief · Version 2.0**
 
+**Submission deadline: Fri, 9 Oct 2026 · 23:59 KST (UTC+9).** Submit by the end of Friday, 9 October.
+
 ## 1. Purpose
 
 **Your central task is to turn an incomplete business request into a defensible decision problem, demonstrate its core mechanism, and propose a credible next step to the client.**
@@ -58,7 +60,7 @@ The final versions of all three deliverables must agree. Do not describe an unim
 
 Write all three deliverables in English. Place them in the same folder and submit one ZIP file named `studentID_name.zip`. For a team submission, use the team identifier specified by your instructor.
 
-The instructor will announce the deadline, individual/team format, submission location, and presentation duration separately.
+The instructor will announce the individual/team format, submission location, and presentation duration separately.
 
 | File | Required content | Intended reader |
 |---|---|---|
