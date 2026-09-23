@@ -60,7 +60,8 @@ a{color:inherit}
 .tnav{display:flex;align-items:center;gap:22px;font-size:14px}
 .tnav a{color:var(--ink2);text-decoration:none;transition:color .15s ease}
 .tnav a:hover{color:var(--ink)}
-@media (max-width:720px){.tnav a{display:none}.tnav a.keep{display:inline}}
+@media (max-width:720px){.tnav{gap:13px;font-size:13px}.tnav a{display:none}.tnav a.keep{display:inline}}
+@media (max-width:380px){.top .wrap{padding-inline:16px;gap:10px}.mark{gap:6px}.tnav{gap:10px;font-size:12px}}
 
 /* ---------- hero ---------- */
 .hero{padding:64px 0 52px}
@@ -220,6 +221,32 @@ section.band.sunk .howto{background:var(--raised)}
 .howto b{color:var(--ink)}
 .howto kbd{font:500 12px/1 var(--mono);border:1px solid var(--line);border-bottom-width:2px;
   border-radius:3px;padding:3px 6px;background:var(--sunk);color:var(--ink2)}
+
+/* ---------- assignments ---------- */
+.assignment-list{list-style:none;display:grid;gap:20px;margin-top:30px}
+.assignment{border:1px solid var(--line);border-radius:10px;background:var(--raised);padding:28px 30px}
+.assignment-head{display:flex;justify-content:space-between;align-items:center;gap:24px}
+.assignment-number{font:500 11px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+.assignment h3{font:600 26px/1.2 var(--disp);letter-spacing:-.02em;margin-top:10px}
+.assignment-subtitle{margin-top:8px;font-size:15px;color:var(--ink2)}
+.assignment-zip{flex:none;white-space:nowrap;min-height:44px}
+.assignment svg{width:16px;height:16px;flex:none}
+.assignment-summary{margin-top:20px;max-width:70ch;font-size:15px;color:var(--ink2)}
+.assignment-meta{display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:20px;font-size:13px}
+.assignment-meta div{display:flex;gap:8px}
+.assignment-meta dt{color:var(--ink3)}
+.assignment-meta dd{color:var(--ink);font-weight:500}
+.assignment-files{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin-top:24px;border-top:1px solid var(--line)}
+.assignment-files a{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:52px;padding:12px 0;font-size:14px;text-decoration:none;color:var(--ink2)}
+.assignment-files a:hover{color:var(--teal);text-decoration:underline;text-underline-offset:4px}
+.assignment-format{display:flex;gap:8px;align-items:center;font:500 10px/1 var(--mono);color:var(--teal);white-space:nowrap}
+@media (max-width:640px){
+  .assignment{padding:22px 20px}
+  .assignment-head{flex-direction:column;align-items:start;gap:20px}
+  .assignment h3{font-size:23px}
+  .assignment-files{grid-template-columns:1fr;gap:0}
+  .assignment-files li+li{border-top:1px solid var(--line2)}
+}
 
 /* ---------- syllabus ---------- */
 .people{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:32px;align-items:start}

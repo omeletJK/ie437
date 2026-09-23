@@ -16,3 +16,11 @@ Omelet_IR_5min.html
 
 # throwaway QA scripts
 _*.mjs
+
+# Assignment instructor notes stay local; publish student materials only.
+/teaching/*/instructor/
+# Local unpacked copy of the student ZIP.
+/teaching/assignment-01-movie-programming/student-assignment-01/
+
+# Archived handoff ZIPs remain local; the site generates current archives.
+/teaching/*/student-assignment-*.zip

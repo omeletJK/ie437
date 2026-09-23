@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 import { marked } from 'marked';
 import { stale } from './pdf.mjs';
+import { publishAssignments } from './assignments.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const MD = path.join(ROOT, 'md');
@@ -296,12 +297,36 @@ function noticeRow(a, i) {
     </article>`;
 }
 
+function assignmentRow(a) {
+  return `<li class="assignment"><article aria-labelledby="${esc(a.id)}-title">
+    <div class="assignment-head">
+      <div>
+        <div class="assignment-number">Assignment ${String(a.number).padStart(2, '0')}</div>
+        <h3 id="${esc(a.id)}-title">${esc(a.title)}</h3>
+        ${a.subtitle ? `<p class="assignment-subtitle">${esc(a.subtitle)}</p>` : ''}
+      </div>
+      <a class="btn solid assignment-zip" href="${esc(a.archive.url)}" download="${esc(a.archive.name)}"
+        aria-label="Download Assignment ${a.number} ZIP">${DL_ICON} Download ZIP</a>
+    </div>
+    <p class="assignment-summary">${esc(a.summary)}</p>
+    <dl class="assignment-meta">
+      <div><dt>Version</dt><dd>${esc(a.version)}</dd></div>
+      <div><dt>Due</dt><dd>${esc(a.due)}</dd></div>
+      <div><dt>Package</dt><dd>${a.files.length} Markdown files</dd></div>
+    </dl>
+    <ul class="assignment-files" aria-label="Assignment ${a.number} documents">
+      ${a.files.map(f => `<li><a href="${esc(f.url)}" download="${esc(f.name)}"><span>${esc(f.label)}</span><span class="assignment-format">MD ${DL_ICON}</span></a></li>`).join('')}
+    </ul>
+  </article></li>`;
+}
+
 export function writeSite() {
   const { fm, body } = readFm(path.join(MD, '_SITE.md'));
   const chs = chapters();
   const byCh = new Map(chs.map(c => [c.ch, c]));
   const news = announcements();
   const syl = syllabus();
+  const assignments = publishAssignments(ROOT);
 
   /* the body of _SITE.md is the "about" section: a lede, then one card
      per `### heading` */
@@ -350,6 +375,7 @@ export function writeSite() {
 
   const stamp = fs.readdirSync(MD).filter(f => f.endsWith('.md'))
     .map(f => fs.statSync(path.join(MD, f)).mtime)
+    .concat(assignments.map(a => new Date(a.modifiedAt)))
     .sort((a, b) => b - a)[0].toISOString().slice(0, 10);
 
   const totalSlides = chs.reduce((s, c) => s + c.slides, 0);
@@ -369,6 +395,7 @@ export function writeSite() {
     <a href="#course">The course</a>
     <a href="#notices">Notices</a>
     ${syl ? '<a href="#syllabus">Syllabus</a>' : ''}
+    ${assignments.length ? '<a class="keep" href="#assignments">Assignments</a>' : ''}
     <a class="keep" href="#materials">Materials</a>
   </nav>
 </div></header>
@@ -385,7 +412,7 @@ export function writeSite() {
     fm.chips.map((c, i) => `<span class="chip${i === 0 ? ' on' : ''}">${esc(c)}</span>`).join('')}</div>` : ''}
   <div class="cta rise" style="--d:5">
     <a class="btn solid" href="#materials">Lecture materials &rarr;</a>
-    <a class="btn ghost" href="#notices">Notices</a>
+    ${assignments.length ? '<a class="btn ghost" href="#assignments">Assignments</a>' : '<a class="btn ghost" href="#notices">Notices</a>'}
   </div>
   </div>
   <div class="cubefig rise" style="--d:3">
@@ -419,6 +446,16 @@ export function writeSite() {
       (news.length > 5 ? `<div class="more"><button class="btn ghost" id="moreb">Show all ${news.length} notices</button></div>` : '')
     : `<div class="empty">No notices yet. Add one to <code>md/_ANNOUNCEMENTS.md</code> and rebuild.</div>`}
 </div></section>
+
+${assignments.length ? `
+<section class="band sunk" id="assignments"><div class="wrap">
+  <div class="shead"><div>
+    <div class="snum">${sn()} &middot; Assignments</div>
+    <h2>Put the ideas to work</h2>
+  </div></div>
+  <p class="sintro">Download the complete assignment package, or choose an individual document. Start with the assignment brief for requirements and grading.</p>
+  <ol class="assignment-list">${assignments.map(assignmentRow).join('\n')}</ol>
+</div></section>` : ''}
 
 ${syl ? `
 <section class="band sunk" id="syllabus"><div class="wrap">
@@ -484,7 +521,7 @@ ${syl ? `
   fs.mkdirSync(OUT, { recursive: true });
   const idx = path.join(OUT, 'index.html');
   if (!fs.existsSync(idx) || fs.readFileSync(idx, 'utf8') !== doc) fs.writeFileSync(idx, doc);
-  return { chapters: chs.length, slides: totalSlides, notices: news.length,
+  return { chapters: chs.length, slides: totalSlides, notices: news.length, assignments: assignments.length,
            pdfs: chs.filter(c => c.hasPdf && !c.pdfStale).length };
 }
 
@@ -492,5 +529,5 @@ ${syl ? `
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const r = writeSite();
   console.log('OK  index.html  ->  html/index.html   ' + r.chapters + ' chapters, ' +
-    r.slides + ' slides, ' + r.notices + ' notices, ' + r.pdfs + ' current PDFs');
+    r.slides + ' slides, ' + r.notices + ' notices, ' + r.assignments + ' assignments, ' + r.pdfs + ' current PDFs');
 }

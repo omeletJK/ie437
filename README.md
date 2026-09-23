@@ -101,14 +101,14 @@ One trap when editing it: an unquoted `#` starts a YAML comment, so a room numbe
 ## Publishing
 
 `.github/workflows/pages.yml` builds the decks, the PDFs and the landing page on every push to
-`main` that touches `md/`, `deck/`, `assets/` or the build scripts, and deploys `html/` to GitHub
+`main` that touches `md/`, `deck/`, `assets/`, student assignment sources or the build scripts, and deploys `html/` to GitHub
 Pages. Enable it once under **Settings → Pages → Source: GitHub Actions**. Nothing generated needs
 to be committed — the workflow rebuilds it from `md/`.
 
 ## Giving it to students
 
 Publish the whole `html/` folder — anywhere that serves static files. It contains the launcher, the
-fourteen decks and the PDFs, and nothing outside it is needed. On the launcher each chapter has a
+fourteen decks, the PDFs and student assignment downloads, and nothing outside it is needed. On the launcher each chapter has a
 **PDF** button that saves that chapter's slides; served over http the file arrives named
 `IE437-08-Value-Based-Reinforcement-Learning.pdf`, and opened straight off a disk it keeps its raw
 filename instead, because browsers ignore a download name on `file://` URLs.
@@ -128,3 +128,18 @@ presentation time.
 
 Change `md/chNN_*.md` only, then rebuild. Design changes belong in `deck/`; anything written
 into `html/` by hand is lost on the next build. See [md/_SCHEMA.md](md/_SCHEMA.md).
+
+## Assignment materials
+
+The landing page lists assignments under **Assignments**, with a complete ZIP and individual Markdown downloads. Assignment 1 is maintained in [teaching/assignment-01-movie-programming](teaching/assignment-01-movie-programming/README.md).
+
+To add or update an assignment:
+
+1. Edit the documents in `teaching/<id>/student/`.
+2. Add its entry to [md/_ASSIGNMENTS.md](md/_ASSIGNMENTS.md), listing the public filenames and labels in display order. Set a quoted `due` value with a timezone when confirmed; otherwise the page shows “To be announced.”
+3. Run `npm run site` and `npm run test:assignments`. The publisher copies only the listed student documents to `html/assignments/<id>/` and rebuilds their ZIP from the current sources.
+4. Push to `main` to build, verify and deploy through GitHub Pages. Deploy the entire `html/` directory when using another static host.
+
+Instructor notes remain local and are excluded from Git. Neither the teaching directory nor a previously prepared ZIP is copied into the public output. Missing files, invalid paths and symlinks fail the build; removing a catalog entry also removes its old downloads on the next build. Generated ZIPs have stable filenames so shared download links continue to work after an update.
+
+`npm run test:assignments` checks archive contents and freshness, the public file boundary, desktop/mobile layout, keyboard navigation, and real HTTP downloads under a repository subpath. To repeat the browser checks against Pages after deploying, run `IE437_SITE_URL=https://omeletjk.github.io/ie437/ node tests/assignment-browser.mjs`.

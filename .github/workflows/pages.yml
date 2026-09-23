@@ -14,6 +14,10 @@ on:
       - 'assets/**'
       - 'build.mjs'
       - 'site.mjs'
+      - 'assignments.mjs'
+      - 'teaching/**/student/**'
+      - 'tests/assignments.mjs'
+      - 'tests/assignment-browser.mjs'
       - 'pdf.mjs'
       - 'package*.json'
       - '.github/workflows/pages.yml'
@@ -49,6 +53,9 @@ jobs:
       # md/ -> html/ decks -> html/pdf/ PDFs -> html/index.html launcher,
       # in that order, from the one command
       - run: node build.mjs --all
+
+      # Verify the public file allowlist and actual downloads before deploying.
+      - run: npm run test:assignments
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

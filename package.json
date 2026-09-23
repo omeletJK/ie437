@@ -9,7 +9,8 @@
     "build:fast": "node build.mjs --all --no-pdf",
     "site": "node site.mjs",
     "pdf": "node pdf.mjs --all",
-    "pdf:force": "node pdf.mjs --all --force"
+    "pdf:force": "node pdf.mjs --all --force",
+    "test:assignments": "node tests/assignments.mjs && node tests/assignment-browser.mjs"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
