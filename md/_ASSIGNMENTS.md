@@ -5,7 +5,7 @@ assignments:
     title: Movie Programming
     subtitle: Problem Definition and Decision-Support Design
     summary: Define a movie-programming problem, build an interactive demo, and propose a decision-support approach for a cinema operator.
-    version: '2.0'
+    version: '2.1'
     due: 'Fri, 9 Oct 2026 · 23:59 KST (UTC+9)'
     files:
       - name: assignment.md

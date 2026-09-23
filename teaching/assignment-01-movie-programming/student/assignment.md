@@ -1,6 +1,6 @@
 # Assignment 1: Movie Programming — Problem Definition and Decision-Support Design
 
-**IE437 · Student assignment brief · Version 2.0**
+**IE437 · Student assignment brief · Version 2.1**
 
 **Submission deadline: Fri, 9 Oct 2026 · 23:59 KST (UTC+9).** Submit by the end of Friday, 9 October.
 
@@ -22,17 +22,20 @@ No particular algorithm or model is prescribed. A justified simple method can re
 
 A fictional cinema operator manages screening schedules at its cinemas. It wants to use its records to understand its audience and improve movie-programming decisions. You are proposing a solution to this company. The company is a cinema operator, rather than a film production studio; its precise operating practices and decision rules still need investigation.
 
-The company has member booking and purchase records containing these fields:
+For this exercise, assume that the fictional operator can supply purchase records using the teaching specification below. **One row represents one completed purchase for one screening.** This format was designed for the classroom exercise.
 
-| Field | Description |
-|---|---|
-| Member ID | Identifier of the member who made the booking or purchase |
-| Movie | Identifier or title of the booked movie |
-| Screening date and time | Date and time of the booked screening |
-| Cinema | Location of the booked screening |
-| Number of tickets purchased | Number of tickets paid for in that purchase |
+| Teaching field | Value type | Meaning |
+|---|---|---|
+| `title_tag` | Text label | Fictional alias for the film being screened |
+| `venue_tag` | Text label | Fictional alias for the cinema hosting the screening |
+| `play_day` | Date, YYYY-MM-DD | Local calendar date of the scheduled screening |
+| `curtain_time` | Time, HH:mm | Local scheduled start time, using a 24-hour clock |
+| `account_tag` | Text label | Fictional alias for the account that placed the purchase |
+| `passes_bought` | Positive integer, in tickets | Number of tickets paid for in that purchase |
 
-For this assignment, you are given the existence and descriptions of these fields, rather than an actual dataset. Dataset size, coverage period, quality, current business practices, and existing performance are not specified. Do not treat unspecified information as an established fact. Create a small fictional dataset for your demonstration.
+The date and time describe the screening, rather than when the purchase was made. Reuse the same alias when referring to the same film, cinema, or purchasing account.
+
+You are given this record specification, rather than an actual dataset. Dataset size, coverage period, quality, current business practices, and existing performance are not specified. Do not treat unspecified information as an established fact. Create a small, entirely fictional dataset for your demonstration, inventing its aliases and values. Label any additional fields or operating rules as your own assumptions.
 
 Using this information as your starting point, address the following questions:
 
