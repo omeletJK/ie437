@@ -222,14 +222,137 @@ $$\mathbb E[f_2\mid f_1]=\rho(-0.313),\qquad\operatorname{Var}(f_2\mid f_1)=1-\r
 ==A stronger correlation transfers more information.== The next matrix formula performs this same calculation using many measurements at once.
 :::
 
-### GP regression — mean and uncertainty, in closed form
-Observe $\mathcal D=\{(x_i,y_i)\}_{i=1}^n$ with $y_i=f_i+\epsilon_i$, $\epsilon_i\sim\mathcal N(0,\sigma_\epsilon^2)$. Prior and likelihood are Gaussian, so the joint of the data and the value at any new $x$ is Gaussian:
+### GP regression, step by step — ① the prior
+{sub: pp. 20–21 of the source — from a belief about functions to a belief about n numbers}
+
+<div class="qstrip"><span class="qn on">1  Prior</span><span class="qa"></span><span class="qn ">2  Likelihood</span><span class="qa"></span><span class="qn ">3  Marginalize</span><span class="qa"></span><span class="qn ">4  Joint</span><span class="qa"></span><span class="qn ">5  Condition</span></div>
+
+We have evaluated $f$ at $n$ inputs $\mathbf x_{1:n}$. Before seeing any output, the GP says the $n$ function values are jointly Gaussian:
+
+$$p(\mathbf f_{1:n}) :\quad \begin{bmatrix}f_1\\ \vdots\\ f_n\end{bmatrix} \sim \mathcal N\!\left(\begin{bmatrix}m(x_1)\\ \vdots\\ m(x_n)\end{bmatrix},\; \begin{bmatrix}k(x_1,x_1)&\cdots&k(x_1,x_n)\\ \vdots&\ddots&\vdots\\ k(x_n,x_1)&\cdots&k(x_n,x_n)\end{bmatrix}\right) = \mathcal N(\mathbf m, \hl{\mathbf K})$$
+
+::: reveal
+- $m(\cdot)$ — the **mean function**, the overall trend we expect before any data.
+- $k(\cdot,\cdot)$ — the **kernel**: $\mathrm{cov}(f_i,f_j)=k(x_i,x_j)$, the structure (smoothness) of the target.
+:::
+
+::: reveal
+::: small
+From here on we set ==$m(\cdot)=0$==. It costs no generality — subtract any known trend from the data first — and it keeps every formula below one term shorter.
+:::
+:::
+
+### GP regression, step by step — ② the likelihood
+{sub: p. 26 of the source — we never see f, only a noisy measurement of it}
+
+<div class="qstrip"><span class="qn done">1  Prior</span><span class="qa"></span><span class="qn on">2  Likelihood</span><span class="qa"></span><span class="qn ">3  Marginalize</span><span class="qa"></span><span class="qn ">4  Joint</span><span class="qa"></span><span class="qn ">5  Condition</span></div>
+
+Each measurement is the true value plus independent Gaussian noise:
+
+$$y_i = f_i + \epsilon_i,\qquad \epsilon_i \overset{\text{iid}}{\sim} \mathcal N(0,\sigma_\epsilon^2)$$
+
+::: reveal
+Stacked over all $n$ observations, the likelihood of the data given the function values is
+
+$$p(\mathbf y_{1:n}\mid\mathbf f_{1:n}) = \mathcal N\big(\mathbf f_{1:n},\; \hl{\sigma_\epsilon^2\mathbf I}\big)$$
+:::
+
+::: reveal
+::: small
+The covariance is diagonal because the noise terms are independent: one sensor's error says nothing about another's. $\sigma_\epsilon^2$ is a hyperparameter, fitted alongside the kernel's.
+:::
+:::
+
+### GP regression, step by step — ③ marginalize out f
+{sub: pp. 26–28 of the source — this is where the noise term on the diagonal comes from}
+
+<div class="qstrip"><span class="qn done">1  Prior</span><span class="qa"></span><span class="qn done">2  Likelihood</span><span class="qa"></span><span class="qn on">3  Marginalize</span><span class="qa"></span><span class="qn ">4  Joint</span><span class="qa"></span><span class="qn ">5  Condition</span></div>
+
+We observe $\mathbf y$, not $\mathbf f$. Integrate the unobserved function values out:
+
+$$p(\mathbf y_{1:n}) = \int p(\mathbf y_{1:n}\mid\mathbf f_{1:n})\,p(\mathbf f_{1:n})\,d\mathbf f_{1:n} = \mathcal N\big(\mathbf 0,\; \hl{\mathbf K+\sigma_\epsilon^2\mathbf I}\big)$$
+
+::: reveal
+No integral needs to be done by hand. $\mathbf y = \mathbf f + \boldsymbol\epsilon$ is a **sum of two independent Gaussians**, so it is Gaussian, and
+
+$$\E[\mathbf y]=\E[\mathbf f]+\E[\boldsymbol\epsilon]=\mathbf 0,\qquad \mathrm{cov}(\mathbf y)=\mathrm{cov}(\mathbf f)+\mathrm{cov}(\boldsymbol\epsilon)=\mathbf K+\sigma_\epsilon^2\mathbf I$$
+:::
+
+::: reveal
+::: keypoint
+Prior covariance and noise covariance ==simply add==. That is the whole origin of $\mathbf K+\sigma_\epsilon^2\mathbf I$.
+:::
+:::
+
+::: reveal
+::: small
+This same $p(\mathbf y)$, read as a function of the hyperparameters, is the **marginal likelihood** — the quantity maximised to fit $\lambda$, $\sigma_0$, $\sigma_\epsilon$ a few slides on.
+:::
+:::
+
+### GP regression, step by step — ④ the joint with a new point
+{sub: p. 37 of the source — add the one value we want to predict}
+
+<div class="qstrip"><span class="qn done">1  Prior</span><span class="qa"></span><span class="qn done">2  Likelihood</span><span class="qa"></span><span class="qn done">3  Marginalize</span><span class="qa"></span><span class="qn on">4  Joint</span><span class="qa"></span><span class="qn ">5  Condition</span></div>
+
+Pick any new input $x$ and let $f=f(x)$. The observed $\mathbf y_{1:n}$ and the unobserved $f$ are jointly Gaussian — fill in the three blocks one at a time:
 
 $$\begin{bmatrix}\mathbf y_{1:n}\\ f\end{bmatrix}\sim\mathcal N\!\left(\mathbf 0,\begin{bmatrix}\mathbf K+\sigma_\epsilon^2\mathbf I & \mathbf k\\ \mathbf k^\top & k(x,x)\end{bmatrix}\right)$$
 
-Condition on $\mathbf y_{1:n}$ and read off $p(f\mid\mathcal D)=\mathcal N\big(\mu(x\mid\mathcal D),\sigma^2(x\mid\mathcal D)\big)$ with
+::: reveal
+| block | where it comes from | size |
+|---|---|---|
+| $\mathrm{cov}(\mathbf y,\mathbf y)=\mathbf K+\sigma_\epsilon^2\mathbf I$ | step ③ | $n\times n$ |
+| $\mathrm{cov}(\mathbf y,f)=\mathrm{cov}(\mathbf f+\boldsymbol\epsilon,\,f)=\mathbf k$, with $k_i=k(x_i,x)$ | the noise is independent of $f$, so ==it drops out== | $n\times 1$ |
+| $\mathrm{var}(f)=k(x,x)$ | the prior at the new point | $1\times 1$ |
+:::
 
-$$\hl{\mu(x\mid\mathcal D) = \mathbf k^\top(\mathbf K+\sigma_\epsilon^2 \mathbf I)^{-1}\mathbf y_{1:n}}, \qquad \hl{\sigma^2(x\mid\mathcal D) = k(x,x) - \mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf k}$$
+::: reveal
+::: small
+Notice the asymmetry: noise sits on the $\mathbf y$–$\mathbf y$ block only. We are predicting the latent $f(x)$, not a future noisy reading of it.
+:::
+:::
+
+### GP regression, step by step — ⑤ condition on the data
+{sub: pp. 38–39 of the source — Property 4, applied block by block}
+
+<div class="qstrip"><span class="qn done">1  Prior</span><span class="qa"></span><span class="qn done">2  Likelihood</span><span class="qa"></span><span class="qn done">3  Marginalize</span><span class="qa"></span><span class="qn done">4  Joint</span><span class="qa"></span><span class="qn on">5  Condition</span></div>
+
+::: cols
+::: col Property 4 — Gaussian conditional
+$$\begin{bmatrix}Y_1\\Y_2\end{bmatrix}\sim\mathcal N\!\left(\begin{bmatrix}\mu_1\\\mu_2\end{bmatrix},\begin{bmatrix}\Sigma_{11}&\Sigma_{12}\\\Sigma_{21}&\Sigma_{22}\end{bmatrix}\right)$$
+
+$$Y_2\mid Y_1\!=\!y \sim \mathcal N\big(\mu_2+\Sigma_{21}\Sigma_{11}^{-1}(y-\mu_1),\; \Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\big)$$
+:::
+::: col.accent Match the blocks from step ④
+Set $Y_1=\mathbf y_{1:n}$, $Y_2=f$, and both means to zero:
+
+| Property 4 | GP |
+|---|---|
+| $\Sigma_{11}$ | $\hl{\mathbf K+\sigma_\epsilon^2\mathbf I}$ |
+| $\Sigma_{21}=\Sigma_{12}^\top$ | $\hl{\mathbf k^\top}$ |
+| $\Sigma_{22}$ | $k(x,x)$ |
+:::
+:::
+
+::: reveal
+Substitute, and the **posterior predictive distribution** falls out:
+
+$$\begin{gathered}p(f\mid\mathcal D)=\mathcal N\big(\mu(x\mid\mathcal D),\,\sigma^2(x\mid\mathcal D)\big)\\[4pt] \hl{\mu(x\mid\mathcal D) = \mathbf k^\top(\mathbf K+\sigma_\epsilon^2 \mathbf I)^{-1}\mathbf y_{1:n}},\qquad \hl{\sigma^2(x\mid\mathcal D) = k(x,x) - \mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf k}\end{gathered}$$
+:::
+
+### The posterior predictive — mean and uncertainty, in closed form
+{sub: what the five steps bought}
+
+$$\mu(x\mid\mathcal D) = \mathbf k^\top(\mathbf K+\sigma_\epsilon^2 \mathbf I)^{-1}\mathbf y_{1:n}, \qquad \sigma^2(x\mid\mathcal D) = k(x,x) - \mathbf k^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf k$$
+
+::: flow
+- Prior | $\mathbf f\sim\mathcal N(\mathbf 0,\mathbf K)$
+- Likelihood | $\mathbf y\mid\mathbf f\sim\mathcal N(\mathbf f,\sigma_\epsilon^2\mathbf I)$
+- Marginalize | $\mathbf y\sim\mathcal N(\mathbf 0,\mathbf K+\sigma_\epsilon^2\mathbf I)$
+- Joint | add $f(x)$: blocks $\mathbf k$, $k(x,x)$
+- !Condition | Property 4 → $\mu$, $\sigma^2$
+:::
 
 ::: reveal
 ::: keypoint
@@ -239,7 +362,7 @@ The GP hands us, at every $x$, both a best guess *and* ==how much to trust it== 
 
 ::: reveal
 ::: small
-Read the two formulas. The mean is a **linear combination of the observed $y$'s**. The kernel determines its weights, which need not be positive or sum to one. The variance starts at the prior value $k(x,x)$ and is reduced by $\mathbf k^\top(\cdot)^{-1}\mathbf k$, a quantity that is large near data and vanishes far from it. For a fixed kernel and fixed noise level, $\sigma^2$ ==does not depend on $\mathbf y$==: where the GP is uncertain is fixed the moment you choose *where* to look, before seeing the answers. If hyperparameters are refitted using $\mathbf y$, the uncertainty can change indirectly.
+Read the two formulas. The mean is a **linear combination of the observed $y$'s**, with weights set by the kernel — they need not be positive or sum to one. The variance starts at the prior value $k(x,x)$ and is reduced by $\mathbf k^\top(\cdot)^{-1}\mathbf k$, large near data and vanishing far from it. For a fixed kernel and noise level, $\sigma^2$ ==does not depend on $\mathbf y$==: where the GP is uncertain is fixed the moment you choose *where* to look.
 :::
 :::
 
