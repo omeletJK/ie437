@@ -250,7 +250,7 @@ We want $f^*=f(x^*)$ at a new input $x^*$. There are two ways to get there, and 
 ### A1 — the graphical model
 {sub: p. 14 of the Lecture 2 source, redrawn — θ becomes the latent function values}
 
-<div class="qstrip"><span class="qn on">A1  Graph</span><span class="qa"></span><span class="qn ">A2  Integrate f out</span><span class="qa"></span><span class="qn ">B1  Joint</span><span class="qa"></span><span class="qn ">B2  Condition</span></div>
+<div class="routes"><div class="rlane">A · Bayesian view</div><div class="rstep on">A1  Graph</div><div class="rarr"></div><div class="rstep">A2  Integrate f out</div><div class="rbrace"></div><div class="rmeet">same posterior<br>p(f* | x*, X, y)</div><div class="rlane">B · Gaussian shortcut</div><div class="rstep">B1  Joint</div><div class="rarr"></div><div class="rstep">B2  Condition</div></div>
 
 ::: widget gp-pgm
 The latent values $f_1,\dots,f_n,f^*$ are coupled by the GP prior; each training value is seen once, through noise. The query $f^*$ is never observed. Reading the arrows: ==$f^*\perp\mathbf y\mid\mathbf f$== — the data can reach the prediction only through the function values beneath it.
@@ -259,7 +259,7 @@ The latent values $f_1,\dots,f_n,f^*$ are coupled by the GP prior; each training
 ### A2 — integrate the function values out
 {sub: p. 15 of the source — Lecture 2's posterior predictive, verbatim}
 
-<div class="qstrip"><span class="qn done">A1  Graph</span><span class="qa"></span><span class="qn on">A2  Integrate f out</span><span class="qa"></span><span class="qn ">B1  Joint</span><span class="qa"></span><span class="qn ">B2  Condition</span></div>
+<div class="routes"><div class="rlane">A · Bayesian view</div><div class="rstep done">A1  Graph</div><div class="rarr"></div><div class="rstep on">A2  Integrate f out</div><div class="rbrace"></div><div class="rmeet">same posterior<br>p(f* | x*, X, y)</div><div class="rlane">B · Gaussian shortcut</div><div class="rstep">B1  Joint</div><div class="rarr"></div><div class="rstep">B2  Condition</div></div>
 
 ::: cols
 ::: col Lecture 2 — a parameter
@@ -286,7 +286,7 @@ Integrate $\mathbf f$ out and what remains depends ==only on the data $(\mathbf 
 ### B1 — the joint of the data and the query
 {sub: p. 37 of the source — one Gaussian over everything we see and everything we want}
 
-<div class="qstrip"><span class="qn done">A1  Graph</span><span class="qa"></span><span class="qn done">A2  Integrate f out</span><span class="qa"></span><span class="qn on">B1  Joint</span><span class="qa"></span><span class="qn ">B2  Condition</span></div>
+<div class="routes"><div class="rlane">A · Bayesian view</div><div class="rstep done">A1  Graph</div><div class="rarr"></div><div class="rstep done">A2  Integrate f out</div><div class="rbrace"></div><div class="rmeet">same posterior<br>p(f* | x*, X, y)</div><div class="rlane">B · Gaussian shortcut</div><div class="rstep on">B1  Joint</div><div class="rarr"></div><div class="rstep">B2  Condition</div></div>
 
 Stack the observations and the query value. They are jointly Gaussian — fill in the three blocks:
 
@@ -309,7 +309,7 @@ Noise sits on the $\mathbf y$–$\mathbf y$ block only: we predict the latent $f
 ### B2 — condition on the data
 {sub: pp. 38–39 of the source — Property 4, applied block by block}
 
-<div class="qstrip"><span class="qn done">A1  Graph</span><span class="qa"></span><span class="qn done">A2  Integrate f out</span><span class="qa"></span><span class="qn done">B1  Joint</span><span class="qa"></span><span class="qn on">B2  Condition</span></div>
+<div class="routes"><div class="rlane">A · Bayesian view</div><div class="rstep done">A1  Graph</div><div class="rarr"></div><div class="rstep done">A2  Integrate f out</div><div class="rbrace"></div><div class="rmeet">same posterior<br>p(f* | x*, X, y)</div><div class="rlane">B · Gaussian shortcut</div><div class="rstep done">B1  Joint</div><div class="rarr"></div><div class="rstep on">B2  Condition</div></div>
 
 ::: cols
 ::: col Property 4 — Gaussian conditional
