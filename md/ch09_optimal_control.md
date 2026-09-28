@@ -36,7 +36,7 @@ questions:
 Control and dynamic programming overlap. We compare mathematical tools and assumptions, not mutually exclusive academic families.
 
 ::: keypoint
-Compute a heater gain and compare the guarantees of the three mathematical views.
+Compute a feedback gain and compare the guarantees of the three mathematical views.
 :::
 
 ### Learning route — solve a small control problem first
@@ -45,7 +45,7 @@ Compute a heater gain and compare the guarantees of the three mathematical views
 | First pass | What to do |
 |---|---|
 | **Follow the idea** | One-step control → LQR feedback → interpret HJB → interpret Pontryagin |
-| **Work without the solution** | Compute a heater gain and compare the guarantees of the three mathematical views. |
+| **Work without the solution** | Compute a feedback gain and compare the guarantees of the three mathematical views. |
 | **Return later** | Full HJB, Riccati and Pontryagin derivations are after the main route. |
 
 ::: keypoint

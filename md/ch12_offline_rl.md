@@ -34,7 +34,7 @@ questions:
 Lecture 5 already showed how optimizing a learned score can exploit error. Here unsupported action values also enter repeated Bellman targets.
 
 ::: keypoint
-Estimate a heater policy's return from a log and identify an unsupported action.
+Estimate a policy's return from a log and identify an unsupported action.
 :::
 
 ### Learning route — improve a policy using only the log
@@ -43,7 +43,7 @@ Estimate a heater policy's return from a log and identify an unsupported action.
 | First pass | What to do |
 |---|---|
 | **Follow the idea** | Diagnose missing support → TD3+BC → CQL/IQL → evaluate |
-| **Work without the solution** | Estimate a heater policy's return from a log and identify an unsupported action. |
+| **Work without the solution** | Estimate a policy's return from a log and identify an unsupported action. |
 | **Return later** | Full CQL guarantees, model/sequence alternatives and advanced OPE estimators are references. |
 
 ::: keypoint

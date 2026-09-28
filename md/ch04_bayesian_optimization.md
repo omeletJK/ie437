@@ -35,7 +35,7 @@ questions:
 An unknown objective can be observed at selected inputs. Fit a GP, choose with an acquisition rule, measure and update.
 
 ::: keypoint
-Choose a heater experiment using a stated acquisition and evaluate the budget trade-off.
+Choose the next experiment from a stated acquisition rule and weigh it against the budget.
 :::
 
 ### Learning route — predict, choose, pay for one measurement
@@ -44,7 +44,7 @@ Choose a heater experiment using a stated acquisition and evaluate the budget tr
 | First pass | What to do |
 |---|---|
 | **Follow the idea** | GP update → acquisition choice → evaluate → update again |
-| **Work without the solution** | Choose a heater experiment using a stated acquisition and evaluate the budget trade-off. |
+| **Work without the solution** | Choose the next experiment from a stated acquisition rule and weigh it against the budget. |
 | **Return later** | Multi-output kernels, constrained/multiobjective extensions and solver details are references. |
 
 ::: keypoint
@@ -693,7 +693,9 @@ One posterior, five observations, three scores drawn underneath it, each with it
 ### Temperature thread — choose an informative heater experiment
 {sub: shared teaching example · predict before revealing the calculation}
 
-The simulator's cost formula is hidden from the BO learner. Maximize score $f=-c$. A GP gives candidate A ($u=0.8$) mean −1.9, standard deviation 0.1; candidate B ($u=1.6$) mean −2.2, standard deviation 0.5. Use UCB $a(u)=\mu(u)+\kappa\sigma(u)$.
+**The running example, restated.** A room sits at 20°C against a target of 22°C, so the error is $x=T-22=-2$. A normalized heater command $u\in[0,2]$ gives $x'=x+u$ at a one-step cost $c=(x')^2+u^2$ — a teaching model, not building physics.
+
+Here the cost formula is **hidden** from the BO learner, which sees only a score $f=-c$ it may measure. A GP gives candidate A ($u=0.8$) mean −1.9, standard deviation 0.1; candidate B ($u=1.6$) mean −2.2, standard deviation 0.5. Use UCB $a(u)=\mu(u)+\kappa\sigma(u)$.
 
 **Predict:** At κ = 1, can the worse predicted mean still lead to the selected experiment?
 

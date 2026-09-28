@@ -34,7 +34,7 @@ questions:
 The goal remains a good real design. A learned objective can be accurate on the data and misleading where the optimizer searches.
 
 ::: keypoint
-Show when a better predicted heater score gives a worse real decision.
+Show when a better predicted score gives a worse real decision.
 :::
 
 ### Learning route — separate prediction quality from design quality
@@ -43,7 +43,7 @@ Show when a better predicted heater score gives a worse real decision.
 | First pass | What to do |
 |---|---|
 | **Follow the idea** | Fit → optimize → diagnose model exploitation → calculate the COMs loss |
-| **Work without the solution** | Show when a better predicted heater score gives a worse real decision. |
+| **Work without the solution** | Show when a better predicted score gives a worse real decision. |
 | **Return later** | NEMO/RoMA derivations and full benchmark tables are in the appendix. |
 
 ::: keypoint

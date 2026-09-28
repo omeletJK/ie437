@@ -35,7 +35,7 @@ questions:
 We begin with a known one-step model. Convexity will tell us when a local condition certifies a global answer.
 
 ::: keypoint
-Solve the bounded heater problem and check its KKT conditions.
+Solve a bounded one-variable problem and check its KKT conditions.
 :::
 
 ### Learning route — formulate, solve, and certify
@@ -44,8 +44,8 @@ Solve the bounded heater problem and check its KKT conditions.
 | First pass | What to do |
 |---|---|
 | **Follow the idea** | Formulate → recognize convexity → state and check optimality → inspect a local approximation |
-| **Work without the solution** | Solve the bounded heater problem and check its KKT conditions. |
-| **Return later** | Optimization layers, detailed heater/wind-farm studies and full sensitivity derivations follow the main route. |
+| **Work without the solution** | Solve a bounded one-variable problem and check its KKT conditions. |
+| **Return later** | Optimization layers, the two design case studies and full sensitivity derivations follow the main route. |
 
 ::: keypoint
 For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
