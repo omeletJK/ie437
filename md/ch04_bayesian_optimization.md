@@ -515,7 +515,7 @@ The length scale says how far a datum's influence reaches. Short $\ell$ means ea
 An expensive $f$, three samples, and a regression through them. The regression has a highest point. Spend a query there, refit, and repeat. No uncertainty anywhere — just fit and exploit.
 
 ::: widget greedy-trap
-**Click the red peak** to spend a query on it, then click the new peak, and again. Watch where the queries go — and then ==reveal the true $f$.==
+The green dashes are the **true $f$** — drawn for us, invisible to the fit, which has only the three grey samples. ==Click the red peak== to spend a query on it, then the new peak, and again. The tall peak on the right stays in plain sight the whole time.
 :::
 
 ::: note
@@ -533,7 +533,7 @@ The greedy peak walks $2.98 \to 2.35 \to 2.30$ and then stops. Every later query
 Best value **$1.481$** at $x=2.30$, against a true optimum of **$2.636$** at $x=7.67$ — ==44% short==, and the optimum sits $2.8$ away from the furthest point ever queried.
 :::
 ::: col.accent Why it never went there
-At $x=7.67$ the truth is $2.636$ and the fit predicts $-0.011$. The regression does not report *ignorance* about the right half; it reports a **low value**, and a greedy rule has no reason to go and check.
+At $x=7.67$ the truth is $2.636$ and the fit predicts $-0.011$. We could see the peak; the fit could not. It does not report *ignorance* about the right half — it reports a **low value**, and a greedy rule has no reason to go and check.
 :::
 :::
 

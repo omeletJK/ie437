@@ -12,8 +12,9 @@
    the greedy peak walks 2.98 -> 2.35 -> 2.30 and then never moves.
    Best found 1.481 against a global optimum of 2.636 — 44% short —
    and nothing beyond x = 4.9 is ever queried, though the optimum sits
-   at 7.67. The reason is on the screen once the truth is revealed: at
-   x = 7.67 the fit predicts -0.011 where f is 2.636. A regression with
+   at 7.67. The true f is drawn faintly throughout — the slide is not a
+   reveal but the sight of a rule refusing to go somewhere plainly there.
+   At x = 7.67 the fit predicts -0.011 where f is 2.636: a regression with
    no uncertainty cannot say "I have not looked here"; it says "bad".
    ============================================================ */
 IE437.widget('greedy-trap', function (host, opts) {
@@ -65,20 +66,20 @@ IE437.widget('greedy-trap', function (host, opts) {
   var GX = GRID.reduce(function (b, x) { return ftrue(x) > ftrue(b) ? x : b; }, X0);
   var GY = ftrue(GX);
 
-  var X, Y, mu, peak, revealed = false, stuck = 0;
+  var X, Y, mu, peak, stuck = 0;
 
   function refit() {
     mu = fitted(X, Y);
     peak = GRID.reduce(function (b, x) { return mu(x) > mu(b) ? x : b; }, X0);
   }
-  function start() { X = INIT.slice(); Y = X.map(ftrue); revealed = false; stuck = 0; refit(); }
+  function start() { X = INIT.slice(); Y = X.map(ftrue); stuck = 0; refit(); }
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">Fit, take the best point, repeat</span>' +
     '<span class="wspacer"></span>' +
-    '<label class="wtog" data-rev><i></i><span>reveal the true f</span></label>' +
     '<span class="wlabel">queries</span><span class="wnum" data-n></span>' +
-    '<span class="wlabel">best found</span><span class="wnum" data-b></span></div>' +
+    '<span class="wlabel">best found</span><span class="wnum" data-b></span>' +
+    '<span class="wlabel">true optimum</span><span class="wnum" data-g></span></div>' +
     '<div class="wbody" style="gap:6px"><div data-c></div>' +
     '<div data-v style="text-align:center;font:400 13px/1.5 var(--sans);color:var(--ink2);min-height:20px"></div></div>';
 
@@ -154,14 +155,13 @@ IE437.widget('greedy-trap', function (host, opts) {
         fill: SLATE, 'font-family': 'IBM Plex Mono, monospace', text: 'never queried' }, sv);
     }
 
-    /* the truth, on request */
-    if (revealed) {
-      E('path', { d: path(ftrue), fill: 'none', stroke: GREEN, 'stroke-width': 1.8,
-        'stroke-dasharray': '5 4', 'stroke-opacity': .85 }, sv);
-      E('circle', { cx: SX(GX), cy: SY(GY), r: 5, fill: 'none', stroke: GREEN, 'stroke-width': 2 }, sv);
-      E('text', { x: SX(GX), y: SY(GY) - 12, 'text-anchor': 'middle', 'font-size': 10.5, fill: GREEN,
-        'font-family': 'IBM Plex Mono, monospace', text: 'true optimum ' + GY.toFixed(2) }, sv);
-    }
+    /* The truth is on the board the whole time. The point of the slide is not
+       a reveal — it is watching a rule refuse to go somewhere visible. */
+    E('path', { d: path(ftrue), fill: 'none', stroke: GREEN, 'stroke-width': 1.8,
+      'stroke-dasharray': '5 4', 'stroke-opacity': .55 }, sv);
+    E('circle', { cx: SX(GX), cy: SY(GY), r: 5, fill: 'none', stroke: GREEN, 'stroke-width': 2 }, sv);
+    E('text', { x: SX(GX), y: SY(GY) - 12, 'text-anchor': 'middle', 'font-size': 10.5, fill: GREEN,
+      'font-family': 'IBM Plex Mono, monospace', text: 'the true optimum, ' + GY.toFixed(2) }, sv);
 
     /* the fit */
     E('path', { d: path(mu), fill: 'none', stroke: INK, 'stroke-width': 2.2 }, sv);
@@ -189,27 +189,23 @@ IE437.widget('greedy-trap', function (host, opts) {
     var best = Math.max.apply(null, Y);
     host.querySelector('[data-n]').textContent = (X.length - INIT.length);
     host.querySelector('[data-b]').textContent = best.toFixed(2);
+    host.querySelector('[data-g]').textContent = GY.toFixed(2);
 
     var v = host.querySelector('[data-v]');
     if (stuck >= 2) {
       v.innerHTML = 'The peak has stopped moving — <b style="color:' + RED + '">greedy has nothing left to propose</b>. ' +
-        'Best found <b>' + best.toFixed(2) + '</b> against a true optimum of <b>' + GY.toFixed(2) + '</b>' +
-        (revealed ? ' — and the fit predicts <b>' + mu(GX).toFixed(2) + '</b> where the optimum actually is.'
-                  : '. Reveal the true f.');
+        'Best found <b>' + best.toFixed(2) + '</b> against <b>' + GY.toFixed(2) + '</b>, and the fit predicts <b>' +
+        mu(GX).toFixed(2) + '</b> where the optimum plainly is.';
       v.style.color = '';
     } else if (X.length > INIT.length) {
       v.textContent = 'The fit moved, and its peak moved with it. Click again.';
       v.style.color = '';
     } else {
-      v.innerHTML = 'Three samples, a fit through them, and its highest point. ' +
-        '<b>Click the plot to spend a query</b> — on the red peak to follow the greedy rule, or anywhere else to test it.';
+      v.innerHTML = 'The green dashes are the truth, which the fit cannot see — it has only the three samples. ' +
+        '<b>Click the plot to spend a query</b>: the red peak to follow the greedy rule, or anywhere else to test it.';
       v.style.color = '';
     }
   }
-
-  host.querySelector('[data-rev]').onclick = function () {
-    revealed = !revealed; this.classList.toggle('on', revealed); draw();
-  };
 
   start(); draw();
   return {
@@ -219,8 +215,7 @@ IE437.widget('greedy-trap', function (host, opts) {
       start();
       for (var i = 0; i < 5; i++) { X.push(peak); Y.push(ftrue(peak)); refit(); }
       /* the printed state is the greedy one, so the peak is where it froze */
-      stuck = 3; revealed = true;
-      host.querySelector('[data-rev]').classList.add('on');
+      stuck = 3;
       draw();
     }
   };

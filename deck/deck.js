@@ -468,7 +468,7 @@
 
   /* click-to-advance (ignore interactive elements) */
   stage.addEventListener('click', function (e) {
-    if (e.target.closest('button,input,select,label,a,.widget')) return;
+    if (e.target.closest('button,input,select,label,a,.widget,.wcap,.fig,.quiz')) return;
     next();
   });
 
