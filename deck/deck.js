@@ -416,6 +416,24 @@
     else if (cur > 0) go(cur - 1, 'back');
   }
 
+  /* R: the arrival reset, without leaving the slide. Everything a visit
+     would clear — widgets back to their opening state, quizzes unanswered —
+     but the reveals already shown stay shown, and a stepped widget is put
+     back to the step those reveals imply. Up-then-down still works; this
+     is the gesture a lecturer can actually guess.                        */
+  function resetHere() {
+    var sl = slides[cur];
+    LIVE.forEach(function (w) {
+      if (!w.__host || !sl.contains(w.__host)) return;
+      if (w.reset) { try { w.reset(); } catch (e) { } }
+      if (w.enter) { try { w.enter(); } catch (e) { } }
+    });
+    resetQuizzes(sl);
+    showStep(sl, step, false);
+    balance(sl);
+    autoplay(sl);
+  }
+
   /* ---------- keyboard --------------------------------------------- */
   document.addEventListener('keydown', function (e) {
     var t = e.target, inCtl = t && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(t.tagName);
@@ -432,6 +450,14 @@
       case '?': $('#help').classList.toggle('on'); break;
       case 'Escape': $('#menu').classList.remove('on'); $('#help').classList.remove('on'); break;
       case 'p': case 'P': if (inCtl) return; window.print(); break;
+      case 'r': case 'R': {
+        /* only a field that takes typing swallows R — focus is usually still on
+           the widget button just pressed, and that is exactly when R is wanted */
+        var typing = t && (t.isContentEditable || t.tagName === 'TEXTAREA' ||
+          (t.tagName === 'INPUT' && /^(text|number|search|email|url|password)$/i.test(t.type)));
+        if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+        e.preventDefault(); if (t && t.blur) t.blur(); resetHere(); break;
+      }
       case 'f': case 'F':
         if (inCtl) return;
         if (document.fullscreenElement) document.exitFullscreen();

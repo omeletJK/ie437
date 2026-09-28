@@ -244,7 +244,7 @@ a toggle, a run button. Three engine hooks replace what the buttons did:
 | you return | the engine does |
 |---|---|
 | `steps: n` and `step(i)` | `→` walks the widget after the slide's reveals are spent; `←` walks back. The widget becomes part of the reveal sequence rather than a thing with its own pager. |
-| `reset()` | called every time the slide is entered, so stepping off and back on (`↓` then `↑`) is the reset gesture. |
+| `reset()` | called every time the slide is entered, and again when the lecturer presses **`R`** — which resets the current slide's widgets and quizzes in place, keeping the reveals already shown. Stepping off and back on (`↑` then `↓`) still works. |
 | `data-auto` on a control, or `auto()` | clicked ~400 ms after the slide lands, so a simulator is already running by the time it is discussed. |
 
 A stepped widget may set its starting point from its mount options — `course-cube` takes
@@ -359,4 +359,4 @@ KaTeX's `@font-face` blocks end their `src:` run at the closing brace rather tha
 which is exactly how the maths spent a build rendering in the wrong typeface.
 
 In the browser: `→`/space advance one reveal, `←` back, `↑ ↓` skip a slide, `M` index,
-`P` print to PDF, `F` fullscreen, `?` key help.
+`R` reset the slide's widgets and quizzes, `P` print to PDF, `F` fullscreen, `?` key help.

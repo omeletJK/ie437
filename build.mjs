@@ -536,6 +536,7 @@ ${menu}
     <dt>&rarr; / space</dt><dd>next reveal, then next slide</dd>
     <dt>&larr;</dt><dd>back</dd>
     <dt>&uarr; &darr;</dt><dd>skip a whole slide</dd>
+    <dt>R</dt><dd>reset this slide's widgets and quizzes</dd>
     <dt>M</dt><dd>slide index</dd>
     <dt>P</dt><dd>print &rarr; save as PDF (1280&times;720)</dd>
     <dt>F</dt><dd>fullscreen</dd>
