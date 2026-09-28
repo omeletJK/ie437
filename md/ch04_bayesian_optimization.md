@@ -405,24 +405,69 @@ $$\sigma_y^2(x)=0.488+0.25=0.738.$$
 ==Uncertainty about the function and noise in a new measurement are different.== Numerically, solve linear systems with $\mathbf K+\sigma_\epsilon^2 I$ rather than explicitly forming its inverse.
 :::
 
-### The kernel is the assumption — and the data can pick it
-::: cols c2
-::: col A small vocabulary
-- **Squared exponential** $k=\sigma_0^2\exp\!\big[-\tfrac12\big(\tfrac{x-x'}{\lambda}\big)^2\big]$ — stationary, infinitely differentiable, *very* smooth. $\lambda$ is the length scale, $\sigma_0$ the amplitude.
-- **Matérn** $\tfrac32$, $\tfrac52$ — finitely differentiable, visibly rougher sample paths, usually more honest about physical data.
-- **ARD** — one $\lambda_d$ per input dimension; a large $\lambda_d$ makes the function vary slowly along dimension $d$ over the observed range.
-- **Sums and products** — sums and products of valid kernels remain valid. Sums describe independent additive components; a product kernel combines similarity requirements. A pointwise product of two GPs is generally not itself Gaussian.
+### The kernel is the assumption
+{sub: pp. 22–25 of the source — every kernel is a different belief about f, visible before any data}
+
+::: widget kernel-gallery
+Pick a kernel and move the length scale. Left: the covariance $k(x,x')$ over the input range — a band along the diagonal says *nearby points agree*, stripes say *the pattern repeats*. Right: four functions the prior considers typical, drawn from ==the same random numbers for every kernel==, so what changes is the assumption alone. **ARD** is the SE kernel with one $\lambda_d$ per input dimension; a large $\lambda_d$ switches that dimension off.
 :::
-::: col.accent Fitting $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$
-Maximise the **log marginal likelihood** — the evidence with $\mathbf f$ integrated out, $p(\mathbf y\mid\theta)=\int p(\mathbf y\mid\mathbf f)p(\mathbf f)\,d\mathbf f=\mathcal N(\mathbf 0,\mathbf C_\theta)$, where $\mathbf C_\theta=\mathbf K_\theta+\sigma_\epsilon^2\mathbf I$:
+
+### Fitting the kernel — maximise the marginal likelihood
+{sub: p. 28 of the source — the hyperparameters are fitted, not chosen}
+
+The kernel's knobs $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$ are chosen to make the observed data most probable, with $\mathbf f$ integrated out. Write $\mathbf C_\theta=\mathbf K_\theta+\sigma_\epsilon^2\mathbf I$:
 
 $$\begin{aligned}
-\ell(\theta)&=\underbrace{-\tfrac12\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\text{data fit}}\\
-&\quad\underbrace{-\tfrac12\log|\mathbf C_\theta|}_{\text{complexity}}-\tfrac n2\log(2\pi),\\
-\theta^*&=\argmax_\theta\ell(\theta).
+\theta^*&=\argmax_\theta\ \log p(\mathbf y_{1:n}\mid\theta)
+=\argmax_\theta\ \log\int p(\mathbf y_{1:n}\mid\mathbf f_{1:n},\theta)\,p(\mathbf f_{1:n}\mid\theta)\,d\mathbf f_{1:n}\\
+&=\argmax_\theta\ \Big[\underbrace{-\tfrac12\,\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\hl{\text{data fit}}}\ \underbrace{-\,\tfrac12\log|\mathbf C_\theta|}_{\hl{\text{complexity}}}\ -\ \tfrac n2\log 2\pi\Big]
 \end{aligned}$$
 
-The first term rewards explaining the data, the second rewards a *rigid* model. Their sum balances fit and model complexity. Optimising it can have local optima and needs numerical care; it is another Lecture 1 optimisation inside the loop.
+::: reveal
+::: cols
+::: col Data fit
+Rises toward zero when $\mathbf y$ is typical under $\mathcal N(\mathbf 0,\mathbf C_\theta)$. A flexible kernel — short $\lambda$, large $\sigma_0$ — can always make this term happy.
+:::
+::: col.accent Complexity
+$\log|\mathbf C_\theta|$ is the log-volume of datasets the prior spreads itself over. A flexible kernel spreads wide and ==pays for it here==.
+:::
+:::
+:::
+
+::: reveal
+::: small
+In practice: gradient ascent on $\ell(\theta)$ (L-BFGS on $\log\theta$ so every parameter stays positive), from several starting points because $\ell$ has local optima. Each evaluation is one Cholesky factorisation of $\mathbf C_\theta$, $O(n^3)$ — cheap at BO's small $n$. It is a Lecture 1 optimisation, nested inside the loop.
+:::
+:::
+
+### Why the *marginal* likelihood — and not the likelihood
+{sub: the question every student should ask of the previous slide}
+
+The likelihood $p(\mathbf y\mid\mathbf f,\sigma_\epsilon)=\mathcal N(\mathbf f,\sigma_\epsilon^2\mathbf I)$ is right there. Why integrate $\mathbf f$ away first?
+
+::: reveal
+::: cols c3
+::: col 1 · It cannot see the kernel
+$\lambda$ and $\sigma_0$ do not appear in $p(\mathbf y\mid\mathbf f)$ at all — they live only in the prior $p(\mathbf f\mid\theta)$. ==Maximising the likelihood cannot choose a kernel.==
+:::
+::: col 2 · It has a trivial optimum
+Maximise over $\mathbf f$ as well and the answer is $\mathbf f=\mathbf y$, $\sigma_\epsilon\to 0$: the function threads every noisy point and the likelihood goes to $+\infty$. ==Perfect fit, zero information.==
+:::
+::: col.accent 3 · The marginal asks the right question
+$p(\mathbf y\mid\theta)=\int p(\mathbf y\mid\mathbf f)\,p(\mathbf f\mid\theta)\,d\mathbf f$ averages over every function the prior finds plausible: *how probable was this data under the kernel, before we saw it?*
+:::
+:::
+:::
+
+::: reveal
+::: keypoint
+A kernel that could explain anything spreads its probability thin and scores low; a rigid one cannot reach the data. ==The marginal likelihood is Occam's razor, built in== — no validation set required.
+:::
+:::
+
+::: reveal
+::: small
+It is Lecture 2's **prior predictive** $p(y)=\int p(y\mid\theta)\,p(\theta)\,d\theta$ (p. 14 of that deck), with $\mathbf f$ in the place of $\theta$ — the same object that, in route A, the posterior was normalised by. The next slide shows the two terms trading off as $\lambda$ moves.
 :::
 :::
 
