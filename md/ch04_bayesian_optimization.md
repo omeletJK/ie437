@@ -495,6 +495,29 @@ This is the explore–exploit dilemma — the same one inside every reinforcemen
 :::
 :::
 
+### Where the number comes from — one area at one point
+{sub: pp. 113–116 of the source, redrawn — probability of improvement}
+
+At one input the GP is only a Gaussian, $f(x)\mid\mathcal D\sim\mathcal N(\mu(x),\sigma^2(x))$. Stand it on its side against the incumbent line and ask what fraction clears:
+
+$$\mathrm{PI}(x)=\Pr\big(f(x)>f^{+}\big)=\int_{f^{+}}^{\infty} p(f\mid\mathcal D)\,\mathrm{d}f=\Phi\!\Big(\frac{\mu(x)-f^{+}}{\sigma(x)}\Big)$$
+
+::: widget improvement-integral {"mode":"pi"}
+The curve on the dashed column *is* the posterior at that $x$, sideways. Shade it and the number appears: ==PI is one curve, integrated once, at one point.== And there is the complaint against it — a sliver a thousandth above the line counts the same as a gain of half a unit, because the integrand is $p(f)$ and $p$ has no idea how high $f$ is.
+:::
+
+### Expected improvement — the same tail, weighted by how far it clears
+{sub: pp. 118–123 of the source — five printed pages of one accumulating sum}
+
+Keep the region; change what a sliver is worth — not $1$, but the improvement it delivers.
+
+$$\mathrm{EI}(x)=\E\big[\max(0,f-f^{+})\big]=\int_{f^{+}}^{\infty}\hl{(f-f^{+})}\;p(f\mid\mathcal D)\,\mathrm{d}f
+\;=\;\sigma(x)\big[z\,\Phi(z)+\phi(z)\big],\quad z=\frac{\mu(x)-f^{+}}{\sigma(x)}$$
+
+::: widget improvement-integral {"mode":"ei"}
+Add slices one at a time: each contributes ==the green length times the red one== — how far above $f^{+}$ it sits, times how probable that is — and strips darken as they climb. Press **finer** and the running sum closes on the closed form. PI weighted every slice by $1$ and answered *how often*; EI weights each by $(f-f^{+})$ and answers ==how often, and by how much== — which is why EI needs no margin $\xi$ to stop it hugging the incumbent.
+:::
+
 ### Three scores
 | | rule | reads as | leans |
 |---|---|---|---|
