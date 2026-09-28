@@ -119,12 +119,22 @@ IE437.widget('improvement-integral', function (host, opts) {
     '<div data-note style="font:400 12px/1.55 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.12);padding-top:9px"></div></div></div>';
 
-  var W = 566, H = 208, PAD = 32, RGT = 10;
+  var W = 566, HP = 168, HA = 48, GAP = 8, H = HP + GAP + HA + 13, PAD = 32, RGT = 10;
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);
   var PX = function (v) { return PAD + v * (W - PAD - RGT); };
   var LO = -0.10, HI = 1.70;
-  var Y = function (v) { return H - 18 - (Math.max(LO, Math.min(HI, v)) - LO) / (HI - LO) * (H - 30); };
+  var Y = function (v) { return HP - 4 - (Math.max(LO, Math.min(HI, v)) - LO) / (HI - LO) * (HP - 16); };
+  /* the acquisition curve, over the same x axis, on its own strip */
+  var ACQ = (function () {
+    return POST.map(function (q) {
+      if (q.s < 1e-8) return 0;
+      var z = (q.mu - FPLUS) / q.s;
+      return MODE === 'pi' ? PHI(z) : (q.mu - FPLUS) * PHI(z) + q.s * pdf(z);
+    });
+  })();
+  var AMAX = Math.max.apply(null, ACQ), ABOT = HP + GAP + HA;
+  var AY = function (v) { return ABOT - (v / (AMAX * 1.12)) * HA; };
   var PEAK = 62;                                   /* pixels at the density's mode */
   function clear(s) { while (s.firstChild) s.removeChild(s.firstChild); }
 
@@ -150,9 +160,9 @@ IE437.widget('improvement-integral', function (host, opts) {
       'font-family': 'IBM Plex Mono, monospace', text: 'f+ = ' + FPLUS.toFixed(2) }, sv);
 
     /* --- the candidate column --- */
-    E('line', { x1: x0p, y1: Y(LO), x2: x0p, y2: Y(HI), stroke: SLATE, 'stroke-width': 1,
-      'stroke-dasharray': '3 3', 'stroke-opacity': .8 }, sv);
-    E('text', { x: x0p, y: H - 4, 'text-anchor': 'middle', 'font-size': 9.5, fill: SLATE,
+    E('line', { x1: x0p, y1: Y(HI), x2: x0p, y2: ABOT, stroke: SLATE, 'stroke-width': 1,
+      'stroke-dasharray': '3 3', 'stroke-opacity': .75 }, sv);
+    E('text', { x: x0p, y: H - 3, 'text-anchor': 'middle', 'font-size': 9.5, fill: SLATE,
       'font-family': 'IBM Plex Mono, monospace', text: 'x = ' + x0.toFixed(2) }, sv);
 
     /* --- the posterior at x0, laid on its side --- */
@@ -198,6 +208,33 @@ IE437.widget('improvement-integral', function (host, opts) {
         E('text', Object.assign({ x: x0p - 18, y: (yk + Y(FPLUS)) / 2 + 3.5, 'text-anchor': 'end',
           'font-size': 9.5, fill: GREEN, 'font-family': 'IBM Plex Mono, monospace', text: 'f - f+' }, HALO), sv);
       }
+    }
+
+    /* --- the acquisition curve: this one area is one point on it --- */
+    var ACOL = MODE === 'pi' ? SLATE : BLUE;
+    E('line', { x1: PAD, y1: ABOT, x2: W - RGT, y2: ABOT, stroke: INK, 'stroke-opacity': .22 }, sv);
+    E('path', { d: ACQ.map(function (v, k) { return (k ? 'L' : 'M') + PX(GRID[k]).toFixed(1) + ' ' + AY(v).toFixed(1); }).join(''),
+      fill: 'none', stroke: ACOL, 'stroke-width': 1.9 }, sv);
+    E('text', { x: PAD + 4, y: HP + GAP + 11, 'font-size': 9.5, 'font-weight': 700, fill: ACOL,
+      'font-family': 'IBM Plex Mono, monospace', text: MODE === 'pi' ? 'PI(x)' : 'EI(x)' }, sv);
+    /* where the rule would actually send you */
+    var bi = 0; for (i = 1; i < ACQ.length; i++) if (ACQ[i] > ACQ[bi]) bi = i;
+    E('path', { d: 'M' + (PX(GRID[bi]) - 4.5) + ' ' + (AY(ACQ[bi]) - 11) + 'h9l-4.5 8Z', fill: ACOL,
+      'fill-opacity': .55 }, sv);
+
+    /* the candidate's own value. In EI mode the marker sits at the sum built
+       so far, so the slices visibly lift it onto the curve. */
+    var aEx = MODE === 'pi' ? ex.pi : ex.ei;
+    var aNow = MODE === 'pi' ? (shown ? ex.pi : 0) : sum;
+    E('circle', { cx: x0p, cy: AY(aEx), r: 4.2, fill: 'none', stroke: ACOL, 'stroke-width': 1.3,
+      'stroke-opacity': .55 }, sv);
+    if (aNow > 1e-9) {
+      E('line', { x1: x0p, y1: ABOT, x2: x0p, y2: AY(aNow), stroke: ACOL, 'stroke-width': 2.2,
+        'stroke-opacity': .5 }, sv);
+      E('circle', { cx: x0p, cy: AY(aNow), r: 3.6, fill: ACOL }, sv);
+      E('text', { x: x0p + 8, y: AY(aNow) + 3.5, 'font-size': 9.5, fill: ACOL, stroke: '#F1F1ED',
+        'stroke-width': 3.4, 'paint-order': 'stroke',
+        'font-family': 'IBM Plex Mono, monospace', text: aNow.toFixed(3) }, sv);
     }
 
     /* --- readout --- */

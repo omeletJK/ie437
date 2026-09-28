@@ -464,6 +464,51 @@ The length scale says how far a datum's influence reaches. Short $\ell$ means ea
 
 **Q3.** The posterior gives a best guess and a width at every $x$. One number has to fuse them, and that number is a rule for acting.
 
+### Why not just fit a model and take its best point?
+{sub: the obvious thing to do — done honestly, and watched}
+
+An expensive $f$, three samples, and a regression through them. The regression has a highest point. Spend a query there, refit, and repeat. No uncertainty anywhere — just fit and exploit.
+
+::: widget greedy-trap
+**Click the red peak** to spend a query on it, then click the new peak, and again. Watch where the queries go — and then ==reveal the true $f$.==
+:::
+
+::: note
+Motivation for Act 3, placed before the acquisition function so the acquisition
+function answers a question the class has already felt. The regression is kernel
+ridge — the GP posterior mean of Act 2 with the variance thrown away — so the only
+thing removed between this slide and the rest of the lecture is the uncertainty.
+:::
+
+### What went wrong — the model had no way to say "I have not looked here"
+The greedy peak walks $2.98 \to 2.35 \to 2.30$ and then stops. Every later query lands on the same point, and nothing beyond $x=4.9$ is ever tried.
+
+::: cols c2
+::: col What it found
+Best value **$1.481$** at $x=2.30$, against a true optimum of **$2.636$** at $x=7.67$ — ==44% short==, and the optimum sits $2.8$ away from the furthest point ever queried.
+:::
+::: col.accent Why it never went there
+At $x=7.67$ the truth is $2.636$ and the fit predicts $-0.011$. The regression does not report *ignorance* about the right half; it reports a **low value**, and a greedy rule has no reason to go and check.
+:::
+:::
+
+::: reveal
+::: keypoint
+A point estimate cannot distinguish ==“I looked, and it is bad”== from ==“I never looked.”== Both come back as a small number. Exploration has to be paid for by something the fit alone does not contain.
+:::
+:::
+
+::: reveal
+::: small
+This is not a failure of the optimiser — the argmax was computed exactly every time. It is a failure of what was handed to the optimiser. The fix is not a better search; it is a score that knows where the model is uncertain, which is the next slide.
+:::
+:::
+
+::: note
+All figures from the widget's own arithmetic, verified in node: kernel ridge with
+$\ell=1.3$, $\lambda=10^{-3}$ on samples at $0.8, 3.3, 4.9$.
+:::
+
 ### The acquisition function — a score you are allowed to optimise
 {q: 3}
 
@@ -503,7 +548,7 @@ At one input the GP is only a Gaussian, $f(x)\mid\mathcal D\sim\mathcal N(\mu(x)
 $$\mathrm{PI}(x)=\Pr\big(f(x)>f^{+}\big)=\int_{f^{+}}^{\infty} p(f\mid\mathcal D)\,\mathrm{d}f=\Phi\!\Big(\frac{\mu(x)-f^{+}}{\sigma(x)}\Big)$$
 
 ::: widget improvement-integral {"mode":"pi"}
-The curve on the dashed column *is* the posterior at that $x$, sideways. Shade it and the number appears: ==PI is one curve, integrated once, at one point.== And there is the complaint against it — a sliver a thousandth above the line counts the same as a gain of half a unit, because the integrand is $p(f)$ and $p$ has no idea how high $f$ is.
+The curve on the dashed column *is* the posterior at that $x$, sideways; shade it and the number appears. ==That one area is one point of the PI curve below== — move the candidate and watch the dot travel along it. And there is the complaint against PI: a sliver a thousandth above the line counts the same as a gain of half a unit, because the integrand is $p(f)$, which has no idea how high $f$ is.
 :::
 
 ### Expected improvement — the same tail, weighted by how far it clears
@@ -515,7 +560,7 @@ $$\mathrm{EI}(x)=\E\big[\max(0,f-f^{+})\big]=\int_{f^{+}}^{\infty}\hl{(f-f^{+})}
 \;=\;\sigma(x)\big[z\,\Phi(z)+\phi(z)\big],\quad z=\frac{\mu(x)-f^{+}}{\sigma(x)}$$
 
 ::: widget improvement-integral {"mode":"ei"}
-Add slices one at a time: each contributes ==the green length times the red one== — how far above $f^{+}$ it sits, times how probable that is — and strips darken as they climb. Press **finer** and the running sum closes on the closed form. PI weighted every slice by $1$ and answered *how often*; EI weights each by $(f-f^{+})$ and answers ==how often, and by how much== — which is why EI needs no margin $\xi$ to stop it hugging the incumbent.
+Each slice contributes ==the green length times the red one== — how far above $f^{+}$ it sits, times how probable that is. Watch the dot below climb onto $\mathrm{EI}(x)$ as the sum completes: ==the integral you are building is that point.== PI weighted every slice by $1$ and answered *how often*; EI weights each by $(f-f^{+})$, which is why it needs no margin $\xi$ to stop it hugging the incumbent.
 :::
 
 ### Three scores
