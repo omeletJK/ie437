@@ -412,6 +412,16 @@ $$\sigma_y^2(x)=0.488+0.25=0.738.$$
 Pick a kernel and move the length scale. Left: the covariance $k(x,x')$ over the input range — a band along the diagonal says *nearby points agree*, stripes say *the pattern repeats*. Right: four functions the prior considers typical, drawn from ==the same random numbers for every kernel==, so what changes is the assumption alone. **ARD** is the SE kernel with one $\lambda_d$ per input dimension; a large $\lambda_d$ switches that dimension off.
 :::
 
+::: wformulas
+- $$k_{\text{SE}}(x,x')=\sigma_0^2\exp\!\Big(-\frac{r^2}{2\lambda^2}\Big),\qquad r=|x-x'|$$
+- $$k_{5/2}(x,x')=\sigma_0^2\Big(1+\frac{\sqrt5\,r}{\lambda}+\frac{5r^2}{3\lambda^2}\Big)\exp\!\Big(-\frac{\sqrt5\,r}{\lambda}\Big)$$
+- $$k_{3/2}(x,x')=\sigma_0^2\Big(1+\frac{\sqrt3\,r}{\lambda}\Big)\exp\!\Big(-\frac{\sqrt3\,r}{\lambda}\Big)$$
+- $$k_{\text{per}}(x,x')=\sigma_0^2\exp\!\Big(-\frac{2\sin^2(\pi r/p)}{\lambda^2}\Big),\qquad p=\text{period}$$
+- $$k_{\text{lin}}(x,x')=\sigma_b^2+\sigma_v^2\,x\,x'$$
+- $$k(x,x')=k_{\text{SE}}(x,x')+k_{\text{lin}}(x,x')\qquad\text{sum: independent components add}$$
+- $$k(x,x')=k_{\text{SE}}(x,x')\cdot k_{\text{per}}(x,x')\qquad\text{product: both similarities required}$$
+:::
+
 ### Fitting the kernel — maximise the marginal likelihood
 {sub: p. 28 of the source — the hyperparameters are fitted, not chosen}
 
@@ -420,7 +430,7 @@ The kernel's knobs $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$ are ch
 $$\begin{aligned}
 \theta^*&=\argmax_\theta\ \log p(\mathbf y_{1:n}\mid\theta)
 =\argmax_\theta\ \log\int p(\mathbf y_{1:n}\mid\mathbf f_{1:n},\theta)\,p(\mathbf f_{1:n}\mid\theta)\,d\mathbf f_{1:n}\\
-&=\argmax_\theta\ \Big[\underbrace{-\tfrac12\,\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\hl{\text{data fit}}}\ \underbrace{-\,\tfrac12\log|\mathbf C_\theta|}_{\hl{\text{complexity}}}\ -\ \tfrac n2\log 2\pi\Big]
+&=\argmax_\theta\ \Big[\underbrace{-\tfrac12\,\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\hl{\text{data fit}}}\ \underbrace{-\,\tfrac12\log|\mathbf C_\theta|}_{\hl{\text{simplicity}}}\ -\ \tfrac n2\log 2\pi\Big]
 \end{aligned}$$
 
 ::: reveal
@@ -428,15 +438,49 @@ $$\begin{aligned}
 ::: col Data fit
 Rises toward zero when $\mathbf y$ is typical under $\mathcal N(\mathbf 0,\mathbf C_\theta)$. A flexible kernel — short $\lambda$, large $\sigma_0$ — can always make this term happy.
 :::
-::: col.accent Complexity
-$\log|\mathbf C_\theta|$ is the log-volume of datasets the prior spreads itself over. A flexible kernel spreads wide and ==pays for it here==.
+::: col.accent Simplicity
+$\log|\mathbf C_\theta|$ is the log-volume of datasets the prior spreads itself over, and it enters **with a minus sign** — so a kernel prepared for *fewer* datasets scores ==higher==, and a flexible one pays.
 :::
+:::
+
+::: small
+Both terms are written so that **larger is better**, which is why the total can peak where neither is at its own maximum. Rasmussen & Williams call the second one the *complexity penalty*; with the minus sign in front it is the reward for staying simple.
 :::
 :::
 
 ::: reveal
 ::: small
-In practice: gradient ascent on $\ell(\theta)$ (L-BFGS on $\log\theta$ so every parameter stays positive), from several starting points because $\ell$ has local optima. Each evaluation is one Cholesky factorisation of $\mathbf C_\theta$, $O(n^3)$ — cheap at BO's small $n$. It is a Lecture 1 optimisation, nested inside the loop.
+Both terms are signed so that **larger is better**, which is why the total can peak where neither is at its own maximum. The next slide says why they must disagree.
+:::
+:::
+
+### Why the two terms must disagree
+{sub: probability has to sum to one — and Occam's razor falls out of that}
+
+A kernel is a claim about which datasets are plausible, and that claim is a **distribution**: its total mass is fixed at $1$. So being ready for more costs you on each.
+
+::: cols c2
+::: col A flexible kernel — short $\lambda$
+Prepared for a huge variety of $\mathbf y$. It must spread one unit of probability thinly, so the particular $\mathbf y$ you saw receives ==a small share==.
+
+It can bend to anything, and is rewarded for nothing.
+:::
+::: col.accent A rigid kernel — long $\lambda$
+Prepared for very few $\mathbf y$. If yours is among them it receives ==a large share==; if it is not, almost none.
+
+Simplicity pays — right up until it cannot reach the data.
+:::
+:::
+
+::: reveal
+::: keypoint
+==Occam's razor is not imposed here; it falls out of normalisation.== The first term asks *did it explain my data?*; the second asks *how much else was it also prepared to explain?*
+:::
+:::
+
+::: reveal
+::: small
+The naming trips people up. Rasmussen & Williams call $-\tfrac12\log|\mathbf C_\theta|$ the **complexity penalty**, because it is what charges a model for being complex — but written with the minus sign in front, its *value* rises as the model gets simpler. That is why the curve in the widget climbs while the posterior straightens out.
 :::
 :::
 
@@ -1064,7 +1108,7 @@ Three readings. The mean is a **linear combination** of observed $y$ values; its
 $$\theta^*=\argmax_\theta \log\!\int p(\mathbf y\mid\mathbf f,\theta)\,p(\mathbf f\mid\theta)\,d\mathbf f = \argmin_\theta\Big[\tfrac12\mathbf y^\top(\mathbf K_\theta+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y + \tfrac12\log|\mathbf K_\theta+\sigma_\epsilon^2\mathbf I|\Big]$$
 
 ::: small
-The two terms pull opposite ways as the length scale grows. On the seven-point example of the Act 2 widget, the complexity term $-\tfrac12\log|\mathbf K+\sigma_\epsilon^2\mathbf I|$ climbs monotonically from $-0.04$ at $\lambda=0.05$ to $+12.2$ at $\lambda=10$ — a rigid model is *rewarded* — while the data-fit term falls from $-0.75$ near $\lambda=0.45$ to $-58.9$ at $\lambda=10$. Their sum peaks at $\lambda\approx0.85$. That is an Occam's razor you did not have to write down, and it is a Lecture 1 optimisation nested inside the Lecture 4 loop.
+The two terms pull opposite ways as the length scale grows. On the seven-point example of the Act 2 widget, the simplicity term $-\tfrac12\log|\mathbf K+\sigma_\epsilon^2\mathbf I|$ — Rasmussen & Williams' *complexity penalty*, signed so that larger is better — climbs monotonically from $-0.04$ at $\lambda=0.05$ to $+12.2$ at $\lambda=10$, because a rigid model is *rewarded* for being prepared for little, while the data-fit term falls from $-0.75$ near $\lambda=0.45$ to $-58.9$ at $\lambda=10$. Their sum peaks at $\lambda\approx0.85$. That is an Occam's razor you did not have to write down, and it is a Lecture 1 optimisation nested inside the Lecture 4 loop.
 :::
 
 ### Backup 3 — Expected Improvement, in closed form

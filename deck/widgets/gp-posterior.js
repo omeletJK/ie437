@@ -3,7 +3,7 @@
    The length-scale sweep of the source deck (pp. 30–36), made live.
    Left: the GP posterior over a handful of observations. Right: the
    marginal log-likelihood split into its two terms — data fit and
-   complexity — plotted against the length scale, with the current
+   simplicity — plotted against the length scale, with the current
    value marked. The total peaks where neither term is happy: the
    Occam balance that picks the kernel's one free number.
    Click the left panel to place another observation.
@@ -178,7 +178,7 @@ IE437.widget('gp-posterior', function (host, opts) {
     E('line', { x1: LX(g.lam), y1: 12, x2: LX(g.lam), y2: H2 - 26, stroke: RED, 'stroke-width': 1.6 }, sv2);
     E('circle', { cx: LX(g.lam), cy: LY(g.lml), r: 4, fill: RED }, sv2);
 
-    E('text', { x: 40, y: 22, 'font-size': 10, 'font-weight': 700, fill: GREEN, text: 'complexity' }, sv2);
+    E('text', { x: 40, y: 22, 'font-size': 10, 'font-weight': 700, fill: GREEN, text: 'simplicity' }, sv2);
     E('text', { x: 40, y: 35, 'font-size': 10, 'font-weight': 700, fill: BLUE, text: 'data fit' }, sv2);
     E('text', { x: 40, y: 48, 'font-size': 10, 'font-weight': 700, fill: AMBER, text: 'total' }, sv2);
     E('text', { x: W2 / 2 + 8, y: H2 - 2, 'text-anchor': 'middle', 'font-size': 9, fill: INK, 'fill-opacity': .45,
@@ -195,14 +195,14 @@ IE437.widget('gp-posterior', function (host, opts) {
     host.querySelector('[data-num]').innerHTML =
       '<b>' + X.length + '</b> observations<br>' +
       '<span style="color:' + BLUE + '">data fit</span> &nbsp;<b>' + g.dataFit.toFixed(2) + '</b><br>' +
-      '<span style="color:' + GREEN + '">complexity</span> &nbsp;<b>' + g.cplx.toFixed(2) + '</b><br>' +
+      '<span style="color:' + GREEN + '">simplicity</span> &nbsp;<b>' + (g.cplx > 0 ? '+' : '') + g.cplx.toFixed(2) + '</b><br>' +
       '<span style="color:' + AMBER + '">total log <i>p</i>(y|&theta;)</span> &nbsp;<b>' + g.lml.toFixed(2) + '</b><br>' +
       '<span style="color:' + SLATE + '">best &lambda; &asymp; ' + bestLam.toFixed(2) + '</span>';
 
     var note;
-    if (lam <= 0.12) note = 'The model believes <b>nothing carries</b>. The mean spikes at each cross and falls back to the prior between them; the band never closes.';
-    else if (lam >= 3) note = 'The model believes <b>everything carries</b>. One rigid curve, a thin band, and observations it cannot bend to reach.';
-    else if (Math.abs(lam - bestLam) / bestLam < 0.45) note = 'Near the marginal-likelihood optimum. Neither term is maximised &mdash; <b>that is the point</b>.';
+    if (lam <= 0.12) note = 'The model believes <b>nothing carries</b>: the mean spikes at each cross and falls back to the prior between them. It fits anything, so it is prepared for almost every dataset &mdash; and <b>simplicity is near zero</b>.';
+    else if (lam >= 3) note = 'The model believes <b>everything carries</b>. It is prepared for very few datasets, so simplicity pays well (' + (g.cplx > 0 ? '+' : '') + g.cplx.toFixed(1) + ') &mdash; but it cannot bend to the crosses, and the fit collapses.';
+    else if (Math.abs(lam - bestLam) / bestLam < 0.45) note = 'Near the optimum. <b>Neither term is maximised</b> &mdash; that is the point: probability must sum to one, so explaining <i>this</i> data well and being prepared for <i>little else</i> cannot both be had.';
     else note = 'Moving away from the optimum: one term is being bought at the other’s expense.';
     host.querySelector('[data-note]').innerHTML = note;
   }
