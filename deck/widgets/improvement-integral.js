@@ -192,10 +192,11 @@ IE437.widget('improvement-integral', function (host, opts) {
         E('line', { x1: x0p, y1: yk, x2: x0p + wk, y2: yk, stroke: RED, 'stroke-width': 2.4 }, sv);
         E('line', { x1: x0p - 13, y1: Y(FPLUS), x2: x0p - 13, y2: yk, stroke: GREEN, 'stroke-width': 2.4 }, sv);
         E('path', { d: 'M' + (x0p - 16.5) + ' ' + (yk + 5.5) + 'h7l-3.5 -6.5Z', fill: GREEN }, sv);
-        E('text', { x: x0p + wk + 5, y: yk - 4, 'font-size': 9.5, fill: RED,
-          'font-family': 'IBM Plex Mono, monospace', text: 'p(f)' }, sv);
-        E('text', { x: x0p - 18, y: (yk + Y(FPLUS)) / 2 + 3.5, 'text-anchor': 'end', 'font-size': 9.5,
-          fill: GREEN, 'font-family': 'IBM Plex Mono, monospace', text: 'f - f+' }, sv);
+        var HALO = { stroke: '#F1F1ED', 'stroke-width': 3.4, 'paint-order': 'stroke' };
+        E('text', Object.assign({ x: x0p + wk + 5, y: yk - 4, 'font-size': 9.5, fill: RED,
+          'font-family': 'IBM Plex Mono, monospace', text: 'p(f)' }, HALO), sv);
+        E('text', Object.assign({ x: x0p - 18, y: (yk + Y(FPLUS)) / 2 + 3.5, 'text-anchor': 'end',
+          'font-size': 9.5, fill: GREEN, 'font-family': 'IBM Plex Mono, monospace', text: 'f - f+' }, HALO), sv);
       }
     }
 
@@ -215,9 +216,11 @@ IE437.widget('improvement-integral', function (host, opts) {
         'slices drawn <b>' + Math.min(shown, n) + ' / ' + n + '</b><br>' +
         'running sum <b>' + sum.toFixed(4) + '</b><br>' +
         '<span style="color:' + BLUE + '">exact EI</span> = <b>' + ex.ei.toFixed(4) + '</b>';
-      if (shown === 0) note = 'Press <b>+ one</b>. Each slice contributes its height above f+ <i>times</i> its probability &mdash; the green length times the red one.';
+      if (shown === 0) note = (ni === 0
+        ? 'Press <b>+ one</b>. Each slice contributes its height above f+ <i>times</i> its probability &mdash; the green length times the red one.'
+        : 'Now <b>' + n + ' slices</b>, and the sum starts over. Press <b>+ one</b> to walk it again at this width, or <b>all</b> to jump to the end.');
       else if (shown < n) note = 'Every strip adds (f &minus; f+)&thinsp;&times;&thinsp;p(f). Darker strips sit further above the line, so they are worth more.';
-      else if (n < 120) note = 'The sum is <b>' + (100 * sum / ex.ei).toFixed(1) + '%</b> of the exact value. Press <b>finer</b>: more, thinner slices and the sum closes on the integral.';
+      else if (n < 120) note = 'The sum is <b>' + (100 * sum / ex.ei).toFixed(1) + '%</b> of the exact value. Press <b>finer</b> for ' + NSLICE[ni + 1] + ' thinner slices, and walk it again.';
       else note = 'At 120 slices the sum agrees with the closed form to <b>' + Math.abs(sum - ex.ei).toExponential(1) + '</b>. The sum <i>is</i> the integral &mdash; PI weighted every slice by 1, EI weights each by how far it clears f+.';
     }
     host.querySelector('[data-num]').innerHTML = num;
@@ -235,7 +238,9 @@ IE437.widget('improvement-integral', function (host, opts) {
   else {
     q('[data-add]').onclick = function () { shown = Math.min(NSLICE[ni], shown + 1); draw(); };
     q('[data-all]').onclick = function () { shown = NSLICE[ni]; draw(); };
-    q('[data-fine]').onclick = function () { ni = Math.min(NSLICE.length - 1, ni + 1); shown = NSLICE[ni]; draw(); };
+    /* a finer cut starts empty: the point is to walk the sum again with
+       thinner slices, not to be handed the finished picture */
+    q('[data-fine]').onclick = function () { ni = Math.min(NSLICE.length - 1, ni + 1); shown = 0; draw(); };
   }
 
   draw();
