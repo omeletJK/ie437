@@ -58,7 +58,15 @@ IE437.widget('kernel-gallery', function (host, opts) {
     '<div class="wlabel">covariance k(x, x′)</div><div data-h></div></div>' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
     '<div class="wlabel">four draws from the prior</div><div data-s></div></div></div>' +
+    '<div data-f></div>' +
     '<div data-a style="font:400 13px/1.55 var(--sans);color:var(--ink2);text-align:center;min-height:21px"></div></div>';
+
+  /* the formulas live in the markdown (::: wformulas, one item per kernel, in
+     this order) because KaTeX only runs at build time; adopt them here */
+  var slide = host.closest('.slide');
+  var fl = slide && slide.querySelector('.wformulas');
+  if (fl) host.querySelector('[data-f]').appendChild(fl);
+  var FL = fl ? fl.querySelectorAll('li') : [];
 
   var kb = host.querySelector('[data-k]');
   K.forEach(function (k, i) {
@@ -72,7 +80,7 @@ IE437.widget('kernel-gallery', function (host, opts) {
     on: function (i) { li = i; draw(); }
   });
 
-  var HS = 220, SW = 560, SH = 220;
+  var HS = 190, SW = 560, SH = 190;
   var svH = IE437.svg(HS, HS), svS = IE437.svg(SW, SH);
   host.querySelector('[data-h]').appendChild(svH);
   host.querySelector('[data-s]').appendChild(svS);
@@ -128,6 +136,7 @@ IE437.widget('kernel-gallery', function (host, opts) {
       xticks: [-3, -2, -1, 0, 1, 2, 3], yticks: [-2, 0, 2], xlabel: 'x',
       xfmt: function (v) { return String(v); }, series: series });
 
+    [].forEach.call(FL, function (li, i) { li.classList.toggle('on', i === ki); });
     host.querySelector('[data-a]').innerHTML = '<b>' + kk.n + '</b> &mdash; ' + kk.a;
   }
 

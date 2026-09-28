@@ -117,6 +117,10 @@ Blocks open with `::: name [argument]` and close with a bare `:::`. They nest.
                       The arrow labels are drawn by CSS `content: attr()`, so they are
                       plain text — markdown and maths in them will not render.
 ::: widget id {json}  mount an interactive widget; the child text becomes its caption
+::: wformulas         a list of formulas, one per state, for the widget on the same slide to
+                      show one at a time (KaTeX runs only at build time, so a widget cannot
+                      typeset maths itself). Hidden until the widget adopts it — see
+                      kernel-gallery for the pattern: find it, move it in, toggle li.on.
 ::: quiz Question?    a check-yourself question; see below
 ::: figure name [| width]   a picture from assets/chNN/; child text is the caption
 ::: video  name [| width]   a clip from assets/chNN/name.mp4 with assets/chNN/name.jpg as poster

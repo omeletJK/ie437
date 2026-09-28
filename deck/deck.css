@@ -365,6 +365,16 @@ td .mathblock{font-size:calc(17.5px * var(--ts))}
 .widget > .wbar .wspacer{flex:1}
 .widget > .wbody{padding:13px 15px;flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
 .wcap{font:400 13.5px/1.5 var(--sans);font-size:calc(13.5px * var(--ts));color:var(--ink3);text-align:center}
+/* ::: wformulas — formulas rendered at build time for a widget to pick from.
+   KaTeX does not run in the page, so a widget that wants to show the maths
+   of its current state adopts this list and shows one item at a time.
+   Hidden until adopted, so a widget that fails to mount leaves no clutter. */
+.wformulas{display:none}
+.widget .wformulas{display:block}
+.widget .wformulas ul{list-style:none;margin:0;padding:0;border:0;display:block}
+.widget .wformulas li{display:none;padding:0;border:0}
+.widget .wformulas li.on{display:block}
+.widget .wformulas .mathblock{padding:8px 16px;background:#fff;font-size:19px}
 .dark .wcap{color:var(--wink3)}
 
 /* ---- figures and clips lifted from the source deck ---------------
