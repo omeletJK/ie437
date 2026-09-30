@@ -873,6 +873,56 @@ An acquisition rule and an RL exploration rule both turn current information int
 :::
 :::
 
+### Discuss — do the trials count, or only the answer?
+{sub: Same policy form, two objectives. Decide before the next slide.}
+
+::: cols
+::: col Six problems
+1. Tuning a network's hyperparameters on a GPU cluster
+2. Choosing which headline each visitor to a news site sees
+3. Assigning doses to patients in a clinical trial
+4. Screening alloy compositions, one furnace run each
+5. Setting yaw angles on a wind farm that is selling its power
+6. Tuning a walking robot's gait on the real hardware
+:::
+::: col.accent Three questions
+1. **Which objective?** $\E\big[\sum_t r_t\big]$ or $\E[f(\hat x_T)]$ — and what in the problem decides it?
+2. **Should exploration change?** More or less of it — and early or late in the budget?
+3. **What do you hand over at the end?** The last query, the best $y$ observed, or $\argmax_x\mu(x)$?
+:::
+:::
+
+::: note
+Pairs, three minutes. Ask one question the students can settle among themselves: *does anyone lose anything when a trial goes badly?* That decides the objective. Leave problem 6 for last — it fits neither column cleanly, which is the point.
+:::
+
+### Answers — the objective sets how much to explore
+{sub: simple regret $f^*-f(\hat x_T)$ versus cumulative regret $\sum_t\big(f^*-f(x^t)\big)$}
+
+| | Only the answer counts | Every trial counts |
+|---|---|---|
+| Problems | 1 hyperparameters · 4 alloys | 2 headlines · 3 doses · 5 live wind farm |
+| A poor query costs | one unit of budget — only $\hat x_T$ is deployed | budget **and** its reward — each trial is a payoff, or a patient |
+| Exploration | cheap; still worth it at the last query | repaid only over the remaining horizon — explore early, exploit late |
+| Suited rules | EI, knowledge gradient, entropy search | UCB (GP-UCB), Thompson sampling |
+| Hand over | $\argmax_x\mu(x)$, not the luckiest noisy $y$ | nothing separate — the queries were the product |
+
+::: reveal
+::: small
+Problem 6 is a hybrid: only the final gait matters, but a query that topples the robot is not free. Safe BO (e.g. SafeOpt) keeps the final-answer objective and restricts every query to where the posterior is confidently safe.
+:::
+:::
+
+::: reveal
+::: keypoint
+The objective, not the model, sets the exploration schedule — and no rule is best at both. [Bubeck, Munos & Stoltz (2009)](https://doi.org/10.1007/978-3-642-04414-4_7): the smaller a strategy's cumulative regret, the larger its lower bound on simple regret.
+:::
+:::
+
+::: note
+EI belongs in the left column: it is the one-step-optimal rule when the recommendation must be a point already evaluated and observations are noise-free. Knowledge gradient drops that restriction and recommends $\argmax_x\mu(x)$. The Act 4 regret widget plots cumulative regret, so it is scoring the right-hand column.
+:::
+
 ### Check — the acquisition function's job
 {q: 3}
 
