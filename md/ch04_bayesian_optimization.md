@@ -45,7 +45,7 @@ Choose the next experiment from a stated acquisition rule and weigh it against t
 |---|---|
 | **Follow the idea** | GP update → acquisition choice → evaluate → update again |
 | **Work without the solution** | Choose the next experiment from a stated acquisition rule and weigh it against the budget. |
-| **Return later** | Multi-output kernels, constrained/multiobjective extensions and solver details are references. |
+| **Return later** | Multi-output kernels, and how EHVI is computed beyond two objectives, are references. |
 
 ::: keypoint
 For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
@@ -1140,31 +1140,107 @@ Source alignment: original PDF pp. 183–185. Gardner, Kusner, Xu, Weinberger & 
 :::
 
 ### Several objectives — a Pareto set replaces one best number
-{sub: Ame geometry, drawn for maximisation}
+{sub: The fastest car and the most economical car are different cars}
 
-For this illustration, **maximise both objectives**. A point dominates another if it is at least as good in both and strictly better in one. The Pareto set contains points not dominated by any other candidate.
+With $m$ objectives the unknown is a vector, $\mathbf f(x)=\big(f_1(x),\dots,f_m(x)\big)$, and no single value can play $f^+$. In this section ==both objectives are minimised== — less fuel, less time — so better lies toward the lower left.
 
-::: cols
-::: col
-::: figure pareto-hypervolume | 540
-The source draws minimisation toward the lower left. Here maximisation is toward the upper right; the dominated hypervolume extends back to reference $r=(0,0)$.
-:::
-:::
-::: col.accent Count the area
-For $A=(3,1)$ and $B=(1,3)$:
-
-$$\operatorname{HV}(\{A,B\})=3+3-1=5.$$
-
-Adding $C=(2,2)$ contributes the green unit square:
-
-$$\operatorname{HVI}(C)=6-5=1.$$
-
-Neither A nor B is the single best design. Choosing one finally requires a preference or trade-off.
-:::
+::: widget mobo-hypervolume {"mode":"front"}
+Press → to walk it; click any design to test it. $\mathbf y''\succ\mathbf y'$, **dominates**: no worse in every objective, strictly better in one. **Pareto set**: $P(Y)=\{\mathbf y'\in Y:\nexists\,\mathbf y''\in Y,\ \mathbf y''\succ\mathbf y'\}$.
 :::
 
 ::: note
-Source alignment: original PDF pp. 186–195.
+Source alignment: original PDF pp. 186–189. The car photographs of p. 187 become points; its green "no better car regarding both" box is the widget's first step, and p. 188's Pareto front and utopia point are its last. The rest of Chapter 4 maximises $f$; this section minimises, as the source does — say so once, aloud.
+:::
+
+### Multi-objective BO — the same loop, with a front where $f^+$ was
+{sub: One GP per objective; only the acquisition function is new}
+
+::: flow | | | loop: new data, new front
+- **Learn** | one GP per objective
+- **Construct** | $A_t\big(x;P(\mathcal D_t)\big)$ from the front
+- **Decide** | $x_{t+1}=\argmax_x A_t$
+- !**Observe** | a *vector* $\mathbf y_{t+1}$, appended
+:::
+
+| | One objective | Several objectives |
+|---|---|---|
+| The best so far | the incumbent $f^+$ | the Pareto front $P(\mathcal D_t)$ |
+| What one outcome improves | how far $f(x)$ beats $f^+$ | ==the hypervolume it adds to $P$==, $\mathrm{HVI}\big(P,\mathbf f(x)\big)$ |
+| Chance of any improvement | PI | **PHVI** |
+| Improvement, on average | EI | **EHVI** |
+| A cheaper stand-in | — | **HVPI** $=\mathrm{HVI}(P,\boldsymbol\mu)\times\mathrm{PHVI}$ |
+
+::: note
+Source alignment: original PDF pp. 190 and 196. The line to say: each multi-objective acquisition is a single-objective one with "beats $f^+$" replaced by "adds hypervolume to $P$" — so the one new object to understand is the hypervolume.
+:::
+
+### Hypervolume — one number for a whole front
+{sub: What the front dominates, what one outcome adds, and where that gain is positive}
+
+::: widget mobo-hypervolume {"mode":"hvi"}
+Press → for each piece, and ==drag **f**== anywhere. The reference point $r$ is a deliberately poor corner, fixed before the search, that fences the area off. An outcome dropped into the blue is dominated and adds nothing.
+:::
+
+::: wformulas
+- $$\textcolor{#2563EB}{\mathrm{HV}(P)}=\operatorname{area}\Big(\bigcup_{\mathbf p\in P}\,[\mathbf p,\ r]\Big)\qquad\text{the region the front dominates, fenced off by } r$$
+- $$\textcolor{#D97706}{\mathrm{HV}\big(P,\mathbf f(x)\big)}=\mathrm{HV}\big(P\cup\{\mathbf f(x)\}\big)\qquad\text{the same area, with one more point in the set}$$
+- $$\mathrm{HVI}\big(P,\mathbf f(x)\big)=\textcolor{#D97706}{\mathrm{HV}\big(P,\mathbf f(x)\big)}-\textcolor{#2563EB}{\mathrm{HV}(P)}$$
+- $$\mathrm{HVI}\big(P,\mathbf f(x)\big)>0\ \text{ for }\ \mathbf f(x)\in\textcolor{#16A34A}{A(P)},\qquad \mathrm{HVI}\big(P,\mathbf f(x)\big)=0\ \text{ otherwise}$$
+:::
+
+::: note
+Source alignment: original PDF pp. 191–195, on the source's own coordinates — its five Pareto points and $r$. The HVI rectangle of p. 194 is $(4.4-3.4)\times(4.2-3.2)=1$.
+:::
+
+### PHVI — will the outcome move the front at all?
+{sub: Probability of improvement, with “beats $f^+$” replaced by “lands in $A(P)$”}
+
+::: widget mobo-hypervolume {"mode":"phvi"}
+Press → to shade the belief that lands in $A(P)$, then to count 160 draws. Drag the mean, widen $\sigma$. The product form assumes one independent GP per objective.
+:::
+
+::: wformulas
+- $$\textcolor{#D64545}{p\big(\mathbf f(x)\big)}=\prod_{j=1}^{m}\phi_j\big(f_j(x)\big),\qquad f_j(x)\mid\mathcal D\sim\mathcal N\big(\mu_j(x),\sigma_j^2(x)\big)$$
+- $$\mathrm{PHVI}(P,x,r)=\int_{\mathbf f\in\textcolor{#16A34A}{A(P)}}\textcolor{#D64545}{p\big(\mathbf f(x)\big)}\,d\mathbf f$$
+- $$\mathrm{PHVI}(P,x,r)=\int_{\mathbf f\in\textcolor{#16A34A}{A(P)}}\textcolor{#D64545}{p\big(\mathbf f(x)\big)}\,d\mathbf f\;\approx\;\frac1N\sum_{k=1}^{N}\mathbf 1\big[\mathbf f^{(k)}\in\textcolor{#16A34A}{A(P)}\big],\qquad \mathbf f^{(k)}\sim p\big(\mathbf f(x)\big)$$
+:::
+
+::: note
+Source alignment: original PDF pp. 197–199; the contours sit where p. 198 draws them. The widget's PHVI is exact: $A(P)$ splits into vertical strips — one left of the front, one under each Pareto point — and each contributes $P(f_1\in\text{strip})\,P(f_2<\text{its cap})$.
+:::
+
+### EHVI — how far will it move the front, on average?
+{sub: Expected improvement for a set — every possible outcome, weighted by the hypervolume it adds}
+
+::: widget mobo-hypervolume {"mode":"ehvi"}
+Press → for three possible outcomes ①–③ and a dominated one ④, then 160 draws sized by the hypervolume each adds — their average is EHVI.
+:::
+
+::: wformulas
+- $$\mathrm{EHVI}(P,x,r)=\mathbb E\big[\max\{0,\mathrm{HVI}(P,\mathbf f(x),r)\}\big]=\int_{\mathbf f(x)\in\textcolor{#16A34A}{A(P)}}\mathrm{HVI}\big(P,\mathbf f(x),r\big)\,\textcolor{#D64545}{p\big(\mathbf f(x)\big)}\,d\mathbf f$$
+- $$\mathrm{EHVI}(P,x,r)\;\approx\;\frac1N\sum_{k=1}^{N}\mathrm{HVI}\big(P,\mathbf f^{(k)},r\big),\qquad \mathbf f^{(k)}\sim\textcolor{#D64545}{p\big(\mathbf f(x)\big)}\quad\text{— each draw's gain, averaged}$$
+:::
+
+::: note
+Source alignment: original PDF pp. 200–204; outcomes ①–③ are the three points of pp. 201–203. For two objectives the integral has a closed form, which is the widget's "exact" value; with more objectives it is usually estimated by Monte Carlo. The exact form: since $\mathrm{HVI}(P,\mathbf f)=\int_{A(P)}\mathbf 1[\mathbf f\le\mathbf z]\,d\mathbf z$, $\mathrm{EHVI}=\int_{A(P)}\Phi_1(z_1)\,\Phi_2(z_2)\,d\mathbf z$, which factorises strip by strip with $\int\Phi\big(\tfrac{z-\mu}{\sigma}\big)dz=\sigma\,[u\Phi(u)+\phi(u)]$. Analytic EHVI and its gradient: Yang, Emmerich, Deutz & Bäck (2019).
+:::
+
+### HVPI — the improvement at the mean, times PHVI
+{sub: A cheaper stand-in for EHVI, and the candidate it cannot see}
+
+::: widget mobo-hypervolume {"mode":"hvpi"}
+Press → for the rectangle at the mean, the product, EHVI beside it — then two candidates: **A**, a near-certain small gain; **B**, a wide belief whose mean is dominated.
+:::
+
+::: wformulas
+- $$\mathrm{HVI}\big(P,\boldsymbol\mu(x)\big)\qquad\text{the gain if the outcome landed exactly on its mean}$$
+- $$\mathrm{HVPI}(P,x)=\mathrm{HVI}\big(P,\boldsymbol\mu(x)\big)\times\mathrm{PHVI}(P,x)$$
+- $$\mathrm{HVPI}=\mathrm{HVI}\big(P,\mathbb E[\mathbf f]\big)\times\Pr\big(\mathbf f\in\textcolor{#16A34A}{A(P)}\big)\;\ne\;\mathbb E\big[\mathrm{HVI}(P,\mathbf f)\big]=\mathrm{EHVI}$$
+- $$\mathrm{HVPI}=\mathrm{HVI}(P,\boldsymbol\mu)\times\mathrm{PHVI}:\qquad \mathrm{HVI}(P,\boldsymbol\mu_B)=0\ \Rightarrow\ \mathrm{HVPI}_B=0\ \text{ for every }\sigma_B$$
+:::
+
+::: note
+Source alignment: original PDF p. 205. The source's HVPI figure reuses p. 203's outcome; here the rectangle stands at the mean, which is where the formula evaluates it. Before the last press, ask which candidate each rule picks: A has PHVI 0.954 and HVPI 0.453; B has EHVI 0.615 against A's 0.487, and HVPI exactly 0 because its mean is dominated. It is Act 3's "Choose between two candidate experiments", with two objectives: only EHVI weighs how far as well as how likely, so only EHVI can pick B — as EI could, and PI could not.
 :::
 
 ### Two different scaling limits — data count and input dimension
@@ -1450,26 +1526,22 @@ The source's many covariance derivations implement one rule: **independent laten
 Source alignment: original PDF pp. 54–68.
 :::
 
-### Expected hypervolume improvement — EI for a set of trade-offs
-{sub: Distinguish probability, amount, and approximation}
+### Computing EHVI — more objectives, correlated outputs, batches, contexts
+{sub: Where the two-objective picture of Act 4 needs more machinery}
 
-Let $P$ be the current Pareto set and $r$ a fixed reference point worse than the outcomes of interest.
-
-$$\operatorname{EHVI}(x)=\mathbb E\!\left[\operatorname{HV}(P\cup\{\mathbf f(x)\};r)-\operatorname{HV}(P;r)\mid D\right].$$
-
-| Acquisition | What is averaged? |
+| Situation | What changes |
 |---|---|
-| Probability of hypervolume improvement | whether the new point adds any dominated volume |
-| **EHVI** | how much new volume it adds |
-| Source's HVPI heuristic | improvement at the posterior mean × probability of improvement; generally **not equal** to EHVI |
-
-Estimate EHVI by drawing possible output vectors from the posterior, computing each added volume, and averaging. Cross-output dependence belongs in those joint draws.
+| Two objectives, independent GPs | exact: split $A(P)$ into strips and integrate each in closed form — differentiable too (Yang et al., 2019) |
+| Three or more objectives | $A(P)$ splits into boxes whose number grows quickly with $m$; Monte Carlo is the usual fallback |
+| Correlated objectives | draw $\mathbf f(x)$ jointly from a multi-output GP — the covariance of the previous two slides |
+| A batch of $q$ experiments | qEHVI: Monte Carlo over the joint outcome of all $q$ at once (Daulton, Balandat & Bakshy, 2020) |
+| A context $c_{t+1}$ seen first | contextual MOBO: build the front from $\boldsymbol\mu(x,c_{t+1})$, then choose $x_{t+1}$ for that context |
 
 ::: keypoint
-**Contextual multiobjective BO** adds the observed context $c$ to this same model and acquisition. Multiple outputs describe what is predicted; multiple objectives describe what is valued.
+Multiple outputs describe **what is predicted**; multiple objectives describe **what is valued**. Every variant keeps the same hypervolume improvement and changes only how its expectation is computed.
 :::
 
 ::: note
-Source alignment: original PDF pp. 190–208.
+Source alignment: original PDF pp. 204 and 206–208 — the 3-D EHVI figure of Yang et al., contextual MOBO, and the GPflowOpt HVI example. K. Yang, M. Emmerich, A. Deutz & T. Bäck, *Multi-objective Bayesian global optimization using expected hypervolume improvement gradient*, Swarm and Evolutionary Computation 44 (2019). S. Daulton, M. Balandat & E. Bakshy, *Differentiable expected hypervolume improvement for parallel multi-objective Bayesian optimization*, NeurIPS 2020.
 :::
 
