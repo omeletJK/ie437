@@ -742,7 +742,7 @@ EI is differentiable, and with $z=(\mu-f^+)/\sigma$ its gradient is closed-form:
 $$\frac{\partial\,\mathrm{EI}}{\partial\mu}=\Phi(z),\quad \frac{\partial\,\mathrm{EI}}{\partial\sigma}=\phi(z)\quad\Longrightarrow\quad \nabla_x a_t(x)=\Phi(z)\,\nabla_x\mu(x)+\phi(z)\,\nabla_x\sigma(x),\qquad x\leftarrow x+\eta\,\nabla_x a_t(x)$$
 
 ::: widget acq-optimisers {"mode":"grad"}
-Press → to walk it: five random starts; then 128 raw samples; the best five as starts; the climbs; the chosen $x_{t+1}$ (★). The dashed ring marks the true maximiser.
+Each → moves all six starts two ascent steps uphill; the last → keeps the best end point as $x_{t+1}$ (★). The dashed ring marks the true maximiser.
 :::
 
 ::: note

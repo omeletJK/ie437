@@ -261,77 +261,58 @@ IE437.widget('acq-optimisers', function (host, opts) {
   }
 
   /* ================= mode: grad ================= */
+  /* Six fixed starts climb together; each press of -> is PER ascent steps for all of
+     them, and the last press picks the best end point. One start sits on the plain,
+     where the gradient is ~0, so it never moves: the reason for many starts. */
   if (MODE === 'grad') {
-    var RNG = IE437.rng(13), NAIVE = [], RAW = [], k2;
-    for (k2 = 0; k2 < 5; k2++) NAIVE.push([RNG(), RNG()]);
-    for (k2 = 0; k2 < 128; k2++) RAW.push([RNG(), RNG()]);
-    NEVAL = 0;
-    var naiveRuns = NAIVE.map(function (p) { return climb(p, 60); }); var NE_NAIVE = NEVAL;
-    NEVAL = 0;
-    var rawVals = RAW.map(function (p) { return acq(p); }); var NE_RAW = NEVAL;
-    var order = rawVals.map(function (v, k) { return k; }).sort(function (a, b) { return rawVals[b] - rawVals[a]; });
-    var STARTS = order.slice(0, 5).map(function (k) { return RAW[k]; });
-    NEVAL = 0;
-    var runs = STARTS.map(function (p) { return climb(p, 60); }); var NE_CLIMB = NEVAL;
-    var bestRun = runs.reduce(function (b, r) { return r.a > b.a ? r : b; }, runs[0]);
-    var COLS = [BLUE, AMBER, GREEN, '#7C3AED', SLATE];
+    var STARTS = [[0.25, 0.58], [0.92, 0.75], [0.58, 0.25], [0.92, 0.08], [0.42, 0.92], [0.42, 0.42]];
+    var COLS = [BLUE, AMBER, GREEN, '#7C3AED', '#DB2777', SLATE];
+    var runs = STARTS.map(function (p) { return climb(p, 80); });
+    var PER = 2, LONG = Math.max.apply(null, runs.map(function (r) { return r.path.length - 1; }));
+    var NCLIMB = Math.ceil(LONG / PER), NSG = NCLIMB + 1;
+    var bestK = 0; runs.forEach(function (r, k) { if (r.a > runs[bestK].a) bestK = k; });
     var gs = 0;
     var drawG = function () {
       map();
-      var P = panel([0, 60], [0, Math.ceil(AMAX * 100) / 100], 'ascent step', 'a_t', { ticks: [0, 20, 40, 60], f: String });
-      var set = gs === 1 ? naiveRuns : runs, note, rows;
-      if (gs === 0) {
-        trueMark();
-        rows = ['<b>0</b> evaluations of a_t'];
-        note = 'Gradient ascent needs ∇a_t, and for EI it is closed-form: <b>∇a = Φ(z)∇μ + φ(z)∇σ</b>. On the plain z ≪ 0, so Φ(z) and φ(z) — and the gradient — are ≈ 0. Press → to start from five random points.';
-      }
-      if (gs === 1) {
-        naiveRuns.forEach(function (r, k) { runPath(r, COLS[k], P); });
-        var moved = naiveRuns.filter(function (r) { return r.path.length > 3; }).length;
-        rows = ['five uniform random starts', '<b>' + NE_NAIVE + '</b> evaluations (value + gradient)',
-          'best found <b>' + f3(Math.max.apply(null, naiveRuns.map(function (r) { return r.a; }))) + '</b> (' +
-          pct(Math.max.apply(null, naiveRuns.map(function (r) { return r.a; }))) + ' of max)'];
-        note = '<b>' + (5 - moved) + ' of 5 starts never move</b>: they land on the plain, the gradient is below tolerance, and the optimiser stops where it began. A start has to be <i>near</i> a peak to climb it.';
-      }
-      if (gs >= 2) {
-        RAW.forEach(function (p, k) { dot(p, 1.8, INK, { op: .45 }); });
-        rows = ['<b>' + NE_RAW + '</b> raw samples (value only)'];
-        note = 'So spend cheap evaluations first: score <b>128 random points</b> (no gradient). Most score ≈ 0; a few land on a slope.';
-      }
-      if (gs >= 3) {
-        STARTS.forEach(function (p, k) { dot(p, 5, 'none', { stroke: COLS[k], sw: 2 }); });
-        rows[0] += ' → best <b>5</b> kept';
-        note = 'Keep the <b>five best</b> raw samples. Each already sits on the flank of some peak, where the gradient is not zero.';
-      }
-      if (gs >= 4) {
-        runs.forEach(function (r, k) { runPath(r, COLS[k], P); });
-        rows.push('<b>' + NE_CLIMB + '</b> ascent evaluations (+ gradient)');
-        note = 'Climb from each. Different starts finish on <b>different local maxima</b> — the right panel shows each run levelling off at its own height.';
-      }
-      if (gs >= 5) {
-        star(bestRun.path[bestRun.path.length - 1], RED); trueMark();
-        rows.push('best end <b>' + f3(bestRun.a) + '</b> = ' + pct(bestRun.a) + ' of max',
-          'total <b>' + (NE_RAW + NE_CLIMB) + '</b> evaluations of a_t');
-        note = 'The <b>best end point</b> is x<sub>t+1</sub> (★) — BoTorch\'s default recipe: raw samples → a few starts → L-BFGS-B. A few hundred cheap evaluations, <b>zero</b> experiments.';
-      }
-      readout(rows, note);
-    };
-    var runPath = function (r, col, P) {
-      var d = r.path.map(function (p, k) { return (k ? 'L' : 'M') + PX(p[0]).toFixed(1) + ' ' + PY(p[1]).toFixed(1); }).join('');
-      E('path', { d: d, fill: 'none', stroke: col, 'stroke-width': 2, 'stroke-linejoin': 'round' }, sv1);
-      dot(r.path[0], 3, col);
-      var e = r.path[r.path.length - 1];
-      E('circle', { cx: PX(e[0]), cy: PY(e[1]), r: 3.4, fill: '#fff', stroke: col, 'stroke-width': 2 }, sv1);
-      var xs = r.vals.map(function (v, k) { return k; });
-      if (xs.length === 1) { xs = [0, 60]; r = { vals: [r.vals[0], r.vals[0]] }; poly(P, xs, r.vals, col, 1.8, { dash: '3 3' }); }
-      else poly(P, xs.concat([60]), r.vals.concat([r.vals[r.vals.length - 1]]), col, 1.8);
+      var it = Math.min(gs * PER, LONG), picked = gs === NSG;
+      var P = panel([0, LONG], [0, Math.ceil(AMAX * 100) / 100], 'ascent step', 'a_t',
+        { ticks: [0, Math.round(LONG / 2), LONG], f: String });
+      E('line', { x1: P.x(it), y1: P.T0, x2: P.x(it), y2: P.B0, stroke: INK, 'stroke-opacity': .25,
+        'stroke-dasharray': '2 3' }, sv2);
+      var rows = [];
+      runs.forEach(function (r, k) {
+        var m = Math.min(it, r.path.length - 1), col = COLS[k];
+        var pts = r.path.slice(0, m + 1);
+        if (m > 0) E('path', { d: pts.map(function (p, q) { return (q ? 'L' : 'M') + PX(p[0]).toFixed(1) + ' ' + PY(p[1]).toFixed(1); }).join(''),
+          fill: 'none', stroke: col, 'stroke-width': 2, 'stroke-linejoin': 'round' }, sv1);
+        pts.forEach(function (p, q) { if (q) dot(p, 1.6, col); });
+        dot(r.path[0], 3, col);
+        var e = r.path[m];
+        E('circle', { cx: PX(e[0]), cy: PY(e[1]), r: 4.2, fill: '#fff', stroke: col, 'stroke-width': 2.2 }, sv1);
+        var xs = [], ys = [];
+        for (var q = 0; q <= it; q++) { xs.push(q); ys.push(r.vals[Math.min(q, r.vals.length - 1)]); }
+        if (xs.length > 1) poly(P, xs, ys, col, 1.8, r.path.length === 1 ? { dash: '3 3' } : {});
+        E('circle', { cx: P.x(it), cy: P.y(ys[ys.length - 1]), r: 2.6, fill: col }, sv2);
+        var state = r.path.length === 1 ? 'stuck: ∇a ≈ 0' : (m < r.path.length - 1 ? 'climbing' : 'stopped: local max');
+        rows.push('<span style="display:flex;align-items:center;gap:7px;line-height:1.5' + (picked && k === bestK ? ';font-weight:700' : '') + '">' +
+          '<span style="width:9px;height:9px;border-radius:50%;background:' + col + ';flex:none"></span>' +
+          '<span style="width:52px;font-family:var(--mono);font-variant-numeric:tabular-nums">' + f3(r.vals[m]) + '</span>' +
+          '<span style="color:var(--ink3)">' + (picked && k === bestK ? '★ best' : state) + '</span></span>');
+      });
+      if (picked) { star(runs[bestK].path[runs[bestK].path.length - 1], RED); trueMark(); }
+      var note;
+      if (gs === 0) note = 'Six starting points (filled dots). From each, repeat <b>x ← x + η∇a<sub>t</sub>(x)</b>: step uphill along the gradient. Press → to take the first steps.';
+      else if (!picked && it < LONG) note = '<b>Ascent step ' + it + '</b>: every start moves uphill at once. A run stops where ∇a<sub>t</sub> ≈ 0 — a <b>local</b> maximum. The grey start is on the flat plain, so it never moves.';
+      else if (!picked) note = 'All runs have stopped, on <b>different local maxima</b> — the right panel shows each levelling off at its own height. Press → to choose.';
+      else note = 'Keep the <b>best end point</b> as x<sub>t+1</sub> (★); the dashed ring is the true maximiser. Only one start of six reached it, which is why we use many starts. (BoTorch picks the starts as the best of many cheap random samples, so fewer land on the plain.)';
+      readout([rows.join('')], note);
     };
     drawG();
     return {
-      steps: 5,
+      steps: NSG,
       step: function (s) { gs = s; drawG(); },
       reset: function () { gs = 0; drawG(); },
-      finish: function () { gs = 5; drawG(); }
+      finish: function () { gs = NSG; drawG(); }
     };
   }
 
