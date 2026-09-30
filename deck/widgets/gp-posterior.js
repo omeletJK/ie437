@@ -79,9 +79,19 @@ IE437.widget('gp-posterior', function (host, opts) {
     '<div style="width:196px;display:flex;flex-direction:column;gap:9px">' +
     '<div data-num style="font:400 12.5px/1.75 var(--sans);color:var(--ink2)"></div>' +
     '<div data-note style="font:400 12px/1.55 var(--sans);color:var(--ink3);' +
-    'border-top:1px solid rgba(22,24,29,.12);padding-top:9px"></div></div></div>';
+    'border-top:1px solid rgba(22,24,29,.12);padding-top:9px"></div></div></div>' +
+    '<div data-f style="display:flex;justify-content:center"></div>';
 
-  var W1 = 442, H1 = 252, W2 = 300, H2 = 252;
+  /* the decomposition is typeset in the markdown (::: wformulas) because KaTeX
+     only runs at build time; adopt it so each curve is shown beside its formula */
+  var slide = host.closest('.slide');
+  var fl = slide && slide.querySelector('.wformulas');
+  if (fl) {
+    host.querySelector('[data-f]').appendChild(fl);
+    [].forEach.call(fl.querySelectorAll('li'), function (li) { li.classList.add('on'); });
+  }
+
+  var W1 = 442, H1 = 222, W2 = 300, H2 = 222;
   var sv1 = IE437.svg(W1, H1), sv2 = IE437.svg(W2, H2);
   host.querySelector('[data-c1]').appendChild(sv1);
   host.querySelector('[data-c2]').appendChild(sv2);
@@ -178,9 +188,9 @@ IE437.widget('gp-posterior', function (host, opts) {
     E('line', { x1: LX(g.lam), y1: 12, x2: LX(g.lam), y2: H2 - 26, stroke: RED, 'stroke-width': 1.6 }, sv2);
     E('circle', { cx: LX(g.lam), cy: LY(g.lml), r: 4, fill: RED }, sv2);
 
-    E('text', { x: 40, y: 22, 'font-size': 10, 'font-weight': 700, fill: GREEN, text: 'simplicity' }, sv2);
-    E('text', { x: 40, y: 35, 'font-size': 10, 'font-weight': 700, fill: BLUE, text: 'data fit' }, sv2);
-    E('text', { x: 40, y: 48, 'font-size': 10, 'font-weight': 700, fill: AMBER, text: 'total' }, sv2);
+    E('text', { x: 40, y: 22, 'font-size': 10, 'font-weight': 700, fill: GREEN, text: 'S(λ)  simplicity' }, sv2);
+    E('text', { x: 40, y: 35, 'font-size': 10, 'font-weight': 700, fill: BLUE, text: 'F(λ)  data fit' }, sv2);
+    E('text', { x: 40, y: 48, 'font-size': 10, 'font-weight': 700, fill: AMBER, text: 'L(λ)  total' }, sv2);
     E('text', { x: W2 / 2 + 8, y: H2 - 2, 'text-anchor': 'middle', 'font-size': 9, fill: INK, 'fill-opacity': .45,
       'font-family': 'IBM Plex Mono, monospace', text: 'length scale  λ  (log)' }, sv2);
     return best.lam;
@@ -192,17 +202,20 @@ IE437.widget('gp-posterior', function (host, opts) {
     var bestLam = drawSweep(g);
 
     host.querySelector('[data-l]').textContent = lam.toFixed(2);
+    var cst = -0.5 * X.length * Math.log(2 * Math.PI);
+    var sg = function (v) { return (v > 0 ? '+' : '') + v.toFixed(2); };
     host.querySelector('[data-num]').innerHTML =
       '<b>' + X.length + '</b> observations<br>' +
-      '<span style="color:' + BLUE + '">data fit</span> &nbsp;<b>' + g.dataFit.toFixed(2) + '</b><br>' +
-      '<span style="color:' + GREEN + '">simplicity</span> &nbsp;<b>' + (g.cplx > 0 ? '+' : '') + g.cplx.toFixed(2) + '</b><br>' +
-      '<span style="color:' + AMBER + '">total log <i>p</i>(y|&theta;)</span> &nbsp;<b>' + g.lml.toFixed(2) + '</b><br>' +
+      '<span style="color:' + BLUE + '">data fit <i>F</i></span> &nbsp;<b>' + sg(g.dataFit) + '</b><br>' +
+      '<span style="color:' + GREEN + '">simplicity <i>S</i></span> &nbsp;<b>' + sg(g.cplx) + '</b><br>' +
+      'constant &minus;(<i>n</i>/2) log 2&pi; &nbsp;<b>' + cst.toFixed(2) + '</b><br>' +
+      '<span style="color:' + AMBER + '"><i>L</i> = log <i>p</i>(y|&lambda;)</span> &nbsp;<b>' + g.lml.toFixed(2) + '</b><br>' +
       '<span style="color:' + SLATE + '">best &lambda; &asymp; ' + bestLam.toFixed(2) + '</span>';
 
     var note;
-    if (lam <= 0.12) note = 'The model believes <b>nothing carries</b>: the mean spikes at each cross and falls back to the prior between them. It fits anything, so it is prepared for almost every dataset &mdash; and <b>simplicity is near zero</b>.';
-    else if (lam >= 3) note = 'The model believes <b>everything carries</b>. It is prepared for very few datasets, so simplicity pays well (' + (g.cplx > 0 ? '+' : '') + g.cplx.toFixed(1) + ') &mdash; but it cannot bend to the crosses, and the fit collapses.';
-    else if (Math.abs(lam - bestLam) / bestLam < 0.45) note = 'Near the optimum. <b>Neither term is maximised</b> &mdash; that is the point: probability must sum to one, so explaining <i>this</i> data well and being prepared for <i>little else</i> cannot both be had.';
+    if (lam <= 0.12) note = 'The model believes <b>nothing carries</b>: the mean spikes at each cross and falls back to the prior between them. It fits anything, so it is prepared for almost every dataset &mdash; <i>F</i> is high but <b><i>S</i> is near zero</b>.';
+    else if (lam >= 3) note = 'The model believes <b>everything carries</b>. It is prepared for very few datasets, so <i>S</i> pays well (' + (g.cplx > 0 ? '+' : '') + g.cplx.toFixed(1) + ') &mdash; but it cannot bend to the crosses, and <b><i>F</i> collapses</b>.';
+    else if (Math.abs(lam - bestLam) / bestLam < 0.45) note = 'Near the optimum. <b>The sum <i>F</i> + <i>S</i> is maximised; neither term is</b> &mdash; probability must sum to one, so explaining <i>this</i> data well and being prepared for <i>little else</i> cannot both be had.';
     else note = 'Moving away from the optimum: one term is being bought at the other’s expense.';
     host.querySelector('[data-note]').innerHTML = note;
   }

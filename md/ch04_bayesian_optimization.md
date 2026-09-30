@@ -425,32 +425,27 @@ Pick a kernel and move the length scale. Left: the covariance $k(x,x')$ over the
 ### Fitting the kernel — maximise the marginal likelihood
 {sub: p. 28 of the source — the hyperparameters are fitted, not chosen}
 
-The kernel's knobs $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$ are chosen to make the observed data most probable, with $\mathbf f$ integrated out. Write $\mathbf C_\theta=\mathbf K_\theta+\sigma_\epsilon^2\mathbf I$:
+The kernel's knobs $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$ are chosen to make the observed data most probable, with $\mathbf f$ integrated out. Write $\mathbf C_\theta=\mathbf K_\theta+\sigma_\epsilon^2\mathbf I$, so that $\mathbf y\mid\theta\sim\mathcal N(\mathbf 0,\mathbf C_\theta)$:
 
-$$\begin{aligned}
-\theta^*&=\argmax_\theta\ \log p(\mathbf y_{1:n}\mid\theta)
-=\argmax_\theta\ \log\int p(\mathbf y_{1:n}\mid\mathbf f_{1:n},\theta)\,p(\mathbf f_{1:n}\mid\theta)\,d\mathbf f_{1:n}\\
-&=\argmax_\theta\ \Big[\underbrace{-\tfrac12\,\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\hl{\text{data fit}}}\ \underbrace{-\,\tfrac12\log|\mathbf C_\theta|}_{\hl{\text{simplicity}}}\ -\ \tfrac n2\log 2\pi\Big]
-\end{aligned}$$
+$$\mathcal L(\theta)=\log p(\mathbf y\mid\theta)
+=\underbrace{-\tfrac12\,\mathbf y^\top\mathbf C_\theta^{-1}\mathbf y}_{\mathcal F(\theta)\ :\ \hl{\text{data fit}}}\ \underbrace{-\,\tfrac12\log|\mathbf C_\theta|}_{\mathcal S(\theta)\ :\ \hl{\text{simplicity}}}\ \underbrace{-\ \tfrac n2\log 2\pi}_{\text{constant}}
+\qquad\Longrightarrow\qquad
+\theta^*=\argmax_\theta\ \big[\,\mathcal F(\theta)+\mathcal S(\theta)\,\big]$$
 
 ::: reveal
 ::: cols
-::: col Data fit
-Rises toward zero when $\mathbf y$ is typical under $\mathcal N(\mathbf 0,\mathbf C_\theta)$. A flexible kernel — short $\lambda$, large $\sigma_0$ — can always make this term happy.
+::: col Data fit $\mathcal F(\theta)$ — always $\le 0$
+How typical the observed $\mathbf y$ is under $\mathcal N(\mathbf 0,\mathbf C_\theta)$. A flexible kernel — short $\lambda$ — can bend to any $\mathbf y$ and keeps $\mathcal F$ near $0$; a rigid one — long $\lambda$ — cannot, and $\mathcal F$ falls.
 :::
-::: col.accent Simplicity
-$\log|\mathbf C_\theta|$ is the log-volume of datasets the prior spreads itself over, and it enters **with a minus sign** — so a kernel prepared for *fewer* datasets scores ==higher==, and a flexible one pays.
+::: col.accent Simplicity $\mathcal S(\theta)$
+$\log|\mathbf C_\theta|$ is the log-volume of datasets the prior spreads itself over. With the minus sign, a kernel prepared for *fewer* datasets — long $\lambda$ — scores ==higher==. Rasmussen & Williams call $+\tfrac12\log|\mathbf C_\theta|$ the *complexity penalty*; $\mathcal S$ is its negative.
 :::
-:::
-
-::: small
-Both terms are written so that **larger is better**, which is why the total can peak where neither is at its own maximum. Rasmussen & Williams call the second one the *complexity penalty*; with the minus sign in front it is the reward for staying simple.
 :::
 :::
 
 ::: reveal
-::: small
-Both terms are signed so that **larger is better**, which is why the total can peak where neither is at its own maximum. The next slide says why they must disagree.
+::: keypoint
+Both terms are **larger-is-better**, but ==no $\theta$ maximises both==: as $\lambda$ grows, $\mathcal S$ rises and $\mathcal F$ falls. So we maximise their **sum**, and $\theta^*$ is the best trade-off — not the maximiser of either term. The constant does not depend on $\theta$ and never moves $\theta^*$.
 :::
 :::
 
@@ -474,13 +469,13 @@ Simplicity pays — right up until it cannot reach the data.
 
 ::: reveal
 ::: keypoint
-==Occam's razor is not imposed here; it falls out of normalisation.== The first term asks *did it explain my data?*; the second asks *how much else was it also prepared to explain?*
+==Occam's razor is not imposed here; it falls out of normalisation.== $\mathcal F$ asks *did it explain my data?*; $\mathcal S$ asks *how little else was it prepared to explain?*
 :::
 :::
 
 ::: reveal
 ::: small
-The naming trips people up. Rasmussen & Williams call $-\tfrac12\log|\mathbf C_\theta|$ the **complexity penalty**, because it is what charges a model for being complex — but written with the minus sign in front, its *value* rises as the model gets simpler. That is why the curve in the widget climbs while the posterior straightens out.
+In symbols: as $\lambda$ grows, $\mathcal S(\theta)$ rises and $\mathcal F(\theta)$ falls. The widget two slides on draws exactly these two curves and their sum $\mathcal L(\theta)$.
 :::
 :::
 
@@ -511,13 +506,17 @@ A kernel that could explain anything spreads its probability thin and scores low
 
 ::: reveal
 ::: small
-It is Lecture 2's **prior predictive** $p(y)=\int p(y\mid\theta)\,p(\theta)\,d\theta$ (p. 14 of that deck), with $\mathbf f$ in the place of $\theta$ — the same object that, in route A, the posterior was normalised by. The next slide shows the two terms trading off as $\lambda$ moves.
+It is Lecture 2's **prior predictive** $p(y)=\int p(y\mid\theta)\,p(\theta)\,d\theta$ (p. 14 of that deck), with $\mathbf f$ in the place of $\theta$ — the same object that, in route A, the posterior was normalised by. The next slide shows $\mathcal F$ and $\mathcal S$ trading off as $\lambda$ moves.
 :::
 :::
 
 ### Turn the dial and watch the assumption move
 ::: widget gp-posterior
-The same seven observations, one kernel, one knob. Short length scale: the posterior spikes at each datum and falls back to the prior between them — the model believes nothing carries. Long length scale: a near-straight line that cannot bend to the data. The right panel is the marginal likelihood split into its two terms, and ==the total peaks where neither term is happy== — that is the Occam balance, drawn.
+The same seven observations, one kernel, one knob: $\theta=\lambda$, with $\sigma_0=1$ and $\sigma_\epsilon=0.1$ held fixed. Short $\lambda$: the posterior spikes at each datum and falls back to the prior between them. Long $\lambda$: a near-straight line that cannot bend to the data. Right: ==$\mathcal S$ rises, $\mathcal F$ falls, and their sum peaks where neither is at its own maximum== — the Occam balance, drawn.
+:::
+
+::: wformulas
+- $$\textcolor{#D97706}{\mathcal L(\lambda)}=\textcolor{#2563EB}{\underbrace{-\tfrac12\,\mathbf y^\top\mathbf C_\lambda^{-1}\mathbf y}_{\mathcal F(\lambda)\text{: data fit}}}\ \textcolor{#16A34A}{\underbrace{-\,\tfrac12\log|\mathbf C_\lambda|}_{\mathcal S(\lambda)\text{: simplicity}}}\ -\ \tfrac n2\log2\pi,\qquad \mathbf C_\lambda=\mathbf K_\lambda+\sigma_\epsilon^2\mathbf I$$
 :::
 
 ### The original regression exercise — fit $x\sin x$ before optimising
@@ -1107,10 +1106,10 @@ Three readings. The mean is a **linear combination** of observed $y$ values; its
 
 **Fitting $\theta=(\sigma_\epsilon,\sigma_0,\boldsymbol\lambda)$.** Marginalise the latent $\mathbf f$ away and maximise what is left:
 
-$$\theta^*=\argmax_\theta \log\!\int p(\mathbf y\mid\mathbf f,\theta)\,p(\mathbf f\mid\theta)\,d\mathbf f = \argmin_\theta\Big[\tfrac12\mathbf y^\top(\mathbf K_\theta+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y + \tfrac12\log|\mathbf K_\theta+\sigma_\epsilon^2\mathbf I|\Big]$$
+$$\theta^*=\argmax_\theta \log\!\int p(\mathbf y\mid\mathbf f,\theta)\,p(\mathbf f\mid\theta)\,d\mathbf f = \argmin_\theta\Big[\tfrac12\mathbf y^\top(\mathbf K_\theta+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y + \tfrac12\log|\mathbf K_\theta+\sigma_\epsilon^2\mathbf I|\Big] = \argmax_\theta\big[\mathcal F(\theta)+\mathcal S(\theta)\big]$$
 
 ::: small
-The two terms pull opposite ways as the length scale grows. On the seven-point example of the Act 2 widget, the simplicity term $-\tfrac12\log|\mathbf K+\sigma_\epsilon^2\mathbf I|$ — Rasmussen & Williams' *complexity penalty*, signed so that larger is better — climbs monotonically from $-0.04$ at $\lambda=0.05$ to $+12.2$ at $\lambda=10$, because a rigid model is *rewarded* for being prepared for little, while the data-fit term falls from $-0.75$ near $\lambda=0.45$ to $-58.9$ at $\lambda=10$. Their sum peaks at $\lambda\approx0.85$. That is an Occam's razor you did not have to write down, and it is a Lecture 1 optimisation nested inside the Lecture 4 loop.
+The two terms pull opposite ways as the length scale grows. On the seven-point example of the Act 2 widget, the simplicity term $\mathcal S=-\tfrac12\log|\mathbf K+\sigma_\epsilon^2\mathbf I|$ — the negative of Rasmussen & Williams' *complexity penalty*, so that larger is better — climbs monotonically from $-0.04$ at $\lambda=0.05$ to $+12.2$ at $\lambda=10$, because a rigid model is *rewarded* for being prepared for little, while the data-fit term $\mathcal F=-\tfrac12\mathbf y^\top(\mathbf K+\sigma_\epsilon^2\mathbf I)^{-1}\mathbf y$ falls from $-0.75$ near $\lambda=0.45$ to $-58.9$ at $\lambda=10$. Their sum $\mathcal F+\mathcal S$ peaks at $\lambda\approx0.85$. That is an Occam's razor you did not have to write down, and it is a Lecture 1 optimisation nested inside the Lecture 4 loop.
 :::
 
 ### Backup 3 — Expected Improvement, in closed form
