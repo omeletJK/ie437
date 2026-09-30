@@ -188,6 +188,9 @@ function renderNode(n, ctx) {
     case 'flow': {
       const items = rawText(n).split('\n').map(l => l.replace(/^\s*[-*]\s+/, '').trim()).filter(Boolean);
       const lbls = (n.arg || '').split('|').map(s => s.trim());
+      /* a last label `loop` or `loop: text` draws a dashed return arrow from the last box back to the first */
+      const lm = /^loop\b\s*:?\s*(.*)$/i.exec(lbls[lbls.length - 1] || '');
+      if (lm) lbls.pop();
       const out = [];
       items.forEach((it, i) => {
         if (i) {
@@ -201,7 +204,10 @@ function renderNode(n, ctx) {
         out.push('<div class="fbox ' + k + '"><b>' + mdInline(parts[0].trim()) + '</b>' +
           (parts[1] ? '<small>' + mdInline(parts[1].trim()) + '</small>' : '') + '</div>');
       });
-      return '<div class="flow">' + out.join('') + '</div>';
+      const row = '<div class="flow">' + out.join('') + '</div>';
+      if (!lm) return row;
+      return '<div class="flowloop">' + row + '<div class="freturn" style="--n:' + items.length + '"' +
+        (lm[1] ? ' data-l="' + esc(lm[1]) + '"' : '') + '></div></div>';
     }
 
     /* ::: quiz  The question?

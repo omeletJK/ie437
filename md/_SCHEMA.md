@@ -116,6 +116,8 @@ Blocks open with `::: name [argument]` and close with a bare `:::`. They nest.
                       prefix an item with `!` to emphasise, `!!` to mark it a hazard.
                       The arrow labels are drawn by CSS `content: attr()`, so they are
                       plain text — markdown and maths in them will not render.
+                      A last label `loop` (or `loop: text`) draws a dashed return arrow
+                      from the last box back to the first, for a cycle: `::: flow | | loop: again`.
 ::: widget id {json}  mount an interactive widget; the child text becomes its caption
 ::: wformulas         a list of formulas, one per state, for the widget on the same slide to
                       show one at a time (KaTeX runs only at build time, so a widget cannot

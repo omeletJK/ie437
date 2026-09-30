@@ -747,7 +747,7 @@ Source alignment: original PDF pp. 139–149.
 ### The loop
 {fill: center}
 
-::: flow | | 
+::: flow | | loop: new data, new posterior
 - **Learn** | GP posterior $(\mu,\sigma)$ — *Lecture 2, over a function*
 - **Optimise** | $x_{\text{next}}=\argmax_x A(x)$ — *Lecture 1, over a cheap surrogate*
 - !**Observe** | query $f(x_{\text{next}})$, append to $\mathcal D$ — *the one expensive thing*
