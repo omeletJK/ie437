@@ -822,7 +822,7 @@ Note also what the loop does *not* do: it never touches $f$ except at step 3. Al
 {sub: Example 4.1 · maximise $-1.3x^4+x^3+1.5x^2+1$ over $-1 \le x \le 1.5$ with noise $\sigma_\epsilon = 0.01$}
 
 ::: widget bo-run {"seed":5}
-Press *next query* and watch EI decide. The second query goes straight to the far boundary $x=-1$ — the mean there is unremarkable, but the uncertainty is enormous, and EI pays to find out. By the eighth the queries have collapsed onto $x=1.10$, and the EI peak has fallen from $0.48$ to $0.002$: ==the model expects little additional improvement under this acquisition rule.== A small EI is not a proof that the true global optimum has been found. The true maximum is $x^*=1.1010$, $f^*=2.2427$.
+Press *next query* and watch EI decide — or click either chart to spend a query where *you* think best, and compare it with EI's choice. The second query goes straight to the far boundary $x=-1$ — the mean there is unremarkable, but the uncertainty is enormous, and EI pays to find out. By the eighth the queries have collapsed onto $x=1.10$, and the EI peak has fallen from $0.48$ to $0.002$: ==the model expects little additional improvement under this acquisition rule.== A small EI is not a proof that the true global optimum has been found. The true maximum is $x^*=1.1010$, $f^*=2.2427$.
 :::
 
 ::: small

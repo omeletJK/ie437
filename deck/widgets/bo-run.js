@@ -7,6 +7,8 @@
    evaluation and appends it. The second query goes to the far
    boundary; by the eighth the queries have collapsed on the true
    optimum x* = 1.1010, f* = 2.2427, and max EI has fallen to 0.003.
+   Or click either chart to spend the query yourself: the log marks
+   your picks, and the note says where EI would have gone instead.
    ============================================================ */
 IE437.widget('bo-run', function (host, opts) {
   var E = IE437.el;
@@ -41,8 +43,11 @@ IE437.widget('bo-run', function (host, opts) {
 
   var GRID = []; (function () { for (var i = 0; i <= 500; i++) GRID.push(XD[0] + (XD[1] - XD[0]) * i / 500); })();
 
-  var rand, X, Y;
-  function reset() { rand = IE437.rng(opts.seed || 3); X = [0.30]; Y = [f(0.30) + SN * gauss()]; }
+  /* M[k]: who chose query k, and what EI said at that moment */
+  var rand, X, Y, M;
+  function reset() {
+    rand = IE437.rng(opts.seed || 3); X = [0.30]; Y = [f(0.30) + SN * gauss()]; M = [{ src: 'seed' }];
+  }
   function gauss() {
     var u = Math.max(1e-9, rand()), v = rand();
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
@@ -73,17 +78,22 @@ IE437.widget('bo-run', function (host, opts) {
       return (p.mu - fmax) * PHI(z) + p.s * pdf(z);
     });
   }
-  function step() {
+  function argmax(a) { var b = -1, bi = 0; for (var i = 0; i < a.length; i++) if (a[i] > b) { b = a[i]; bi = i; } return bi; }
+  /* spend one query at GRID[qi]; src is 'ei' or 'you' */
+  function query(qi, src) {
     if (X.length >= MAXN) return;
-    var g = fit(), ei = eiCurve(g), b = -1, bi = 0, i;
-    for (i = 0; i < ei.length; i++) if (ei[i] > b) { b = ei[i]; bi = i; }
-    X.push(GRID[bi]); Y.push(f(GRID[bi]) + SN * gauss());
+    var ei = eiCurve(fit()), bi = argmax(ei);
+    if (qi == null) qi = bi;
+    X.push(GRID[qi]); Y.push(f(GRID[qi]) + SN * gauss());
+    M.push({ src: src, ei: ei[qi], eiBest: ei[bi], xBest: GRID[bi] });
   }
+  function step() { query(null, 'ei'); }
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">Bayesian optimisation, ten queries</span><span class="wspacer"></span>' +
     '<span class="wlabel">queries</span><span class="wnum" data-n></span>' +
     '<button class="wb" data-s1>next query</button><button class="wb" data-auto data-s5>&times;5</button>' +
+    '<button class="wb" data-rs>reset</button>' +
     '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:center">' +
     '<div style="display:flex;flex-direction:column;gap:4px"><div data-c1></div><div data-c2></div></div>' +
@@ -98,10 +108,12 @@ IE437.widget('bo-run', function (host, opts) {
   var sv1 = IE437.svg(W, H1), sv2 = IE437.svg(W, H2);
   host.querySelector('[data-c1]').appendChild(sv1);
   host.querySelector('[data-c2]').appendChild(sv2);
+  sv1.style.cursor = sv2.style.cursor = 'crosshair';
   var L = 34, R = 12;
   var PX = function (v) { return L + (v - XD[0]) / (XD[1] - XD[0]) * (W - L - R); };
   function clear(s) { while (s.firstChild) s.removeChild(s.firstChild); }
 
+  var S = null, hov1, hov2;   /* the last fit, kept so hovering needs no refit */
   function draw() {
     var g = fit(), ei = eiCurve(g), i;
     var lo = -0.6, hi = 3.4;
@@ -126,7 +138,8 @@ IE437.widget('bo-run', function (host, opts) {
     E('path', { d: 'M' + (PX(XSTAR) - 5) + ' ' + (Y1(FSTAR) - 5) + 'l10 10M' + (PX(XSTAR) + 5) + ' ' + (Y1(FSTAR) - 5) + 'l-10 10',
       stroke: INK, 'stroke-width': 1.8 }, sv1);
     X.forEach(function (x, k) {
-      E('circle', { cx: PX(x), cy: Y1(Y[k]), r: 4.2, fill: 'none', stroke: INK, 'stroke-width': 1.8 }, sv1);
+      E('circle', { cx: PX(x), cy: Y1(Y[k]), r: 4.2, fill: 'none', stroke: M[k].src === 'you' ? AMBER : INK,
+        'stroke-width': 1.8 }, sv1);
       if (k === X.length - 1) E('circle', { cx: PX(x), cy: Y1(Y[k]), r: 2, fill: RED }, sv1);
     });
     E('line', { x1: L, y1: H1 - 20, x2: W - R, y2: H1 - 20, stroke: INK, 'stroke-opacity': .28 }, sv1);
@@ -137,6 +150,8 @@ IE437.widget('bo-run', function (host, opts) {
     });
     E('text', { x: L + 6, y: 18, 'font-size': 10, 'font-weight': 700, fill: BLUE, text: 'μ ± 2σ' }, sv1);
     E('text', { x: L + 68, y: 18, 'font-size': 10, 'font-weight': 700, fill: INK, 'fill-opacity': .55, text: 'true f' }, sv1);
+    E('text', { x: W - R - 3, y: 18, 'text-anchor': 'end', 'font-size': 10, fill: INK, 'fill-opacity': .45,
+      text: X.length < MAXN ? 'click to query x yourself' : 'budget spent' }, sv1);
 
     /* --- EI panel --- */
     clear(sv2);
@@ -146,13 +161,13 @@ IE437.widget('bo-run', function (host, opts) {
       ei.map(function (v, k) { return 'L' + PX(GRID[k]).toFixed(1) + ' ' + Y2(v).toFixed(1); }).join('') +
       'L' + PX(GRID[GRID.length - 1]) + ' ' + Y2(0) + 'Z', fill: AMBER, 'fill-opacity': .16,
       stroke: AMBER, 'stroke-width': 2 }, sv2);
-    var b = -1, bi = 0;
-    for (i = 0; i < ei.length; i++) if (ei[i] > b) { b = ei[i]; bi = i; }
+    var bi = argmax(ei), b = ei[bi];
     if (X.length < MAXN) {
       E('line', { x1: PX(GRID[bi]), y1: Y2(b), x2: PX(GRID[bi]), y2: Y2(0), stroke: GREEN, 'stroke-width': 1.4,
         'stroke-dasharray': '3 3' }, sv2);
       E('path', { d: 'M' + (PX(GRID[bi]) - 5) + ' ' + (Y2(b) - 11) + 'h10l-5 9Z', fill: GREEN }, sv2);
-      E('text', { x: PX(GRID[bi]) + 8, y: Y2(b) - 4, 'font-size': 10, 'font-weight': 700, fill: GREEN,
+      E('text', { x: PX(GRID[bi]) + (PX(GRID[bi]) > W - 60 ? -8 : 8), y: Y2(b) - 4,
+        'text-anchor': PX(GRID[bi]) > W - 60 ? 'end' : 'start', 'font-size': 10, 'font-weight': 700, fill: GREEN,
         text: 'next' }, sv2);
     }
     E('line', { x1: L, y1: Y2(0), x2: W - R, y2: Y2(0), stroke: INK, 'stroke-opacity': .28 }, sv2);
@@ -161,20 +176,31 @@ IE437.widget('bo-run', function (host, opts) {
       E('text', { x: PX(t), y: H2 - 8, 'text-anchor': 'middle', 'font-size': 9, fill: INK, 'fill-opacity': .45,
         'font-family': 'IBM Plex Mono, monospace', text: t }, sv2);
     });
-    E('text', { x: W - R - 3, y: 18, 'text-anchor': 'end', 'font-size': 10, 'font-weight': 700, fill: AMBER,
-      text: 'EI(x)   max ' + b.toFixed(3) }, sv2);
+    var hr = PX(GRID[bi]) < W - 150;   /* the header keeps clear of the 'next' marker */
+    E('text', { x: hr ? W - R - 3 : L + 8, y: 18, 'text-anchor': hr ? 'end' : 'start', 'font-size': 10,
+      'font-weight': 700, fill: AMBER, text: 'EI(x)   max ' + b.toFixed(3) }, sv2);
+    hov1 = E('g', { 'pointer-events': 'none' }, sv1);
+    hov2 = E('g', { 'pointer-events': 'none' }, sv2);
+    S = { P: P, ei: ei, Y1: Y1, Y2: Y2 };
 
     /* --- readout --- */
     host.querySelector('[data-n]').textContent = X.length + ' / ' + MAXN;
+    var full = X.length >= MAXN;
+    host.querySelector('[data-s1]').disabled = host.querySelector('[data-s5]').disabled = full;
+    var BY = { seed: 'seed', ei: 'EI', you: 'you' };
     var rows = X.map(function (x, k) {
       var run = Math.max.apply(null, Y.slice(0, k + 1));
       return '<div style="display:flex;justify-content:space-between' +
         (k === X.length - 1 ? ';color:' + RED + ';font-weight:600' : '') + '">' +
-        '<span>' + (k + 1) + '</span><span>x = ' + x.toFixed(3) + '</span><span>' + run.toFixed(3) + '</span></div>';
+        '<span style="width:18px">' + (k + 1) + '</span>' +
+        '<span style="width:34px;font-size:10px;' + (M[k].src === 'you' ? 'color:' + AMBER + ';font-weight:600' : '') +
+        '">' + BY[M[k].src] + '</span>' +
+        '<span>x = ' + (x < 0 ? '' : '&nbsp;') + x.toFixed(3) + '</span><span>' + run.toFixed(3) + '</span></div>';
     }).join('');
     host.querySelector('[data-log]').innerHTML =
       '<div style="display:flex;justify-content:space-between;color:var(--ink4);font-size:9.5px;' +
-      'letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px"><span>n</span><span>query</span><span>best</span></div>' + rows;
+      'letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px"><span style="width:18px">n</span>' +
+      '<span style="width:34px">by</span><span>query</span><span>best</span></div>' + rows;
 
     var gap = FSTAR - fmax, note;
     if (X.length === 1) note = 'One seed point. The posterior is nearly the prior and EI is largest where the model knows least.';
@@ -182,13 +208,57 @@ IE437.widget('bo-run', function (host, opts) {
     else if (gap > 0.05) note = 'Still climbing. EI is being spent partly on learning, partly on winning.';
     else if (b > 0.02) note = 'On the peak, and still checking &mdash; EI has not yet gone quiet.';
     else note = '<b>Converged.</b> Max EI is ' + b.toFixed(3) + ': the model no longer expects to learn anything by asking again.';
+    var last = M[M.length - 1];
+    if (last.src === 'you') note = 'You queried <b>x = ' + X[X.length - 1].toFixed(3) + '</b>, where EI was ' +
+      last.ei.toFixed(3) + '. EI would have gone to x = ' + last.xBest.toFixed(3) + ' (EI ' + last.eiBest.toFixed(3) + ').' +
+      (full ? '' : '<br>' + (gap > 0.05 ? 'Best so far is ' + gap.toFixed(3) + ' below f*.' : 'The best so far is on the peak.'));
+    if (full) note += ' <b>Budget spent</b> &mdash; reset to try another route.';
     host.querySelector('[data-note]').innerHTML =
       note + '<br><span style="color:var(--ink4)">true optimum f* = 2.2427 at x* = 1.1010</span>';
   }
 
+  /* --- hover a candidate x, click to spend a query there --- */
+  function gridAt(e, sv) {
+    var r = sv.getBoundingClientRect();
+    if (!r.width) return -1;
+    var sx = (e.clientX - r.left) * W / r.width;
+    if (!(sx >= L - 6 && sx <= W - R + 6)) return -1;
+    return Math.max(0, Math.min(GRID.length - 1, Math.round((sx - L) / (W - L - R) * (GRID.length - 1))));
+  }
+  function clearHover() { if (hov1) { clear(hov1); clear(hov2); } }
+  function hover(qi) {
+    clearHover();
+    if (qi < 0 || X.length >= MAXN || !S) return;
+    var x = PX(GRID[qi]), p = S.P[qi], v = S.ei[qi];
+    E('line', { x1: x, y1: 8, x2: x, y2: H1 - 20, stroke: AMBER, 'stroke-width': 1.2, 'stroke-dasharray': '2 3' }, hov1);
+    E('line', { x1: x, y1: S.Y1(p.mu + 2 * p.s), x2: x, y2: S.Y1(p.mu - 2 * p.s), stroke: BLUE, 'stroke-width': 3,
+      'stroke-opacity': .35 }, hov1);
+    E('circle', { cx: x, cy: S.Y1(p.mu), r: 3.4, fill: BLUE }, hov1);
+    var right = x > W - 150;
+    E('text', { x: x + (right ? -7 : 7), y: 34, 'text-anchor': right ? 'end' : 'start', 'font-size': 10, fill: INK,
+      'fill-opacity': .75, 'font-family': 'IBM Plex Mono, monospace',
+      text: 'x=' + GRID[qi].toFixed(3) + '  μ=' + p.mu.toFixed(2) + '  σ=' + p.s.toFixed(2) }, hov1);
+    E('line', { x1: x, y1: 8, x2: x, y2: S.Y2(0), stroke: AMBER, 'stroke-width': 1.2, 'stroke-dasharray': '2 3' }, hov2);
+    E('circle', { cx: x, cy: S.Y2(v), r: 3.4, fill: AMBER }, hov2);
+    E('text', { x: x + (right ? -7 : 7), y: Math.max(20, S.Y2(v) - 6), 'text-anchor': right ? 'end' : 'start',
+      'font-size': 10, 'font-weight': 700, fill: AMBER, text: 'EI ' + v.toFixed(3) }, hov2);
+  }
+  [sv1, sv2].forEach(function (sv) {
+    sv.addEventListener('pointermove', function (e) { hover(gridAt(e, sv)); });
+    sv.addEventListener('pointerleave', clearHover);
+    sv.addEventListener('click', function (e) {
+      /* draw() detaches e.target, so the stage could no longer tell this click came from a widget */
+      e.stopPropagation();
+      var qi = gridAt(e, sv);
+      if (qi < 0 || X.length >= MAXN) return;
+      query(qi, 'you'); draw(); hover(qi);
+    });
+  });
+
   host.querySelector('[data-s1]').onclick = function () { step(); draw(); };
   host.querySelector('[data-s5]').onclick = function () { for (var i = 0; i < 5; i++) step(); draw(); };
   var __reset = function () { reset(); draw(); };
+  host.querySelector('[data-rs]').onclick = __reset;
 
   reset(); draw();
   return { reset: __reset, finish: function () { reset(); while (X.length < MAXN) step(); draw(); } };
