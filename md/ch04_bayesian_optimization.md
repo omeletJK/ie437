@@ -661,10 +661,10 @@ Each slice contributes ==the green length times the red one== — how far above 
 Here $\Phi$ is the standard normal CDF, $\xi\ge0$ is an improvement margin, and $\kappa\ge0$ weights uncertainty. In the noiseless case, $f^{+}$ is the best observed value. With noise, the incumbent requires a noise-aware definition.
 
 ::: reveal
-::: block PI's flaw, and why EI exists | the source deck's own words
-"The formulation is pure exploitation. Points that have a high probability of being ==infinitesimally== greater than $f(x^{+})$ will be drawn over points that offer larger gains but less certainty."
+::: block Why PI plays it safe — and why EI exists
+PI asks only ==*will* $x$ beat $f^{+}$?== — never *by how much*. A point just beside the incumbent, with $\mu$ a hair above $f^{+}$ and almost no uncertainty, wins almost surely: $\mathrm{PI}\approx1$, for a gain of almost nothing. An unexplored point that could win big — but whose mean is no better than $f^{+}$ — scores at most $\tfrac12$. So PI keeps taking the safe sliver: ==exploitation, not exploration==. It ranks bets by the chance of winning and ignores the payout.
 
-The patch is a margin $\xi\ge0$ — demand improvement *by at least $\xi$* — scheduled large early and decayed to zero. But it is a knob you must tune: too small and the search is highly local, too large and it is excessively global. EI needs no such knob, because integrating $\max(0,f-f^{+})$ already counts **how far above the line** the improvement is, not merely whether it happens.
+**Patch:** count only wins larger than a margin $\xi$ — a knob to tune: too small and the search stays local, too large and it wanders. **Fix:** EI weights each win by its size $(f-f^{+})$, so a large, uncertain gain can outscore a certain sliver, with no knob at all.
 :::
 :::
 
