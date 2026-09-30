@@ -719,29 +719,84 @@ Keep both GP predictions, but set κ = 0. Which candidate is selected? Does this
 Distinguish a calculation about one acquisition choice from evidence about a whole optimization strategy.
 :::
 
-### Optimise the acquisition — spend computation before spending an experiment
-{sub: Inner optimisation problem}
+### Optimise the acquisition — an optimisation inside the optimisation
+{sub: source pp. 139–140 · a cheap problem with an awkward shape}
 
-The physical experiment is expensive. Evaluating the acquisition $a_t(x)$ uses the current surrogate and is comparatively cheap.
+Every round of BO ends in an inner problem, $\;x_{t+1}=\argmax_{x\in\mathcal X}\,a_t(x)$. One evaluation of $a_t$ is one GP prediction — $O(n^2)$ arithmetic, microseconds — against hours for one experiment. So we can afford ==thousands of evaluations of $a_t$==. What makes the problem awkward is its shape.
 
-| Method from the source | How it searches $a_t(x)$ | What to check |
-|---|---|---|
-| Gradient methods / BFGS | climb from an initial point | use multiple starts for a nonconvex score |
-| **DIRECT** | divide a bounded domain into promising rectangles | does not require gradients; scales poorly with dimension |
-| **CMA-ES** | sample candidates and adapt a Gaussian search distribution | respect bounds and allow enough candidate evaluations |
+::: widget acq-optimisers {"mode":"surface"}
+A real EI surface: a GP on twenty observations (crosses) in $[0,1]^2$, colour $\propto\sqrt{a_t}$. Drag the slice to see the profile. EI is $\approx 0$ wherever the GP is confident a point cannot beat $f^+$ — ==flat almost everywhere, with a few narrow peaks==.
+:::
+
+::: reveal
+::: small
+The source deck names three families of solver (p. 140): **gradient methods** (conjugate gradient, BFGS), **Lipschitz-based heuristics** (DIRECT) and **evolutionary algorithms** (CMA-ES). The next three slides run each one on this surface.
+:::
+:::
+
+### Method 1 — gradient ascent, from many starts
+{sub: source p. 141 · Wilson, Hutter & Deisenroth (2018); BoTorch, Balandat et al. (2020)}
+
+EI is differentiable, and with $z=(\mu-f^+)/\sigma$ its gradient is closed-form:
+
+$$\frac{\partial\,\mathrm{EI}}{\partial\mu}=\Phi(z),\quad \frac{\partial\,\mathrm{EI}}{\partial\sigma}=\phi(z)\quad\Longrightarrow\quad \nabla_x a_t(x)=\Phi(z)\,\nabla_x\mu(x)+\phi(z)\,\nabla_x\sigma(x),\qquad x\leftarrow x+\eta\,\nabla_x a_t(x)$$
+
+::: widget acq-optimisers {"mode":"grad"}
+Press → to walk it: five random starts; then 128 raw samples; the best five as starts; the climbs; the chosen $x_{t+1}$ (★). The dashed ring marks the true maximiser.
+:::
+
+::: note
+Recipe as in BoTorch (Balandat et al., NeurIPS 2020). Why this inner problem matters, and gradient-based maximisation of acquisition functions: Wilson, Hutter & Deisenroth, *Maximizing acquisition functions for Bayesian optimization*, NeurIPS 2018.
+:::
+
+### Method 2 — DIRECT, dividing rectangles
+{sub: source pp. 142–146 · Jones, Perttunen & Stuckman (1993); Finkel's user guide (2003)}
+
+Sample the centre $c_j$ of each box; $d_j$ is its centre-to-corner size. If $a_t$ were $K$-Lipschitz, box $j$ could hold at most $a_t(c_j)+K d_j$. DIRECT divides every box that is best for ==*some*== $K\ge0$:
+
+$$\exists K\ge0:\quad a_t(c_j)+K\,d_j\;\ge\;a_t(c_i)+K\,d_i\quad\text{for all boxes } i$$
+
+::: widget acq-optimisers {"mode":"direct"}
+Each → is one iteration: the yellow boxes are the potentially optimal ones, and they are trisected along their longest side. Right: every box as a point (size, value); the selected ones form the upper-right hull.
+:::
+
+### Method 3 — CMA-ES, moving a Gaussian
+{sub: source pp. 147–149 · Hansen & Ostermeier (2001); Hansen, *The CMA Evolution Strategy: A Tutorial* (2016)}
+
+Search with a distribution over inputs instead of a single point — **sample** $\lambda$ points, **select** the $\mu$ best, **re-fit** the Gaussian:
+
+$$\begin{aligned}
+&\mathbf x_k^{(g+1)}\sim\mathbf m^{(g)}+\sigma^{(g)}\mathcal N\big(\mathbf 0,\mathbf C^{(g)}\big),\qquad
+\mathbf m^{(g+1)}=\mathbf m^{(g)}+c_m\textstyle\sum_{i=1}^{\mu}w_i\big(\mathbf x_{i:\lambda}^{(g+1)}-\mathbf m^{(g)}\big),\\
+&\mathbf C_\mu^{(g+1)}=\textstyle\sum_{i=1}^{\mu}w_i\big(\mathbf x_{i:\lambda}^{(g+1)}-\mathbf m^{(g)}\big)\big(\mathbf x_{i:\lambda}^{(g+1)}-\mathbf m^{(g)}\big)^{\!\top}
+\end{aligned}$$
+
+::: widget acq-optimisers {"mode":"cma"}
+Each → is one generation: grey ellipse = the current Gaussian ($2\sigma$), dots = its $\lambda=12$ samples, blue = the $\mu=6$ kept, amber = the re-fitted Gaussian. $x_{i:\lambda}$ is the $i$-th best sample; $w_i$ are decreasing weights.
+:::
+
+::: note
+The widget uses the rank-$\mu$ estimation shown on the source's p. 148, blended with the previous $\mathbf C$; full CMA-ES adds evolution paths and step-size control.
+:::
+
+### Three optimisers, one inner problem
+{sub: what each spends, and when to reach for it}
+
+| | Gradient, multi-start | DIRECT | CMA-ES |
+|---|---|---|---|
+| uses | values **and gradients** of $a_t$ | values only | values only (ranks) |
+| global? | only through the starts | yes, by design (bounded box) | partly — one Gaussian, restarts help |
+| cost grows with dimension | mildly | fast | moderately |
+| typical use | the default in BoTorch-style libraries | low-dimensional boxes | non-smooth or awkward $a_t$ |
 
 ::: flow
-- **Many cheap scores** | compare candidate inputs using the surrogate
-- **One selected input** | approximately maximise the acquisition
+- **Many cheap scores** | evaluate $a_t$ hundreds or thousands of times
+- **One selected input** | $x_{t+1}\approx\argmax_x a_t(x)$
 - !**One expensive measurement** | query the real objective and update the data
 :::
 
 ::: keypoint
-A locally optimised acquisition can miss a better query. Solving this inner problem does **not** reveal the unknown objective without an experiment.
-:::
-
-::: note
-Source alignment: original PDF pp. 139–149.
+DIRECT and CMA-ES could optimise $f$ itself when $f$ can be evaluated (source p. 140) — but they need hundreds of evaluations, exactly what an expensive $f$ cannot afford. ==BO spends those evaluations on $a_t$ instead==, and a locally optimised $a_t$ still costs only a slightly worse query, never an extra experiment.
 :::
 
 ### The loop
