@@ -692,14 +692,10 @@ One posterior, five observations, three scores drawn underneath it, each with it
 ### Temperature thread — choose an informative heater experiment
 {sub: shared teaching example · predict before revealing the calculation}
 
-**The running example, restated.** A room sits at 20°C against a target of 22°C, so the error is $x=T-22=-2$. A normalized heater command $u\in[0,2]$ gives $x'=x+u$ at a one-step cost $c=(x')^2+u^2$ — a teaching model, not building physics.
+Room at 20 °C, target 22 °C, so the error is $x=-2$. A heater command $u\in[0,2]$ gives $x'=x+u$ at cost $c=(x')^2+u^2$. BO **never sees this formula** — it can only run an experiment and read the score $f=-c$. Its GP currently believes:
 
-Here the cost formula is **hidden** from the BO learner, which sees only a score $f=-c$ it may measure. A GP gives candidate A ($u=0.8$) mean −1.9, standard deviation 0.1; candidate B ($u=1.6$) mean −2.2, standard deviation 0.5. Use UCB $a(u)=\mu(u)+\kappa\sigma(u)$.
-
-**Predict:** At κ = 1, can the worse predicted mean still lead to the selected experiment?
-
-::: reveal
-**Calculate and check.** A has acquisition $-1.9+0.1=\mathbf{-1.8}$; B has $-2.2+0.5=\mathbf{-1.7}$. UCB selects **B**. In the teaching simulator its measured score is $-[(-2+1.6)^2+1.6^2]=\mathbf{-2.72}$.
+::: widget ucb-heater {"kappa":1}
+**Predict:** at $\kappa=1$, does UCB $a(u)=\mu(u)+\kappa\sigma(u)$ pick **A** (better mean, narrow band) or **B** (worse mean, wide band)? Press → to add each candidate's optimism bonus $\kappa\sigma$, and → again to run the experiment it picks.
 :::
 
 ::: keypoint
@@ -709,10 +705,10 @@ Acquisition value is not predicted reward or measured reward. A disappointing ex
 ### Try it — the exploration weight becomes zero
 {sub: work independently · reveal only after writing an answer}
 
-Keep both GP predictions, but set κ = 0. Which candidate is selected? Does this establish that the resulting policy is better over an entire experimental budget?
+Same two beliefs, but now $\kappa=0$. **Which candidate is selected?** And if its measured score turns out better, **does that show $\kappa=0$ is the better policy?** Write both answers, then press →.
 
-::: reveal
-**Check your answer.** A is selected because −1.9 exceeds −2.2. This establishes only the next choice. Comparing strategies requires repeating the loop with the same initial data, budget and evaluation rules.
+::: widget ucb-heater {"kappa":0}
+After the reveal, drag $\kappa$: each line's slope is its $\sigma$, so ==the more uncertain candidate gains faster as $\kappa$ grows==, and the pick flips where the lines cross.
 :::
 
 ::: keypoint
