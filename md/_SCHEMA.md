@@ -274,7 +274,7 @@ Currently available:
 | Ch 1 | `formulation-balance` · `convex-set` · `convex-watershed` · `first-order-proof` (necessary / sufficient / counterexample) · `kkt-point` (draggable) · `kkt-wall` (balance / adjustable bound and shadow price) · `trust-region` |
 | Ch 2 | `bayes-anatomy` · `bayes-update` · `ci-vs-cr` · `bayes-regression` · `ridge-lasso-prior` · `bayes-predictive` (coin batch / Normal prediction) · `ch02-experiments` (sampling, Poisson, Normal precision, categories, residuals, regularisation) |
 | Ch 3 | `factor-count` · `explaining-away` · `inference-cost` · `influence-diagram` |
-| Ch 4 | `gp-posterior` · `acquisition-zoo` · `acq-optimisers` (inner argmax: surface / grad / direct / cma) · `bo-run` · `explore-regret` |
+| Ch 4 | `gp-posterior` · `acquisition-zoo` · `acq-optimisers` (inner argmax: surface / grad / direct / cma) · `bo-run` · `constrained-ei` (EI × PF vs plain EI, stepped) · `explore-regret` |
 | Ch 5 | `two-failures` · `surrogate-exploit` · `conservative-coms` · `ensemble-alarm` |
 | Ch 6 | `forward-inverse` · `latent-beta` · `cbas-ladder` · `condition-shift` |
 | Ch 7 | `value-propagation` · `dp-schedules` · `discount-dial` · `contraction-rate` |

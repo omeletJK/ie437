@@ -968,50 +968,129 @@ And it costs something up front. In the professor's own wind-farm study, the con
 :::
 :::
 
-### Unknown constraints — model feasibility as well as reward
-{sub: Constrained BO problem}
+### Unknown constraints — feasibility is also an experiment
+{sub: source pp. 176–178 · Gardner et al. (2014)}
 
-Lecture 1 wrote constraints as known functions. Now both performance $f(x)$ and a constraint $c(x)\le0$ may require an expensive measurement.
+Lecture 1 wrote constraints as known functions: you could check $c(x)$ before spending anything. Here the constraint is ==as expensive to evaluate as the objective==, and you learn whether $x$ was feasible only after running it.
 
-$$\max_x f(x)\quad\text{subject to }c(x)\le0.$$
+$$\max_x f(x)\quad\text{subject to}\quad c(x)\le\lambda$$
 
-| Surrogate | Question answered |
-|---|---|
-| Posterior for $f(x)$ | how much could this design improve performance? |
-| Posterior for $c(x)$ | how likely is this design to be feasible? |
+| Setting in the source | Maximise $f(x)$ | Constraint $c(x)\le\lambda$ |
+|---|---|---|
+| Tuning an approximate ML model | speed (shorter test time) | accuracy must match the exact model |
+| Chemical experimental design | process yield | unwanted by-product below a threshold |
+| CPU micro-architecture | processor speed | power usage within a fixed budget |
 
-If $c(x)\mid D\sim\mathcal N(\mu_c(x),\sigma_c^2(x))$, with $\sigma_c(x)>0$, then
-
-$$P(\text{feasible}\mid x,D)=\Phi\!\left(\frac{-\mu_c(x)}{\sigma_c(x)}\right).$$
+::: reveal
+In each case **one experiment returns both numbers**: running $x$ yields $y^F\approx f(x)$ and $y^C\approx c(x)$ together. So the data set grows in pairs, and BO needs a belief about each.
+:::
 
 ::: keypoint
 A good predicted objective is not enough. **Feasibility is also uncertain**, and an acquisition score is not a guarantee that every tested design is safe.
 :::
 
 ::: note
-Source alignment: original PDF pp. 176–185.
+Source alignment: original PDF pp. 176–178. The source also writes several constraints as $h_i(x)<a_i$; that form returns two slides on.
 :::
 
-### Constrained improvement — one numerical choice
-{sub: Independence assumptions made explicit}
+### Two surrogates, one loop
+{sub: source p. 179 · the BO loop with a second GP}
 
-Use a feasible incumbent $f^+$ and define $I(x)=\max(0,f(x)-f^+)$. If objective and constraint posteriors are independent,
+::: flow | | loop: both data sets grow
+- **Learn twice** | $f\sim\mathcal{GP}$ from $\mathcal D^F_t$, $\;c\sim\mathcal{GP}$ from $\mathcal D^C_t$
+- **Choose** | $x_{t+1}=\argmax_x A_t(x;\mathcal D^F_t,\mathcal D^C_t)$
+- !**Run one experiment** | observe $y^F_{t+1}$ *and* $y^C_{t+1}$
+- **Append** | $(x_{t+1},y^F_{t+1})\to\mathcal D^F$, $\;(x_{t+1},y^C_{t+1})\to\mathcal D^C$
+:::
 
-$$\operatorname{CEI}(x)=\mathbb E[I(x)\mathbf1\{c(x)\le0\}\mid D]=\operatorname{EI}(x)\,P(c(x)\le0\mid D).$$
+::: cols
+::: col Objective GP
+$f(x)\mid\mathcal D^F\sim\mathcal N\big(\mu_F(x),\sigma_F^2(x)\big)$ answers: *how much could this design improve performance?* It is the GP of Act 2, unchanged.
+:::
+::: col.accent Constraint GP
+$c(x)\mid\mathcal D^C\sim\mathcal N\big(\mu_C(x),\sigma_C^2(x)\big)$ answers: *how likely is this design to be feasible?* Same machinery, its own kernel hyperparameters $\theta^C$.
+:::
+:::
 
-| Candidate | Expected improvement | Probability of feasibility | CEI |
-|---|---:|---:|---:|
-| A | 2.0 | 0.20 | 0.40 |
-| B | 1.0 | 0.90 | **0.90** |
+::: reveal
+Only the acquisition $A_t$ is new — it must read **both** posteriors. The source builds it by editing EI.
+:::
 
-B has less potential improvement but more **expected feasible improvement**. For several posterior-independent constraints, multiply their feasibility probabilities. With dependence, use their **joint** distribution instead.
+### Constrained improvement — two edits to EI
+{sub: source pp. 180–181 · from I(x) to Δ(x)·I(x)}
 
-::: keypoint
-This calculation assumes a feasible incumbent exists. If none has been found, a feasibility-search rule is needed before ordinary improvement over that incumbent is defined.
+Recall $\operatorname{EI}(x)=\mathbb E[I(x)\mid\mathcal D]$ with $I(x)=\max\big(0,f(x)-f(x^+)\big)$. Constraints enter through two edits:
+
+::: cols
+::: col 1 · The incumbent must be feasible
+A high but infeasible result is not a design you could ship, so it is no benchmark. $x^+$ becomes the best **feasible** observation:
+$$f^+=\max\{\,y^F_i : y^C_i\le\lambda\,\}$$
+:::
+::: col.accent 2 · Infeasible points improve nothing
+$$I_C(x)=\Delta(x)\,I(x),\qquad \Delta(x)=\begin{cases}1 & c(x)\le\lambda\\ 0 & \text{otherwise}\end{cases}$$
+:::
+:::
+
+::: reveal
+Before the experiment $\Delta(x)$ is unknown — a **Bernoulli** variable, and for $Y\sim\mathrm B(p)$, $\mathbb E[Y]=1\cdot p+0\cdot(1-p)=p$. Its parameter is read off the constraint GP:
+
+$$\mathbb E[\Delta(x)]=\operatorname{PF}(x)=P\big(c(x)\le\lambda\mid\mathcal D^C\big)=\int_{-\infty}^{\lambda}p\big(c(x)\mid\mathcal D^C\big)\,dc=\hl{\Phi\!\left(\frac{\lambda-\mu_C(x)}{\sigma_C(x)}\right)}$$
 :::
 
 ::: note
-Source alignment: original PDF pp. 181–183.
+Source alignment: original PDF pp. 180–181. The source writes $\Pr(x)$ for $\operatorname{PF}(x)$, the probability of feasibility.
+:::
+
+### Expected constrained improvement — PF × EI
+{sub: source p. 182 · where independence is used}
+
+$$\operatorname{EI}_C(x)=\mathbb E\big[\Delta(x)\,I(x)\mid\mathcal D^F,\mathcal D^C\big]\;\overset{\text{indep.}}{=}\;\underbrace{\mathbb E\big[\Delta(x)\mid\mathcal D^C\big]}_{\operatorname{PF}(x)}\;\underbrace{\mathbb E\big[I(x)\mid\mathcal D^F\big]}_{\operatorname{EI}(x)}$$
+
+$\Delta(x)$ depends only on $c(x)$ and $I(x)$ only on $f(x)$. With **two separate GPs**, the posteriors of $c(x)$ and $f(x)$ are independent at each $x$, so the expectation factorises. Both factors are closed-form: the constrained score costs one extra GP prediction.
+
+::: reveal
+| Candidate | $\operatorname{EI}(x)$ | $\operatorname{PF}(x)$ | $\operatorname{EI}_C(x)$ |
+|---|---:|---:|---:|
+| A — promising but risky | 2.0 | 0.20 | 0.40 |
+| B — modest but safe | 1.0 | 0.90 | **0.90** |
+
+B has less potential improvement but more **expected feasible improvement**. $\operatorname{PF}$ acts as a soft veto: $\operatorname{PF}\to0$ silences any EI, and $\operatorname{PF}\to1$ gives back ordinary EI.
+:::
+
+::: note
+Source alignment: original PDF p. 182. The source calls the step "conditional independence of $c(x)$ and $f(x)$ given $x$"; it is a modelling choice made by fitting two independent GPs, not a fact about the experiment.
+:::
+
+### Constrained BO, run — EI × PF against plain EI
+::: widget constrained-ei
+Press → to spend one query. Top: objective GP; middle: constraint GP and threshold $\lambda$; bottom: $\operatorname{PF}$ (green), EI (dashed) and ==the score actually maximised== (amber). Red shading is where $c>\lambda$ — drawn for us, unknown to the algorithm. Switch to *EI alone* to replay the same budget with a rule that ignores $c$.
+:::
+
+### Several constraints, and no feasible point yet
+{sub: source p. 183 · and what the formula leaves open}
+
+For constraints $c_i(x)\le\lambda_i$, $i=1,\dots,m$, only $\operatorname{PF}$ changes; $\operatorname{EI}_C=\operatorname{PF}\cdot\operatorname{EI}$ stays.
+
+$$\operatorname{PF}(x)=P\big(c_1(x)\le\lambda_1,\dots,c_m(x)\le\lambda_m\mid\mathcal D^C\big)\;\approx\;\prod_{i=1}^{m}P\big(c_i(x)\le\lambda_i\mid\mathcal D^C\big)$$
+
+The product is exact when each $c_i$ has its own independent GP. For correlated constraints, use their **joint** posterior instead.
+
+::: reveal
+| Situation | What the formula says | What to do |
+|---|---|---|
+| No feasible observation yet | $f^+$ is undefined, so EI is too | maximise $\operatorname{PF}(x)$ alone until one feasible point is found |
+| Constraint is cheap or known | nothing to learn about $c$ | check it directly and search only the feasible set (Lecture 1) |
+| An infeasible trial is unacceptable | $\operatorname{EI}_C$ only *discourages* risky queries | *safe* BO restricts queries to a high-confidence safe set (Sui et al., 2015) |
+:::
+
+::: reveal
+::: small
+The source closes (pp. 184–185) with Gardner et al.'s 2-D tests: uniform sampling spreads its budget everywhere, plain BO piles queries onto the infeasible optimum, and ==constrained BO concentrates on the best feasible region== — the pattern the widget shows in 1-D.
+:::
+:::
+
+::: note
+Source alignment: original PDF pp. 183–185. Gardner, Kusner, Xu, Weinberger & Cunningham, *Bayesian Optimization with Inequality Constraints*, ICML 2014. Sui, Gotovos, Burdick & Krause, *Safe Exploration for Optimization with Gaussian Processes*, ICML 2015.
 :::
 
 ### Several objectives — a Pareto set replaces one best number
