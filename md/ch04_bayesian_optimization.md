@@ -408,7 +408,7 @@ $$\sigma_y^2(x)=0.488+0.25=0.738.$$
 ### The kernel is the assumption
 {sub: pp. 22–25 of the source — every kernel is a different belief about f, visible before any data}
 
-::: widget kernel-gallery
+::: widget kernel-gallery {"try":"Pick a kernel, drag λ","tryAt":"bar"}
 Pick a kernel and move the length scale. Left: the covariance $k(x,x')$ over the input range — a band along the diagonal says *nearby points agree*, stripes say *the pattern repeats*. Right: four functions the prior considers typical, drawn from ==the same random numbers for every kernel==, so what changes is the assumption alone. **ARD** is the SE kernel with one $\lambda_d$ per input dimension; a large $\lambda_d$ switches that dimension off.
 :::
 
@@ -511,7 +511,7 @@ It is Lecture 2's **prior predictive** $p(y)=\int p(y\mid\theta)\,p(\theta)\,d\t
 :::
 
 ### Turn the dial and watch the assumption move
-::: widget gp-posterior
+::: widget gp-posterior {"try":"Click the plot to add a point"}
 The same seven observations, one kernel, one knob: $\theta=\lambda$, with $\sigma_0=1$ and $\sigma_\epsilon=0.1$ held fixed. Short $\lambda$: the posterior spikes at each datum and falls back to the prior between them. Long $\lambda$: a near-straight line that cannot bend to the data. Right: ==$\mathcal S$ rises, $\mathcal F$ falls, and their sum peaks where neither is at its own maximum== — the Occam balance, drawn.
 :::
 
@@ -557,7 +557,7 @@ The length scale says how far a datum's influence reaches. Short $\ell$ means ea
 
 An expensive $f$, three samples, and a regression through them. The regression has a highest point. Spend a query there, refit, and repeat. No uncertainty anywhere — just fit and exploit.
 
-::: widget greedy-trap
+::: widget greedy-trap {"try":"Click the red peak"}
 The green dashes are the **true $f$** — drawn for us, invisible to the fit, which has only the three grey samples. ==Click the red peak== to spend a query on it, then the new peak, and again. The tall peak on the right stays in plain sight the whole time.
 :::
 
@@ -635,7 +635,7 @@ At one input the GP is only a Gaussian, $f(x)\mid\mathcal D\sim\mathcal N(\mu(x)
 
 $$\mathrm{PI}(x)=\Pr\big(f(x)>f^{+}\big)=\int_{f^{+}}^{\infty} p(f\mid\mathcal D)\,\mathrm{d}f=\Phi\!\Big(\frac{\mu(x)-f^{+}}{\sigma(x)}\Big)$$
 
-::: widget improvement-integral {"mode":"pi"}
+::: widget improvement-integral {"mode":"pi","try":"Press shade the tail","tryAt":"bar"}
 The curve on the dashed column *is* the posterior at that $x$, sideways; shade it and the number appears. ==That one area is one point of the PI curve below== — move the candidate and watch the dot travel along it. And there is the complaint against PI: a sliver a thousandth above the line counts the same as a gain of half a unit, because the integrand is $p(f)$, which has no idea how high $f$ is.
 :::
 
@@ -685,7 +685,7 @@ A offers a likely small gain. B offers a less certain but potentially larger gai
 :::
 
 ### The three rules, disagreeing
-::: widget acquisition-zoo
+::: widget acquisition-zoo {"try":"Change ξ and κ","tryAt":"bar"}
 One posterior, five observations, three scores drawn underneath it, each with its own $\argmax$ marked. At $\xi=0$, PI points at $x=0.630$ — hard against the incumbent at $0.65$, buying a near-certain sliver. EI points at $x=0.470$, into the wide-uncertainty valley where the true maximum actually is. Turn $\xi$ up and PI walks out to meet EI; turn $\kappa$ down and UCB collapses onto the greedy mean. ==The knob is the same knob in all three.==
 :::
 
@@ -707,7 +707,7 @@ Acquisition value is not predicted reward or measured reward. A disappointing ex
 
 Same two beliefs, but now $\kappa=0$. **Which candidate is selected?** And if its measured score turns out better, **does that show $\kappa=0$ is the better policy?** Write both answers, then press →.
 
-::: widget ucb-heater {"kappa":0}
+::: widget ucb-heater {"kappa":0,"try":"Drag κ","tryAt":"bar"}
 After the reveal, drag $\kappa$: each line's slope is its $\sigma$, so ==the more uncertain candidate gains faster as $\kappa$ grows==, and the pick flips where the lines cross.
 :::
 
@@ -720,7 +720,7 @@ Distinguish a calculation about one acquisition choice from evidence about a who
 
 Every round of BO ends in an inner problem, $\;x_{t+1}=\argmax_{x\in\mathcal X}\,a_t(x)$. One evaluation of $a_t$ is one GP prediction — $O(n^2)$ arithmetic, microseconds — against hours for one experiment. So we can afford ==thousands of evaluations of $a_t$==. What makes the problem awkward is its shape.
 
-::: widget acq-optimisers {"mode":"surface"}
+::: widget acq-optimisers {"mode":"surface","try":"Drag the slice","tryAt":"bar"}
 A real EI surface: a GP on twenty observations (crosses) in $[0,1]^2$, colour $\propto\sqrt{a_t}$. Drag the slice to see the profile. EI is $\approx 0$ wherever the GP is confident a point cannot beat $f^+$ — ==flat almost everywhere, with a few narrow peaks==.
 :::
 
@@ -817,7 +817,7 @@ Note also what the loop does *not* do: it never touches $f$ except at step 3. Al
 ### Ten queries on a quartic
 {sub: Example 4.1 · maximise $-1.3x^4+x^3+1.5x^2+1$ over $-1 \le x \le 1.5$ with noise $\sigma_\epsilon = 0.01$}
 
-::: widget bo-run {"seed":5}
+::: widget bo-run {"seed":5,"try":"Click a chart to pick a query"}
 Press *next query* and watch EI decide — or click either chart to spend a query where *you* think best, and compare it with EI's choice. The second query goes straight to the far boundary $x=-1$ — the mean there is unremarkable, but the uncertainty is enormous, and EI pays to find out. By the eighth the queries have collapsed onto $x=1.10$, and the EI peak has fallen from $0.48$ to $0.002$: ==the model expects little additional improvement under this acquisition rule.== A small EI is not a proof that the true global optimum has been found. The true maximum is $x^*=1.1010$, $f^*=2.2427$.
 :::
 
@@ -982,7 +982,7 @@ Source alignment: original PDF pp. 69–94.
 :::
 
 ### How much exploration is the right amount?
-::: widget explore-regret {"seed":21}
+::: widget explore-regret {"seed":21,"try":"Switch the rule, drag the dial","tryAt":"bar"}
 Ten arms, unknown payout probabilities, a thousand pulls, cumulative regret on the vertical axis. Pure greed ($\varepsilon=0$) locks onto whichever arm happened to pay first and never recovers. Constant thrashing ($\varepsilon=0.5$) pays a fixed toll on every round. ==Compare the fixed exploration rates with UCB in this simulated run== — because it explores where the uncertainty actually is, rather than at random. That is the whole argument for $\mu+\kappa\sigma$, made without a Gaussian process anywhere in sight.
 :::
 
@@ -1108,7 +1108,7 @@ Source alignment: original PDF p. 182. The source calls the step "conditional in
 :::
 
 ### Constrained BO, run — EI × PF against plain EI
-::: widget constrained-ei
+::: widget constrained-ei {"try":"Switch EI × PF and EI alone","tryAt":"bar"}
 Press → to spend one query. Top: objective GP; middle: constraint GP and threshold $\lambda$; bottom: $\operatorname{PF}$ (green), EI (dashed) and ==the score actually maximised== (amber). Red shading is where $c>\lambda$ — drawn for us, unknown to the algorithm. Switch to *EI alone* to replay the same budget with a rule that ignores $c$.
 :::
 
@@ -1144,7 +1144,7 @@ Source alignment: original PDF pp. 183–185. Gardner, Kusner, Xu, Weinberger & 
 
 With $m$ objectives the unknown is a vector, $\mathbf f(x)=\big(f_1(x),\dots,f_m(x)\big)$, and no single value can play $f^+$. In this section ==both objectives are minimised== — less fuel, less time — so better lies toward the lower left.
 
-::: widget mobo-hypervolume {"mode":"front"}
+::: widget mobo-hypervolume {"mode":"front","try":"Click any car"}
 Press → to walk it; click any design to test it. $\mathbf y''\succ\mathbf y'$, **dominates**: no worse in every objective, strictly better in one. **Pareto set**: $P(Y)=\{\mathbf y'\in Y:\nexists\,\mathbf y''\in Y,\ \mathbf y''\succ\mathbf y'\}$.
 :::
 
@@ -1177,7 +1177,7 @@ Source alignment: original PDF pp. 190 and 196. The line to say: each multi-obje
 ### Hypervolume — one number for a whole front
 {sub: What the front dominates, what one outcome adds, and where that gain is positive}
 
-::: widget mobo-hypervolume {"mode":"hvi"}
+::: widget mobo-hypervolume {"mode":"hvi","try":"Drag the red point f"}
 Press → for each piece, and ==drag **f**== anywhere. The reference point $r$ is a deliberately poor corner, fixed before the search, that fences the area off. An outcome dropped into the blue is dominated and adds nothing.
 :::
 
@@ -1195,7 +1195,7 @@ Source alignment: original PDF pp. 191–195, on the source's own coordinates �
 ### PHVI — will the outcome move the front at all?
 {sub: Probability of improvement, with “beats $f^+$” replaced by “lands in $A(P)$”}
 
-::: widget mobo-hypervolume {"mode":"phvi"}
+::: widget mobo-hypervolume {"mode":"phvi","try":"Drag the mean, widen σ"}
 Press → to shade the belief that lands in $A(P)$, then to count 160 draws. Drag the mean, widen $\sigma$. The product form assumes one independent GP per objective.
 :::
 
@@ -1212,7 +1212,7 @@ Source alignment: original PDF pp. 197–199; the contours sit where p. 198 draw
 ### EHVI — how far will it move the front, on average?
 {sub: Expected improvement for a set — every possible outcome, weighted by the hypervolume it adds}
 
-::: widget mobo-hypervolume {"mode":"ehvi"}
+::: widget mobo-hypervolume {"mode":"ehvi","try":"Drag the mean, widen σ"}
 Press → for three possible outcomes ①–③ and a dominated one ④, then 160 draws sized by the hypervolume each adds — their average is EHVI.
 :::
 
@@ -1228,7 +1228,7 @@ Source alignment: original PDF pp. 200–204; outcomes ①–③ are the three p
 ### HVPI — the improvement at the mean, times PHVI
 {sub: A cheaper stand-in for EHVI, and the candidate it cannot see}
 
-::: widget mobo-hypervolume {"mode":"hvpi"}
+::: widget mobo-hypervolume {"mode":"hvpi","try":"Drag the mean, widen σ"}
 Press → for the rectangle at the mean, the product, EHVI beside it — then two candidates: **A**, a near-certain small gain; **B**, a wide belief whose mean is dominated.
 :::
 
@@ -1280,7 +1280,7 @@ The loop of Acts 1–3 quietly assumed **a kernel you could choose**, **inputs f
 ### Three walls between the textbook loop and real problems
 {sub: Each stream replaces one exact GP calculation with something learned or approximated}
 
-::: widget bo-frontier {"mode":"map"}
+::: widget bo-frontier {"mode":"map","try":"Click any paper"}
 Press → for each wall; click any paper for what it does. **Filled** chips are our lab's papers; a **dashed** chip is a paper that answers a second wall too.
 :::
 
@@ -1414,7 +1414,7 @@ Yun, Om, Lee, Yun & Park, *Posterior Inference with Diffusion Models for High-di
 ### Wall 3 — too many observations: O(n³), and a few inducing points
 {sub: 400 noisy observations; the exact GP against a sparse GP built on m inducing points}
 
-::: widget bo-frontier {"mode":"data"}
+::: widget bo-frontier {"mode":"data","try":"Drag the m slider","tryAt":"bar"}
 Press → to add inducing points (▲), or drag $m$. An exact refit factorises an $n\times n$ matrix; the sparse one, after a single pass over the data, only an $m\times m$ one.
 :::
 
@@ -1443,7 +1443,7 @@ Also: GPU solvers, Gardner, Pleiss, Bindel, Weinberger & Wilson, NeurIPS 2018 (G
 ### Our lab's thread — one real problem, followed through the walls
 {sub: From a wind farm in 2015 to diffusion-based search in 2025}
 
-::: widget bo-frontier {"mode":"map","view":"lab"}
+::: widget bo-frontier {"mode":"map","view":"lab","try":"Click any paper"}
 Press → to walk the papers in time order. Each step replaced an exact GP calculation with something **learned** — so each inherits Lecture 5's warning: ==a learned surrogate's errors become the optimiser's target==.
 :::
 

@@ -378,6 +378,26 @@ td .mathblock{font-size:calc(17.5px * var(--ts))}
 .widget > .wbar .wspacer{flex:1}
 .widget > .wbody{padding:13px 15px;flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
 .wcap{font:400 13.5px/1.5 var(--sans);font-size:calc(13.5px * var(--ts));color:var(--ink3);text-align:center}
+/* ---- try-it prompt: {"try": "..."} on a mount says what can be clicked or dragged.
+   Accent, because it is the one thing on the slide asking to be touched; it pulses
+   on arrival, dims to an outline after the first touch, and never prints. On a figure it
+   floats where the action is and lets clicks through; in the bar, the negative margin lets
+   it sit in the bar's padding, so adding one never makes a slide taller. */
+.wtry{display:inline-flex;align-items:center;gap:5px;flex:none;white-space:nowrap;
+  font:600 11.5px/1 var(--sans);color:#fff;background:var(--accent);
+  padding:4px 10px 4px 7px;margin:-4px 0;border-radius:999px;box-shadow:0 0 0 0 rgba(37,99,235,.5);
+  transition:background-color .35s,color .35s,box-shadow .35s}
+.wtry svg{width:13px;height:13px;flex:none}
+.wtry.pulse{animation:wtry-pulse 1.4s ease-out 4}
+@keyframes wtry-pulse{0%{box-shadow:0 0 0 0 rgba(37,99,235,.55)}
+  75%{box-shadow:0 0 0 7px rgba(37,99,235,0)}100%{box-shadow:0 0 0 0 rgba(37,99,235,0)}}
+.wtry.done{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1px rgba(37,99,235,.45);animation:none}
+.wtry.float{position:absolute;z-index:3;margin:0;pointer-events:none}
+.wtry.float.done{background:rgba(255,255,255,.92)}
+.widget[data-try-off] .wtry{opacity:0;animation:none}
+.dark .wtry.done{color:var(--accent-d)}
+@media (prefers-reduced-motion:reduce){.wtry.pulse{animation:none}}
+@media print{.wtry{display:none!important}}
 /* ::: wformulas — formulas rendered at build time for a widget to pick from.
    KaTeX does not run in the page, so a widget that wants to show the maths
    of its current state adopts this list and shows one item at a time.

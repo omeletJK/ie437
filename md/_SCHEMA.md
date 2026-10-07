@@ -257,6 +257,27 @@ A stepped widget may set its starting point from its mount options — `course-c
 `{"step": 5}`, which is where Lecture 12 picks the walk up — and `steps` then counts only the
 presses that remain. Printing and reduced-motion skip autoplay; `finish()` covers those.
 
+**Say what to try.** A point you can drag or a plot you can click looks exactly like one you
+cannot. Any mount may carry a `"try"` prompt, and the deck sets it as a blue pill **where the
+action is**. It pulses when the slide is entered, dims after the first touch, lets clicks through
+to the figure, and never prints:
+
+```markdown
+::: widget mobo-hypervolume {"mode":"hvi","try":"Drag the red point f"}
+::: widget ucb-heater {"kappa":0,"try":"Drag κ","tryAt":"bar"}
+```
+
+By default the pill sits on the widget's figure: the element the widget marks `data-try-anchor`,
+else the first chart it drew, at its top-left — or `"tryAt"` `"tr"`, `"bl"`, `"br"` for another
+corner, or the exact spot the widget gives as `data-try-x` / `data-try-y` (pixels from the
+figure's top-left, chosen to cover nothing). Use `"tryAt": "bar"` when the action is a slider or
+a button in the bar, so the hint stands beside the control. A widget sets `data-try-off` on its
+host while there is nothing to touch yet.
+
+Keep the text to a few words that name the action and its target. Give one to every widget with an
+interaction a reader would not guess; leave it off widgets that only step with `→`, and off a bar
+already crowded with labelled buttons, where it would push the title onto two lines.
+
 Rules that keep the PDF honest:
 
 - Seed every random number generator with `IE437.rng(seed)` so a rebuild is reproducible.

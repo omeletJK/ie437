@@ -132,11 +132,9 @@ IE437.widget('mobo-hypervolume', function (host, opts) {
     ehvi: 'EHVI &mdash; the gain, averaged over every outcome',
     hvpi: 'HVPI &mdash; the gain at the mean, times PHVI'
   };
-  var HINT = { front: 'click a design', hvi: 'drag f', phvi: 'drag the mean', ehvi: 'drag the mean', hvpi: 'drag a mean' };
   var DENS = MODE === 'phvi' || MODE === 'ehvi' || MODE === 'hvpi';
   host.innerHTML =
     '<div class="wbar"><span class="wt">' + TITLES[MODE] + '</span><span class="wspacer"></span>' +
-    '<span class="wlabel">' + HINT[MODE] + '</span>' +
     (DENS ? '<span class="wlabel" style="margin-left:14px">posterior width</span><span class="wnum" data-sv></span><div data-sl></div>' : '') +
     '</div>' +
     '<div class="wbody" style="gap:8px">' +
@@ -162,6 +160,9 @@ IE437.widget('mobo-hypervolume', function (host, opts) {
   var Y = function (v) { return PT + (YMAX - v) * K; };
   var sv = IE437.svg(W, H);
   sv.style.touchAction = 'none';
+  /* the try-it prompt sits in open space at the top of the plot (pixels in sv) */
+  var TRYXY = { front: [270, 14], hvi: [193, 32], phvi: [180, 32], ehvi: [180, 32], hvpi: [180, 32] }[MODE];
+  sv.setAttribute('data-try-anchor', ''); sv.setAttribute('data-try-x', TRYXY[0]); sv.setAttribute('data-try-y', TRYXY[1]);
   host.querySelector('[data-c]').appendChild(sv);
 
   function path(pts, close) {
@@ -585,6 +586,8 @@ IE437.widget('mobo-hypervolume', function (host, opts) {
     if (MODE === 'front') drawFront();
     else if (MODE === 'hvi') drawHVI();
     else drawDens();
+    /* before the first press there is no f to drag, so no prompt to drag it */
+    if (MODE === 'hvi') { if (st === 0) host.setAttribute('data-try-off', ''); else host.removeAttribute('data-try-off'); }
   }
 
   /* ---------- the drag ---------- */

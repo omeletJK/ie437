@@ -259,6 +259,76 @@
       try { opts = JSON.parse(host.getAttribute('data-opts') || '{}'); } catch (e) { }
       var inst = f(host, opts) || {};
       inst.__id = id; inst.__host = host; LIVE.push(inst);
+      if (typeof opts['try'] === 'string' && opts['try']) addTry(host, opts['try'], opts.tryAt);
+    });
+  }
+
+  /* ---------- try-it prompts ----------------------------------------
+     A point you can drag or a plot you can click looks exactly like one you
+     cannot. So a mount may say what to try -- {"try": "Drag the red point"}
+     in the markdown -- and the deck sets it as a pill where the action is:
+     on the widget's figure by default, or beside the bar's controls with
+     {"tryAt": "bar"} when the action is a slider or a button. It pulses
+     when the slide is entered and dims after the first touch; print hides
+     it, since paper cannot be clicked.
+
+     On the figure, the pill goes on the element marked [data-try-anchor]
+     (else the first chart the widget drew), in a corner -- "tl" "tr" "bl"
+     "br" from tryAt, top-left by default -- or at the spot the widget names
+     with data-try-x / data-try-y, in pixels from the figure's top-left. A
+     widget sets data-try-off on its host while there is nothing to touch. */
+  var TRY_ICON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.2 2.2v9.6l2.5-2.3 1.7 3.9 1.7-.8-1.7-3.8 3.4-.3z" fill="currentColor"/>' +
+    '<path d="M2.4 4.6 1.2 3.9M3.9 1.7 3.5.4M6.8 2.1l.6-1.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+  function tryFigure(host) {
+    var a = host.querySelector('[data-try-anchor]');
+    if (a) return a;
+    var svgs = $$('svg', host).filter(function (s) { return !s.closest('.katex') && !s.closest('.wbar') && !s.closest('.wtry'); });
+    return svgs[0] || null;
+  }
+  function addTry(host, text, at) {
+    var p = document.createElement('span');
+    p.className = 'wtry';
+    p.innerHTML = TRY_ICON;
+    p.appendChild(document.createTextNode(text));
+    var bar = host.querySelector('.wbar'), fig = at === 'bar' ? null : tryFigure(host);
+    if (fig && fig.parentNode) {
+      var box = fig.parentNode;
+      if (getComputedStyle(box).position === 'static') box.style.position = 'relative';
+      p.classList.add('float');
+      p.__fig = fig; p.__at = /^(tl|tr|bl|br)$/.test(at || '') ? at : 'tl';
+      box.appendChild(p);
+    } else if (bar && bar.parentNode === host) {
+      var sp = bar.querySelector('.wspacer');
+      bar.insertBefore(p, sp ? sp.nextSibling : null);
+    } else {
+      p.classList.add('float', 'at-tr'); host.style.position = 'relative'; host.appendChild(p);
+    }
+    var touched = function () { p.classList.add('done'); };
+    host.addEventListener('pointerdown', touched, true);
+    host.addEventListener('input', touched, true);
+  }
+  /* measured on arrival, once the slide is laid out: the figure need not sit at
+     its container's corner, and the stage's scale is undone to get CSS pixels */
+  function placeTry(p) {
+    var fig = p.__fig, box = p.parentNode;
+    if (!fig || !box) return;
+    var br = box.getBoundingClientRect(), fr = fig.getBoundingClientRect();
+    var k = box.offsetWidth ? br.width / box.offsetWidth : 1;
+    if (!k || !fr.width) return;
+    var ox = (fr.left - br.left) / k, oy = (fr.top - br.top) / k, fw = fr.width / k, fh = fr.height / k;
+    var tx = fig.getAttribute('data-try-x'), ty = fig.getAttribute('data-try-y'), pw = p.offsetWidth, ph = p.offsetHeight;
+    var x, y;
+    if (tx !== null && ty !== null) { x = ox + parseFloat(tx); y = oy + parseFloat(ty); }
+    else {
+      x = p.__at.charAt(1) === 'r' ? ox + fw - 8 - pw : ox + 8;
+      y = p.__at.charAt(0) === 'b' ? oy + fh - 8 - ph : oy + 8;
+    }
+    p.style.left = Math.round(x) + 'px'; p.style.top = Math.round(y) + 'px';
+  }
+  function pulseTry(sl) {
+    $$('.wtry', sl).forEach(function (p) {
+      if (p.__fig) placeTry(p);
+      p.classList.remove('done', 'pulse'); void p.offsetWidth; p.classList.add('pulse');
     });
   }
 
@@ -395,6 +465,7 @@
       }
       else if (w.leave) w.leave();
     });
+    pulseTry(sl);
     autoplay(sl);
     /* the first pass measures a slide whose widgets have only just mounted,
        so take it again once the frame is laid out and the heights are real */
@@ -428,6 +499,7 @@
       if (w.reset) { try { w.reset(); } catch (e) { } }
       if (w.enter) { try { w.enter(); } catch (e) { } }
     });
+    pulseTry(sl);
     resetQuizzes(sl);
     showStep(sl, step, false);
     balance(sl);

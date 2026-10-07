@@ -156,11 +156,13 @@ IE437.widget('bo-frontier', function (host, opts) {
 
     host.innerHTML =
       '<div class="wbar"><span class="wt">' + (VIEW === 'lab' ? 'Our lab’s thread through the three walls' : 'Three walls, and the streams that climb them') +
-      '</span><span class="wspacer"></span><span class="wlabel">click any paper</span></div>' +
+      '</span><span class="wspacer"></span></div>' +
       '<div class="wbody" style="gap:8px;padding:10px 14px"><div data-g></div>' +
       '<div data-i style="min-height:' + (VIEW === 'lab' ? 66 : 38) + 'px;font:400 12.5px/1.5 var(--sans);color:var(--ink2);' +
       'border-top:1px solid rgba(22,24,29,.12);padding-top:8px"></div></div>';
     var G = host.querySelector('[data-g]'), INFO = host.querySelector('[data-i]');
+    /* the try-it prompt sits in the grid's empty corner cell */
+    G.setAttribute('data-try-anchor', ''); G.setAttribute('data-try-x', 6); G.setAttribute('data-try-y', 3);
     var st = 0, sel = null;
     var STEPS = VIEW === 'lab' ? LAB.length : 3;
 
