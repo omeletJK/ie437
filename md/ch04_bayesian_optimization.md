@@ -1316,15 +1316,15 @@ A richer kernel moves the guess from the kernel's **form** into its **parameters
 Snoek, Larochelle & Adams, NeurIPS 2012 (MCMC over hyperparameters); Duvenaud, Lloyd, Grosse, Tenenbaum & Ghahramani, ICML 2013; Malkomes, Schaff & Garnett, NeurIPS 2016; Wilson & Adams, ICML 2013; Wilson, Hu, Salakhutdinov & Xing, AISTATS 2016; Garnelo et al., ICML 2018; Müller, Hollmann, Pineda Arango, Grabocka & Hutter, ICLR 2022 (and PFNs4BO, ICML 2023); Wang et al., *Pre-trained Gaussian processes for Bayesian optimization*, JMLR 2024. Lab: Jung, Song & Park, ICML 2022 (first as arXiv:2006.07036, 2020); Jung & Park, AISTATS 2023 (arXiv:2210.12363); Yun, Lee et al., KDD 2024 (arXiv:2408.07327).
 :::
 
-### Wall 2 — too many knobs: the same experiments light up less and less
-{sub: 100 experiments on a design with d knobs; each tells the GP about its neighbourhood, about 0.2 along every knob}
+### Wall 2 — too many inputs: every new design is far from every experiment
+{sub: A GP learns about a design only from experiments within about one length scale of it}
 
 ::: widget bo-frontier {"mode":"dim"}
-Press → to add knobs, or drag $d$. **Blue**: the GP has learned something there; **white**: it only has its prior, so EI is flat. A dot fades as its experiment sits further from the window in the knobs the window hides.
+Press → to add input variables. Each dot is one new design, placed at the distance to its nearest experiment out of 100. Inside the **blue band** the GP can learn from that experiment; beyond it the GP has only its prior — and EI cannot tell those designs apart.
 :::
 
 ::: note
-Source alignment: original PDF pp. 211–212. Shading is 1 − σ(x)/σ₀ for an SE kernel with length scale 0.2 per knob; "knows" means σ(x) < σ₀/2, estimated on 600 random designs. The count: 100 experiments with two knobs sit about 0.1 apart; keeping that spacing with d knobs takes 100^{d/2} = 10^d experiments. For a concrete picture, let d be the number of turbines whose yaw angles a wind farm tunes. Letting the length-scale prior grow like √d (Hvarfner, Hellsten & Nardi, ICML 2024) restores some correlation — but that is itself an assumption about how f varies, which is Wall 1 again.
+Source alignment: original PDF pp. 211–212 — the samples needed to cover the inputs grow exponentially with the dimension, and with a small budget the acquisition is flat almost everywhere; in practice BO handles 10–20 variables. Reach = one length scale, 0.2, for an SE kernel on inputs scaled to [0, 1]. The count: 100 experiments are ten settings per variable only when there are two variables; ten settings for each of d variables takes 10^d experiments. For a concrete picture, let d be the number of turbines whose yaw angles a wind farm tunes. Letting the length-scale prior grow like √d (Hvarfner, Hellsten & Nardi, ICML 2024) widens the reach — but that is itself an assumption about how f varies, which is Wall 1 again.
 :::
 
 ### Wall 2 — assume structure, stay local, or search a learned space

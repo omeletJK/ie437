@@ -94,7 +94,7 @@ IE437.widget('bo-frontier', function (host, opts) {
     var VIEW = opts.view === 'lab' ? 'lab' : 'all';
     var LANES = [
       { name: 'Kernel', sub: 'the prior is a guess' },
-      { name: 'Dimension', sub: 'experiments cannot cover the space' },
+      { name: 'Dimension', sub: 'every design is far from the data' },
       { name: 'Data', sub: 'O(n³) for every refit' }];
     var ERAS = ['2006 – 12', '2013 – 17', '2018 – 21', '2022 – 26'];
     function era(y) { return y < 2013 ? 0 : y < 2018 ? 1 : y < 2022 ? 2 : 3; }
@@ -374,126 +374,87 @@ IE437.widget('bo-frontier', function (host, opts) {
   }
 
   /* =================================================================
-     dim -- Wall 2: what 100 experiments let the GP see, as knobs are added
-     A 2-D window through the design (knob 1 x knob 2, every other knob at
-     0.5), shaded by how much the GP knows there: 1 - sigma(x)/sigma0.
+     dim -- Wall 2: how far is the nearest experiment?
+     One row per number of input variables. Each dot is a new design,
+     placed at its distance to the nearest of 100 past experiments; the
+     band is the GP's reach, one length scale. Rows appear one per press.
      ================================================================= */
   function dimMode() {
-    var N = 100, DMAX = 20, ELL = 0.2, Q = 600, G = 40;
-    var DS = [2, 3, 4, 5, 6, 8, 10, 20], WALK = [0, 1, 2, 3, 4, 6];
-    var g = IE437.rng(opts.seed || 7), r, k;
+    var N = 100, C = 40, DMAX = 20, ELL = 0.2, XMAXD = 1.5;
+    var DS = [1, 2, 3, 5, 10, 20];
+    var g = IE437.rng(opts.seed || 7), g2 = IE437.rng(23), gj = IE437.rng(5), r, k;
     var XX = [], ZZ = [];
     for (r = 0; r < N; r++) { var a = new Float64Array(DMAX); for (k = 0; k < DMAX; k++) a[k] = g(); XX.push(a); }
-    var g2 = IE437.rng(99);
-    for (r = 0; r < Q; r++) { var z = new Float64Array(DMAX); for (k = 0; k < DMAX; k++) z[k] = g2(); ZZ.push(z); }
-    var cache = {};
-    function stats(d) {
-      if (cache[d]) return cache[d];
-      var e2 = 2 * ELL * ELL;
-      var d2 = function (u, v) { var s = 0; for (var t = 0; t < d; t++) { var w = u[t] - v[t]; s += w * w; } return s; };
-      var L = chol(XX.map(function (u, i) { return XX.map(function (v, j) { return Math.exp(-d2(u, v) / e2) + (i === j ? 1e-4 : 0); }); }));
-      /* how far each experiment sits from the window, in the knobs the window hides */
-      var del = XX.map(function (u) { var s = 0; for (var t = 2; t < d; t++) { var w = u[t] - 0.5; s += w * w; } return s; });
-      var know = [], i, j;
-      for (i = 0; i < G; i++) for (j = 0; j < G; j++) {
-        var x = (i + 0.5) / G, y = (j + 0.5) / G;
-        var kx = XX.map(function (u, m) { var dx = x - u[0], dy = y - u[1]; return Math.exp(-(dx * dx + dy * dy + del[m]) / e2); });
-        var v = solveL(L, kx), vv = 0; for (var t = 0; t < N; t++) vv += v[t] * v[t];
-        know.push(1 - Math.sqrt(Math.max(0, 1 - vv)));
-      }
-      var known = 0;
-      ZZ.forEach(function (q) {
-        var kq = XX.map(function (u) { return Math.exp(-d2(q, u) / e2); }), v = solveL(L, kq), vv = 0;
-        for (var t = 0; t < N; t++) vv += v[t] * v[t];
-        if (Math.sqrt(Math.max(0, 1 - vv)) < 0.5) known++;
+    for (r = 0; r < C; r++) { var z = new Float64Array(DMAX); for (k = 0; k < DMAX; k++) z[k] = g2(); ZZ.push(z); }
+    var JIT = []; for (r = 0; r < C; r++) JIT.push(gj() - 0.5);
+    var ROWS = DS.map(function (d) {
+      var nn = ZZ.map(function (q) {
+        var m = 1e9;
+        XX.forEach(function (u) { var s2 = 0; for (var t = 0; t < d; t++) { var w = q[t] - u[t]; s2 += w * w; } if (s2 < m) m = s2; });
+        return Math.sqrt(m);
       });
-      var near = del.filter(function (s) { return Math.exp(-s / e2) > 0.3; }).length;
-      return (cache[d] = { know: know, del: del, share: known / Q, near: near });
-    }
+      var sorted = nn.slice().sort(function (u, v) { return u - v; });
+      return { d: d, nn: nn, med: sorted[C >> 1], within: nn.filter(function (v) { return v < ELL; }).length / C };
+    });
 
     host.innerHTML =
-      '<div class="wbar"><span class="wt">100 experiments on a design with d knobs</span><span class="wspacer"></span>' +
-      '<span class="wlabel">knobs</span><span class="wnum" data-dv></span><div data-sl></div></div>' +
-      '<div class="wbody" style="flex-direction:row;gap:18px;align-items:flex-start;justify-content:center">' +
-      '<div style="display:flex;flex-direction:column;gap:3px"><div class="wlabel" data-wl></div><div data-c1></div></div>' +
-      '<div style="display:flex;flex-direction:column;gap:3px"><div class="wlabel">share of the whole space the GP knows</div><div data-c2></div></div>' +
+      '<div class="wbar"><span class="wt">How far is the nearest experiment?</span><span class="wspacer"></span>' +
+      '<span class="wlabel">100 experiments, placed at random</span></div>' +
+      '<div class="wbody" style="flex-direction:row;gap:22px;align-items:flex-start;justify-content:center"><div data-c></div>' +
       panelHTML(300) + '</div>';
-    var W1 = 292, H1 = 270, W2 = 270, H2 = 236;
-    var sv1 = IE437.svg(W1, H1), sv2 = IE437.svg(W2, H2);
-    host.querySelector('[data-c1]').appendChild(sv1);
-    host.querySelector('[data-c2]').appendChild(sv2);
-    var di = 0;
-    var dial = IE437.slider(host.querySelector('[data-sl]'), {
-      bare: true, min: 0, max: DS.length - 1, step: 1, value: 0, width: 120, on: function (v) { di = v; draw(); }
-    });
-    function sup(n) { return String(n).split('').map(function (c) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]; }).join(''); }
+    var W = 680, RH = 40, TOP = 30, BOT = 40, LBL = 112, PR = 70;
+    var H = TOP + DS.length * RH + BOT;
+    var sv = IE437.svg(W, H);
+    host.querySelector('[data-c]').appendChild(sv);
+    var X = function (v) { return LBL + Math.min(v, XMAXD) / XMAXD * (W - LBL - PR); };
+    var st = 0;
 
     function draw() {
-      var d = DS[di], s = stats(d), i, j;
-      host.querySelector('[data-dv]').textContent = 'd = ' + d;
-      host.querySelector('[data-wl]').textContent = d === 2 ? 'the whole design: knob 1 × knob 2' : 'a window: knob 1 × knob 2, the other ' + (d - 2) + ' at 0.5';
-      /* the window, lit where the GP knows something */
-      clear(sv1);
-      var PL = 30, PT = 4, SZ = 236;
-      S('rect', { x: PL, y: PT, width: SZ, height: SZ, fill: '#FFFFFF' }, sv1);
-      /* one G x G bitmap, upscaled smoothly: light, not a mosaic of seams */
-      var cv = document.createElement('canvas'); cv.width = G; cv.height = G;
-      var cx = cv.getContext('2d'), im = cx.createImageData(G, G);
-      for (i = 0; i < G; i++) for (j = 0; j < G; j++) {
-        var o = ((G - 1 - j) * G + i) * 4;
-        im.data[o] = 37; im.data[o + 1] = 99; im.data[o + 2] = 235;
-        im.data[o + 3] = Math.round(255 * 0.85 * Math.max(0, s.know[i * G + j]));
-      }
-      cx.putImageData(im, 0, 0);
-      S('image', { x: PL, y: PT, width: SZ, height: SZ, href: cv.toDataURL(), preserveAspectRatio: 'none' }, sv1);
-      XX.forEach(function (u, m) {
-        var w = Math.exp(-s.del[m] / (2 * ELL * ELL));
-        if (w > 0.03) S('circle', { cx: PL + u[0] * SZ, cy: PT + SZ - u[1] * SZ, r: 2.6, fill: INK, 'fill-opacity': (0.9 * w).toFixed(3) }, sv1);
+      clear(sv);
+      var y0 = TOP, y1 = TOP + DS.length * RH;
+      S('rect', { x: X(0), y: y0, width: X(XMAXD) - X(0), height: y1 - y0, fill: '#FFFFFF' }, sv);
+      /* the GP's reach: one length scale */
+      S('rect', { x: X(0), y: y0, width: X(ELL) - X(0), height: y1 - y0, fill: BLUE, 'fill-opacity': .13 }, sv);
+      S('line', { x1: X(ELL), x2: X(ELL), y1: y0 - 4, y2: y1, stroke: BLUE, 'stroke-width': 1.4, 'stroke-dasharray': '4 3' }, sv);
+      txt(sv, X(0) + 2, y0 - 10, 'within reach — the GP learns from it', { size: 10.5, weight: 600, fill: BLUE });
+      txt(sv, W - 6, y0 - 10, 'typical', { anchor: 'end', size: 10, op: .55 });
+      [0, 0.2, 0.5, 1, 1.5].forEach(function (v) {
+        S('line', { x1: X(v), x2: X(v), y1: y1, y2: y1 + 4, stroke: INK, 'stroke-opacity': .4 }, sv);
+        txt(sv, X(v), y1 + 16, String(v), { anchor: 'middle', size: 9.5, op: .55 });
       });
-      S('rect', { x: PL, y: PT, width: SZ, height: SZ, fill: 'none', stroke: INK, 'stroke-opacity': .35 }, sv1);
-      txt(sv1, PL + SZ / 2, PT + SZ + 16, 'knob 1', { anchor: 'middle', size: 10, op: .6 });
-      var t2 = txt(sv1, PL - 8, PT + SZ / 2, 'knob 2', { anchor: 'middle', size: 10, op: .6 });
-      t2.setAttribute('transform', 'rotate(-90 ' + (PL - 8) + ' ' + (PT + SZ / 2) + ')');
-      /* share known against d */
-      clear(sv2);
-      var QL = 36, QB = 30, QT = 8, QR = 12;
-      var XD = function (ix) { return QL + ix / (DS.length - 1) * (W2 - QL - QR); };
-      var YD = function (f) { return H2 - QB - f * (H2 - QB - QT); };
-      S('rect', { x: QL, y: QT, width: W2 - QL - QR, height: H2 - QB - QT, fill: '#FFFFFF' }, sv2);
-      [0, 0.5, 1].forEach(function (f) {
-        S('line', { x1: QL, x2: W2 - QR, y1: YD(f), y2: YD(f), stroke: INK, 'stroke-opacity': .08 }, sv2);
-        txt(sv2, QL - 5, YD(f) + 3.5, Math.round(f * 100) + '%', { anchor: 'end', size: 9, op: .45 });
+      txt(sv, (X(0) + X(XMAXD)) / 2, y1 + 32, 'distance from a new design to its nearest experiment (each variable scaled to [0, 1])', { anchor: 'middle', size: 10, op: .6 });
+      ROWS.forEach(function (row, i) {
+        var cy = TOP + (i + 0.5) * RH, on = i <= st, cur = i === st;
+        if (i) S('line', { x1: X(0), x2: X(XMAXD), y1: TOP + i * RH, y2: TOP + i * RH, stroke: INK, 'stroke-opacity': .07 }, sv);
+        txt(sv, LBL - 10, cy + 4, row.d + (row.d === 1 ? ' variable' : ' variables'),
+          { anchor: 'end', size: 11.5, weight: cur ? 700 : 500, fill: INK, op: on ? (cur ? 1 : .7) : .25, sans: true });
+        if (!on) return;
+        row.nn.forEach(function (v, c) {
+          S('circle', { cx: X(v), cy: cy + JIT[c] * (RH - 16), r: 3.3, fill: v < ELL ? BLUE : SLATE, 'fill-opacity': cur ? .85 : .45 }, sv);
+        });
+        var mx = X(row.med);
+        S('line', { x1: mx, x2: mx, y1: cy - RH / 2 + 5, y2: cy + RH / 2 - 5, stroke: INK, 'stroke-width': 2, 'stroke-opacity': cur ? .9 : .4 }, sv);
+        txt(sv, W - 6, cy + 4, row.med.toFixed(2), { anchor: 'end', size: 11, weight: 600, op: cur ? .95 : .5 });
       });
-      DS.forEach(function (dd, ix) { txt(sv2, XD(ix), H2 - QB + 14, String(dd), { anchor: 'middle', size: 9.5, op: .55 }); });
-      txt(sv2, W2 - QR, H2 - 3, 'knobs d', { anchor: 'end', size: 9, op: .5 });
-      var seen = [];
-      DS.forEach(function (dd, ix) { if (ix <= di || cache[dd]) seen.push(ix); });
-      S('path', { d: seen.map(function (ix, n) { return (n ? 'L' : 'M') + XD(ix).toFixed(1) + ' ' + YD(stats(DS[ix]).share).toFixed(1); }).join(''),
-        fill: 'none', stroke: BLUE, 'stroke-width': 1.8 }, sv2);
-      seen.forEach(function (ix) {
-        var cur = ix === di;
-        S('circle', { cx: XD(ix), cy: YD(stats(DS[ix]).share), r: cur ? 5.5 : 3.2, fill: cur ? BLUE : '#FFFFFF', stroke: BLUE, 'stroke-width': 1.5 }, sv2);
-      });
-      S('line', { x1: QL, x2: W2 - QR, y1: YD(0), y2: YD(0), stroke: INK, 'stroke-opacity': .3 }, sv2);
 
-      var pct = s.share * 100, years = Math.pow(10, d) / 365;
+      var row = ROWS[st], ratio = row.med / ELL;
+      var sup = String(row.d).split('').map(function (c) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]; }).join('');
       show(
-        b(d + ' knobs') + ', each scaled to [0, 1] · ' + b('100 experiments') + ' · length scale 0.2<br>' +
-        'the GP knows ' + b((pct < 1 && pct > 0 ? pct.toFixed(1) : Math.round(pct)) + '%', s.share > 0.5 ? BLUE : SLATE) + ' of the whole space' +
-        ' <span style="color:var(--ink3)">(σ below half its prior)</span><br>' +
-        'experiments close to this window: ' + b(s.near + ' of 100') + '<br>' +
-        'to keep the 2-knob spacing: ' + b('10' + sup(d)) + ' experiments' +
-        (d > 2 ? ' <span style="color:var(--ink3)">— one a day: ' + (years < 1e3 ? Math.round(years) + ' years' : (years / 1e6 >= 1 ? sci(years).replace('×', ' × ') + ' years' : Math.round(years).toLocaleString('en-US') + ' years')) + '</span>' : ''),
-        d === 2 ? 'Each experiment teaches the GP about its neighbourhood — about one length scale around it. With two knobs, 100 experiments light up the whole design.'
-          : d <= 4 ? 'Only experiments whose other knobs happen to sit near 0.5 still light this window. The same 100 points are spread over a much larger space.'
-          : 'The window is dark: every point is several length scales from every experiment, so μ(x) and σ(x) are just the prior there — EI is flat, and BO has nothing to compare.');
+        b(row.d + (row.d === 1 ? ' input variable' : ' input variables')) + ', 100 experiments<br>' +
+        'typical nearest experiment: ' + b(row.med.toFixed(2)) + ' away' + (row.med > ELL ? ' — ' + b(ratio.toFixed(1) + ' length scales') : '') + '<br>' +
+        'new designs with an experiment within reach: ' + b(Math.round(100 * row.within) + '%', row.within > 0.5 ? BLUE : SLATE) + '<br>' +
+        'ten settings per variable would take ' + b('10' + sup) + ' experiments',
+        row.d <= 2 ? 'Every new design has an experiment close by, so the GP’s prediction there is informed — and EI can rank the designs.'
+          : row.d <= 3 ? 'Still mostly within reach, but the same 100 experiments are spread thinner.'
+          : row.d <= 5 ? 'Most new designs are now out of reach of every experiment.'
+          : 'Out of reach, the GP has only its prior: the same mean and the same width for every such design. EI cannot tell them apart, so BO is no better than picking at random.');
     }
     draw();
     return {
-      steps: WALK.length - 1,
-      step: function (i) { di = WALK[i]; dial.set(di, false); draw(); },
+      steps: DS.length - 1,
+      step: function (i) { st = i; draw(); },
       reset: function () { draw(); },
-      finish: function () { di = 3; dial.set(3, false); draw(); }
+      finish: function () { st = DS.length - 1; draw(); }
     };
   }
 
