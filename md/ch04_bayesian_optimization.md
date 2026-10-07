@@ -1243,25 +1243,6 @@ Press → for the rectangle at the mean, the product, EHVI beside it — then tw
 Source alignment: original PDF p. 205. The source's HVPI figure reuses p. 203's outcome; here the rectangle stands at the mean, which is where the formula evaluates it. Before the last press, ask which candidate each rule picks: A has PHVI 0.954 and HVPI 0.453; B has EHVI 0.615 against A's 0.487, and HVPI exactly 0 because its mean is dominated. It is Act 3's "Choose between two candidate experiments", with two objectives: only EHVI weighs how far as well as how likely, so only EHVI can pick B — as EI could, and PI could not.
 :::
 
-### Two different scaling limits — data count and input dimension
-{sub: Why the original lecture continues beyond standard BO}
-
-| Bottleneck | Why it arises | Source directions |
-|---|---|---|
-| Many observations $n$ | dense GP factorisation costs $O(n^3)$, storage $O(n^2)$ | sparse/inducing-point GPs, online approximations, neural surrogates |
-| Many input dimensions | measurements cover the domain poorly; acquisition search becomes harder | low-dimensional embeddings, learned latent coordinates, partitions/ensembles |
-| Expensive repeated fitting | updating hyperparameters can cost more than a cheap query | schedule refits; update the posterior between refits |
-
-A latent representation helps only if it preserves the variables relevant to the objective and constraints. A neural predictor helps BO only if its uncertainty is useful for choosing experiments.
-
-::: keypoint
-There is no universal “BO works in any dimension” guarantee. **Representation, inference, and query selection** each have their own approximation error.
-:::
-
-::: note
-Source alignment: original PDF pp. 209–225.
-:::
-
 ### The bridge — one table, four lectures
 ::: table center
 |   | **Model known** — only exploitation | **Model unknown** — explore vs exploit |
@@ -1289,6 +1270,185 @@ What carries over intact is the explore–exploit machinery of this lecture. Wha
 - That evaluations are noiseless
 - =That you may query $f$ at a point of your choosing and get an answer back
 BO earns its sample efficiency by choosing where to look — it needs an **oracle** it can call. Lecture 5 removes exactly that: a fixed dataset, gathered by someone else, and no way to ask a new question. The loop collapses to a single pass, and every safeguard the loop provided has to be rebuilt from inside the model.
+:::
+
+## Beyond the textbook loop — three walls, and the research that climbs them
+{short: FRONTIER, num: Frontier}
+
+The loop of Acts 1–3 quietly assumed **a kernel you could choose**, **inputs few enough to cover** and **observations few enough to invert**. Real problems break all three — and each break opened a research stream, ours included.
+
+### Three walls between the textbook loop and real problems
+{sub: Each stream replaces one exact GP calculation with something learned or approximated}
+
+::: widget bo-frontier {"mode":"map"}
+Press → for each wall; click any paper for what it does. **Filled** chips are our lab's papers; a **dashed** chip is a paper that answers a second wall too.
+:::
+
+::: note
+Source alignment: original PDF pp. 209–225 — input-dimension scalability, data-point scalability, the frequency of parameter updates, and GPs combined with deep learning. They are regrouped here as three walls; refitting frequency belongs to Wall 3, since every refit pays O(n³). Lab papers: https://silab.kaist.ac.kr/publications-2/.
+:::
+
+### Wall 1 — the kernel is a guess, and the guess picks the next experiment
+{sub: Same seven observations; SE, Matérn-1/2 and periodic kernels, each fitted by marginal likelihood}
+
+::: widget bo-frontier {"mode":"kernel"}
+Press → for each kernel, then all three together. The log evidence $\log p(\mathbf y\mid k,\hat\theta)$ ranks the kernels you tried — it cannot propose one you did not.
+:::
+
+::: note
+Source alignment: original PDF pp. 22–25 (a kernel is an assumption) and p. 221 (refitting hyperparameters). Each kernel's hyperparameters come from a grid search over the type-II likelihood, with σ_ε = 0.05 and a constant mean. Before each press, ask: where will this kernel send the next experiment?
+:::
+
+### Wall 1 — average the prior, learn it, or transfer it
+{sub: Three ways around a kernel picked by hand}
+
+| Stream | Idea | Representative work | Our lab |
+|---|---|---|---|
+| **Average or choose** | integrate over $\theta$; search kernel structures by evidence | Snoek et al. (2012) · Duvenaud et al. (2013) · Malkomes et al. (2016) | |
+| **Learn a richer kernel** | a spectral mixture can represent any stationary kernel; a network can learn the features | Wilson & Adams (2013) · Wilson et al. (2016) | ==spectral-mixture kernels learned by random Fourier features and variational inference== — Jung, Song & Park (ICML 2022) |
+| **Transfer from related tasks** | meta-learn the prior: neural processes, prior-fitted networks, pre-trained GPs | Garnelo et al. (2018) · Müller et al. (2022) · Wang et al. (2024) | ==Bayesian ConvDeepSets with a task-dependent stationary prior== — Jung & Park (AISTATS 2023) · offline meta-BBO for traffic lights — Yun, Lee et al. (KDD 2024) |
+
+::: keypoint
+A richer kernel moves the guess from the kernel's **form** into its **parameters** — and many parameters overfit a few points. Taming that is what the 2022 paper does; borrowing other tasks' data is what transfer does.
+:::
+
+::: note
+Snoek, Larochelle & Adams, NeurIPS 2012 (MCMC over hyperparameters); Duvenaud, Lloyd, Grosse, Tenenbaum & Ghahramani, ICML 2013; Malkomes, Schaff & Garnett, NeurIPS 2016; Wilson & Adams, ICML 2013; Wilson, Hu, Salakhutdinov & Xing, AISTATS 2016; Garnelo et al., ICML 2018; Müller, Hollmann, Pineda Arango, Grabocka & Hutter, ICLR 2022 (and PFNs4BO, ICML 2023); Wang et al., *Pre-trained Gaussian processes for Bayesian optimization*, JMLR 2024. Lab: Jung, Song & Park, ICML 2022 (first as arXiv:2006.07036, 2020); Jung & Park, AISTATS 2023 (arXiv:2210.12363); Yun, Lee et al., KDD 2024 (arXiv:2408.07327).
+:::
+
+### Wall 2 — too many knobs: the same experiments light up less and less
+{sub: 100 experiments on a design with d knobs; each tells the GP about its neighbourhood, about 0.2 along every knob}
+
+::: widget bo-frontier {"mode":"dim"}
+Press → to add knobs, or drag $d$. **Blue**: the GP has learned something there; **white**: it only has its prior, so EI is flat. A dot fades as its experiment sits further from the window in the knobs the window hides.
+:::
+
+::: note
+Source alignment: original PDF pp. 211–212. Shading is 1 − σ(x)/σ₀ for an SE kernel with length scale 0.2 per knob; "knows" means σ(x) < σ₀/2, estimated on 600 random designs. The count: 100 experiments with two knobs sit about 0.1 apart; keeping that spacing with d knobs takes 100^{d/2} = 10^d experiments. For a concrete picture, let d be the number of turbines whose yaw angles a wind farm tunes. Letting the length-scale prior grow like √d (Hvarfner, Hellsten & Nardi, ICML 2024) restores some correlation — but that is itself an assumption about how f varies, which is Wall 1 again.
+:::
+
+### Wall 2 — assume structure, stay local, or search a learned space
+{sub: Four ways to make many inputs behave like a few}
+
+| Stream | Idea | Representative work | Our lab |
+|---|---|---|---|
+| **Assume structure** | $f$ is a sum of low-dimensional parts, or depends on a few directions | Wang et al. (2013) · Kandasamy et al. (2015) · Eriksson & Jankowiak (2021) | |
+| **Stay local** | model and search only inside a trust region, grown on success and shrunk on failure | Eriksson et al., TuRBO (2019) | ==Bayesian Ascent== — Park & Law (IEEE TCST 2016) · contextual CBOTR — Park (2020) |
+| **Search a learned space** | optimise in the latent space of a generative model | Gómez-Bombarelli et al. (2018), next slide | latent-space posterior inference with constraints — Om, Sim, Yun et al. (NeurIPS 2025 workshop) |
+| **Sample, don't maximise** | draw candidates from a posterior: (good designs) × exp(acquisition) | generative optimisers — Lecture 6 | ==DiBO== — Yun, Om et al. (ICML 2025), next slide |
+
+::: keypoint
+There is no universal "BO works in any dimension" guarantee. Each stream buys tractability with an assumption — **few relevant directions, a good local start, a faithful latent space** — so pick the one your problem keeps.
+:::
+
+::: note
+Wang, Zoghi, Hutter, Matheson & de Freitas, IJCAI 2013 (REMBO; source p. 213); Garnett, Osborne & Hennig, UAI 2014 (source p. 213); Kandasamy, Schneider & Póczos, ICML 2015; Eriksson & Jankowiak, UAI 2021 (SAASBO); Eriksson, Pearce, Gardner, Turner & Poloczek, NeurIPS 2019 (TuRBO); Gómez-Bombarelli et al., ACS Central Science 2018 (VAE-BO; source pp. 214–215). Lab: Park & Law, IEEE TCST 24(5), 2016 — the next query is confined to a trust region around the incumbent so that power rises monotonically, validated in a wind tunnel (Park, Kwon & Law, Energies 2017); contextual Bayesian ascent, ACC 2017; CBOTR, Sustainable Energy Technologies and Assessments 38, 2020; Om, Sim, Yun, Kang & Park, NeurIPS 2025 SPIGM workshop (oral), arXiv:2507.00480.
+:::
+
+### Latent-space BO — turn molecules into points a GP can search
+{sub: Gómez-Bombarelli et al., ACS Central Science 2018 — the classic of the "search a learned space" stream}
+
+::: cols wide-l
+::: col
+::: figure latent-bo-fig1 | 640
+(a) Encoder, continuous latent space and decoder, with a property predictor $f(\mathbf z)$ trained jointly. (b) Climb $f(\mathbf z)$ in the latent space and decode each point back to a molecule. Figure 1 of the paper.
+:::
+:::
+::: col.accent The recipe
+1. **Encode.** A VAE trained on 250 000 drug-like molecules (ZINC) maps each SMILES string to a point $\mathbf z\in\mathbb R^{196}$ — and back.
+2. **Organise.** The predictor $f(\mathbf z)$, trained with the VAE, lays the space out by property: similar molecules, similar values.
+3. **Search.** Fit a GP to 2 000 encoded molecules, optimise in $\mathbf z$, decode, test.
+:::
+:::
+
+::: note
+Gómez-Bombarelli, Wei, Duvenaud, Hernández-Lobato, Sánchez-Lengeling, Sheberla, Aguilera-Iparraguirre, Hirzel, Adams & Aspuru-Guzik, *Automatic chemical design using a data-driven continuous representation of molecules*, ACS Central Science 4(2):268–276, 2018 (arXiv:1610.02415). Figure 1 is reproduced for teaching, as on p. 214 of the original deck. Encoder: three 1-D convolutions and a 196-wide dense layer (ZINC; 156 for QM9); decoder: three GRU layers. The GP's 2 000 training molecules were chosen to be maximally diverse. Source alignment: original PDF pp. 214–215.
+:::
+
+### Latent-space BO — what the search found, and what it assumes
+{sub: Objective 5 × QED − SAS: drug-likeness, minus how hard the molecule is to make}
+
+::: cols wide-l
+::: col
+::: figure latent-bo-fig4a | 560
+Percentile reached from the bottom 10% of ZINC: random search (400 iterations), a genetic algorithm, and latent-space GP optimisation (200 iterations) with the GP trained on 500, 1 000 or 2 000 molecules. Figure 4a of the paper.
+:::
+:::
+::: col.accent What it assumes
+The search is only as good as the space: nearby points must decode to **valid, similar** molecules. Yet only about 74% of random latent points decode to a valid molecule — the space has "dead areas".
+
+Later work fixed the decoder (grammar and graph VAEs) or reshaped the space while searching (weighted retraining). Lecture 6 builds the VAE itself.
+:::
+:::
+
+::: keypoint
+Latent-space BO trades the curse of dimensionality for one assumption: ==a faithful latent space==. Our lab's DiBO, next, replaces the arg-max by posterior inference; its 2025 follow-up runs that inference in a learned latent space, with constraints.
+:::
+
+::: note
+Validity figures from the paper: 73.9% of 5 000 random latent points of the ZINC VAE decode to a valid molecule within 1 000 attempts (Table 4); newly generated strings were valid between 70% and under 1% of the time, depending on the region. Later work: Kusner, Paige & Hernández-Lobato, *Grammar variational autoencoder*, ICML 2017; Jin, Barzilay & Jaakkola, *Junction tree variational autoencoder for molecular graph generation*, ICML 2018; Tripp, Daxberger & Hernández-Lobato, *Sample-efficient optimization in the latent space of deep generative models via weighted retraining*, NeurIPS 2020. Lab: Om, Sim, Yun, Kang & Park, NeurIPS 2025 SPIGM workshop (oral), arXiv:2507.00480.
+:::
+
+### DiBO — sample a posterior instead of maximising the acquisition
+{sub: Our lab's answer to Wall 2 — and to Wall 3, since no step inverts an n × n matrix}
+
+$$p_{\text{tar}}(\mathbf x)\;\propto\;\underbrace{p_\theta(\mathbf x)}_{\text{diffusion prior over good designs}}\cdot\exp\!\Big(\beta\,\underbrace{\big[\mu_\phi(\mathbf x)+\gamma\,\sigma_\phi(\mathbf x)\big]}_{\text{UCB of a deep ensemble (Act 3)}}\Big)$$
+
+::: flow | | | loop: new data, retrain
+- **Fit** | ensemble $(\mu_\phi,\sigma_\phi)$ and prior $p_\theta$, both weighted toward high $y$
+- **Fine-tune** | a copy $p_\psi$ to sample $p_{\text{tar}}$ — amortised inference
+- **Sample** | many candidates; refine them; keep the best $B$
+- !**Evaluate** | $B$ expensive experiments
+:::
+
+Tested on four synthetic functions with 200 and 400 inputs (10 000 evaluations) and on HalfCheetah-102D, Rover-100D and DNA-180D (2 000 evaluations), against TuRBO, LA-MCTS, MCMC-BO, CMA-ES and generative baselines.
+
+::: keypoint
+Nothing in this loop is a GP — yet UCB's ==exploration bonus survives, as the likelihood==. Lecture 6 builds the diffusion model it rests on.
+:::
+
+::: note
+Yun, Om, Lee, Yun & Park, *Posterior Inference with Diffusion Models for High-dimensional Black-box Optimization*, ICML 2025 (arXiv:2502.16824). The fine-tuning objective is relative trajectory balance; sampled candidates are refined by gradient steps on the unnormalised target and the top B by posterior density are evaluated. The ensemble has K = 5 networks. Follow-up for constraints, in a flow model's latent space: Om, Sim, Yun, Kang & Park, NeurIPS 2025 SPIGM workshop (oral).
+:::
+
+### Wall 3 — too many observations: O(n³), and a few inducing points
+{sub: 400 noisy observations; the exact GP against a sparse GP built on m inducing points}
+
+::: widget bo-frontier {"mode":"data"}
+Press → to add inducing points (▲), or drag $m$. An exact refit factorises an $n\times n$ matrix; the sparse one, after a single pass over the data, only an $m\times m$ one.
+:::
+
+::: note
+Source alignment: original PDF pp. 216–221 — data-point scalability (DNGO, online sparse GPs, ensemble BO) and the frequency of parameter updates. The widget uses the DTC / variational predictive with inducing inputs on a grid; Titsias (2009) places them by maximising a bound instead.
+:::
+
+### Wall 3 — summarise the data, approximate the kernel, or stop using a GP
+{sub: Four ways to keep the surrogate cheap as observations pile up}
+
+| Stream | Idea | Representative work | Our lab |
+|---|---|---|---|
+| **Summarise the data** | $m$ inducing points stand in for $n$ observations: $O(nm^2)$ | Snelson & Ghahramani (2006) · Titsias (2009) · Hensman et al. (2013) | ==real-time sparse GP regression== — Park et al. (BigData 2015) |
+| **Approximate the kernel** | $M$ random features: Bayesian linear regression, $O(nM^2)$ | Rahimi & Recht (2007) · Wilson & Nickisch (2015) | ==random-feature spectral-mixture kernels== — Jung, Song & Park (ICML 2022) · GP-emission HMMs (JCGS 2022) |
+| **Split the space** | a local GP per region or trust region | Wang et al. (2018) · Eriksson et al. (2019) | Bayesian Ascent and CBOTR stay local too |
+| **Stop using a GP** | networks that carry uncertainty | Snoek et al. (2015) · Lakshminarayanan et al. (2017) · Garnelo et al. (2018) | ConvDeepSets (AISTATS 2023) · DiBO's ensemble (ICML 2025) |
+
+::: keypoint
+Refitting is part of the wall: re-estimate the hyperparameters **on a schedule**, and update the posterior in between.
+:::
+
+::: note
+Also: GPU solvers, Gardner, Pleiss, Bindel, Weinberger & Wilson, NeurIPS 2018 (GPyTorch); online sparse GPs for BO, McIntire, Ratner & Ermon, UAI 2016. Snelson & Ghahramani, NeurIPS 2005 (published 2006); Titsias, AISTATS 2009; Hensman, Fusi & Lawrence, UAI 2013; McIntire, Ratner & Ermon, UAI 2016 (source p. 218); Rahimi & Recht, NeurIPS 2007; Wilson & Nickisch, ICML 2015 (KISS-GP); Gardner, Pleiss, Bindel, Weinberger & Wilson, NeurIPS 2018 (GPyTorch); Wang, Gehring, Kohli & Jegelka, AISTATS 2018 (EBO; source pp. 219–220); Snoek et al., ICML 2015 (DNGO; source p. 217); Lakshminarayanan, Pritzel & Blundell, NeurIPS 2017. Lab: Park, Bhinge, Chen, Dornfeld & Law, IEEE BigData 2015; Jung & Park, J. Computational and Graphical Statistics 31(3), 2022.
+:::
+
+### Our lab's thread — one real problem, followed through the walls
+{sub: From a wind farm in 2015 to diffusion-based search in 2025}
+
+::: widget bo-frontier {"mode":"map","view":"lab"}
+Press → to walk the papers in time order. Each step replaced an exact GP calculation with something **learned** — so each inherits Lecture 5's warning: ==a learned surrogate's errors become the optimiser's target==.
+:::
+
+::: note
+Along the way the same loop also designed composites (2022, 2023) and injection-moulding processes (2023) with multi-objective BO. The thread (https://silab.kaist.ac.kr/publications-2/): ① Park, Bhinge, Chen, Dornfeld & Law, IEEE BigData 2015; ② Park & Law, IEEE TCST 2016 (wind tunnel: Park, Kwon & Law, Energies 2017; contextual: Park, ACC 2017); ③ Park, Sustainable Energy Technologies and Assessments 2020; ④ Jung, Song & Park, ICML 2022; ⑤ Jung & Park, JCGS 2022; ⑥ Jung & Park, AISTATS 2023; ⑦ Yun, Lee et al., KDD 2024; ⑧ Yun, Om, Lee, Yun & Park, ICML 2025; ⑨ Om, Sim, Yun, Kang & Park, NeurIPS 2025 SPIGM workshop. Multi-objective applications: Park et al., Composites Science and Technology 2022; Park, Song, Park & Ryu, Materials Horizons 2023; Jung et al., Journal of Intelligent Manufacturing 2023; contextual multi-objective BO (Song, Park & Park) is under review. Lecture 6 continues the generative thread: BootGen (NeurIPS 2023), genetic-guided GFlowNets (NeurIPS 2024), diffusion wind-farm layouts (KDD 2025).
 :::
 
 ## Closing
