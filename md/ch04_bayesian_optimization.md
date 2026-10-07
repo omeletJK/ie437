@@ -1316,15 +1316,15 @@ A richer kernel moves the guess from the kernel's **form** into its **parameters
 Snoek, Larochelle & Adams, NeurIPS 2012 (MCMC over hyperparameters); Duvenaud, Lloyd, Grosse, Tenenbaum & Ghahramani, ICML 2013; Malkomes, Schaff & Garnett, NeurIPS 2016; Wilson & Adams, ICML 2013; Wilson, Hu, Salakhutdinov & Xing, AISTATS 2016; Garnelo et al., ICML 2018; Müller, Hollmann, Pineda Arango, Grabocka & Hutter, ICLR 2022 (and PFNs4BO, ICML 2023); Wang et al., *Pre-trained Gaussian processes for Bayesian optimization*, JMLR 2024. Lab: Jung, Song & Park, ICML 2022 (first as arXiv:2006.07036, 2020); Jung & Park, AISTATS 2023 (arXiv:2210.12363); Yun, Lee et al., KDD 2024 (arXiv:2408.07327).
 :::
 
-### Wall 2 — too many inputs: every new design is far from every experiment
-{sub: A GP learns about a design only from experiments within about one length scale of it}
+### Wall 2 — too many inputs: the data needed to fill the space grows as 10ᵈ
+{sub: Cut each variable into 10 cells of width 0.1 — every cell needs at least one experiment}
 
 ::: widget bo-frontier {"mode":"dim"}
-Press → to add input variables. Each dot is one new design, placed at the distance to its nearest experiment out of 100. Inside the **blue band** the GP can learn from that experiment; beyond it the GP has only its prior — and EI cannot tell those designs apart.
+Press → to add variables. One variable has 10 cells, two have 100, three 1 000: each new variable multiplies the count by ten. To leave no cell empty you need at least one experiment per cell, and a typical BO budget fills only the first two.
 :::
 
 ::: note
-Source alignment: original PDF pp. 211–212 — the samples needed to cover the inputs grow exponentially with the dimension, and with a small budget the acquisition is flat almost everywhere; in practice BO handles 10–20 variables. Reach = one length scale, 0.2, for an SE kernel on inputs scaled to [0, 1]. The count: 100 experiments are ten settings per variable only when there are two variables; ten settings for each of d variables takes 10^d experiments. For a concrete picture, let d be the number of turbines whose yaw angles a wind farm tunes. Letting the length-scale prior grow like √d (Hvarfner, Hellsten & Nardi, ICML 2024) widens the reach — but that is itself an assumption about how f varies, which is Wall 1 again.
+Source alignment: original PDF pp. 211–212 — the samples needed to cover the inputs grow exponentially with the dimension, and with a small budget the acquisition is flat almost everywhere; in practice BO handles 10–20 variables. The counting is the pigeonhole principle read backwards: with fewer experiments than cells, some cell must stay empty, and the GP knows nothing about an empty cell beyond its prior (when the length scale is about one cell). For a concrete picture, let d be the number of turbines whose yaw angles a wind farm tunes. Comparisons: 10^5 experiments at one a day is 274 years; 10^10 exceeds the world's population; 10^20 seconds is about 230 times the age of the universe.
 :::
 
 ### Wall 2 — assume structure, stay local, or search a learned space

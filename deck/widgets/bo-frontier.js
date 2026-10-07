@@ -94,7 +94,7 @@ IE437.widget('bo-frontier', function (host, opts) {
     var VIEW = opts.view === 'lab' ? 'lab' : 'all';
     var LANES = [
       { name: 'Kernel', sub: 'the prior is a guess' },
-      { name: 'Dimension', sub: 'every design is far from the data' },
+      { name: 'Dimension', sub: 'data needed grows as 10ᵈ' },
       { name: 'Data', sub: 'O(n³) for every refit' }];
     var ERAS = ['2006 – 12', '2013 – 17', '2018 – 21', '2022 – 26'];
     function era(y) { return y < 2013 ? 0 : y < 2018 ? 1 : y < 2022 ? 2 : 3; }
@@ -374,87 +374,126 @@ IE437.widget('bo-frontier', function (host, opts) {
   }
 
   /* =================================================================
-     dim -- Wall 2: how far is the nearest experiment?
-     One row per number of input variables. Each dot is a new design,
-     placed at its distance to the nearest of 100 past experiments; the
-     band is the GP's reach, one length scale. Rows appear one per press.
+     dim -- Wall 2: the data needed to fill the space grows as 10^d
+     Cut every variable into 10 cells of width 0.1. To leave no cell
+     empty you need at least one experiment per cell (the pigeonhole
+     principle, read backwards): 10, 100, 1 000 ... 10^d. Drawn as a
+     segment, a square and a cube; counted as bars beyond that.
      ================================================================= */
   function dimMode() {
-    var N = 100, C = 40, DMAX = 20, ELL = 0.2, XMAXD = 1.5;
-    var DS = [1, 2, 3, 5, 10, 20];
-    var g = IE437.rng(opts.seed || 7), g2 = IE437.rng(23), gj = IE437.rng(5), r, k;
-    var XX = [], ZZ = [];
-    for (r = 0; r < N; r++) { var a = new Float64Array(DMAX); for (k = 0; k < DMAX; k++) a[k] = g(); XX.push(a); }
-    for (r = 0; r < C; r++) { var z = new Float64Array(DMAX); for (k = 0; k < DMAX; k++) z[k] = g2(); ZZ.push(z); }
-    var JIT = []; for (r = 0; r < C; r++) JIT.push(gj() - 0.5);
-    var ROWS = DS.map(function (d) {
-      var nn = ZZ.map(function (q) {
-        var m = 1e9;
-        XX.forEach(function (u) { var s2 = 0; for (var t = 0; t < d; t++) { var w = q[t] - u[t]; s2 += w * w; } if (s2 < m) m = s2; });
-        return Math.sqrt(m);
-      });
-      var sorted = nn.slice().sort(function (u, v) { return u - v; });
-      return { d: d, nn: nn, med: sorted[C >> 1], within: nn.filter(function (v) { return v < ELL; }).length / C };
-    });
+    var DS = [1, 2, 3, 5, 10, 20], BUDGET = 100;
+    var g = IE437.rng(opts.seed || 13), i, j, k;
+    /* one experiment somewhere inside each cell -- filling, not a grid search */
+    var P1 = [], P2 = [], P3 = [];
+    for (i = 0; i < 10; i++) P1.push((i + 0.15 + 0.7 * g()) / 10);
+    for (i = 0; i < 10; i++) for (j = 0; j < 10; j++) P2.push([(i + 0.15 + 0.7 * g()) / 10, (j + 0.15 + 0.7 * g()) / 10]);
+    for (i = 0; i < 10; i++) for (j = 0; j < 10; j++) for (k = 0; k < 10; k++)
+      P3.push([(i + 0.2 + 0.6 * g()) / 10, (j + 0.2 + 0.6 * g()) / 10, (k + 0.2 + 0.6 * g()) / 10]);
+    function sup(n) { return String(n).split('').map(function (c) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]; }).join(''); }
+    function count(d) { return d <= 4 ? String(Math.pow(10, d)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '10' + sup(d); }
 
     host.innerHTML =
-      '<div class="wbar"><span class="wt">How far is the nearest experiment?</span><span class="wspacer"></span>' +
-      '<span class="wlabel">100 experiments, placed at random</span></div>' +
-      '<div class="wbody" style="flex-direction:row;gap:22px;align-items:flex-start;justify-content:center"><div data-c></div>' +
-      panelHTML(300) + '</div>';
-    var W = 680, RH = 40, TOP = 30, BOT = 40, LBL = 112, PR = 70;
-    var H = TOP + DS.length * RH + BOT;
-    var sv = IE437.svg(W, H);
-    host.querySelector('[data-c]').appendChild(sv);
-    var X = function (v) { return LBL + Math.min(v, XMAXD) / XMAXD * (W - LBL - PR); };
+      '<div class="wbar"><span class="wt">How many experiments to fill the space?</span><span class="wspacer"></span>' +
+      '<span class="wlabel">10 cells per variable, one experiment per cell</span></div>' +
+      '<div class="wbody" style="flex-direction:row;gap:18px;align-items:flex-start;justify-content:center">' +
+      '<div data-c1></div><div data-c2></div>' + panelHTML(270) + '</div>';
+    var W1 = 330, H1 = 290, W2 = 290, H2 = 290;
+    var sv1 = IE437.svg(W1, H1), sv2 = IE437.svg(W2, H2);
+    host.querySelector('[data-c1]').appendChild(sv1);
+    host.querySelector('[data-c2]').appendChild(sv2);
     var st = 0;
 
-    function draw() {
-      clear(sv);
-      var y0 = TOP, y1 = TOP + DS.length * RH;
-      S('rect', { x: X(0), y: y0, width: X(XMAXD) - X(0), height: y1 - y0, fill: '#FFFFFF' }, sv);
-      /* the GP's reach: one length scale */
-      S('rect', { x: X(0), y: y0, width: X(ELL) - X(0), height: y1 - y0, fill: BLUE, 'fill-opacity': .13 }, sv);
-      S('line', { x1: X(ELL), x2: X(ELL), y1: y0 - 4, y2: y1, stroke: BLUE, 'stroke-width': 1.4, 'stroke-dasharray': '4 3' }, sv);
-      txt(sv, X(0) + 2, y0 - 10, 'within reach — the GP learns from it', { size: 10.5, weight: 600, fill: BLUE });
-      txt(sv, W - 6, y0 - 10, 'typical', { anchor: 'end', size: 10, op: .55 });
-      [0, 0.2, 0.5, 1, 1.5].forEach(function (v) {
-        S('line', { x1: X(v), x2: X(v), y1: y1, y2: y1 + 4, stroke: INK, 'stroke-opacity': .4 }, sv);
-        txt(sv, X(v), y1 + 16, String(v), { anchor: 'middle', size: 9.5, op: .55 });
-      });
-      txt(sv, (X(0) + X(XMAXD)) / 2, y1 + 32, 'distance from a new design to its nearest experiment (each variable scaled to [0, 1])', { anchor: 'middle', size: 10, op: .6 });
-      ROWS.forEach(function (row, i) {
-        var cy = TOP + (i + 0.5) * RH, on = i <= st, cur = i === st;
-        if (i) S('line', { x1: X(0), x2: X(XMAXD), y1: TOP + i * RH, y2: TOP + i * RH, stroke: INK, 'stroke-opacity': .07 }, sv);
-        txt(sv, LBL - 10, cy + 4, row.d + (row.d === 1 ? ' variable' : ' variables'),
-          { anchor: 'end', size: 11.5, weight: cur ? 700 : 500, fill: INK, op: on ? (cur ? 1 : .7) : .25, sans: true });
-        if (!on) return;
-        row.nn.forEach(function (v, c) {
-          S('circle', { cx: X(v), cy: cy + JIT[c] * (RH - 16), r: 3.3, fill: v < ELL ? BLUE : SLATE, 'fill-opacity': cur ? .85 : .45 }, sv);
+    function picture(d) {
+      clear(sv1);
+      var draw = Math.min(d, 3), fade = d > 3;
+      var gp = S('g', fade ? { opacity: .22 } : {}, sv1);
+      if (draw === 1) {
+        var x0 = 20, x1 = W1 - 20, y = 150, cw = (x1 - x0) / 10;
+        for (i = 0; i < 10; i++) S('rect', { x: x0 + i * cw + 1, y: y - 16, width: cw - 2, height: 32, fill: i % 2 ? '#F4F6FB' : '#FFFFFF', stroke: INK, 'stroke-opacity': .18 }, gp);
+        P1.forEach(function (v) { S('circle', { cx: x0 + v * (x1 - x0), cy: y, r: 5, fill: BLUE }, gp); });
+        txt(gp, x0, y + 34, '0', { anchor: 'middle', size: 10, op: .55 });
+        txt(gp, x1, y + 34, '1', { anchor: 'middle', size: 10, op: .55 });
+        txt(gp, x0 + cw / 2, y - 24, '0.1', { anchor: 'middle', size: 10, op: .55 });
+      } else if (draw === 2) {
+        var L = 46, T = 6, SZ = 236, c = SZ / 10;
+        S('rect', { x: L, y: T, width: SZ, height: SZ, fill: '#FFFFFF' }, gp);
+        for (i = 0; i <= 10; i++) {
+          S('line', { x1: L + i * c, x2: L + i * c, y1: T, y2: T + SZ, stroke: INK, 'stroke-opacity': i % 10 ? .14 : .4 }, gp);
+          S('line', { x1: L, x2: L + SZ, y1: T + i * c, y2: T + i * c, stroke: INK, 'stroke-opacity': i % 10 ? .14 : .4 }, gp);
+        }
+        P2.forEach(function (q) { S('circle', { cx: L + q[0] * SZ, cy: T + SZ - q[1] * SZ, r: 3.6, fill: BLUE }, gp); });
+        txt(gp, L + SZ / 2, T + SZ + 15, 'variable 1', { anchor: 'middle', size: 10, op: .55 });
+        var t2 = txt(gp, L - 10, T + SZ / 2, 'variable 2', { anchor: 'middle', size: 10, op: .55 });
+        t2.setAttribute('transform', 'rotate(-90 ' + (L - 10) + ' ' + (T + SZ / 2) + ')');
+      } else {
+        /* an isometric cube: x to the right-down, y to the left-down, z up */
+        var O = [W1 / 2, 150], A = 118, cs = Math.cos(Math.PI / 6), sn = 0.5;
+        var pr = function (x, y, z) { return [O[0] + (x - y) * A * cs, O[1] + (x + y) * A * sn - z * A * 1.05 - 20]; };
+        var edge = function (a, b2, op) { var u = pr.apply(null, a), v = pr.apply(null, b2);
+          S('line', { x1: u[0], y1: u[1], x2: v[0], y2: v[1], stroke: INK, 'stroke-opacity': op }, gp); };
+        /* back edges, then the cloud by depth, then front edges */
+        edge([0, 0, 0], [1, 0, 0], .25); edge([0, 0, 0], [0, 1, 0], .25); edge([0, 0, 0], [0, 0, 1], .25);
+        P3.slice().sort(function (u, v) { return (u[0] + u[1] - u[2]) - (v[0] + v[1] - v[2]); }).forEach(function (q) {
+          var p2 = pr(q[0], q[1], q[2]), depth = (q[0] + q[1] + (1 - q[2])) / 3;
+          S('circle', { cx: p2[0].toFixed(1), cy: p2[1].toFixed(1), r: 1.9, fill: BLUE, 'fill-opacity': (0.3 + 0.6 * depth).toFixed(2) }, gp);
         });
-        var mx = X(row.med);
-        S('line', { x1: mx, x2: mx, y1: cy - RH / 2 + 5, y2: cy + RH / 2 - 5, stroke: INK, 'stroke-width': 2, 'stroke-opacity': cur ? .9 : .4 }, sv);
-        txt(sv, W - 6, cy + 4, row.med.toFixed(2), { anchor: 'end', size: 11, weight: 600, op: cur ? .95 : .5 });
+        [[[1, 0, 0], [1, 1, 0]], [[0, 1, 0], [1, 1, 0]], [[1, 0, 0], [1, 0, 1]], [[0, 1, 0], [0, 1, 1]], [[1, 1, 0], [1, 1, 1]],
+         [[0, 0, 1], [1, 0, 1]], [[0, 0, 1], [0, 1, 1]], [[1, 0, 1], [1, 1, 1]], [[0, 1, 1], [1, 1, 1]]].forEach(function (e) { edge(e[0], e[1], .55); });
+      }
+      if (fade) {
+        txt(sv1, W1 / 2, H1 / 2 - 6, count(d) + ' cells', { anchor: 'middle', size: 26, weight: 700, fill: INK, sans: true, halo: true });
+        txt(sv1, W1 / 2, H1 / 2 + 20, 'too many to draw — count them instead', { anchor: 'middle', size: 11, op: .65, halo: true });
+      } else {
+        txt(sv1, W1 / 2, H1 - 6, d + (d === 1 ? ' variable' : ' variables') + ': ' + count(d) + ' cells, ' + count(d) + ' experiments',
+          { anchor: 'middle', size: 11.5, weight: 600, fill: INK, sans: true });
+      }
+    }
+    function bars() {
+      clear(sv2);
+      var L = 46, R = 8, T = 14, B = 34, YM = 20;
+      var X = function (ix) { return L + (ix + 0.5) / DS.length * (W2 - L - R); };
+      var Y = function (e) { return H2 - B - e / YM * (H2 - B - T); };
+      var BW = (W2 - L - R) / DS.length * 0.62;
+      S('rect', { x: L, y: T, width: W2 - L - R, height: H2 - B - T, fill: '#FFFFFF' }, sv2);
+      [0, 5, 10, 15, 20].forEach(function (e) {
+        S('line', { x1: L, x2: W2 - R, y1: Y(e), y2: Y(e), stroke: INK, 'stroke-opacity': .08 }, sv2);
+        var tk = txt(sv2, L - 6, Y(e) + 4, '10', { anchor: 'end', size: 10.5, op: .55, sans: true });
+        S('tspan', { 'baseline-shift': 'super', 'font-size': '72%', text: String(e) }, tk);
       });
-
-      var row = ROWS[st], ratio = row.med / ELL;
-      var sup = String(row.d).split('').map(function (c) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]; }).join('');
+      DS.forEach(function (d, ix) {
+        txt(sv2, X(ix), H2 - B + 15, String(d), { anchor: 'middle', size: 10.5, weight: ix === st ? 700 : 400, op: ix <= st ? .8 : .3 });
+        if (ix > st) return;
+        var ok = d <= 2, cur = ix === st;
+        S('rect', { x: X(ix) - BW / 2, y: Y(d), width: BW, height: Y(0) - Y(d), fill: ok ? BLUE : SLATE, 'fill-opacity': cur ? .9 : .45 }, sv2);
+      });
+      txt(sv2, (L + W2 - R) / 2, H2 - 4, 'number of variables d', { anchor: 'middle', size: 10, op: .55 });
+      /* what BO can afford */
+      S('line', { x1: L, x2: W2 - R, y1: Y(2), y2: Y(2), stroke: RED, 'stroke-width': 1.6, 'stroke-dasharray': '5 3' }, sv2);
+      S('line', { x1: L + 8, x2: L + 30, y1: T + 14, y2: T + 14, stroke: RED, 'stroke-width': 1.6, 'stroke-dasharray': '5 3' }, sv2);
+      txt(sv2, L + 36, T + 18, 'a typical BO budget: ~100', { size: 10.5, weight: 600, fill: RED, sans: true });
+    }
+    function draw() {
+      var d = DS[st];
+      picture(d); bars();
+      var cmp = d === 1 ? '' : d === 2 ? '' : d === 3 ? 'a budget of 100 fills at most 10% of them'
+        : d === 5 ? 'one experiment a day: 274 years'
+        : d === 10 ? 'ten billion — more than the people on Earth'
+        : 'one experiment a second: ~230 times the age of the universe';
       show(
-        b(row.d + (row.d === 1 ? ' input variable' : ' input variables')) + ', 100 experiments<br>' +
-        'typical nearest experiment: ' + b(row.med.toFixed(2)) + ' away' + (row.med > ELL ? ' — ' + b(ratio.toFixed(1) + ' length scales') : '') + '<br>' +
-        'new designs with an experiment within reach: ' + b(Math.round(100 * row.within) + '%', row.within > 0.5 ? BLUE : SLATE) + '<br>' +
-        'ten settings per variable would take ' + b('10' + sup) + ' experiments',
-        row.d <= 2 ? 'Every new design has an experiment close by, so the GP’s prediction there is informed — and EI can rank the designs.'
-          : row.d <= 3 ? 'Still mostly within reach, but the same 100 experiments are spread thinner.'
-          : row.d <= 5 ? 'Most new designs are now out of reach of every experiment.'
-          : 'Out of reach, the GP has only its prior: the same mean and the same width for every such design. EI cannot tell them apart, so BO is no better than picking at random.');
+        b(d + (d === 1 ? ' variable' : ' variables')) + (d === 1 ? ', cut' : ', each cut') + ' into 10 cells of width 0.1<br>' +
+        'cells: ' + (d >= 2 && d <= 3 ? Array(d).fill('10').join(' × ') + ' = ' : '') + b(count(d)) + '<br>' +
+        'experiments to leave no cell empty: ' + b(count(d), d <= 2 ? BLUE : SLATE) +
+        (cmp ? '<br><span style="color:var(--ink3)">' + cmp + '</span>' : ''),
+        d <= 2 ? 'With one or two variables, a budget of about 100 experiments puts one in every cell: the GP sees the whole space.'
+          : d === 3 ? 'Each new variable multiplies the cells by ten. Most cells are now empty — and the GP knows nothing about an empty cell beyond its prior.'
+          : 'BO cannot fill this space. It must guess the empty cells from its prior — which is why high-dimensional BO needs structure, locality or a learned space.');
     }
     draw();
     return {
       steps: DS.length - 1,
-      step: function (i) { st = i; draw(); },
+      step: function (i2) { st = i2; draw(); },
       reset: function () { draw(); },
-      finish: function () { st = DS.length - 1; draw(); }
+      finish: function () { st = 2; draw(); }
     };
   }
 
