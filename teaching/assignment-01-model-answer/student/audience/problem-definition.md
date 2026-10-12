@@ -2,7 +2,7 @@
 
 [One-page comparison of the course brief, case data and assumptions](../classroom-comparison.html).
 
-**HW1 sample answer · English · Proposal flow revision 1.6 · 2026-10-11**
+**HW1 sample answer · English · Annual-sample revision 1.8 · 2026-10-11**
 
 Author / student ID: Public teaching sample; `N/A — not a student submission`.  
 LLM use: OpenAI Codex assistant, 2026-10-11, for source inspection, scope review, English drafting, translation and functional-check design. The exact deployed model identifier was not recorded.
@@ -15,7 +15,7 @@ This worked example connects this definition, the latest Movie First M0 applicat
 
 **D1 — Choose a fixed schedule from current information.** M0 starts with audience profiles and movie metadata, predicts schedule-independent potential viewings, constructs a feasible baseline, evaluates its actual times and seats, and searches nearby schedules. The manager inspects the comparison before recommending a candidate. The generated baseline is a synthetic demand-coverage heuristic; current real operator practice is `TBD`. Forecasting supports the decision rather than constituting a separate operational decision.
 
-The configured interval is **2027-01-01 through exclusive 2028-01-01**, or 365 service days. The supplied [Movies.csv](Movies.csv) contains two invented films, available **January 1–4** because their `endDate` is January 5 and is exclusive. Importing these films does not shorten the configured horizon; the current UI has no separate horizon editor. This small active catalog makes the annual workflow easier to inspect without pretending it is a four-day planning model.
+The configured interval is **2027-01-01 through exclusive 2028-01-01**, or 365 service days. The supplied [Movies.csv](Movies.csv) restores the existing annual simulator's **24 distinct fictional movie IDs**, with two new movies each month. Each monthly pair shares a release window, so every service day has two active, competing films. January's films end exclusively on February 1; December's end exclusively on January 1, 2028. The two preference templates are science fiction and drama; the controlled fixture uses 110-minute runtimes, all-age ratings and standard format. The CSV can be edited to test other catalogs. Importing movies does not change the annual horizon; the current UI has no separate horizon editor.
 
 Use **2,000 computational profiles and one initial forecast path** for the classroom example. The local seat market always contains **10,000 distinct synthetic people**. Profiles describe input types, not the number of attendees. One local person consumes one seat per admitted visit. Multiple annual visits are possible, so viewings are not unique visitors.
 
@@ -57,7 +57,7 @@ The UI's edit penalty is **zero** for both objectives. Ticket revenue sums simul
 
 A shared model supplies genre/style match and available interest, awareness and rating evidence. It is not one LLM per person. M0 uses explicit coefficients and genre-rule feature defaults rather than training a graph predictor. Positive movie intensity combines preference, calibrated frequency, release-day weight, recovery, access and any shock multiplier. Intensities define competing movie choices plus no visit. Equivalent access groups and remaining seats affect choices; an extra showing does not create another independent population.
 
-Frequency calibration fits each profile's intercept in a **fixed synthetic reference environment with a neutral new movie each day**, known access rules and separate calibration-validation draws. It aims to match a declared or synthetically estimated annual reference frequency. It does not force that many visits to the uploaded two films or calibrate against real attendance. Unattainable or unresolved calibration is reported as a failure.
+Frequency calibration fits each profile's intercept in a **fixed synthetic reference environment with a neutral new movie each day**, known access rules and separate calibration-validation draws. It aims to match a declared or synthetically estimated annual reference frequency. It does not force that many visits to the uploaded catalog or calibrate against real attendance. Unattainable or unresolved calibration is reported as a failure.
 
 ### Restrictions and recovery
 
@@ -98,7 +98,7 @@ The check is **5 purchases, 9 paid tickets and 4 distinct purchasing accounts**.
 | Movie metadata/features: supplied synthetically; real provenance `TBD` | Cold-start preference and competition | Content/modeling owner; high | Transparent genre defaults; distinguish reviewed/automatic features |
 | Real response changes and cutoffs: `TBD` | D2 observation/trigger without future leakage | Operations/data owner; high for D2 | Labeled hypothetical intensity shock |
 
-The two-film CSV supplies genre/runtime/rating/format/date fields. Omitted synopsis, director, cast and explicit features receive existing metadata-rule defaults, not AI interpretations or validated tastes. Profile IDs such as `U00002` and person IDs such as `P00010` identify different synthetic units; several people can share one profile's input history.
+The annual CSV supplies genre/runtime/rating/format/date fields, a fictional synopsis and explicit preference-feature values from the existing sample workbook. Director and cast remain empty. The science-fiction and drama templates have different feature values; the month-specific IDs represent distinct fictional films, not repeat screenings of one movie. These are declared metadata-rule features, not AI interpretations or validated tastes. Profile IDs such as `U00002` and person IDs such as `P00010` identify different synthetic units; several people can share one profile's input history.
 
 Separate **Monte Carlo variation**, **behavioral assumption error** and **missing real information**. A fixed seed makes replay checkable, not certain. The paired interval estimates simulation variation, not real forecast error, calibrated market uncertainty or causal uplift. Compare multiple attendance/group worlds compatible with the purchase totals and vary preferences, frequency, budgets and rules. Request evidence where it could change rankings or invalidate the feasible set.
 
@@ -124,13 +124,13 @@ Compare the selected candidate and baseline on **20 unused paths, 200–219**, w
 
 Open [demo.html](demo.html). Its UI, fictional inputs and calculation code are embedded. Direct offline execution is a required delivery check whose status is recorded separately below. No API key or customer data is involved.
 
-1. Keep **Computational profiles** at **2,000** and **Initial movie list** at **Empty list · enter movies manually**. Leave **Declare annual viewing frequency** unchecked, then select **Prepare synthetic audience**. This uses the fixture's synthetic frequency estimates and matches the observed run below. An optional separate experiment may declare 10; that is a reference mean, not a two-film quota, and must not be mixed with the default run.
-2. Select **Next: Register movies**, then **Load classroom sample**. This passes the two-film CSV through the existing importer as a file named `Movies.csv`; it does not supply mocked results. Alternatively, use **Download sample CSV** or the supplied [Movies.csv](Movies.csv) and upload it, preserving the exact filename. The importer uses its basename as the sheet name and expects `Movies`. Confirm two registered films/no error. A differently named file is not interchangeable even with identical columns.
+1. Keep **Computational profiles** at **2,000** and **Initial movie list** at **Empty list · enter movies manually**. Leave **Declare annual viewing frequency** unchecked, then select **Prepare synthetic audience**. This uses the fixture's synthetic frequency estimates; current annual-sample observations are recorded below. An optional separate experiment may declare 10; that is a reference mean, not a quota for the uploaded catalog, and must not be mixed with the default run.
+2. Select **Next: Register movies**, then **Load annual sample · 24 films**. This passes the existing annual sample's 24-film CSV through the existing importer as a file named `Movies.csv`; it does not supply mocked results. Alternatively, use **Download sample CSV** or the supplied [Movies.csv](Movies.csv) and upload it, preserving the exact filename. The importer uses its basename as the sheet name and expects `Movies`. Confirm 24 registered films/no error. A differently named file is not interchangeable even with identical columns.
 3. Select **Next: Objective & constraints**. Keep **Admissions**, **1 path · exploratory simulation**, opening 540, closing 1470, cleaning 20 and price 1400. Leave **Run local improvement and separate 20-path validation after the baseline schedule** unchecked. Select **Confirm settings**, then **Start simulation**.
-4. Actual stages are reference-frequency calibration → potential demand → baseline construction → choice/seat evaluation → results. Inspect potential viewings, baseline realized viewings, showings and path count. The timeline includes dates with no active films.
+4. Actual stages are reference-frequency calibration → potential demand → baseline construction → choice/seat evaluation → results. Inspect potential viewings, baseline realized viewings, showings and path count. The annual sample has active movies on every date; uploading a sparse catalog can leave dates empty.
 5. In **Displayed result**, inspect potential and baseline realized modes. Click a film title/bar, choose a date, and click a person ID. Charts average the result's paths; the person list is one sample path. Search/page through people; distinguish known synthetic completed watches from earlier predicted visits in that path. Close the dialog to continue.
 6. In **Next task from these results**, choose **Find a better candidate from the baseline schedule**, then **Start schedule improvement** in the bottom bar. Inspect search trace, paired 20-path comparison and recommendation. Do not subtract an initial one-path KPI from a 20-path candidate to claim gain.
-7. Choose **Compare re-programming after a response change**. Set **Shock effective date** to `2027-01-03`, film A / Stellar Voyage, and **Movie intensity multiplier** to **0.2**. Select **Apply shock & start re-programming**. Inspect all three states and preservation identifiers.
+7. Choose **Compare re-programming after a response change**. Set **Shock effective date** to `2027-02-15`, **February · Stellar Voyage** (`OWN-02-A`), and **Movie intensity multiplier** to **0.2**. The selected movie is active February 1–28, with exclusive end date March 1. Select **Apply shock & start re-programming**. Inspect all three states and preservation identifiers.
 
 The multiplier changes intensity: 0 removes fresh intensity, 1 leaves it unchanged, 2 doubles it. A value of 0.2 does not promise 80% fewer admissions. Every run starts from the original baseline; shocks do not accumulate. Confirmed future bookings stay protected. All three states use common 20-path evaluation and a fixed synthetic prefix. **Shock effect = after-shock same plan − before shock. Revision effect = after-shock revised plan − after-shock same plan.** These are whole-period results conditional on the common past.
 
@@ -140,73 +140,37 @@ Use [proposal.html](proposal.html) for the original full presentation. Arrow key
 
 **Save inputs & rules** and **Download reproducibility manifest** preserve input/rules/path settings. Browser-local restore uses a separate Movie First store; it does not migrate old predictions or resume an interrupted computation checkpoint. Cancellation retains input; replay recalculates from the beginning with the same settings/paths. Altering input invalidates old results.
 
+### Annual-sample verification — release 1.8
+
+The 24-film CSV restores the `Movies` catalog from the existing annual simulator's sample workbook. Its 12 monthly pairs cover all 365 service days of 2027. Metadata are declared known at `2027-01-01T00:00+09:00`, matching the annual forecast cutoff. English titles and the fictional synopsis replace the sample's display text; the movie IDs, release dates, runtime, rating, format and feature values preserve its controlled workload.
+
+**Current annual-sample baseline: completed through the actual English app over local HTTP.** The checked HTML SHA-256 is `d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea`. The run used 2,000 profiles, synthetic estimated frequency with displayed mean 10.84 viewings/year, Admissions, one initial path and default operating rules. The former two-film baseline and response-change numbers are preserved in the historical appendix; they are not outputs of this annual catalog.
+
+| Current annual-sample measure | Observation |
+|---|---|
+| Movies registered | 24 |
+| Monthly timeline / date eligibility | Source catalog covers January–December; forecast completed all 365 days, allocation completed and evaluation advanced through December 27 before finishing |
+| Population and initial path count | 2,000 profiles, 10,000 local people, 1 path |
+| Reference-frequency calibration | 130.6 seconds; displayed mean 10.84 viewings/year |
+| Schedule-independent potential viewings | 9,576 |
+| Baseline realized viewings / showings | 5,536 / 7,467 |
+| Film/date/person drilldowns | Baseline December · Our Day: 234 visits; December 2: 27 people / 23 showings. P00094 (U00018): 25 completed synthetic input watches, zero earlier visits in this simulated path |
+| Schedule improvement / shock replanning | Not run for this annual catalog; separate 20-path comparisons |
+
+The complete observed annual run took approximately **419 seconds** on the checked environment. This is a functional-run observation, not a formal performance benchmark. Potential and realized viewings describe different choice environments; their difference alone is not a causal effect or an optimization gain. Schedule-improvement and response-change comparisons have not been run on this annual catalog.
+
 ### Normal, boundary and failure checks
 
-Start independent cases fresh with the stated fixture. These are actual M0 controls; the old seven-day 10:30/09:00/08:30 editor examples do not apply.
+Start independent cases fresh with the stated annual fixture. These are actual M0 controls; the old seven-day 10:30/09:00/08:30 editor examples do not apply.
 
-| Case | Input / steps | Expected source-backed behavior | Current English-build observation |
+| Case | Input / steps | Expected source-backed behavior | Current annual-sample observation |
 |---|---|---|---|
-| Normal | Valid `Movies.csv`, default estimated frequency, admissions/one path; execute baseline | Register two films; calculate potential demand and seat-constrained baseline | Observed through the English HTTP build: 757 potential local viewings, 726 baseline realized viewings and 241 showings; details below |
-| Shock/replan extension | From that baseline: Jan 3 / A / multiplier 0.2; execute | Report three comparable states under the same fixed past/bookings | Observed: three-state comparison and positive paired revision gain; details below |
-| Boundary | Baseline → Jan 3 / A / multiplier **0**, an allowed endpoint | Accept the boundary as a valid input; an executed zero-shock-intensity case would remove fresh A intensity after Jan 3 while preserving past/bookings | Observed: **Apply shock & start re-programming** remained enabled at 0. Its numerical evaluation was **Not run**; restored 0.2 before the recorded execution. |
-| Failure | Multiplier **6**, or empty, with otherwise valid shock inputs | Disable execution; previous comparison retains its original conditions. Restore 0–5 and execute for a new result. | Observed: entering **6** disabled **Apply shock & start re-programming**. Empty-input behavior is `Not run`. |
-| Import failure / recovery | Upload the supplied file renamed `WrongName.csv`; then unchanged `Movies.csv` | Explain invalid input; no valid new evaluated plan from rejection; valid import gives a runnable two-film fixture | `Not run` — pending UI/engine observation |
-| Repeatability | Fresh reload, identical profile/declaration/CSV/rules/paths; repeat baseline/comparison | Matching provenance and deterministic outputs for the same browser/runtime and execution sequence | `Not run` — pending repeated current-build observation |
-
-### Observed classroom baseline
-
-On **2026-10-11**, the current rebuilt English Movie First app was exercised through CUA in the Codex in-app browser, served through an HTTP preview. The run used **2,000 profiles**, default synthetic estimated frequency with displayed mean **10.84 viewings/year**, the two imported `Movies.csv` films, **Admissions**, and **one path**. The local person pool was 10,000. The configured horizon was the full 2027 year; both films' active intervals ended at exclusive January 5.
-
-| Observed result | Value | Interpretation |
-|---|---:|---|
-| Reference-frequency calibration time | 23.4 s | One observed run on the current host, not a performance guarantee |
-| Local potential viewings | 757 | Reference-environment result, not booked or allocated screenings |
-| Quiet Afternoon potential viewings | 409 | Film B; part of the same local reference total |
-| Stellar Voyage potential viewings | 348 | Film A; part of the same local reference total |
-| Baseline realized viewings | 726 | Choices under generated screenings and seat constraints |
-| Stellar Voyage baseline realized viewings | 332 | Film A under the same baseline path |
-| Quiet Afternoon baseline realized viewings | 394 | Film B under the same baseline path |
-| Baseline showings | 241 | Generated schedule records, not attendees |
-| Initial forecast/evaluation paths | 1 | Exploratory path, not a 20-path validation estimate |
-
-The film totals match their respective totals: potential `409 + 348 = 757`; realized `332 + 394 = 726`. Potential and realized values describe different environments; their difference alone is not a causal estimate, pure capacity shortfall or a policy improvement. The 10.84 reference frequency does not force every person to visit that many times in this two-film catalog. This baseline demonstrates the import, calibration, demand, allocation and evaluation pipeline under declared synthetic assumptions. It does not validate real consumer behavior or establish that a searched candidate improves it.
-
-Film/date exploration was also exercised: selecting **Stellar Voyage / January 3** in the baseline result showed **107 synthetic people**. In the earlier **potential Quiet Afternoon** result, opening **P00205** showed **10 completed synthetic historical watches** and **0 earlier visits in that simulation**. These are separate inspected selections, not an assertion that P00205 belongs to the 107-person baseline list. They establish that film/date and person-history drilldowns operate; they do not validate real identities or observed customer histories.
-
-### Observed schedule-improvement comparison
-
-The current English build completed ordinary local search and the paired unused-path comparison under the same inputs. Search used **100–103** and validation used **200–219**.
-
-| Observed comparison output | Value |
-|---|---:|
-| Baseline mean admissions on 20 validation paths | 767.30 |
-| Candidate mean admissions on those same paths | 767.30 |
-| Paired candidate-minus-baseline mean | 0.00 |
-| Paired 95% Monte Carlo interval | [0.00, 0.00] |
-| Search rounds / candidate evaluations | 1 / 24 |
-| Recommendation | Uncertain gain · Baseline schedule retained |
-
-No improvement was established in this search. The zero paired interval describes this comparison under the synthetic evaluator; it does not prove that real forecast error or all possible schedule gains are zero. The retained baseline's **767.30** is a 20-path mean, whereas **726** above is the initial one-path realization. Their difference is not an optimization gain. Best-among-searched and no-gain conclusions do not establish global optimality.
-
-### Observed response shock and replanning
-
-The next task applied **2027-01-03 / Stellar Voyage / intensity multiplier 0.2**. All three states used **20 common validation paths**, conditional on the same confirmed synthetic history before January 3.
-
-| Observed conditional state | Displayed mean viewings | Ticket revenue, DEMO units |
-|---|---:|---:|
-| Before shock, existing schedule | 741.5 | 10,381.00 |
-| After shock, existing schedule | 619.6 | 8,675.10 |
-| After shock, re-programmed schedule | 620.4 | 8,684.90 |
-
-The authoritative paired revision gain was **0.70 admissions**, with **95% Monte Carlo interval [0.30, 1.10]** and **Recommend the improved schedule**. Search reported **2 rounds / 48 candidate evaluations**. The displayed means have one decimal place: subtracting 620.4 − 619.6 gives 0.8, which must not replace the paired **unrounded** gain of 0.70. The ticket-revenue difference is 9.80 DEMO units; neither figure is real field benefit.
-
-The before-shock **741.5** uses a fixed synthetic history prefix and therefore has a different evaluation context from the earlier unrestricted **767.30** comparison. Do not mix those baselines or interpret their difference as the response shock. The recorded shock comparison separates the new intensity condition from the additional future schedule change. Exact preservation-hash values were not separately transcribed in this record. The fixture's empty bookings do not test preservation of a nonempty real reservation ledger.
-
-The observed English application file's SHA256 was `8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f`. These are current HTTP functional observations; direct offline execution and the repeatability/import-failure checks remain unexecuted where stated.
-
-Record actual baseline/candidate values, paired interval, recommendation and hashes from the comparison panel, then all three shock values and preservation identifiers. A valid change need not change an aggregate; report what happens. Do not import measurements from an earlier app or label unexecuted expectations as observations.
-
-Latest source implementation evidence is dated **2026-09-18**: film/person detail and the baseline-allocation stall fix were implemented and tested. Development reports do not themselves verify this packaged English build. Overall M0 gates remain incomplete: formal repeated 10k/25k performance, independent-world statistics, M1 learning and real customer/business validation are not established. The baseline above is a current-package HTTP observation; other current checks remain `Not run` where indicated. Direct offline opening is **`Not run` in this verification session**; update only from an actual run.
+| Normal | Valid `Movies.csv`, default estimated frequency, admissions/one path; execute baseline | Register 24 films; calculate annual potential demand and seat-constrained baseline | Local HTTP run completed: 9,576 potential viewings, 5,536 realized viewings and 7,467 showings |
+| Shock/replan extension | From that baseline: Feb 15 / OWN-02-A / multiplier 0.2; execute | Report three comparable states under the same fixed past/bookings | Not run for the annual catalog |
+| Boundary | Baseline → Feb 15 / OWN-02-A / multiplier **0**, an allowed endpoint | Accept 0; executed case removes fresh movie intensity after the date while preserving past/bookings | Not run for the annual catalog; historical two-film control observation is separate |
+| Failure | Multiplier **6**, or empty, with otherwise valid shock inputs | Disable execution; previous comparison retains its original conditions. Restore 0–5 and execute for a new result. | Not run for the annual catalog; historical two-film control observation is separate |
+| Import failure / recovery | Upload supplied file renamed `WrongName.csv`; then unchanged `Movies.csv` | Explain invalid input; no valid new evaluated plan from rejection; valid import gives a runnable 24-film fixture | Not run — pending UI/engine observation |
+| Repeatability | Fresh reload, identical profile/declaration/CSV/rules/paths; repeat baseline/comparison | Matching provenance and deterministic outputs for the same browser/runtime and execution sequence | Not run — pending repeated current-build observation |
 
 For model evaluation, use a held-out period/cutoff and target-matched error/calibration metrics. For action evaluation, compare with the agreed baseline under the same eligible information/feasible set; report objective, admissions, tickets/revenue, changes, violations and preserved commitments together. Vary plausible behavioral worlds and rules. Replay is not independent causal evidence; a prospective operational comparison is a later gate.
 
@@ -227,10 +191,70 @@ These are actual review decisions during this sample's preparation, not an inven
 | Suggestion / framing | Independent check | Assessment | Final use |
 |---|---|---|---|
 | Use the earlier seven-day editor as the audience example | Compared routes, latest checklist, 2026-09-18 development reports and M0 Worker/UI flow | Earlier controls, objective and shock values do not describe latest M0 | Promote the existing Movie First app; rewrite seven sections; preserve original proposal design and distinguish prepared illustrations |
-| Treat the two-film file as a four-day forecast with any filename | Checked importer filename/sheet matching, exclusive dates, unchanged annual config and supplied rows | `Movies.csv` is required; films are active Jan 1–4 while horizon remains 365 days | State exact filename/cutoff/exclusive dates, no horizon editor, and import failure/recovery |
+| Make the annual simulator representative of a full teaching year | Inspected the existing annual sample workbook and preserved its 24 IDs, monthly release windows and feature values | Two new films each month; two competing films on all 365 days; metadata known at the annual cutoff | Restore its English CSV through the existing importer; use current annual results, keep earlier two-film checks historical |
 | Carry over penalized revenue, BO and 48-hour freezing | Checked `objectiveNow`, `scorePlan`, `improvePlan`, `validateImprovement`, `executeReplanWorkflow`, `replanAt` and default rules | M0 selects admissions/ticket revenue with zero edit penalty, bounded search, four search paths, 20 paired unused paths and synthetic-prefix preservation | State exact mechanism/units; distinguish simulator validation from field evidence; keep unexecuted checks `Not run` |
 
 Source basis: the [HW1 brief](../reference/assignment.md), [seven-section template](../reference/problem-definition-template.md), [classification reference](../reference/problem-classification-reference.md), [Movies.csv](Movies.csv), and reviewed functions above. Development README/checklist/source establish implementation scope, not observation of this public build. The purchase-unit audit independently checks why accounts cannot establish personal attendee histories.
+
+
+## Appendix — Historical release 1.7 two-film verification
+
+The following executed checks belong to the former `Movies.csv` containing **Stellar Voyage** and **Quiet Afternoon**, active January 1–4, 2027. Their app SHA-256 is stated below. They establish the earlier importer/calculation/detail/control workflow within that fixture; they are **not the release 1.8 annual catalog's numerical results or performance measurements**. Keep them separate when evaluating the 24-film run in Section 5.
+
+### Historical two-film baseline
+
+On **2026-10-11**, the English Movie First app retained through release 1.7 was exercised through CUA in the Codex in-app browser, served through an HTTP preview. The run used **2,000 profiles**, default synthetic estimated frequency with displayed mean **10.84 viewings/year**, the two imported `Movies.csv` films, **Admissions**, and **one path**. The local person pool was 10,000. The configured horizon was the full 2027 year; both films' active intervals ended at exclusive January 5.
+
+| Observed result | Value | Interpretation |
+|---|---:|---|
+| Reference-frequency calibration time | 23.4 s | One observed run on the current host, not a performance guarantee |
+| Local potential viewings | 757 | Reference-environment result, not booked or allocated screenings |
+| Quiet Afternoon potential viewings | 409 | Film B; part of the same local reference total |
+| Stellar Voyage potential viewings | 348 | Film A; part of the same local reference total |
+| Baseline realized viewings | 726 | Choices under generated screenings and seat constraints |
+| Stellar Voyage baseline realized viewings | 332 | Film A under the same baseline path |
+| Quiet Afternoon baseline realized viewings | 394 | Film B under the same baseline path |
+| Baseline showings | 241 | Generated schedule records, not attendees |
+| Initial forecast/evaluation paths | 1 | Exploratory path, not a 20-path validation estimate |
+
+The film totals match their respective totals: potential `409 + 348 = 757`; realized `332 + 394 = 726`. Potential and realized values describe different environments; their difference alone is not a causal estimate, pure capacity shortfall or a policy improvement. The 10.84 reference frequency does not force every person to visit that many times in this two-film catalog. This baseline demonstrates the import, calibration, demand, allocation and evaluation pipeline under declared synthetic assumptions. It does not validate real consumer behavior or establish that a searched candidate improves it.
+
+Film/date exploration was also exercised: selecting **Stellar Voyage / January 3** in the baseline result showed **107 synthetic people**. In the earlier **potential Quiet Afternoon** result, opening **P00205** showed **10 completed synthetic historical watches** and **0 earlier visits in that simulation**. These are separate inspected selections, not an assertion that P00205 belongs to the 107-person baseline list. They establish that film/date and person-history drilldowns operate; they do not validate real identities or observed customer histories.
+
+### Historical two-film schedule-improvement comparison
+
+The historical two-film English build completed ordinary local search and the paired unused-path comparison under the same inputs. Search used **100–103** and validation used **200–219**.
+
+| Observed comparison output | Value |
+|---|---:|
+| Baseline mean admissions on 20 validation paths | 767.30 |
+| Candidate mean admissions on those same paths | 767.30 |
+| Paired candidate-minus-baseline mean | 0.00 |
+| Paired 95% Monte Carlo interval | [0.00, 0.00] |
+| Search rounds / candidate evaluations | 1 / 24 |
+| Recommendation | Uncertain gain · Baseline schedule retained |
+
+No improvement was established in this search. The zero paired interval describes this comparison under the synthetic evaluator; it does not prove that real forecast error or all possible schedule gains are zero. The retained baseline's **767.30** is a 20-path mean, whereas **726** above is the initial one-path realization. Their difference is not an optimization gain. Best-among-searched and no-gain conclusions do not establish global optimality.
+
+### Historical two-film response shock and replanning
+
+The next task applied **2027-01-03 / Stellar Voyage / intensity multiplier 0.2**. All three states used **20 common validation paths**, conditional on the same confirmed synthetic history before January 3.
+
+| Observed conditional state | Displayed mean viewings | Ticket revenue, DEMO units |
+|---|---:|---:|
+| Before shock, existing schedule | 741.5 | 10,381.00 |
+| After shock, existing schedule | 619.6 | 8,675.10 |
+| After shock, re-programmed schedule | 620.4 | 8,684.90 |
+
+The authoritative paired revision gain was **0.70 admissions**, with **95% Monte Carlo interval [0.30, 1.10]** and **Recommend the improved schedule**. Search reported **2 rounds / 48 candidate evaluations**. The displayed means have one decimal place: subtracting 620.4 − 619.6 gives 0.8, which must not replace the paired **unrounded** gain of 0.70. The ticket-revenue difference is 9.80 DEMO units; neither figure is real field benefit.
+
+The before-shock **741.5** uses a fixed synthetic history prefix and therefore has a different evaluation context from the earlier unrestricted **767.30** comparison. Do not mix those baselines or interpret their difference as the response shock. The recorded shock comparison separates the new intensity condition from the additional future schedule change. Exact preservation-hash values were not separately transcribed in this record. The fixture's empty bookings do not test preservation of a nonempty real reservation ledger.
+
+The observed English application file's SHA256 was `8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f`. These are historical two-film HTTP functional observations; direct offline execution and the repeatability/import-failure checks remain unexecuted where stated.
+
+Record actual baseline/candidate values, paired interval, recommendation and hashes from the comparison panel, then all three shock values and preservation identifiers. A valid change need not change an aggregate; report what happens. Do not import measurements from an earlier app or label unexecuted expectations as observations.
+
+Latest source implementation evidence is dated **2026-09-18**: film/person detail and the baseline-allocation stall fix were implemented and tested. Development reports do not themselves verify the corresponding two-film packaged English build. Overall M0 gates remain incomplete: formal repeated 10k/25k performance, independent-world statistics, M1 learning and real customer/business validation are not established. The baseline above is a historical two-film HTTP observation; other checks for that fixture remain `Not run` where indicated. Direct offline opening is **`Not run` in this verification session**; update only from an actual run.
 
 
 ## Appendix — Presentation context and presenter notes
@@ -286,4 +310,4 @@ The following figures were reported in the original V2 source deck. They are ret
 | UI/replay | Edit movie → annual run → viewer detail → manifest replay | Source reported Chromium execution with 0 console errors/external requests |
 | Readiness flags | `annualReleaseReady=false`, `realWorldValidated=false` | Historical source flags, not a current release decision |
 
-The current measured application outputs and unexecuted checks remain in Section 5. No numerical demo code was changed by this presentation revision.
+Current annual-sample outputs and unexecuted checks are recorded in Section 5. Historical two-film observations have their own appendix. Release 1.8 restores the existing annual catalog; it does not introduce a new simulation algorithm.

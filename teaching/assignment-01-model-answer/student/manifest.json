@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
-  "version": "1.7",
+  "version": "1.8",
   "purpose": "IE437 Assignment 1 public worked examples",
-  "disclosure": "All records, outcomes and engine results are synthetic. Case A supports planning JSON/CSV import, operating-rule configuration, aggregate-response ILS optimization and timetable inspection/export; learned response models and BO are not implemented. Case B uses the movie-first M0 individual-consumer simulator. Both demo sites and guides are English.",
+  "disclosure": "All records, outcomes and engine results are synthetic. Case A supports planning JSON/CSV import, operating-rule configuration, aggregate-response ILS optimization and timetable inspection/export; learned response models and BO are not implemented. Case B uses the existing movie-first M0 individual-consumer simulator with its original 24-film, 365-day annual sample translated into English. Both demo sites and guides are English.",
   "files": [
     {
       "file": "classroom-comparison.html",
       "bytes": 178650,
-      "sha256": "b6f52780241d856c8f227a7e5e56495b308962643b6d3b16bdb55874347d29d4"
+      "sha256": "47eec7415357914babf972c6a9f52055b43b7634b920030f209cdde39092a2bb"
     },
     {
       "file": "classroom-comparison.md",
-      "bytes": 4269,
-      "sha256": "a4b8300a60aba478495acd14a9e555f2389bd987d7badeb83300b7624ab53ffe"
+      "bytes": 4498,
+      "sha256": "4820691b46a5e56a29036e1cb41c6f31dfe4f96bc273eba6bdf7dc7044cba53b"
     },
     {
       "file": "index.html",
-      "bytes": 497530,
-      "sha256": "121758a38094bcb74251b66ec3a83fd9c50d784e852943f602452e2fd5abf0d8"
+      "bytes": 497603,
+      "sha256": "80b1325a734e9a2f60bc2a3f7903fa0ebcfc8e38c145eef4101b9ea4c6129058"
     },
     {
       "file": "THIRD_PARTY_NOTICES.md",
@@ -51,23 +51,23 @@
     },
     {
       "file": "README.md",
-      "bytes": 4921,
-      "sha256": "ec75215f2cd47b65a2f9a0a083e2161fb2f5f4473930c8d1dce44d8785df16c0"
+      "bytes": 5246,
+      "sha256": "c7a547955cced4bbd1497bd9f50f89d007c1f13fd4117308766c468519a71464"
     },
     {
       "file": "README.html",
-      "bytes": 498319,
-      "sha256": "2e3aa66a89b580565c2223ef469cc62d8d0c205e7d8c4f2c1e2e23f388d12843"
+      "bytes": 498687,
+      "sha256": "39f0ac972897e476ffc78852cc07f6735e967b4edc923c0083157aadc939b58c"
     },
     {
       "file": "verification.md",
-      "bytes": 15308,
-      "sha256": "375eeaf6221bf82b84411eb2338d78e8b2a137ce4783360d2c825a1574b61e69"
+      "bytes": 18568,
+      "sha256": "16aafddf14ed8f937179921bcab0d6020c5e3cfa56258ec3d2da119440756e0d"
     },
     {
       "file": "verification.html",
-      "bytes": 510550,
-      "sha256": "d695af98f59b546dd107614503bc323b5c301de3e22507f06072cec280e2cdb2"
+      "bytes": 514169,
+      "sha256": "0a63e3bfa4627c714d381c19364c48f0960959a307271b56a89763608176876e"
     },
     {
       "file": "response/problem-definition.md",
@@ -106,18 +106,18 @@
     },
     {
       "file": "audience/problem-definition.md",
-      "bytes": 42793,
-      "sha256": "bc5ff029dbeac21d8156aae492ee1a018bc9324439962efcca2cf9253912aaf9"
+      "bytes": 46292,
+      "sha256": "cd4f797b168eeea58b6e18b33de3e069380c5d897c8d8a480db387540c482f10"
     },
     {
       "file": "audience/problem-definition.html",
-      "bytes": 542478,
-      "sha256": "641e618929fc25d953a002fb02aed5ddfce59ce1116e89e0a6098d888d5f152d"
+      "bytes": 546300,
+      "sha256": "19016cf92d0d5d46d1b4db7a0ca355874185742067b805cc1ac18189cde037c4"
     },
     {
       "file": "audience/demo.html",
-      "bytes": 462607,
-      "sha256": "8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f"
+      "bytes": 468331,
+      "sha256": "d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea"
     },
     {
       "file": "audience/proposal.html",
@@ -141,18 +141,18 @@
     },
     {
       "file": "audience/demo-guide.md",
-      "bytes": 5186,
-      "sha256": "04898cefbf11f02a982f8ac6cdbc4fdd91739579ad7dc0f776624b04ae72589a"
+      "bytes": 6676,
+      "sha256": "e96458919692180bbcda9a3f3d7e0b79c8a60ebdeaf0bbdaadcff2d6fa6aa34f"
     },
     {
       "file": "audience/demo-guide.html",
-      "bytes": 498753,
-      "sha256": "eb60c7f161021a8017328a9bfd5915223147e8582dd21555d25b301d8673e463"
+      "bytes": 500331,
+      "sha256": "6f867eb3c98e38fa8b16f3beb215072cdd2526610bb77ca6f38fbf3e03c0842e"
     },
     {
       "file": "audience/Movies.csv",
-      "bytes": 223,
-      "sha256": "6eab47d13ee33afa2e30e738604d93746b17785071f3a2a268f8974f170f9b11"
+      "bytes": 5595,
+      "sha256": "77fc6ed98a78e2cba95eba60ef481293c992d9c8d27de06d3c845edcbd233bd2"
     }
   ]
 }

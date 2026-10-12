@@ -4,7 +4,7 @@ worked_examples:
     assignment: 1
     title: Movie Programming — Two Worked Examples
     summary: Read the completed Markdown definitions, present the English 44-slide and 59-slide proposals in their original designs, and experiment with the independent Response Model Simulator and latest movie-first M0 audience app. Each case exposes one English demo site and guide.
-    version: '1.7'
+    version: '1.8'
     entry: index.html
     files:
       - classroom-comparison.html

@@ -5,12 +5,16 @@ Open [the demo site](demo.html). This is the latest existing movie-first M0 app,
 ## Start the classroom experiment
 
 1. Keep **Computational profiles** at **2,000** and **Initial movie list** empty. Select **Prepare synthetic audience**, then **Next: Register movies**.
-2. Select **Load classroom sample**. Confirm **2 movies registered**. This uses the application's existing file importer; you can also upload your own `Movies.csv` or XLSX.
+2. Select **Load annual sample · 24 films**. Confirm **Movies: 24 registered**. This restores the existing simulator's annual sample through its original file importer. Use **Download sample CSV** to inspect or change the same catalog, or upload your own file named `Movies.csv` or XLSX with a `Movies` sheet.
 3. Continue to **Objective & constraints**. Keep the **Admissions** objective, **1 forecast path**, opening **540**, closing **1470**, cleaning **20 minutes** and ticket price **1400 minor units**. Leave automatic improvement unchecked. Select **Confirm settings**, then **Start simulation**.
 4. Wait for baseline evaluation to complete. Read **Schedule-independent potential viewings**, **Realized viewings under the baseline schedule** and the number of baseline showings.
 5. Under **Displayed result**, compare potential and baseline modes. Select a movie title or bar, then a date and a person ID to inspect the synthetic viewing history.
 
-The sample films are Stellar Voyage and Quiet Afternoon. Their release windows end exclusively on January 5, so screenings are available **January 1–4, 2027**. Importing this sample does not shorten the configured horizon: the engine still evaluates **January 1, 2027 to exclusive January 1, 2028**. The recorded run produced **757 potential viewings, 726 realized baseline viewings and 241 showings**.
+Start the one-path simulation while introducing the proposal: reference-frequency calibration and the full 365-day, 10,000-person evaluation take several minutes in the browser. The app reports the current phase and completed dates. **Stop calculation** keeps the inputs so the same experiment can be replayed.
+
+The existing annual sample contains **24 distinct fictional movie IDs: two new films each month across 2027**. Each month pairs a science-fiction movie and a drama with different preference features. Both are available throughout that month, so their release windows overlap and every service day has two competing films. The fixture uses 110-minute runtimes, all-age ratings and standard format. These are controlled sample inputs, which you can change in the downloadable CSV.
+
+A movie is eligible from its `releaseDate` through the day before its exclusive `endDate`. Metadata are declared known at the annual forecast cutoff, **January 1, 2027**. The engine evaluates **January 1, 2027 to exclusive January 1, 2028**. Inspect dates in different months to see the active catalog change, then compare potential interest with the baseline's actual times and seats. The fresh local HTTP run with 2,000 profiles and one path produced **9,576 potential viewings**, **5,536 baseline realized viewings** and **7,467 showings**. Calibration reported **130.6 seconds**; the complete run took approximately **419 seconds** on the checked environment. This is an observed run, not a runtime guarantee. [The verification record](../verification.html) keeps the earlier two-film checks separately.
 
 ## Experiment 1 — Improve the schedule
 
@@ -20,15 +24,15 @@ Read the paired comparison and recommendation. A candidate is recommended only w
 
 Search uses paths 100–103; validation uses 200–219. The initial baseline uses path 0. Use the paired comparison panel when assessing improvement, rather than subtracting headline values evaluated on different paths.
 
-In the recorded sample run the separate validation comparison gave **767.30 admissions for both schedules**, a paired gain of **0.00** and **Uncertain gain · Baseline schedule retained**. Retaining the baseline is a valid decision when the explored candidates provide no supported gain.
+Retaining the baseline is a valid decision when the explored candidates provide no supported gain. Run the one-path annual baseline first, then use this separate 20-path experiment when there is time to inspect its results.
 
 ## Experiment 2 — Change film response and replan
 
-Choose the results option for a response change and replanning. Use **2027-01-03**, **Stellar Voyage** and an intensity multiplier of **0.2**, then run the bottom action.
+Choose the results option for a response change and replanning. Use **2027-02-15**, **February · Stellar Voyage** (`OWN-02-A`) and an intensity multiplier of **0.2**, then run the bottom action. This movie is active February 1–28; March 1 is its exclusive end date. For another experiment, check the chosen movie's release window before selecting an effective date.
 
 Compare three states: before shock with the original plan; after shock with the original plan; after shock with the replanned schedule. **Replanning effect = third state minus second state.** The multiplier changes movie intensity; it does not force an 80% admissions decline. The same synthetic past and known commitments are preserved across the comparison. The sample contains no confirmed bookings.
 
-The recorded three-state comparison displayed **741.5 → 619.6 → 620.4 viewings**, with a paired replanning gain of **0.70 admissions** and interval **[0.30, 1.10]**. Use the reported paired gain; subtracting rounded table values can differ. This is a simulation comparison with fixed history, not evidence of real-market performance.
+Use the reported paired gain and interval; subtracting rounded table values can differ. Record the movie, effective date and multiplier with the comparison. The February annual-sample comparison has not yet been recorded. The former January 3 / Stellar Voyage results belong to the historical two-film fixture, documented separately in the verification record.
 
 ## Units and assumptions
 

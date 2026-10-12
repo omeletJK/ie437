@@ -73,6 +73,67 @@ assert.equal(responseRecord.currentBuild.demoSHA256,createHash('sha256').update(
 const audienceDemo=fs.readFileSync(path.join(out,'audience/demo.html'),'utf8');
 assert.match(audienceDemo,/<title>IE437 · Movie-First Audience Simulator · M0<\/title>/,'Case B must remain the selected movie-first M0 app');
 assert.match(audienceDemo,/new Worker\(/,'Case B must retain its individual-audience computation Worker');
+// Check the delivered annual scenario, rather than merely counting UI labels.
+const annualCSV=fs.readFileSync(path.join(out,'audience/Movies.csv'),'utf8');
+function csvRows(text){
+ const rows=[];let row=[],field='',quoted=false;
+ for(let i=0;i<text.length;i++){
+  const char=text[i];
+  if(char==='"'){
+   if(quoted&&text[i+1]==='"'){field+='"';i++;}else quoted=!quoted;
+  }else if(char===','&&!quoted){row.push(field);field='';}
+  else if((char==='\r'||char==='\n')&&!quoted){
+   if(char==='\r'&&text[i+1]==='\n')i++;
+   row.push(field);rows.push(row);row=[];field='';
+  }else field+=char;
+ }
+ assert.equal(quoted,false,'The shared movie CSV must have balanced quotes');
+ if(field||row.length){row.push(field);rows.push(row);}
+ const header=rows.shift();assert.equal(new Set(header).size,header.length,'Movie CSV headers must be unique');
+ return rows.map((cells,index)=>{assert.equal(cells.length,header.length,'Movie CSV column count at row '+(index+2));return Object.fromEntries(header.map((key,i)=>[key,cells[i]]));});
+}
+const annualMovies=csvRows(annualCSV);
+assert.equal(annualMovies.length,24,'Case B must share the existing 24-film annual scenario');
+assert.equal(new Set(annualMovies.map(movie=>movie.id)).size,24,'Every annual film needs a unique ID');
+assert.equal(new Set(annualMovies.map(movie=>movie.title)).size,24,'Every annual film needs a distinct display title');
+const annualCutoff=Date.parse('2027-01-01T00:00:00+09:00');
+for(const movie of annualMovies){
+ for(const field of ['releaseDate','endDate']){
+  assert.match(movie[field],/^\d{4}-\d{2}-\d{2}$/,'ISO calendar date required for '+movie.id+' '+field);
+  assert.equal(new Date(movie[field]+'T00:00:00Z').toISOString().slice(0,10),movie[field],'Valid calendar date required for '+movie.id+' '+field);
+ }
+ assert.ok(movie.releaseDate<movie.endDate,'Each movie needs a nonempty, end-exclusive release window: '+movie.id);
+ assert.ok(movie.releaseDate>='2027-01-01'&&movie.endDate<='2028-01-01','Annual sample release windows must fit the 2027 horizon');
+ assert.ok(Number.isFinite(Date.parse(movie.knownAt))&&Date.parse(movie.knownAt)<=annualCutoff,'Movie metadata must be available at the January 1 planning cutoff: '+movie.id);
+}
+for(let month=1;month<=12;month++){
+ const prefix='2027-'+String(month).padStart(2,'0');
+ const pair=annualMovies.filter(movie=>movie.releaseDate.startsWith(prefix));
+ assert.equal(pair.length,2,'The shared sample needs two releases in '+prefix);
+ assert.ok(pair[0].releaseDate<pair[1].endDate&&pair[1].releaseDate<pair[0].endDate,'Monthly release windows must overlap so audience competition can be explored: '+prefix);
+}
+for(let day=Date.parse('2027-01-01T00:00:00Z');day<Date.parse('2028-01-01T00:00:00Z');day+=86400000){
+ const date=new Date(day).toISOString().slice(0,10);
+ assert.ok(annualMovies.some(movie=>movie.releaseDate<=date&&date<movie.endDate),'Annual sample must have an active movie on '+date+' (end dates are exclusive)');
+}
+// esbuild may print the CSV as a quoted string or a template literal. Decode
+// only literal escapes; never execute bundled JavaScript to inspect its data.
+function decodeLiteral(literal){
+ const escapes={'n':'\n','r':'\r','t':'\t','b':'\b','f':'\f','v':'\v','0':'\0'};
+ return literal.slice(1,-1).replace(/\\(u\{[\da-f]+\}|u[\da-f]{4}|x[\da-f]{2}|[\s\S])/gi,(_,escape)=>{
+  if(escape.startsWith('u{'))return String.fromCodePoint(parseInt(escape.slice(2,-1),16));
+  if(escape.startsWith('u')||escape.startsWith('x'))return String.fromCharCode(parseInt(escape.slice(1),16));
+  if(escape==='\n'||escape==='\r\n')return '';
+  return escapes[escape]??escape;
+ });
+}
+const csvLiterals=[...audienceDemo.matchAll(/"(?:\\[\s\S]|[^"\\])*"|`(?:\\[\s\S]|[^`\\])*`/g)].map(match=>match[0]).filter(literal=>literal.slice(1).startsWith('id,title,genres,'));
+assert.equal(csvLiterals.length,1,'The selected audience demo needs one embedded annual sample');
+assert.equal(decodeLiteral(csvLiterals[0]),annualCSV,'Loading the annual sample must use the exact downloadable movie catalogue');
+assert.match(audienceDemo,/Load annual sample[^"`]*24 films/,'The sample action must describe the 24-film annual scenario');
+const audienceWorkers=[...audienceDemo.matchAll(/atob\("([A-Za-z0-9+/=]+)"\)/g)].map(match=>Buffer.from(match[1],'base64'));
+assert.equal(audienceWorkers.length,1,'Case B must retain one selected M0 computation Worker');
+assert.equal(createHash('sha256').update(audienceWorkers[0]).digest('hex'),'f2baa183497e7461017855716dadf729eaad99ab70484de84f0d9a3716f6e7d5','Restoring the annual catalogue must preserve the existing M0 evaluator');
 assert.notEqual(responseDemo,audienceDemo,'Each case must expose its own evaluator');
 for(const folder of ['response','audience']){
  const demo=fs.readFileSync(path.join(out,folder,'demo.html'),'utf8');
@@ -99,4 +160,4 @@ try{
  fs.writeFileSync(catalog,config('missing.html'));assert.throws(()=>publishWorkedExamples(temp),/ENOENT/);
  fs.writeFileSync(catalog,'---\nworked_examples: []\n---\n');assert.deepEqual(publishWorkedExamples(temp),[]);assert.deepEqual(fs.readdirSync(path.join(temp,'html/worked-examples')),[]);
 }finally{fs.rmSync(temp,{recursive:true,force:true});}
-console.log('PASS: public package/ZIP, checksum integrity, static HTML links, stable archive, landing links, allowlist and traversal/symlink/missing-file boundaries.');
+console.log('PASS: public package/ZIP, checksum integrity, static HTML links, annual 24-film catalogue and unchanged M0 evaluator, stable archive, landing links, allowlist and traversal/symlink/missing-file boundaries.');

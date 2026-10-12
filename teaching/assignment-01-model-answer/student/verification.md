@@ -1,8 +1,8 @@
 # Verification record — IE437 worked examples
 
-Version 1.7 · Presentation revision · Synthetic classroom fixtures
+Version 1.8 · Existing annual catalog restored · Synthetic classroom fixtures
 
-There are two demo sites. Case A now provides the operator flow **Import planning data → Objective & constraints → Run optimization → Review results**, with the dark sidebar, light workspace and fixed action bar used by Case B. The old film exchange is a collapsed Results experiment. Both demo files remain byte-identical to the published 1.5 apps. The proposal files are revised for presentation flow; release 1.7 concentrates the brief-versus-case comparison on one separate page; each main/compatibility pair remains byte-identical. These examples execute different fictional evaluators, not measured business effects.
+There are two demo sites. Case A now provides the operator flow **Import planning data → Objective & constraints → Run optimization → Review results**, with the dark sidebar, light workspace and fixed action bar used by Case B. The old film exchange is a collapsed Results experiment. Case A retains its published operator app. Case B retains the existing Movie First M0 calculation engine and restores the annual simulator's 24-film sample through its original importer. The proposal files retain release 1.7's presentation flow and shared comparison page; each main/compatibility pair remains byte-identical. These examples execute different fictional evaluators, not measured business effects.
 
 ## Case A — executed operator-flow checks
 
@@ -53,9 +53,28 @@ CSV does not reset response assumptions: **3,975** at scale 104 is not a parsing
 
 See [the Case A guide](response/demo-guide.html) and [per-case verification](response/verification.json) for the authoritative final API/results when recorded. The response formula is explicitly assumed and the search is ILS; neither a learned model nor BO nor global optimality is established. No individual consumers are created.
 
-## Case B — executed latest M0 checks
+## Case B — current annual-sample checks, release 1.8
 
-Case B's HTML is byte-identical to the previously checked English movie-first build (SHA-256 `8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f`). That app and its embedded Worker completed the full population → movie registration → objective → baseline → improvement → response-change workflow over local HTTP.
+The current public `Movies.csv` restores the existing annual simulator's sample workbook: **24 distinct fictional movie IDs**, two new releases per month, paired science-fiction/drama preference features and overlapping monthly windows. Each of the 365 service days has two active films. End dates are exclusive; December ends on January 1, 2028. Metadata are declared known at `2027-01-01T00:00+09:00`, the annual cutoff. The controlled sample uses 110-minute runtimes, all-age ratings and standard format.
+
+**The fresh annual-sample baseline completed over local HTTP through CUA in the actual English app.** Its HTML SHA-256 is `d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea`. Settings were 2,000 profiles, estimated annual frequency, Admissions, one initial path and default operating rules. The displayed mean frequency was 10.84 viewings/year and the local person pool was 10,000. Earlier two-film numbers below are not a substitute for this run.
+
+| Current annual-sample check | Status |
+|---|---|
+| Existing sample / English CSV | 24 IDs and 12 monthly pairs specified; exact source-preservation audit recorded separately |
+| Actual import and movie count | Existing importer loaded the annual sample; 24 movies registered |
+| Reference calibration / potential demand / baseline evaluation | Completed: 130.6-second calibration; 9,576 potential viewings; 5,536 realized viewings; 7,467 showings; one path |
+| Monthly timeline and film/date/person details | 24 film rows / 12 months. Baseline December · Our Day: 234 visits; December 2: 27 people, 23 showings. P00094 / U00018: 25 completed input watches and zero earlier path visits. All English |
+| Annual schedule improvement / February 15 OWN-02-A shock | Not run; these are separate 20-path comparisons |
+| Public site and package | Release 1.8 live check follows publication; deterministic public-package checks protect the fixture |
+
+Progress showed the forecast complete for all **365 service days**, allocation complete and choice evaluation through **December 27** before baseline completion. The observed complete run took approximately **419 seconds** in this environment; this is not a formal runtime benchmark. The complete baseline verifies the annual workload, while the optional 20-path improvement/replanning experiments remain unexecuted for this catalog.
+
+## Case B — historical release 1.7 two-film M0 checks
+
+These checks belong to the former two-film CSV, active January 1–4. They demonstrate that fixture's workflow; **they are not annual-catalog outputs or a current performance benchmark**.
+
+The historical Case B HTML was byte-identical to the checked English movie-first build (SHA-256 `8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f`). That app and its embedded Worker completed the full population → movie registration → objective → baseline → improvement → response-change workflow over local HTTP.
 
 Inputs were **2,000 computational profiles**, estimated frequency with declaration unchecked, **Admissions**, one initial forecast path, default operating constraints and **Movies.csv** containing Stellar Voyage and Quiet Afternoon. The inline **Load classroom sample** action uses the original file importer. Both films have release windows January 1–5, 2027, with the end date excluded; the configured horizon remains the full year. The app displayed mean frequency **10.84 visits/year** and calibration time **23.4 seconds** in this run. Timing is an observation on this environment, not a performance benchmark.
 
@@ -85,7 +104,7 @@ The multiplier **6** disabled the run action. The valid boundary **0** enabled i
 
 ## Presentations, navigation and package
 
-The revised proposals retain **44 Response sections** and **59 Audience sections** and their original visual systems, with byte-identical main/compatibility pairs. Case A slide 03 restores the two-column operating structure. Classroom provenance/audit notices that interrupted the solution narrative are moved into presenter notes and each case’s Markdown appendix. Modeling assumptions, operating constraints, backtesting and decision evaluation remain in the relevant slides. Both apps retain their published 1.5 bytes.
+The revised proposals retain **44 Response sections** and **59 Audience sections** and their original visual systems, with byte-identical main/compatibility pairs. Case A slide 03 restores the two-column operating structure. Classroom provenance/audit notices that interrupted the solution narrative are moved into presenter notes and each case’s Markdown appendix. Modeling assumptions, operating constraints, backtesting and decision evaluation remain in the relevant slides. Case A retains its published 1.5 bytes; Case B's release 1.8 rebuild embeds the restored annual catalog while retaining the existing simulation engine.
 
 The hub and reading views retain course portal styling. Case A's new operator shell matches Case B's dark sidebar/light workspace/fixed action bar. The public allowlist contains **31 files**, including the Response planning assets and the shared comparison page/Markdown. [manifest.json](manifest.json) identifies delivered checksums; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) preserves 11 library notices and three font families. Private archives, grading notes, student work and customer records are excluded.
 
@@ -96,7 +115,7 @@ Fresh course-prefix CUA ran the exact staged app through the complete pipeline: 
 ## Remaining checks and limits
 
 - **Direct-from-disk offline browser execution:** not run. Embedded assets alone do not establish this requirement.
-- **Case B public default-workflow repeat (release 1.5):** completed with 2,000 profiles and two classroom films: 757 potential / 726 baseline realized viewings / 241 showings. Frequency calibration reported 120.5 seconds. Improvement/shock runs retain their earlier stated scopes.
+- **Case B annual-sample default workflow (release 1.8):** fresh local HTTP baseline completed with 24 movies: 9,576 potential viewings / 5,536 baseline realized viewings / 7,467 showings, one path. Release 1.8 live check follows publication; deterministic public-package checks protect the fixture. The earlier public repeat with 2,000 profiles and two films gave 757 potential / 726 baseline realized viewings / 241 showings and reported 120.5-second calibration. Those historical results do not describe the 24-film catalog. Historical improvement/shock runs retain their stated scopes.
 - **Real-world validation:** no learned response accuracy, causal effects, real reservations, calibrated market uncertainty or production readiness is established. M1 remains future work.
 - **Strategy comparison:** distinct fixtures, horizons and units prevent numerical ranking of the approaches.
 
@@ -106,4 +125,4 @@ These instructor-authorized examples use synthetic data and follow the public as
 
 The main slides develop the operating problem, the model and the proposed decision process. Case A starts from forecasting and timetable programming, examines why programming changes response, and develops constrained optimization and an operating loop. Case B starts from individual movie intent, connects choices and competition to demand and capacity, then develops schedule evaluation and replanning. Presenter notes and the appended Markdown guidance retain the assumptions and evidence that the original generic notice slides carried. Short labels still identify illustrative inputs, prepared values and proposed components.
 
-The separate [one-page comparison](classroom-comparison.html) consolidates the brief-versus-case data and assumption differences. Main slides focus on the solution and operator process. This is a presentation/documentation revision. It does not add learning, BO, M1, measured customer effects or new demo algorithms. Checksums and slide identities identify the delivered deck revisions; the numerical and public execution evidence above applies to unchanged app bytes.
+The separate [one-page comparison](classroom-comparison.html) consolidates the brief-versus-case data and assumption differences. Main slides focus on the solution and operator process. The release 1.7 presentation revision added no learning, BO, M1, measured customer effects or new demo algorithms. Release 1.8 restores the existing annual simulator's catalog in Case B; it adds no new numerical algorithm. Checksums identify the delivered files, and the historical numerical/public evidence above remains scoped to its stated app and fixture. Fresh annual-sample observations belong to the current section.

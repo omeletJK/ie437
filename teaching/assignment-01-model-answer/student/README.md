@@ -1,6 +1,6 @@
 # IE437 Assignment 1 — Movie Programming Worked Examples
 
-Release 1.7 · English proposals, problem definitions and interactive demos
+Release 1.8 · English proposals, problem definitions and interactive demos
 
 Use these examples to connect a written problem definition to a proposed solution and an executable operator workflow. Open [the case index](index.html). First explain [the one-page comparison](classroom-comparison.html): the course brief, added case inputs, model assumptions and implemented demo scope. Then read a problem definition, present its solution, and run its demo. Each case has one selected app.
 
@@ -15,7 +15,7 @@ The proposals preserve their original visual designs. Case A's third slide again
 
 For Case A, explain why the timetable can change audience response, then open the app. Load [CinemaPlanning.json](response/CinemaPlanning.json) or [Screenings.csv](response/Screenings.csv), review the data and operating rules, confirm settings, run optimization and inspect/export results. **Load classroom sample** supplies the same complete package. The recorded default sample gives **4,969 → 5,247** expected attendance, gain **278**, **89 retained screenings**, **2,600 iterations** and **1,742 response evaluations**. Changing data or rules requires confirmation and a new run. The exported five-column timetable CSV can be reimported under the same planning definitions.
 
-For Case B, prepare **2,000 profiles**, load the classroom movie sample, confirm **Admissions** and **1 forecast path**, then start simulation. The [Movies.csv](audience/Movies.csv) films are active January 1–4, 2027; the configured horizon is the full 2027 year. The recorded sample gives **757 potential viewings**, **726 baseline realized viewings** and **241 showings**. Inspect film/date/person details, then optionally try schedule improvement or response-change replanning using the English guide.
+For Case B, prepare **2,000 profiles**, select **Load annual sample · 24 films**, confirm **Admissions** and **1 forecast path**, then start simulation. [Movies.csv](audience/Movies.csv) restores the existing simulator's annual sample: **24 distinct films across 2027**, with two new movies and overlapping windows each month. Inspect the annual timeline and film/date/person details, then optionally try schedule improvement or response-change replanning using the English guide. The fresh local HTTP baseline produced **9,576 potential viewings**, **5,536 realized viewings** and **7,467 showings**. Start with that one-path baseline; the separate 20-path comparisons require more calculation. The observed complete annual run took approximately **419 seconds** in the checked environment.
 
 Use **All worked examples** to return to the index. On the course site, **Assignments → Assignment 1 → Open worked examples** opens the same materials. [Download the complete package](IE437-Assignment-01-Worked-Examples-EN.zip) to keep all definitions, proposals, demos, guides and planning samples together.
 
@@ -23,7 +23,7 @@ Use **All worked examples** to return to the index. On the course site, **Assign
 
 The proposals describe a broader solution than the classroom apps. Case A executes an explicit aggregate response formula and deterministic ILS; response learning and Bayesian optimization are proposed extensions. Case B executes the M0 consumer-choice simulator; its broader M1 graph model is a proposed extension. All data and illustrated outcomes are synthetic. Different fixtures, horizons and units prevent comparing the two approaches by headline totals.
 
-Both app files are unchanged from release 1.5. That public release was built and deployed through GitHub Pages, and both complete default app workflows, direct MD downloads, proposals, guides and the 29-file ZIP were checked on the public site. The [verification record](verification.html) separates those numerical/browser checks from this release's presentation revision. Direct offline execution remains unverified.
+Case A's app and both proposals retain their release 1.7 content. Case B keeps the existing Movie First M0 simulator and restores its 24-film annual sample in the English operator flow. The [verification record](verification.html) separates fresh annual-sample checks from the historical two-film observations. The fresh local HTTP run completed the annual baseline; its public release check follows publication. Direct offline execution remains unverified.
 
 ## Shared resources
 
