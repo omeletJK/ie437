@@ -144,7 +144,7 @@ Use [proposal.html](proposal.html) for the original full presentation. Arrow key
 
 The 24-film CSV restores the `Movies` catalog from the existing annual simulator's sample workbook. Its 12 monthly pairs cover all 365 service days of 2027. Metadata are declared known at `2027-01-01T00:00+09:00`, matching the annual forecast cutoff. English titles and the fictional synopsis replace the sample's display text; the movie IDs, release dates, runtime, rating, format and feature values preserve its controlled workload.
 
-**Current annual-sample baseline: completed through the actual English app over local HTTP.** The checked HTML SHA-256 is `d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea`. The run used 2,000 profiles, synthetic estimated frequency with displayed mean 10.84 viewings/year, Admissions, one initial path and default operating rules. The former two-film baseline and response-change numbers are preserved in the historical appendix; they are not outputs of this annual catalog.
+**Current annual-sample baseline: completed through the actual English app over local HTTP.** The checked HTML SHA-256 is `d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea`. The subsequent sample-download link patch preserves this run's Worker and catalog byte-for-byte. The run used 2,000 profiles, synthetic estimated frequency with displayed mean 10.84 viewings/year, Admissions, one initial path and default operating rules. The former two-film baseline and response-change numbers are preserved in the historical appendix; they are not outputs of this annual catalog.
 
 | Current annual-sample measure | Observation |
 |---|---|

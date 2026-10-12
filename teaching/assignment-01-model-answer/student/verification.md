@@ -57,7 +57,7 @@ See [the Case A guide](response/demo-guide.html) and [per-case verification](res
 
 The current public `Movies.csv` restores the existing annual simulator's sample workbook: **24 distinct fictional movie IDs**, two new releases per month, paired science-fiction/drama preference features and overlapping monthly windows. Each of the 365 service days has two active films. End dates are exclusive; December ends on January 1, 2028. Metadata are declared known at `2027-01-01T00:00+09:00`, the annual cutoff. The controlled sample uses 110-minute runtimes, all-age ratings and standard format.
 
-**The fresh annual-sample baseline completed over local HTTP through CUA in the actual English app.** Its HTML SHA-256 is `d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea`. Settings were 2,000 profiles, estimated annual frequency, Admissions, one initial path and default operating rules. The displayed mean frequency was 10.84 viewings/year and the local person pool was 10,000. Earlier two-film numbers below are not a substitute for this run.
+**The fresh annual-sample baseline completed over local HTTP through CUA in the actual English app.** Its HTML SHA-256 is `d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea`. The subsequent sample-download link patch preserves this run's Worker and catalog byte-for-byte. Settings were 2,000 profiles, estimated annual frequency, Admissions, one initial path and default operating rules. The displayed mean frequency was 10.84 viewings/year and the local person pool was 10,000. Earlier two-film numbers below are not a substitute for this run.
 
 | Current annual-sample check | Status |
 |---|---|

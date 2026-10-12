@@ -61,13 +61,13 @@
     },
     {
       "file": "verification.md",
-      "bytes": 18568,
-      "sha256": "16aafddf14ed8f937179921bcab0d6020c5e3cfa56258ec3d2da119440756e0d"
+      "bytes": 18665,
+      "sha256": "38bdbaac38e6295a64d3ad190db57c360750377beef30b47829ecdcc7abcb21a"
     },
     {
       "file": "verification.html",
-      "bytes": 514169,
-      "sha256": "0a63e3bfa4627c714d381c19364c48f0960959a307271b56a89763608176876e"
+      "bytes": 514270,
+      "sha256": "10a45dc2dc47e231acc65a7ce6d2b15ed300b581806b61c39c974b194d8af7f5"
     },
     {
       "file": "response/problem-definition.md",
@@ -106,18 +106,18 @@
     },
     {
       "file": "audience/problem-definition.md",
-      "bytes": 46292,
-      "sha256": "cd4f797b168eeea58b6e18b33de3e069380c5d897c8d8a480db387540c482f10"
+      "bytes": 46389,
+      "sha256": "755cc4bf4c531809aa90cb4694c3e16e6f24ccf53d71b067ca3890d9fdc22df3"
     },
     {
       "file": "audience/problem-definition.html",
-      "bytes": 546300,
-      "sha256": "19016cf92d0d5d46d1b4db7a0ca355874185742067b805cc1ac18189cde037c4"
+      "bytes": 546401,
+      "sha256": "5613ccf85dfce2331ea4b1db3fa4629b4b1fafde5349a78180184cc741b5ab0a"
     },
     {
       "file": "audience/demo.html",
-      "bytes": 468331,
-      "sha256": "d43c00a19489882c6e3ba082c8f6debd79c0ffcddc48c160be35e13b656997ea"
+      "bytes": 468290,
+      "sha256": "254e341600d41f42f6fb5a1a7e44f2dbe1b79079500d6688cd25b8258d25d96e"
     },
     {
       "file": "audience/proposal.html",
