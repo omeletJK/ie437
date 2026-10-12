@@ -10,7 +10,8 @@
     "site": "node site.mjs",
     "pdf": "node pdf.mjs --all",
     "pdf:force": "node pdf.mjs --all --force",
-    "test:assignments": "node tests/assignments.mjs && node tests/assignment-browser.mjs"
+    "test:assignments": "node tests/assignments.mjs && node tests/assignment-browser.mjs",
+    "test:worked-examples": "node tests/worked-examples.mjs"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

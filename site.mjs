@@ -21,6 +21,7 @@ import yaml from 'js-yaml';
 import { marked } from 'marked';
 import { stale } from './pdf.mjs';
 import { publishAssignments } from './assignments.mjs';
+import { publishWorkedExamples } from './worked-examples.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const MD = path.join(ROOT, 'md');
@@ -297,7 +298,7 @@ function noticeRow(a, i) {
     </article>`;
 }
 
-function assignmentRow(a) {
+function assignmentRow(a, examples = []) {
   return `<li class="assignment"><article aria-labelledby="${esc(a.id)}-title">
     <div class="assignment-head">
       <div>
@@ -317,6 +318,11 @@ function assignmentRow(a) {
     <ul class="assignment-files" aria-label="Assignment ${a.number} documents">
       ${a.files.map(f => `<li><a href="${esc(f.url)}" download="${esc(f.name)}"><span>${esc(f.label)}</span><span class="assignment-format">MD ${DL_ICON}</span></a></li>`).join('')}
     </ul>
+    ${examples.filter(e => e.assignment === a.number).map(e => `<div class="assignment-examples">
+      <h4>Worked examples · MD + interactive demo + proposal</h4>
+      <p>${esc(e.summary)}</p>
+      <div class="assignment-example-actions"><a class="btn solid" href="${esc(e.startURL)}">Open worked examples</a><a class="btn ghost" href="${esc(e.archive.url)}" download="${esc(e.archive.name)}">${DL_ICON} Download examples ZIP</a></div>
+    </div>`).join('')}
   </article></li>`;
 }
 
@@ -327,6 +333,7 @@ export function writeSite() {
   const news = announcements();
   const syl = syllabus();
   const assignments = publishAssignments(ROOT);
+  const examples = publishWorkedExamples(ROOT);
 
   /* the body of _SITE.md is the "about" section: a lede, then one card
      per `### heading` */
@@ -454,7 +461,7 @@ ${assignments.length ? `
     <h2>Put the ideas to work</h2>
   </div></div>
   <p class="sintro">Download the complete assignment package, or choose an individual document. Start with the assignment brief for requirements and grading.</p>
-  <ol class="assignment-list">${assignments.map(assignmentRow).join('\n')}</ol>
+  <ol class="assignment-list">${assignments.map(a => assignmentRow(a, examples)).join('\n')}</ol>
 </div></section>` : ''}
 
 ${syl ? `

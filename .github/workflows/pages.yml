@@ -15,6 +15,8 @@ on:
       - 'build.mjs'
       - 'site.mjs'
       - 'assignments.mjs'
+      - 'worked-examples.mjs'
+      - 'tests/worked-examples.mjs'
       - 'teaching/**/student/**'
       - 'tests/assignments.mjs'
       - 'tests/assignment-browser.mjs'
@@ -56,6 +58,7 @@ jobs:
 
       # Verify the public file allowlist and actual downloads before deploying.
       - run: npm run test:assignments
+      - run: npm run test:worked-examples
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
