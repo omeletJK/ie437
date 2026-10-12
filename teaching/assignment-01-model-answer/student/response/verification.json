@@ -1,7 +1,7 @@
 {
-  "case": "Case A: Response Schedule Optimizer — independent aggregate SIM2",
-  "release": "1.5",
-  "updatedAt": "2026-10-11",
+  "case": "Case A: Response Schedule Optimizer \u2014 independent aggregate SIM2",
+  "release": "1.6",
+  "updatedAt": "2026-10-12T04:12:57.303199+00:00",
   "artifact": "demo.html",
   "implementation": {
     "workflow": [
@@ -13,7 +13,7 @@
     "evaluator": "Explicit aggregate synthetic expected-attendance rule, no individual synthetic people or real-data fitting.",
     "objective": "J(x)=round(sum_j min(capacity_j, declared response_j))",
     "search": "Seeded Iterated Local Search (ILS), not Bayesian Optimization.",
-    "datasetShape": "Exactly six films A–F, six sites A–F and three screens/site;18–600 reference showings using all18screens, subject to declared rules.",
+    "datasetShape": "Exactly six films A\u2013F, six sites A\u2013F and three screens/site;18\u2013600 reference showings using all18screens, subject to declared rules.",
     "baseline": "Exact uploaded and confirmed feasible reference timetable, without presolve.",
     "sampleInputShowings": 90,
     "sampleObservedRetainedShowings": 89,
@@ -120,10 +120,10 @@
   "currentBuild": {
     "demoSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
     "demoBytes": 650464,
-    "identityStatus": "Final stable 1.5 source and staged-course artifact.",
+    "identityStatus": "Published 1.5 app bytes preserved in presentation release 1.6.",
     "exactStandaloneCoreComparison": "Pass: 12 numerical core ASTs and 39 exact-artifact Node checks.",
     "independentHTTPUI": "Pass for exact final source/staged default pipeline, replay, Run/Pause/Finish, actual final JSON/CSV downloads and CSV reupload, invalid-file/recovery and responsive views. Earlier 100-iteration/seed-7, REF104/closing settings retain their stated candidate scope.",
-    "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal → Assignment 1 → Open worked examples returned to the hub.",
+    "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
     "directOfflineFileExecution": "Not verified",
     "importerModuleSHA256": "66b0197b5595d7fe163287f0fe90d5d888b1c1050f4deec19e67288e3714fa25",
     "courseStaging": "Pass: 29-file assembly, approved installer, course build, worked-examples and assignment checks passed. Build/integration checks are separate from numerical evidence."
@@ -143,7 +143,7 @@
     "checksPassed": 25,
     "moduleSHA256": "66b0197b5595d7fe163287f0fe90d5d888b1c1050f4deec19e67288e3714fa25",
     "method": "Independent pure-factory Node tests using actual archived numerical engine: shape,IDs,mapping,packing/prediction/coefficient changes,feasibility/boundaries,CSVJSON parsing/roundtrip/UTF8limit and detached outputs. Tests apply to this unchanged parser module, not new operator UI or the current sample search.",
-    "browserUploadEvidence": "Pending fresh1.5 actual file-selection checks."
+    "browserUploadEvidence": "Real JSON/CSV file-selection checks were performed with the documented candidate scope; the final app also reimported its exported 89-row CSV at reference score 5,247."
   },
   "checks": [
     {
@@ -179,7 +179,7 @@
     {
       "name": "Pure importer",
       "status": "pass",
-      "observed": "25independent checks on unchanged module;18–600 bounds,exact supportedshape,IDs,feasibility,actualcore mapping,parsing/roundtrip/nonmutation.",
+      "observed": "25independent checks on unchanged module;18\u2013600 bounds,exact supportedshape,IDs,feasibility,actualcore mapping,parsing/roundtrip/nonmutation.",
       "method": "Independent parser Node suite."
     },
     {
@@ -243,7 +243,7 @@
     {
       "name": "Run/Pause/Finish/restart/speeds/seed replay",
       "status": "pass-scoped",
-      "observed": "Exact-artifactNodebudget/seed/replaypasses; final-SHA sourcefullsample repeats4969→5247/1742/2600/89 withRun/Pauseobservedat1605→Finish. Freshrestart/speedbrowser coverage is not claimed.",
+      "observed": "Exact-artifactNodebudget/seed/replaypasses; final-SHA sourcefullsample repeats4969\u21925247/1742/2600/89 withRun/Pauseobservedat1605\u2192Finish. Freshrestart/speedbrowser coverage is not claimed.",
       "method": "NodeplusfinalsourceCUA."
     },
     {
@@ -291,7 +291,7 @@
     {
       "name": "Course-prefix navigation/build/assignment integration",
       "status": "pass",
-      "observed": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal → Assignment 1 → Open worked examples returned to the hub.",
+      "observed": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
       "integration": "29-file assembly, approved installer, course build, worked-examples and assignment checks passed.",
       "method": "Root staged-course CUA and build/test checks."
     }
@@ -450,7 +450,7 @@
       "methodDialogWidth": 356,
       "desktopRestored": true
     },
-    "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal → Assignment 1 → Open worked examples returned to the hub.",
+    "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
     "directOfflineFileExecution": "Not verified",
     "finalSourceUnknownFilmAndRecovery": "Pass: film X on CSV row 2 was rejected, Next disabled and the accepted source retained; valid-sample recovery passed.",
     "stagedCourseDefaultPipeline": {
@@ -463,5 +463,29 @@
       "feasibility": "PASS"
     }
   },
-  "evidenceBoundary": "The exact 1.5 engine passed 39/39 Node checks and the unchanged importer passed 25/25. Final-SHA source/staged-course pipeline, replay, pause/finish, actual final exports and optimized-CSV reupload, rejection/recovery, responsive and course navigation passed. Earlier-candidate configuration evidence retains its stated scope. Course build/integration checks passed separately. Direct offline opening remains unverified. Legacy native/manual and old shift outputs are regressions, not operator benchmarks. Declared assumptions do not establish learned response accuracy, the purchased-ticket target, causal effects, business uplift, BO or a global optimum."
+  "evidenceBoundary": "The exact 1.5 engine passed 39/39 Node checks and the unchanged importer passed 25/25. Final-SHA source/staged-course pipeline, replay, pause/finish, actual final exports and optimized-CSV reupload, rejection/recovery, responsive and course navigation passed. Earlier-candidate configuration evidence retains its stated scope. Course build/integration checks passed separately. Direct offline opening remains unverified. Legacy native/manual and old shift outputs are regressions, not operator benchmarks. Declared assumptions do not establish learned response accuracy, the purchased-ticket target, causal effects, business uplift, BO or a global optimum.",
+  "presentationRevision": {
+    "release": "1.6",
+    "scope": "Original diagram/design preservation and coherent problem-solving narrative; detailed assumption/verification guidance moved to speaker notes and Markdown. Apps unchanged.",
+    "sections": 44,
+    "slide03": "Original forecasting/programming structure restored."
+  },
+  "publicDeploymentEvidence1_5": {
+    "commit": "7c183a964a9dd28c73ba65ede652903f205f9f5e",
+    "workflowRun": 38187603308,
+    "workflowConclusion": "success",
+    "publicDefaultResponse": {
+      "reference": 4969,
+      "best": 5247,
+      "iterations": 2600,
+      "evaluations": 1742
+    },
+    "publicDefaultAudience": {
+      "profiles": 2000,
+      "potential": 757,
+      "realized": 726,
+      "showings": 241
+    },
+    "actualMDAndZIPDownloads": "PASS; 29-file ZIP exact reviewed bytes."
+  }
 }

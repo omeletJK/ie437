@@ -35,6 +35,18 @@ for(const [folder,sections] of [['response',44],['audience',59]]){
  assert.equal([...proposal.matchAll(/<section\b/g)].length,sections,'Original presentation sections must be retained');
  assert.equal(proposal,fs.readFileSync(path.join(out,folder,'extended-proposal.html'),'utf8'),'Primary proposal must use the preserved original design');
  assert.match(proposal,/href="\.\.\/index\.html"/,'Proposal needs a package-home link');
+ const deckSections=[...proposal.matchAll(/<section\b([^>]*)>([\s\S]*?)<\/section>/g)];
+ const notesMatch=proposal.match(/<script id="notes" type="application\/json">\s*([\s\S]*?)<\/script>/);
+ assert.ok(notesMatch,'Each proposal needs accessible presenter-note data');
+ const notes=JSON.parse(notesMatch[1]);
+ for(const [,attributes] of deckSections){const id=attributes.match(/\bid="([^"]+)"/)[1];assert.ok(Array.isArray(notes[id])&&typeof notes[id][1]==='string'&&notes[id][1].trim(),'Missing presenter notes: '+folder+' '+id);}
+ const slideCopy=deckSections.map(([,attributes,body])=>body.replace(/<[^>]*>/g,' ')).join(' ');
+ assert.doesNotMatch(slideCopy,/Expanded classroom reference|pending an operator audit/i,'Classroom audit notices must not replace the presentation narrative');
+ if(folder==='response'){
+  const operating=deckSections.find(([,attributes])=>/\bid="s03"/.test(attributes))[2];
+  assert.equal([...operating.matchAll(/class="panel mini-flow/g)].length,2,'Slide03 needs the two original operating flow diagrams');
+  for(const label of ['P1','P2','P3','P4','A1','A2','A3','A4'])assert.ok(operating.includes('>'+label+'</span>'),'Slide03 must retain operating step '+label);
+ }
 }
 const hub=fs.readFileSync(path.join(out,'index.html'),'utf8');
 assert.deepEqual(names.filter(name=>name.endsWith('/demo.html')).sort(),['audience/demo.html','response/demo.html'],'Exactly one demo site per case must be shared');

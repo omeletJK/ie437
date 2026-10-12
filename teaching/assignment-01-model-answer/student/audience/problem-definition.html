@@ -460,9 +460,9 @@ footer .stamp{font:400 12px/1 var(--mono);color:var(--ink3)}
 </style><style>
  [hidden]{display:none!important}.reading{padding:44px 0 64px}.reading h1{font:600 clamp(1.8rem,3vw,2.2rem)/1.2 var(--disp);letter-spacing:-.02em;margin:12px 0 24px}.reading h2{margin:34px 0 14px}.reading h3{font:600 19px/1.35 var(--disp);margin:24px 0 12px}.reading p{margin:14px 0}.reading ul,.reading ol{margin:14px 0 14px 23px}.reading li{margin:7px 0}.reading a{color:var(--teal);text-underline-offset:3px}.reading table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:18px 0}.reading td,.reading th{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top}.reading th{background:var(--sunk)}.reading code{font:13px/1.6 var(--mono);overflow-wrap:anywhere}.reading pre{overflow:auto;background:var(--sunk);padding:16px;margin:18px 0}.reading blockquote{border-left:3px solid var(--teal);padding:4px 18px;margin:18px 0;background:var(--raised)}.reading .document-actions{margin-bottom:30px;display:flex;flex-wrap:wrap;gap:11px}.reading .document-actions a{color:var(--ink)}@media print{.top,.document-actions,footer{display:none}.reading{padding:0}body{background:white;color:#1c2321}}
  </style></head><body><header class="top"><div class="wrap"><a class="mark" data-course-home href="../index.html"><svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,8 90,30 50,52 10,30" fill="var(--teal-200)" stroke="var(--teal-d)" stroke-width="3"/><polygon points="10,30 50,52 50,92 10,70" fill="var(--teal)" stroke="var(--teal-d)" stroke-width="3"/><polygon points="90,30 50,52 50,92 90,70" fill="var(--teal-l)" stroke="var(--teal-d)" stroke-width="3"/></svg><b>IE<i>437</i></b></a><nav class="tnav" aria-label="Course navigation"><a class="keep" href="../index.html">All worked examples</a><a  data-course-home data-course-only href="../index.html" hidden>Course portal</a></nav></div></header><main class="reading"><div class="wrap"><div class="document-actions"><a class="btn ghost" href="problem-definition.md" download><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1v8m0 0L4.8 5.8M8 9l3.2-3.2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 11.5v2h11v-2" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg> Download Markdown</a><a class="btn ghost" href="proposal.html">Original English proposal</a><a class="btn ghost" href="demo.html">Open demo site</a></div><h1>Synthetic Audience: Movie-First Cinema Programming</h1>
-<p><strong>HW1 sample answer · English · 2026-10-11</strong></p>
+<p><strong>HW1 sample answer · English · Proposal flow revision 1.6 · 2026-10-11</strong></p>
 <p>Author / student ID: Public teaching sample; <code>N/A — not a student submission</code>.<br>LLM use: OpenAI Codex assistant, 2026-10-11, for source inspection, scope review, English drafting, translation and functional-check design. The exact deployed model identifier was not recorded.</p>
-<p>This worked example connects this definition, the latest Movie First M0 application in <a href="demo.html">demo.html</a>, and the original-design <a href="proposal.html">proposal.html</a>: 45 main slides plus 14 appendix/Q&amp;A slides, with its diagrams and animations retained. The full presentation is the primary proposal; <a href="extended-proposal.html">extended-proposal.html</a> is an alternate copy of the same deck. Its prepared illustrations and broader development plans must be distinguished from the M0 calculations described here. The application uses fictional people, histories, movies, rules and DEMO money. It does not reconstruct real attendees from purchase accounts or establish real business improvement. Earlier seven-day applications and their measured outputs are outside this example.</p>
+<p>This worked example connects this definition, the latest Movie First M0 application in <a href="demo.html">demo.html</a>, and the original-design <a href="proposal.html">proposal.html</a>: 45 main slides plus 14 appendix/Q&amp;A slides, with its diagrams and animations retained. The full presentation is the primary proposal; <a href="extended-proposal.html">extended-proposal.html</a> is an alternate copy of the same deck. The presentation follows planning → audience model → demand → accessible choices → schedule experiments → operating decisions. Prepared illustrations and broader development plans are documented in the presentation-context appendix below, separate from the M0 calculations described here. The application uses fictional people, histories, movies, rules and DEMO money. It does not reconstruct real attendees from purchase accounts or establish real business improvement. Earlier seven-day applications and their measured outputs are outside this example.</p>
 <h2>1. Decision, Scope &amp; Problem Structure</h2>
 <blockquote>
 <p>A cinema programming manager uses information available at a stated cutoff, movie release windows and explicit operating assumptions to choose a feasible screening schedule, in order to increase simulated admissions or ticket revenue relative to an agreed baseline; after a later change in movie response, the manager may revise future screenings while preserving the confirmed past and bookings.</p>
@@ -901,10 +901,10 @@ footer .stamp{font:400 12px/1 var(--mono);color:var(--ink3)}
 <p>Latest source implementation evidence is dated <strong>2026-09-18</strong>: film/person detail and the baseline-allocation stall fix were implemented and tested. Development reports do not themselves verify this packaged English build. Overall M0 gates remain incomplete: formal repeated 10k/25k performance, independent-world statistics, M1 learning and real customer/business validation are not established. The baseline above is a current-package HTTP observation; other current checks remain <code>Not run</code> where indicated. Direct offline opening is <strong><code>Not run</code> in this verification session</strong>; update only from an actual run.</p>
 <p>For model evaluation, use a held-out period/cutoff and target-matched error/calibration metrics. For action evaluation, compare with the agreed baseline under the same eligible information/feasible set; report objective, admissions, tickets/revenue, changes, violations and preserved commitments together. Vary plausible behavioral worlds and rules. Replay is not independent causal evidence; a prospective operational comparison is a later gate.</p>
 <h2>6. Client Proposal</h2>
-<p>Request a bounded information and operating-rule audit first. The data owner verifies semantics, coverage and temporal availability. The operations owner supplies controllable variables, current policy, capacities, rights, commitments and approval rules. The modeling owner chooses tickets versus admissions, states assumptions, sets the cutoff and plans common-baseline validation. Customer identity reconstruction is unnecessary.</p>
+<p>Build a shared audience model and connect it to constrained schedule experiments. Begin with an agreed reference forecast and schedule, movies and releases, audience profiles, complete screening supply and operating rules. The data owner establishes semantics and cutoff; the operations owner provides capacities, controllable variables and commitments; the modeling owner defines admissions or ticket revenue and a common comparison. The result should let an operator prepare inputs, set rules, run candidates and inspect consequences.</p>
 <p>The first deliverable is a reproducible shadow comparison: current practice versus a feasible candidate, with hard-rule audits, held-out predictive checks and sensitivity to latent worlds. Agree practical-value, error, calibration and stability thresholds after measuring the baseline and before a trial. Require zero hard violations and preserved reservations. M0 demonstrates comparison mechanics, not deployment readiness or commercial benefit.</p>
 <p><strong>Proceed</strong> when information is adequate and agreed gates pass. <strong>Revise</strong> when rankings depend strongly on plausible worlds, calibration is unresolved or workload is impractical. <strong>Stop or narrow scope</strong> when the target is unsupported, critical exposure/constraint information is absent, commitments fail or a controlled comparison does not justify adoption. Shadow work precedes a live pilot. Pilot unit/duration/sample size, cost and benefit are <code>TBD</code>, to estimate from variance, workload and operations after the audit. Revenue is not profit without costs.</p>
-<p>The original full proposal presents the wider concept. Prepared scores, diagrams and future learning plans do not replace M0&#39;s source-backed mechanism and verified observations. The next decision requested is authorization of the audit and appointment of data, operations and modeling owners; deployment needs separate evidence and approval.</p>
+<p>The original full proposal presents the wider concept. Prepared scores, diagrams and future learning plans do not replace M0&#39;s source-backed mechanism and verified observations. The next decision is to approve a bounded prototype comparison with assigned data, operations and modeling roles. Estimate effort, cost and practical value from that scope; operational adoption follows the measured comparison and preserved commitments.</p>
 <h2>7. LLM Review &amp; Key Revisions</h2>
 <p>These are actual review decisions during this sample&#39;s preparation, not an invented student&#39;s discussion history. Students must document their own checks.</p>
 <table>
@@ -936,6 +936,146 @@ footer .stamp{font:400 12px/1 var(--mono);color:var(--ink3)}
 </tr>
 </tbody></table>
 <p>Source basis: the <a href="../reference/assignment.md">HW1 brief</a>, <a href="../reference/problem-definition-template.md">seven-section template</a>, <a href="../reference/problem-classification-reference.md">classification reference</a>, <a href="Movies.csv">Movies.csv</a>, and reviewed functions above. Development README/checklist/source establish implementation scope, not observation of this public build. The purchase-unit audit independently checks why accounts cannot establish personal attendee histories.</p>
+<h2>Appendix — Presentation context and presenter notes</h2>
+<p>The proposal retains the original visual system, diagrams and controls: <strong>59 sections</strong>, including <strong>35 slides in the compact main path</strong>. The MD explains scope and source limitations without inserting an administrative review between the business question and the solution. Press <strong>N</strong> in the proposal for the corresponding presenter note. A short <strong>synthetic example</strong> or <strong>proposed extension</strong> label remains beside numerical illustrations and future-model diagrams.</p>
+<h3>Suggested presentation flow</h3>
+<ul>
+<li><strong>S01–S04A:</strong> planning horizons and a movie-feature reference forecast; why viewer behavior adds information.</li>
+<li><strong>S05–S15:</strong> individual memory and preferences, daily joint movie choices, aggregation, market calibration and forecast uncertainty.</li>
+<li><strong>S16–S17:</strong> time-cutoff backtesting and target-matched accuracy, calibration and usefulness measures.</li>
+<li><strong>S17A–S23:</strong> desire versus accessible showtimes, choice among movie/site/time/no movie, before/after effects and constrained schedule search.</li>
+<li><strong>S25–S29:</strong> revision of eligible future screenings, the integration options, development sequence, hypotheses and model inputs.</li>
+<li><strong>S30–S37:</strong> privacy-aware data design, deliverables, operator workflow and end-to-end capabilities. <strong>S32 links directly to the runnable M0 demo.</strong></li>
+<li><strong>A1–A13:</strong> technical comparison, representations, calibration, backtesting, constraints, current M0/proposed M1 and formulation detail.</li>
+</ul>
+<h3>Guidance moved out of the slide narrative</h3>
+<p>These entries preserve the distinctions that matter for evaluating the sample. They are attached to the same slide IDs in presenter notes; they are not a second presentation track.</p>
+<table>
+<thead>
+<tr>
+<th>Slide(s)</th>
+<th>Context, assumptions and evidence handling</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>S03, Q&amp;A</strong></td>
+<td>Annual Aug–Sep planning, a 50–60-film portfolio and the pre-release horizons are declared case assumptions, not observed company practice. Confirm the actual decision window, current plan, approval rights and revision trigger for a real operator.</td>
+</tr>
+<tr>
+<td><strong>S04, A1</strong></td>
+<td>The top-down feature forecast is the reference comparator. The assignment does not establish that a company uses the pictured workflow; 5.0M is a prepared example.</td>
+</tr>
+<tr>
+<td><strong>S04A</strong></td>
+<td>The 300–600-film and 400,000+ viewer–movie sizes are illustrative. Viewer/movie repeats are dependent observations; extra records do not by themselves prove smaller uncertainty or better accuracy. Compare on later movies and time periods.</td>
+</tr>
+<tr>
+<td><strong>S05, S09, S13, S14</strong></td>
+<td>The 4.7M totals are prepared, weighted market examples. They are not local M0 admissions. The current M0 seat market is 10,000 distinct people, and national population weights are never seat multipliers. Real market expansion needs coverage/competitor calibration.</td>
+</tr>
+<tr>
+<td><strong>S07, S08, S29</strong></td>
+<td>Linked attendee history, companions, ratings, clicks and complete exposure/supply are proposed input types. Purchase accounts/ticket counts do not establish individual attendee histories. Inspect observation units, linkage, cutoff and coverage. Feedback is optional and may have response/incentive bias. Frequency from suitable history differs from a declared synthetic fallback.</td>
+</tr>
+<tr>
+<td><strong>S09A</strong></td>
+<td>The small four-week sampling widget illustrates one daily joint draw and repeated paths. It is distinct from the annual M0 application, its local person pool and its search/validation paths.</td>
+</tr>
+<tr>
+<td><strong>S10, S15, A2</strong></td>
+<td>Prior/posterior curves and 90% intervals are stored synthetic illustrations. M0 does not fit them or establish real coverage. Additional signals do not guarantee narrower uncertainty. Set target-matched forecast and interval criteria for actual comparison.</td>
+</tr>
+<tr>
+<td><strong>S11A, S18, A3, A12</strong></td>
+<td>The live M0 uses explicit taste/content/frequency rules, not trained encoders or GRU graph history. Learned M1 is proposed. Compare M1, M0 and a learned non-graph baseline under the same held-out target and information cutoff before adopting complexity.</td>
+</tr>
+<tr>
+<td><strong>S12, S13, A12</strong></td>
+<td>Prepared “evidence” lists and attention/connections are model references, not causal proof. Test contribution by removing signals and recalculating; forecasts and decompositions do not establish intervention effects.</td>
+</tr>
+<tr>
+<td><strong>S17B, S19, S21, S22</strong></td>
+<td>Desire, utility, choice and attendance values are prepared examples. The 31,420/34,180 attendance and 410M/448M example-unit revenue in S22 are stored A/B values, not a new simulation, actual currency or business improvement. Actual M0 observations appear in Section 5 above.</td>
+</tr>
+<tr>
+<td><strong>S18B, A11</strong></td>
+<td>The source deck&#39;s 2026-09-17 movie-first “engine pending” statement is a historical snapshot. The current packaged Movie First M0 is executable. Its execution does not establish learned M1, real-user calibration, independent-world validation or live benefit.</td>
+</tr>
+<tr>
+<td><strong>S18C</strong></td>
+<td>The four English diagrams summarize the earlier V2 prototype, rather than screenshots or results from current M0. Its 200-film workload, 107,359 visits, 9,996 visitors, 0.56% visit probability and 24h/48h freezing belong to the earlier visit-hazard→conditional-choice generation.</td>
+</tr>
+<tr>
+<td><strong>S23, A9</strong></td>
+<td>S23 animates six stored mock scores; the storyboard itself does not run an optimizer. M0 executes bounded local search, with zero UI edit penalty and separate evaluation paths. “Best” means best explored, not a guaranteed global optimum. Ticket revenue excludes costs and is not profit.</td>
+</tr>
+<tr>
+<td><strong>S24, S25</strong></td>
+<td>Integration and booked-showtime diagrams are proposed operating mechanisms. M0 offers one hypothetical shock/revision cycle, fixes a synthetic past and preserves supplied commitments. Default empty bookings do not test a nonempty real ledger or a continuous feedback controller.</td>
+</tr>
+<tr>
+<td><strong>S27, S31–S33</strong></td>
+<td>Cost, duration, commercial licensing, serving/retraining and operating approvals require a scoped real comparison. Original 2–3/12–16/1–2/10–16-week calendar and fee choices are not justified promises in this teaching example. S27 now presents implementation order; S32 hands off to the live experiment; S33 shows operator inputs versus simulator outputs.</td>
+</tr>
+<tr>
+<td><strong>S30, A8</strong></td>
+<td>Pseudonyms, limited purposes, minimum retention and controlled access are proposed design principles. Real records require applicable policies, permissions and responsible data roles; this package supplies no permission to process personal data.</td>
+</tr>
+<tr>
+<td><strong>S34, S11A, A12</strong></td>
+<td>The source proposal references <em>Learning Multivariate Hawkes Process via Graph Recurrent Neural Network</em> (KDD 2023) and <em>Attention is not Explanation</em> (NAACL 2019). Its cited financial-services workload is research background, not cinema accuracy or M0 performance evidence.</td>
+</tr>
+<tr>
+<td><strong>S37</strong></td>
+<td>The conclusion is the reusable decision mechanism: profiles → demand → accessible choices → feasible schedules → experiment. Synthetic comparisons demonstrate that mechanism and do not establish field benefit.</td>
+</tr>
+<tr>
+<td><strong>A13</strong></td>
+<td>Desire and schedule accessibility are not automatically identifiable from purchases. Declare travel, price, availability and supply interpretation, and use common conditions for comparisons. The source&#39;s internal reporting field was <code>supplyAdjustedAssumption</code>. The equations describe a proposed model family; the actual M0 functions and paths are specified above.</td>
+</tr>
+</tbody></table>
+<h3>Archived earlier-generation figures (S18C / former A11)</h3>
+<p>The following figures were reported in the original V2 source deck. They are retained here for source traceability, <strong>not as measurements of the current deployed M0 build</strong> and not as real customer/business validation. A11 now compares the current M0 mechanism with proposed extensions.</p>
+<table>
+<thead>
+<tr>
+<th>Archived V2 item</th>
+<th>Source-deck report</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Development workload</td>
+<td>2,000 profiles; 10,000 viewers; 200 movies; 32,850 screenings; 365 days</td>
+<td>Fixed synthetic performance workload, not market size</td>
+</tr>
+<tr>
+<td>Representative path</td>
+<td>107,359 visits; 9,996 / 10,000 people with a visit</td>
+<td>Source hash family <code>ed896fe0</code>; 0 competitor visits and 0 seat-shortage failures reported</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td>88.66s → 17.03s</td>
+<td>Source reported matched input/result hash, not a fresh current-build timing</td>
+</tr>
+<tr>
+<td>Statistical checks</td>
+<td>100 calibration + 100 evaluation + 100 null + 100 misspecified worlds</td>
+<td>Source reported pass within synthetic scope; not transferred to M0</td>
+</tr>
+<tr>
+<td>UI/replay</td>
+<td>Edit movie → annual run → viewer detail → manifest replay</td>
+<td>Source reported Chromium execution with 0 console errors/external requests</td>
+</tr>
+<tr>
+<td>Readiness flags</td>
+<td><code>annualReleaseReady=false</code>, <code>realWorldValidated=false</code></td>
+<td>Historical source flags, not a current release decision</td>
+</tr>
+</tbody></table>
+<p>The current measured application outputs and unexecuted checks remain in Section 5. No numerical demo code was changed by this presentation revision.</p>
 </div></main><footer><div class="wrap"><span class="who">IE437 · Assignment 1</span><a class="dl open" href="../index.html">All worked examples</a></div></footer><script>(function(){
  const hosted=location.protocol!=='file:'&&/\/worked-examples\/[^/]+\//.test(location.pathname);
  document.querySelectorAll('[data-course-home]').forEach(link=>{if(hosted)link.href=new URL('../../../index.html#assignments',location.href).href;});

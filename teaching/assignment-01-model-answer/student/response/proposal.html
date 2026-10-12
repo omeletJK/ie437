@@ -889,8 +889,8 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 <section class="slide" id="s02">
   <div class="kicker"><span class="tick"></span><span class="kn">02</span><span>Executive Summary</span></div>
-  <h1 class="head rise" style="--d:0">Turn a declared reference forecast into<br><em class="c-purple">better film programming decisions</em></h1>
-  <p class="lede rise" style="--d:1">Build on the cinema chain's Base Demand Forecast, learn how audiences respond to scheduling actions, optimize feasible schedules, and continuously refine future schedules using actual bookings and attendance. Together, they deliver
+  <h1 class="head rise" style="--d:0">Turn the baseline forecast into<br><em class="c-purple">better film programming decisions</em></h1>
+  <p class="lede rise" style="--d:1">Build on the cinema chain's Base Demand Forecast, learn how audiences respond to scheduling actions, optimize feasible schedules, and continuously refine future schedules using actual bookings and attendance. Together, they form the proposed
   <strong>AI Programming Intelligence</strong> for Cinema.</p>
   <div class="fill">
     <div class="four">
@@ -928,12 +928,46 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 </section>
 
 
-<section class="slide" id="s03"><div class="kicker"><span class="tick"></span><span class="kn">S03</span><span>Expanded classroom reference</span></div><h1 class="head">A declared reference workflow, pending an operator audit</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Confirm the real planning window, current plan and rule ownership before designing a replacement.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s03">
+  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">03</span><span>Part I — Baseline operating structure</span></div>
+  <h1 class="head rise" style="--d:0">Start with separate forecasting and scheduling flows,<br>then <em class="c-blue">connect them through response</em></h1>
+  <div class="fill">
+    <div class="duo">
+      <div class="panel mini-flow rise" style="--d:1">
+        <div class="phead" style="padding:0 0 12px"><span class="dot" style="background:var(--blue)"></span>
+          Prediction — occupancy forecasting <span class="modeltag">Model ② · Occupancy forecasting</span></div>
+        <div class="mf"><span class="idx">P1</span>Forecast simulation · National market forecast<small>NATIONAL</small></div>
+        <div class="mfa">↓</div>
+        <div class="mf"><span class="idx">P2</span>Company-wide allocation — screen operating plan<small>COMPANY</small></div>
+        <div class="mfa">↓</div>
+        <div class="mf"><span class="idx">P3</span>Site-level allocation · Feedback<small>SITE</small></div>
+        <div class="mfa">↓</div>
+        <div class="mf"><span class="idx">P4</span>Weights derived from site performance data<small>WEIGHT</small></div>
+      </div>
+      <div class="panel mini-flow rise" style="--d:2">
+        <div class="phead" style="padding:0 0 12px"><span class="dot" style="background:var(--purple)"></span>
+          Programming — automated scheduling <span class="modeltag">Model ① · Automated scheduling</span></div>
+        <div class="mf"><span class="idx">A1</span>Scheduling criteria — operating and cleaning hours<small>SETUP</small></div>
+        <div class="mfa">↓</div>
+        <div class="mf"><span class="idx">A2</span>Apply automated scheduling rules<small>RULE</small></div>
+        <div class="mfa">↓</div>
+        <div class="mf"><span class="idx">A3</span>Refine rules for site characteristics<small>SITE-FIT</small></div>
+        <div class="mfa">↓</div>
+        <div class="mf"><span class="idx">A4</span>Produce site-level screening schedules<small>SCHEDULE</small></div>
+      </div>
+    </div>
+    <div class="thesis rise" style="--d:3">
+      <strong>This proposal builds on that architecture.</strong>
+      <span style="font-weight:300;color:var(--ink2)">The two domains <em class="c-purple" style="font-weight:600">connect more effectively</em> through a stronger decision layer.</span>
+    </div>
+  </div>
+  <div class="foot"><span>Classroom baseline · Illustrative operating structure</span></div>
+</section>
 
 
 <section class="slide" id="s04">
-  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">04</span><span>Part I — Existing cinema operations</span></div>
-  <h1 class="head rise" style="--d:0">The current approach is sound:<br><em class="c-blue">forecast demand</em>, then <em class="c-slate">allocate it</em></h1>
+  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">04</span><span>Part I — Baseline operating structure</span></div>
+  <h1 class="head rise" style="--d:0">The baseline approach is sound:<br><em class="c-blue">forecast demand</em>, then <em class="c-slate">allocate it</em></h1>
   <div class="fill">
     <div class="stagearea">
       <div class="grid-bg" style="border:1px solid var(--line2);height:100%;display:flex;align-items:center;justify-content:center">
@@ -1429,7 +1463,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
             <button type="button" class="btn ghost" id="s2Speed">Speed 1×</button>
           </div>
           <div class="simscore">
-            <div class="ss"><span class="sl">Current schedule — no site-specific response</span><b id="s2Base">—</b><div class="sb"><i id="s2BaseBar" style="background:var(--slate)"></i></div></div>
+            <div class="ss"><span class="sl">Reference schedule — no site-specific response</span><b id="s2Base">—</b><div class="sb"><i id="s2BaseBar" style="background:var(--slate)"></i></div></div>
             <div class="ss"><span class="sl">Response-aware reoptimization: Best <em id="s2Delta"></em></span><b id="s2Best" class="c-purple">—</b><div class="sb"><i id="s2BestBar" style="background:var(--purple)"></i></div></div>
           </div>
           <div class="simcounters">
@@ -1457,7 +1491,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
   <div class="fill">
     <div class="wrap">
       <div class="panel rules">
-        <div class="phead" style="padding:0 0 10px;margin:0"><span class="dot" style="background:var(--slate)"></span>Current operating rules — As-is</div>
+        <div class="phead" style="padding:0 0 10px;margin:0"><span class="dot" style="background:var(--slate)"></span>Operating rules — reference process</div>
         <span class="chip rise" style="--d:1">Operating hours<small>OPERATING HOURS</small></span>
         <span class="chip rise" style="--d:2">Cleaning time<small>CLEANING</small></span>
         <span class="chip rise" style="--d:3">Screen quota<small>SCREEN QUOTA</small></span>
@@ -1470,7 +1504,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <div class="opt rise" style="--d:5">
         <div class="phead" style="border-bottom:1px solid var(--line2)"><span class="dot" style="background:var(--purple)"></span>Inside the Programming Optimizer</div>
         <div class="layer"><b>Hard Constraint <small>MUST SATISFY</small></b>
-          <p>Mandatory: operating hours, cleaning time, screen quota, and booking protection. Infeasible schedules are never generated.</p></div>
+          <p>Mandatory: operating hours, cleaning time, screen quota, and booking protection. Every recommended schedule must pass feasibility checks.</p></div>
         <div class="layer"><b>Soft Policy <small>PENALIZED</small></b>
           <p>Preferred: show spacing, screen assignment practices, and premium-screen policies. Violations receive penalties.</p></div>
         <div class="layer"><b>Objective <small>MAXIMIZED</small></b>
@@ -1482,13 +1516,13 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <span style="font-weight:300;color:var(--ink2)">— they become the <em style="font-weight:600;color:var(--ink)">operating grammar</em> it must respect.</span>
     </div>
   </div>
-  <div class="foot"><span>Based on the cinema chain's automated scheduling criteria and rules</span></div>
+  <div class="foot"><span>Proposed constraint structure · Operating hours, turnaround, capacity, format and booking rules</span></div>
 </section>
 
 
 <section class="slide" id="s15">
   <div class="kicker"><span class="tick" style="background:var(--purple)"></span><span class="kn">15</span><span>Part IV — Target Architecture</span></div>
-  <h1 class="head rise" style="--d:0">The cinema chain’s next-generation film programming AI:<br><em class="c-purple">the complete architecture</em></h1>
+  <h1 class="head rise" style="--d:0">The proposed film programming system:<br><em class="c-purple">the complete architecture</em></h1>
   <div class="fill">
     <div class="arch grid-bg rise" style="--d:1;border:1px solid var(--line2)">
       <svg width="100%" height="100%" viewBox="0 0 1150 486" preserveAspectRatio="xMidYMid meet" fill="none" font-family="'Noto Sans KR',sans-serif">
@@ -1545,7 +1579,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </svg>
     </div>
   </div>
-  <div class="foot"><span>PREDICTION (blue · teal) and PROGRAMMING (purple) are implemented as separate services</span></div>
+  <div class="foot"><span>PREDICTION (blue · teal) and PROGRAMMING (purple) are designed as separate services</span></div>
 </section>
 
 
@@ -1706,7 +1740,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <strong>Refine eligible windows through <em class="c-amber" style="font-weight:700">Rolling Horizon Optimization</em> with operational stability.</strong>
     </div>
   </div>
-  <div class="foot"><span>0–24h / 24–48h / 48h+ are illustrative windows. Final Freeze rules follow the cinema chain's operating policies.</span></div>
+  <div class="foot"><span>Synthetic rolling illustration · 0–24h / 24–48h / 48h+ are example windows; operating policies define the final Freeze rules.</span></div>
 </section>
 
 <section class="slide" id="s19">
@@ -1763,7 +1797,51 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 </section>
 
 
-<section class="slide" id="s21"><div class="kicker"><span class="tick"></span><span class="kn">S21</span><span>Expanded classroom reference</span></div><h1 class="head">Purchase records establish transactions, not demand response</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s21">
+  <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">21</span><span>Part VI — Data for the decision loop</span></div>
+  <h1 class="head rise" style="--d:0">Organize the proposed inputs<br>by <em class="c-blue">their role in the decision loop</em></h1>
+  <div class="fill">
+    <div class="cols3">
+      <div class="panel dcol rise" style="--d:1">
+        <div class="phead"><span class="dot" style="background:var(--blue)"></span>Base Demand<span class="cnt">Estimate potential demand</span></div>
+        <div class="dchips">
+          <span class="chip" style="border-color:rgba(37,99,235,.4)"><b>Film attributes</b><small>Film</small></span>
+          <span class="chip">Viewing intent<small>Booking</small></span>
+          <span class="chip">Awareness<small>Booking</small></span>
+          <span class="chip">Reviews · Buzz (quantitative · qualitative)<small>Booking</small></span>
+          <span class="chip">Advance-booking schedule<small>Booking</small></span>
+          <span class="chip">Release date · First screening date<small>Film</small></span>
+          <span class="chip">Genre · Director · Cast · Synopsis<small>Film</small></span>
+        </div>
+      </div>
+      <div class="panel dcol rise" style="--d:2">
+        <div class="phead"><span class="dot" style="background:var(--teal)"></span>Response<span class="cnt">Learn audience response</span></div>
+        <div class="dchips">
+          <span class="chip">Show count<small>Site</small></span>
+          <span class="chip">Scheduled seats<small>Site</small></span>
+          <span class="chip">Screening date · Booking date<small>Booking</small></span>
+          <span class="chip">Booking opening timestamp<small>Booking</small></span>
+          <span class="chip">Booked seats · Tickets<small>Booking</small></span>
+          <span class="chip">Screening format<small>Film</small></span>
+          <span class="chip">Aggregated audience segments<small>Booking</small></span>
+          <span class="chip">Sales channel · Film occupancy<small>Booking</small></span>
+        </div>
+      </div>
+      <div class="panel dcol rise" style="--d:3">
+        <div class="phead"><span class="dot" style="background:var(--slate)"></span>Constraint · Programming<span class="cnt">Scheduling constraints</span></div>
+        <div class="dchips">
+          <span class="chip">Operating hours<small>To agree</small></span>
+          <span class="chip">Cleaning time<small>Site</small></span>
+          <span class="chip">Premium-screen share cap<small>Site</small></span>
+          <span class="chip">Screen-quota information<small>Site</small></span>
+          <span class="chip">Premium-screen space · Technology<small>Site</small></span>
+          <span class="chip">Screen name · Operating floor<small>Site</small></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Proposed data map · Demand context → action and outcome records → feasibility rules</span></div>
+</section>
 
 
 <section class="slide" id="s22">
@@ -1806,7 +1884,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </div>
       <div class="fields">
         <p class="why rise" style="--d:2">A final schedule shows only what was screened.
-        <b>Versioned snapshots and change history</b> reveal which schedule changes led to booking and audience responses — the key raw material for response learning.</p>
+        <b>Versioned snapshots and change history</b> align schedule changes with later booking and audience responses — the key raw material for response learning.</p>
         <div class="panel fieldcard rise" style="--d:3">
           <div class="phead"><span class="dot" style="background:var(--amber)"></span>Required Fields</div>
           <ul>
@@ -1821,7 +1899,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
     </div>
     <div class="thesis rise" style="--d:4">
       <strong>Action History helps identify</strong>
-      <span style="font-weight:300;color:var(--ink2)">which scheduling changes caused audience responses with much stronger evidence.</span>
+      <span style="font-weight:300;color:var(--ink2)">how responses vary with scheduling actions and support stronger effect estimation.</span>
     </div>
   </div>
   <div class="foot"><span>Key data that determines H2 (Action Response) validation depth</span></div>
@@ -1830,11 +1908,11 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 <section class="slide" id="s23">
   <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">23</span><span>Part VI — Required support</span></div>
-  <h1 class="head rise" style="--d:0">The cinema chain’s support determines<br>the <em class="c-green">depth of validation</em></h1>
+  <h1 class="head rise" style="--d:0">The available operating inputs determine<br>the <em class="c-green">depth of validation</em></h1>
   <div class="fill">
     <table class="matrix rise" style="--d:1">
       <thead><tr>
-        <th style="width:250px">Cinema-side support</th><th style="width:270px">Why it is needed</th>
+        <th style="width:250px">Operating input or support</th><th style="width:270px">Why it is needed</th>
         <th style="width:170px">Testable hypotheses</th><th>If unavailable</th>
       </tr></thead>
       <tbody>
@@ -1863,7 +1941,65 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 </section>
 
 
-<section class="slide" id="s24"><div class="kicker"><span class="tick"></span><span class="kn">S24</span><span>Expanded classroom reference</span></div><h1 class="head">Sequence the work by evidence, not calendar promises</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Duration and dependencies: TBD after data coverage, permissions and validation effort are known.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s24">
+  <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">24</span><span>Part VI — Three-stage implementation plan</span></div>
+  <h1 class="head rise" style="--d:0">Build in three stages:<br><em class="c-ink">feasibility → response → integrated operation</em></h1>
+  <div class="fill">
+    <div class="ctx rise" style="--d:1">
+      <span>PROPOSED SEQUENCE</span><span>—</span><span><b>Feasible schedules</b></span><span>→</span><span><b>Better decisions</b></span>
+      <button type="button" class="btn ghost ovbtn noprint" id="s24btn" style="padding:7px 12px;font-size:10px">+ Show modeling and search track</button>
+    </div>
+    <div class="pretrack rise" style="--d:1">
+      <b>PRE-TRACK</b>
+      <span>Prepare reference schedules, input data, operating rules and evaluation metrics</span>
+      <span class="pt-note">Common baseline for all three stages</span>
+    </div>
+    <div class="phases">
+      <div class="panel ph rise" style="--d:2">
+        <div class="phead" style="flex-direction:column;align-items:flex-start;gap:3px">
+          <span class="dates">STAGE 1</span><span class="pname">Feasible scheduling · Model ①</span></div>
+        <div class="srclab">Operator track</div>
+        <div class="cinemarows"><div class="row">Validate automated scheduling independently</div><div class="row">Check scheduling criteria · Rule compliance</div></div>
+        <div class="srclab frag">Modeling and search track</div>
+        <div class="omrows">
+          <div class="row op frag">Programming Engine feasibility</div>
+          <div class="row op frag">Target: zero hard-constraint violations</div>
+          <div class="row op frag">Reproduce the current scheduling baseline</div>
+        </div>
+      </div>
+      <div class="panel ph rise" style="--d:3">
+        <div class="phead" style="flex-direction:column;align-items:flex-start;gap:3px">
+          <span class="dates">STAGE 2</span><span class="pname">Response-aware decisions · Models ① + ②</span></div>
+        <div class="srclab">Operator track</div>
+        <div class="cinemarows"><div class="row">Occupancy forecast — current vs. prototype in parallel</div><div class="row">Same period · Same conditions</div></div>
+        <div class="srclab frag">Modeling and search track</div>
+        <div class="omrows">
+          <div class="row ob frag">Compare current and improved forecasts</div>
+          <div class="row op frag">Compare under the same Programming Engine</div>
+          <div class="row ot frag">Validate Response signals</div>
+        </div>
+      </div>
+      <div class="panel ph rise" style="--d:4">
+        <div class="phead" style="flex-direction:column;align-items:flex-start;gap:3px">
+          <span class="dates">STAGE 3</span><span class="pname">Integrated pilot · Models ① + ②</span></div>
+        <div class="srclab">Operator track</div>
+        <div class="cinemarows"><div class="row">Validate both models in integrated operation</div><div class="row">Evaluate under operating conditions</div></div>
+        <div class="srclab frag">Modeling and search track</div>
+        <div class="omrows">
+          <div class="row ob frag">Integrate Base + Response + Programming</div>
+          <div class="row ot frag">Historical Replay validation</div>
+          <div class="row ot frag">Shadow · Limited experiments (if permitted)</div>
+          <div class="row oa frag">Dynamic Re-programming simulation</div>
+        </div>
+      </div>
+    </div>
+    <div class="thesis rise" style="--d:5">
+      <strong>Keep one shared baseline</strong>
+      <span style="font-weight:300;color:var(--ink2)">and add <em class="c-green" style="font-weight:600">capabilities step by step</em>.</span>
+    </div>
+  </div>
+  <div class="foot"><span>Proposed implementation sequence · Baseline, model comparison, then integrated pilot</span></div>
+</section>
 
 
 <section class="slide" id="s25" data-skip="1">
@@ -1902,7 +2038,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>Agree targets after diagnosing the cinema chain's baseline. This proposal does not precommit to improvement figures.</span></div>
+  <div class="foot"><span>Define forecast, schedule and operating targets against a shared measured baseline.</span></div>
 </section>
 
 
@@ -1993,11 +2129,11 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 <section class="slide" id="s28">
   <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">28</span><span>Part VII — System integration</span></div>
-  <h1 class="head rise" style="--d:0">Connect an <em class="c-purple">Intelligence Module</em><br>to the cinema chain’s existing architecture</h1>
+  <h1 class="head rise" style="--d:0">Connect an <em class="c-purple">Intelligence Module</em><br>to a cinema operating architecture</h1>
   <div class="fill">
     <div class="arch grid-bg rise" style="--d:1;border:1px solid var(--line2)">
       <svg width="100%" height="100%" viewBox="0 0 1150 348" preserveAspectRatio="xMidYMid meet" fill="none" font-family="'Noto Sans KR',sans-serif">
-        <text x="34" y="30" font-size="11" font-weight="600" letter-spacing="2" fill="rgba(22,24,29,.5)" font-family="'IBM Plex Mono',monospace">AS-IS — existing cinema architecture</text>
+        <text x="34" y="30" font-size="11" font-weight="600" letter-spacing="2" fill="rgba(22,24,29,.5)" font-family="'IBM Plex Mono',monospace">BASELINE — illustrative cinema architecture</text>
         <g font-size="13" font-weight="600" fill="#16181D">
           <rect x="34" y="44" width="196" height="48" fill="#fff" stroke="rgba(22,24,29,.45)"/>
           <text x="132" y="66" text-anchor="middle">Theater business system</text>
@@ -2058,23 +2194,165 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <span style="font-weight:300;color:var(--ink2)">and improve the decision engine.</span>
     </div>
   </div>
-  <div class="foot"><span>Based on the cinema chain's Model ①/② architecture (Theater business → EAI → DX AI → DB)</span></div>
+  <div class="foot"><span>Integration design · Theater business → EAI → prediction and optimization services → DB</span></div>
 </section>
 
 
-<section class="slide" id="s29"><div class="kicker"><span class="tick"></span><span class="kn">S29</span><span>Expanded classroom reference</span></div><h1 class="head">Adopt through evidence gates</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s29">
+  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">29</span><span>Part VII — Adoption plan</span></div>
+  <h1 class="head rise" style="--d:0">Adopt a <em class="c-ink">phased structure</em>:<br>prototype → integration → ongoing operation</h1>
+  <div class="fill">
+    <div class="phases">
+      <div class="panel pc rise" style="--d:1">
+        <div class="phead"><span class="dot" style="background:var(--purple)"></span>Phase 1 — Build and compare</div>
+        <div class="pbody">
+          <div class="fee"><small>Working prototype</small>One evaluator and one feasible search loop</div>
+          <ul class="bullets">
+            <li>Build Base Forecast · Response Model · Optimizer</li>
+            <li>Historical Replay validation environment</li>
+            <li>Reference schedule and candidate comparison</li>
+          </ul>
+        </div>
+      </div>
+      <div class="parrow rise" style="--d:2">→</div>
+      <div class="panel pc rise" style="--d:2">
+        <div class="phead"><span class="dot" style="background:var(--teal)"></span>Phase 2 — Production integration</div>
+        <div class="pbody">
+          <div class="fee"><small>Integration · Hardening</small>Production build · Integration
+            <span style="font:400 10px var(--mono);color:var(--ink3)">Connect the validated recommendation service</span></div>
+          <ul class="bullets">
+            <li>API · EAI integration</li>
+            <li>Monitoring framework</li>
+            <li>Performance · Failover hardening</li>
+          </ul>
+        </div>
+      </div>
+      <div class="parrow rise" style="--d:3">→</div>
+      <div class="panel pc rise" style="--d:3">
+        <div class="phead"><span class="dot" style="background:var(--green)"></span>Phase 3 — Operations</div>
+        <div class="pbody">
+          <div class="fee"><small>Operations</small>Operating phase</div>
+          <ul class="bullets">
+            <li><span><b>Programming Engine operation</b> — versioned models and policies</span></li>
+            <li>Prediction operation · Retraining support</li>
+            <li>Policy · Model improvement support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <span class="plate pricenote rise" style="--d:4;font-size:12.5px;color:var(--slate)">Keep each phase useful: <b style="color:var(--ink)">working model and search → integrated recommendation → monitored operations</b>.</span>
+  </div>
+  <div class="foot"><span>Proposed adoption path · Expand the operating scope as the preceding phase proves useful</span></div>
+</section>
 
 
-<section class="slide" id="s30"><div class="kicker"><span class="tick"></span><span class="kn">S30</span><span>Expanded classroom reference</span></div><h1 class="head">Value must be measured against a declared baseline</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Search scores do not establish business uplift, causality or adoption readiness.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s30">
+  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">30</span><span>Part VII — Operational value to measure</span></div>
+  <h1 class="head rise" style="--d:0">The value goes beyond<br><em class="c-green">time saved on scheduling</em></h1>
+  <div class="fill">
+    <div class="cols3">
+      <div class="panel vcol rise" style="--d:1">
+        <div class="phead"><span class="dot" style="background:var(--green)"></span>Business</div>
+        <ul>
+          <li>Target better audience coverage<small>More realized viewers from equal potential demand</small></li>
+          <li>Potential occupancy · Revenue gains<small>Compare actual outcomes with the reference process</small></li>
+          <li>Improve premium-screen utilization<small>Evaluate film × format matching</small></li>
+        </ul>
+      </div>
+      <div class="panel vcol rise" style="--d:2">
+        <div class="phead"><span class="dot" style="background:var(--blue)"></span>Operation</div>
+        <ul>
+          <li>Reduce scheduling time<small>Faster schedules · Earlier booking openings</small></li>
+          <li>Reduce reliance on individual expertise<small>Turn scheduling expertise into a system</small></li>
+          <li>Respond faster to demand surprises<small>Reprogram when box office demand shifts</small></li>
+        </ul>
+      </div>
+      <div class="panel vcol rise" style="--d:3">
+        <div class="phead"><span class="dot" style="background:var(--purple)"></span>Intelligence Asset</div>
+        <ul>
+          <li>Action–Response data asset<small>Accumulate decisions and responses</small></li>
+          <li>Reusable constraint framework<small>Document operational grammar</small></li>
+          <li>Continuously improving capability<small>Compounding value from the learning loop</small></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Proposed value dimensions · Measure business, operating and learning outcomes against the same baseline</span></div>
+</section>
 
 
-<section class="slide" id="s31"><div class="kicker"><span class="tick"></span><span class="kn">S31</span><span>Expanded classroom reference</span></div><h1 class="head">Make the analysis auditable</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">A colleague should be able to reproduce a recommendation and explain what would invalidate it.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s31">
+
+<div class="kicker"><span class="tick"></span><span class="kn">31</span><span>Implementation capabilities</span></div>
+<h1 class="head rise" style="--d:0">Connect decision models<br>to <em class="c-blue">operating systems</em></h1>
+<p class="lede rise" style="--d:1">Operational intelligence combines forecasts, simulation, optimization, execution, and feedback.</p>
+<div class="fill"><div class="cols3" style="margin:auto 0;gap:16px">
+<div class="mcard lb-blue rise" style="--d:2"><h3>Decision modeling</h3><p>Translate operating goals into decision variables, constraints, and objectives.</p></div>
+<div class="mcard lb-teal rise" style="--d:3"><h3>Prediction and uncertainty</h3><p>Estimate audience outcomes and describe the uncertainty around those estimates.</p></div>
+<div class="mcard lb-purple rise" style="--d:4"><h3>Combinatorial optimization</h3><p>Search feasible allocations of films, auditoriums, showtimes, and formats.</p></div>
+<div class="mcard lb-amber rise" style="--d:5"><h3>Simulation</h3><p>Evaluate candidate decisions before they enter operating systems.</p></div>
+<div class="mcard lb-slate rise" style="--d:6"><h3>System integration</h3><p>Connect models and decision services to APIs, data stores, and operator interfaces.</p></div>
+<div class="mcard lb-green rise" style="--d:7"><h3>Continuous learning</h3><p>Record actions and observed outcomes to update models and future decisions.</p></div>
+</div></div>
+<div class="foot"><span>IE437 · ASSIGNMENT 1 · FROM MODELS TO DECISIONS</span></div>
+
+</section>
 
 
-<section class="slide" id="s32"><div class="kicker"><span class="tick"></span><span class="kn">S32</span><span>Expanded classroom reference</span></div><h1 class="head">Separate evaluator choice from search choice</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s32">
+  <div class="kicker"><span class="tick"></span><span class="kn">32</span><span>Technical extension — search strategy</span></div>
+  <h1 class="head rise" style="--d:0">Use response estimates to<br><em class="c-purple">choose the next schedule to evaluate</em></h1>
+  <div class="fill">
+    <div class="strapwrap rise" style="--d:1">
+      <div class="strap">
+        <span class="sw"><i style="background:var(--blue)"></i>Response estimate</span><span class="ar">→</span>
+        <span class="sw"><i style="background:var(--teal)"></i>Uncertainty</span><span class="ar">→</span>
+        <span class="sw"><i style="background:var(--purple)"></i>Next candidate</span><span class="ar">→</span>
+        <span class="sw"><i style="background:var(--ink)"></i>Evaluate</span><span class="ar">→</span>
+        <span class="sw"><i style="background:var(--green)"></i>Update</span>
+      </div>
+    </div>
+    <div class="caps">
+      <div class="mcard lb-purple rise" style="--d:2"><h3>Feasible schedule space</h3><p>Define film, screen and time decisions under operating constraints.</p></div>
+      <div class="mcard lb-blue rise" style="--d:3"><h3>Response evaluator</h3><p>Score a candidate schedule with a formula, simulator or learned model.</p></div>
+      <div class="mcard lb-purple rise" style="--d:4"><h3>Surrogate and posterior</h3><p>In a BO extension, model score and uncertainty from evaluated schedules.</p></div>
+      <div class="mcard lb-teal rise" style="--d:5"><h3>Acquisition rule</h3><p>Balance promising improvements with informative evaluations.</p></div>
+      <div class="mcard lb-slate rise" style="--d:6"><h3>Candidate evaluation</h3><p>Check feasibility, call the evaluator and record the resulting score.</p></div>
+      <div class="mcard lb-green rise" style="--d:7"><h3>Update and repeat</h3><p>Add the new evaluation; update the posterior until the budget is spent.</p></div>
+    </div>
+    <div class="thesis rise" style="--d:8">
+      <strong>Match the search strategy to the evaluation cost</strong>
+      <span style="font:500 13px var(--mono);color:var(--ink2);letter-spacing:.01em">Cheap response calls: local search · Expensive response calls: consider constrained BO</span>
+    </div>
+  </div>
+  <div class="foot"><span>Proposed BO extension · The executable classroom demo uses synthetic response rules and ILS</span></div>
+</section>
 
 
-<section class="slide" id="s33"><div class="kicker"><span class="tick"></span><span class="kn">S33</span><span>Expanded classroom reference</span></div><h1 class="head">Stress the model before making an operational claim</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Do not use a recommendation outside supported contexts or when hard-rule checks fail.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s33">
+  <div class="kicker"><span class="tick"></span><span class="kn">33</span><span>Part VIII — Testing the operating decision</span></div>
+  <h1 class="head rise" style="--d:0">Test the recommendation under<br><em class="c-purple">changing demand and operating conditions</em></h1>
+  <div class="fill">
+    <div class="refstats">
+      <span class="rs rise" style="--d:1"><b>Same cutoff</b> No future information<small>Time-separated evaluation</small></span>
+      <span class="rs rise" style="--d:2"><b>Same rules</b> Feasible comparisons<small>Reference and candidate</small></span>
+      <span class="rs rise" style="--d:3"><b>Same metric</b> Comparable outcomes<small>Attendance and stability</small></span>
+      <span class="rs rise" style="--d:4"><b>Repeatable</b> Recorded decisions<small>Inputs · version · seed</small></span>
+    </div>
+    <div class="refs">
+      <div class="ref rise" style="--d:2"><span class="dom">Forecast</span><h3>Demand surprise</h3><span class="stag tech">Scenario comparison</span><div class="flowl"><span class="fstep fp"><i></i>Vary film demand and site preferences</span><span class="fstep fd"><i></i>Search under the same constraints</span><span class="fstep ff"><i></i>Compare gains and schedule sensitivity</span></div></div>
+      <div class="ref rise" style="--d:3"><span class="dom">Response</span><h3>Substitution assumptions</h3><span class="stag tech">Sensitivity analysis</span><div class="flowl"><span class="fstep fp"><i></i>Vary timing, crowding and cannibalization</span><span class="fstep fd"><i></i>Rescore the same reference and candidate</span><span class="fstep ff"><i></i>Check whether the preferred plan changes</span></div></div>
+      <div class="ref rise" style="--d:4"><span class="dom">Feasibility</span><h3>Operating limits</h3><span class="stag tech">Boundary tests</span><div class="flowl"><span class="fstep fp"><i></i>Change closing, cleaning or film caps</span><span class="fstep fd"><i></i>Reject invalid references and candidates</span><span class="fstep ff"><i></i>Retain a feasible fallback schedule</span></div></div>
+      <div class="ref rise" style="--d:5"><span class="dom">Evaluation</span><h3>Historical replay</h3><span class="stag tech">Proposed real-data test</span><div class="flowl"><span class="fstep fp"><i></i>Keep zero-sales shows and planning cutoffs</span><span class="fstep fd"><i></i>Check calibration by film, site and time</span><span class="fstep ff"><i></i>Separate predictive error from search quality</span></div></div>
+      <div class="ref rise" style="--d:6"><span class="dom">Operation</span><h3>Shadow and limited pilot</h3><span class="stag tech">Proposed field test</span><div class="flowl"><span class="fstep fp"><i></i>Review recommendations with operators</span><span class="fstep fd"><i></i>Track actual attendance and overrides</span><span class="fstep ff"><i></i>Assess gains alongside disruption and stability</span></div></div>
+    </div>
+    <div class="thesis rise" style="--d:6">
+      <span style="font-weight:300;color:var(--ink2)">Use the same</span>
+      <strong><em class="c-blue">Predict</em> → <em class="c-purple">Decide</em> → <em class="c-green">Feedback</em> loop to improve the next scheduling decision.</strong>
+    </div>
+  </div>
+  <div class="foot"><span>Evaluation strategy · Scenario checks support development; real-data replay and field tests assess operational value</span></div>
+</section>
 
 
 <section class="slide" id="s34">
@@ -2086,7 +2364,49 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 </section>
 
 
-<section class="slide" id="s35"><div class="kicker"><span class="tick"></span><span class="kn">S35</span><span>Expanded classroom reference</span></div><h1 class="head">Request a bounded data and rule audit</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide" id="s35">
+  <div class="kicker"><span class="tick" style="background:var(--purple)"></span><span class="kn">35</span><span>Next steps — decisions requested</span></div>
+  <h1 class="head rise" style="--d:0">Turn the proposal into action<br>with <em class="c-ink">three decisions</em></h1>
+  <div class="fill">
+    <div class="askgrid">
+      <div class="mcard lb-purple rise" style="--d:1">
+        <span class="no">ASK 01</span>
+        <h3>Approve a focused prototype<span>Phase 1 — Build &amp; Validate</span></h3>
+        <p>Improve Base Forecast; build Audience Response Model and Programming Engine; compare it with the reference schedule. Deliver all D1–D7 outputs.</p>
+        <div class="askfee">First result <b>one feasible improvement</b><small>Common inputs · Explicit objective · Reproducible comparison</small></div>
+      </div>
+      <div class="mcard lb-amber rise" style="--d:2">
+        <span class="no">ASK 02</span>
+        <h3>Provide data support<span>Validation Depth</span></h3>
+        <p>Provide film, screening and outcome inputs; prioritize <strong>scheduling Action History</strong> and actual rules/policies. These determine the validation depth for H1–H4.</p>
+      </div>
+      <div class="mcard lb-ink rise" style="--d:3">
+        <span class="no">ASK 03</span>
+        <h3>Appoint the collaboration structure<span>Single Escalation Path</span></h3>
+        <p><strong>One cinema Decision Owner</strong> plus operator interviews and review windows. Use one decision path to resolve policy conflicts and approve schedule changes.</p>
+      </div>
+    </div>
+    <div class="feestruct rise" style="--d:4">
+      <div class="fs-head">Prototype and operating scope</div>
+      <div class="fs-cols">
+        <div class="fs-col">
+          <b class="c-purple">Prototype — model, search and comparison</b>
+          <span>Build a <strong>working decision loop</strong>: response evaluator, feasible search, reference comparison and operator review; document the data and API contract.</span>
+        </div>
+        <div class="fs-col">
+          <b class="c-slate">Operating rollout — integration and monitoring</b>
+          <span>After a useful prototype, connect the <strong>recommendation service</strong> to the operator workflow and add <strong>monitoring, rollback and model updates</strong>.</span>
+        </div>
+      </div>
+    </div>
+    <div class="thesis rise" style="--d:5">
+      <strong>Decision today</strong><span class="askarrow">→</span>
+      <span style="font-weight:400;color:var(--ink2)">Inputs · Reference schedule · Rules</span><span class="askarrow">→</span>
+      <strong class="c-green">Build · Compare · Review</strong>
+    </div>
+  </div>
+  <div class="foot"><span>Next-step plan · One owner, one reference schedule and one measurable operating objective</span></div>
+</section>
 
 
 <section class="slide dark" id="s36">
@@ -2137,7 +2457,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </div>
       <div class="fourwords">Base Forecast<i></i>Audience Response<i></i>Dynamic Scheduling<i></i>Continuous Learning</div>
     </div>
-    <p class="closecopy rise" style="--d:7">Forecasting box office demand is the starting point. the cinema chain's schedules shape audience choices. Connect forecasts to scheduling decisions, then learn from actual outcomes in a closed loop.</p>
+    <p class="closecopy rise" style="--d:7">Forecasting box office demand is the starting point. The cinema chain's schedules shape audience choices. Connect forecasts to scheduling decisions, then learn from actual outcomes in a closed loop.</p>
   </div>
   <div class="cvfoot rise" style="--d:8"><b>IE437</b><span>2026.08</span><span>Thank you</span><span class="noprint" style="margin-left:auto;color:var(--wink3)">→ Q&amp;A · A Appendix menu · N Speaker notes</span></div>
 </section>
@@ -2159,7 +2479,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <li>Screen, time, frequency, and format choices change audience behavior.</li>
       <li>Prediction estimates schedule outcomes; Programming chooses the schedule.</li>
       <li>Actual booking response reoptimizes future schedules within Freeze rules.</li>
-      <li>The project team integrates this intelligence into the cinema chain's architecture and validates it within the existing PoC.</li>
+      <li>The project team integrates this intelligence into the cinema chain's architecture and evaluates it through a staged pilot.</li>
     </ol>
     <div class="cvfoot"><b>IE437</b><span>IE437 · Classroom discussion</span><span class="noprint">Appendix menu — A key</span></div>
   </div>
@@ -2167,11 +2487,11 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 
 <section class="slide appendix" id="a1" data-alabel="A1">
-  <div class="kicker"><span class="tick"></span><span class="kn">A1</span><span>Appendix — “How does this differ from today's PoC?”</span></div>
+  <div class="kicker"><span class="tick"></span><span class="kn">A1</span><span>Appendix — “How does this improve the baseline?”</span></div>
   <h1 class="head">Keep Models ① and ②;<br>add <em class="c-purple">Response and Optimization</em> around them</h1>
   <div class="fill">
     <table class="matrix apx">
-      <thead><tr><th style="width:150px">Domain</th><th style="width:38%">Current Phase 1 PoC</th><th>Proposal — added layer</th></tr></thead>
+      <thead><tr><th style="width:150px">Domain</th><th style="width:38%">Reference process</th><th>Proposal — added layer</th></tr></thead>
       <tbody>
         <tr><td>Prediction</td><td>Site/content occupancy prediction (Model ②)</td><td><b>Maintain and improve Base Forecast</b> + audience response to scheduling actions through <b>Audience Response Model</b> as a new layer</td></tr>
         <tr><td>Programming</td><td>Apply automated scheduling rules → schedule (Model ①)</td><td>Express rules as <b>structured constraints</b> and repeatedly call Prediction through <b>Optimization Engine</b> to search candidate schedules</td></tr>
@@ -2186,7 +2506,24 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 </section>
 
 
-<section class="slide appendix" id="a2"><div class="kicker"><span class="tick"></span><span class="kn">A2</span><span>Expanded classroom reference</span></div><h1 class="head">Proceed, revise or stop at explicit evidence gates</h1><p class="lede" style="font-size:25px;line-height:1.55;margin-top:28px;max-width:1060px">Proceed only when the outcome unit, planning cutoff and feasible set are defensible. Validate prediction separately from optimization and operational effects.</p><div class="thesis" style="margin-top:auto"><strong style="font-size:19px;line-height:1.6">Stop or revise when critical information is missing, calibration is poor, recommendations violate hard rules or a trial fails the agreed outcome/stability criteria.</strong></div><div class="foot"><span>IE437 · Fictional case · Evidence and assumptions must remain separate</span></div></section>
+<section class="slide appendix" id="a2" data-alabel="A2">
+  <div class="kicker"><span class="tick"></span><span class="kn">A2</span><span>Appendix — Validation gates and reusable outputs</span></div>
+  <h1 class="head">Validate through four gates,<br>and retain <em class="c-green">useful assets at every outcome</em></h1>
+  <div class="fill">
+    <div class="gates">
+      <div class="mcard lb-blue"><span class="no">GATE H1</span><h3>Base Forecast</h3><p><b>Pass criterion</b> At least match the current forecast on agreed metrics (MAE/WMAPE, etc.)</p><p><b>Assets retained if gate fails</b> D1 benchmark report · Data quality diagnosis</p></div>
+      <div class="mcard lb-teal"><span class="no">GATE H2</span><h3>Action Response</h3><p><b>Pass criterion</b> Check held-out response accuracy and supported action effects</p><p><b>Assets retained if gate fails</b> Action History roadmap · Prospective logging framework</p></div>
+      <div class="mcard lb-purple"><span class="no">GATE H3</span><h3>Optimization</h3><p><b>Pass criterion</b> Improve the evaluation metric over the reference, with zero hard-constraint violations</p><p><b>Assets retained if gate fails</b> D3 Engine · D4 Replay environment</p></div>
+      <div class="mcard lb-amber"><span class="no">GATE H4</span><h3>Dynamic</h3><p><b>Pass criterion</b> Reoptimization adds gains over the fixed initial schedule</p><p><b>Assets retained if gate fails</b> D6 operating guidelines · Draft Freeze policy</p></div>
+    </div>
+    <div class="gonogo">
+      <b>GO / NO-GO</b>
+      <span>After the integrated pilot, <strong>the decision owner decides</strong> whether to proceed to Phase 2. Deliver D6 validation report and D7 API specification regardless of the outcome.</span>
+    </div>
+    <div class="thesis"><strong>Every stage produces useful decision assets</strong><span style="font-weight:300;color:var(--ink2)">— retain the model, rules, comparison tools and operating lessons.</span></div>
+  </div>
+  <div class="foot"><span>APPENDIX A2 · Agree gate thresholds after baseline diagnosis</span></div>
+</section>
 
 
 <section class="slide appendix" id="a3" data-alabel="A3">
@@ -2211,7 +2548,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
   <div class="fill">
     <div class="four4">
       <div class="mcard lb-teal"><span class="no">Strategy 01</span><h3>Use natural experiments</h3><p>Use different schedules for the same film across sites/weeks as quasi-experimental variation to estimate response effects.</p></div>
-      <div class="mcard lb-green"><span class="no">Strategy 02</span><h3>Build prospective logs</h3><p>From October Shadow operation, record schedule snapshots and revisions to strengthen identification later in the PoC and Phase 2.</p></div>
+      <div class="mcard lb-green"><span class="no">Strategy 02</span><h3>Build prospective logs</h3><p>During proposed shadow operation, record schedule snapshots and revisions to strengthen identification later in the PoC and Phase 2.</p></div>
       <div class="mcard lb-slate"><span class="no">Strategy 03</span><h3>Conservative identification</h3><p>Estimate effects only where assumptions are supported; state uncertainty. Observational data alone does not establish full causality.</p></div>
       <div class="mcard lb-amber"><span class="no">Strategy 04</span><h3>Redefine validation depth</h3><p>Treat H2 as partial validation and assess PoC results around H1 and H3 (Replay-based optimization gains).</p></div>
     </div>
@@ -2235,7 +2572,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
     </div>
     <div class="thesis"><strong>Choose the model after diagnosis</strong><span style="font-weight:300;color:var(--ink2)">using accuracy, explainability, operating stability, and Cinema system compatibility.</span></div>
   </div>
-  <div class="foot"><span>APPENDIX A5 · Based on Build Spec Appendix C</span></div>
+  <div class="foot"><span>APPENDIX A5 · Method candidates for model and search selection</span></div>
 </section>
 
 
@@ -2244,14 +2581,14 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
   <h1 class="head">Process cinema data <em class="c-blue">within the cinema chain’s environment</em><br>and exclude it from global-model training</h1>
   <div class="fill">
     <div class="four4">
-      <div class="mcard lb-slate"><span class="no">Principle 01</span><h3>Deidentified · Aggregated data only</h3><p>The cinema chain's 47 data categories across three domains are deidentified and aggregated. No individually identifiable data is requested.</p></div>
-      <div class="mcard lb-slate"><span class="no">Principle 02</span><h3>Process in the client environment</h3><p>Keep data and decision records within the cinema chain's tenant. Exclude them from provider global-model training.</p></div>
+      <div class="mcard lb-slate"><span class="no">Principle 01</span><h3>Deidentified · Aggregated data only</h3><p>Request deidentified or aggregated film, screening and audience records. Avoid individually identifiable information.</p></div>
+      <div class="mcard lb-slate"><span class="no">Principle 02</span><h3>Process in the client environment</h3><p>Plan to keep data and decision records within the cinema chain's tenant. Exclude them from provider global-model training.</p></div>
       <div class="mcard lb-ink"><span class="no">Principle 03</span><h3>Use existing paths</h3><p>Use the cinema chain's EAI · DX AI · DB paths without adding external export channels.</p></div>
-      <div class="mcard lb-green"><span class="no">Principle 04</span><h3>Deliverable ownership</h3><p>Cinema owns validation reports, Decision Logs, Replay environments, and project outputs. Support IT and security review.</p></div>
+      <div class="mcard lb-green"><span class="no">Principle 04</span><h3>Deliverable ownership</h3><p>Specify operator ownership of validation reports, Decision Logs, Replay environments and project outputs. Support IT and security review.</p></div>
     </div>
     <div class="thesis"><strong>Complete security review before kickoff</strong><span style="font-weight:300;color:var(--ink2)">— configure VPC or on-premises processing where required by Cinema policy.</span></div>
   </div>
-  <div class="foot"><span>APPENDIX A6 · Processing principles based on the case platform policy</span></div>
+  <div class="foot"><span>APPENDIX A6 · Proposed data-processing principles</span></div>
 </section>
 
 
@@ -2260,11 +2597,11 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
   <h1 class="head">The Optimizer’s <em class="c-slate">operating grammar</em><br>Draft for agreement at kickoff</h1>
   <div class="fill">
     <table class="matrix apx">
-      <thead><tr><th style="width:230px">Item</th><th style="width:120px">Class</th><th style="width:300px">Source fields (47-category dataset)</th><th>Notes</th></tr></thead>
+      <thead><tr><th style="width:230px">Item</th><th style="width:120px">Class</th><th style="width:300px">Proposed source fields</th><th>Notes</th></tr></thead>
       <tbody>
         <tr><td>Operating hours · First/last show</td><td><i class="hs hard">HARD</i></td><td>Operating hours (definition to agree)</td><td>May differ by site and weekday</td></tr>
         <tr><td>Cleaning · Turnaround time</td><td><i class="hs hard">HARD</i></td><td>Cleaning time · Runtime</td><td>Varies by screen size</td></tr>
-        <tr><td>Screen quota</td><td><i class="hs hard">HARD</i></td><td>Screen quota · Domestic/foreign film category</td><td>Statutory requirement</td></tr>
+        <tr><td>Screen quota</td><td><i class="hs hard">HARD</i></td><td>Screen quota · Domestic/foreign film category</td><td>Applicable quota rule</td></tr>
         <tr><td>Premium-screen policy · Share cap</td><td><i class="hs hard">HARD</i> <i class="hs soft">SOFT</i></td><td>Premium-screen cap · Space/technology · Format</td><td>Format fit: Hard; share cap: Soft</td></tr>
         <tr><td>Booking lock (Freeze)</td><td><i class="hs hard">HARD</i></td><td>Booking opening time · Advance-booking schedule</td><td>Rolling Horizon boundary</td></tr>
         <tr><td>Minimum / Maximum shows</td><td><i class="hs soft">SOFT</i></td><td>Film scheduling category · Operating policy</td><td>Hard if required by distribution contracts</td></tr>
@@ -2272,14 +2609,14 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </tbody>
     </table>
   </div>
-  <div class="foot"><span>APPENDIX A7 · Build Spec Appendix D · See Rule → Constraint in the main deck</span></div>
+  <div class="foot"><span>APPENDIX A7 · Proposed constraint catalog · See Rule → Constraint in the main deck</span></div>
 </section>
 
 <div id="amenu" class="noprint" hidden>
   <div class="ambox">
     <div class="amhead"><span>APPENDIX</span><span class="amhint">1–8 or click · Esc Close · Q = Q&amp;A</span></div>
     <button type="button" data-goto="a1"><b>A1</b> Difference from today's PoC (Models ①/②)</button>
-    <button type="button" data-goto="a2"><b>A2</b> Evidence gates · Proceed / Revise / Stop</button>
+    <button type="button" data-goto="a2"><b>A2</b> Validation gates · Outcomes and reusable assets</button>
     <button type="button" data-goto="a3"><b>A3</b> Already-booked shows — four Freeze rules</button>
     <button type="button" data-goto="a4"><b>A4</b> No Action History — identification strategy</button>
     <button type="button" data-goto="a5"><b>A5</b> Method candidates (technical review)</button>
@@ -3009,7 +3346,7 @@ table.matrix.apx td b{font-weight:600}
 <script id="notes" type="application/json">{
  "s01": [
   30,
-  "Expanded classroom reference. All operating practices and demand relationships are fictional assumptions pending verification. The executable ILS and rolling demonstrations use synthetic formulas, not trained or validated business models."
+  "Open with the decision: connect a film-demand forecast to better feasible schedules. The overall learned-response, BO and rolling-operation architecture is a proposal. The embedded illustrations use synthetic formulas; the standalone operator demo executes aggregate synthetic response rules and seeded ILS, not fitted real-data prediction or BO."
  ],
  "s02": [
   45,
@@ -3017,7 +3354,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s03": [
   35,
-  "The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement."
+  "Walk through the original operating structure: P1 national forecast, P2 chain allocation, P3 site allocation and feedback, P4 site-performance weights; A1 operating/cleaning setup, A2 scheduling rules, A3 site fit, A4 site timetables. Retain both flows. The next slide explains their forecast-then-allocate logic; s05 then questions schedule-independent demand.\n\nMoved classroom and verification guidance (verbatim): The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement."
  ],
  "s04": [
   30,
@@ -3065,7 +3402,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s15": [
   50,
-  "The complete architecture in one slide: blue is Prediction, purple is Programming, green is learning, and amber is dynamic rescheduling. Prediction and Programming are implemented as separate services."
+  "Explain the target architecture: separate Prediction and Programming services, recommended schedules, observed outcomes, a learning loop and eligible-window reoptimization. This service integration and rolling deployment are proposed; the standalone class app remains one-day aggregate-response ILS."
  ],
  "s16": [
   30,
@@ -3077,7 +3414,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s18": [
   60,
-  "Top: Freeze, Limited, Optimizable. Click Play 4 Weeks below, about 15 seconds. Actual observations accumulate in green; forecasts learn; locked intervals stay fixed; only the 48h+ interval is reallocated in amber. Weekly retraining improves the cumulative attendance curve, with at most four changes per update. Explain rolling-horizon scheduling."
+  "The 4-week widget is a synthetic rolling illustration. Its booking signals, error reductions and cumulative attendance curves are scripted assumptions, not trained forecasts or observed operating gains. Use it to explain the Frozen/Limited/Optimizable windows and stability penalty; final thresholds need operator agreement."
  ],
  "s19": [
   60,
@@ -3089,7 +3426,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s21": [
   20,
-  "Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset."
+  "Group the proposed data by purpose: potential demand, action-dependent response, then feasibility. This is an input design, not a claim that all data exist. The assignment's purchase row is one completed purchase and is insufficient alone for screening-level demand, zero-sales inventory or causal response identification.\n\nMoved classroom and verification guidance (verbatim): Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset."
  ],
  "s22": [
   30,
@@ -3101,7 +3438,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s24": [
   60,
-  "Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known."
+  "The three columns describe a proposed implementation sequence, not a committed calendar: feasible scheduling, response-aware comparison, then integrated pilot. Click the reveal button to add the modeling/search track to the operator track. Start from common reference schedules, cutoffs, rules and metrics. Read duration and permission details from the MD.\n\nMoved classroom and verification guidance (verbatim): Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known."
  ],
  "s25": [
   25,
@@ -3121,23 +3458,23 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s29": [
   30,
-  "Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate."
+  "Explain the adoption path: working model/search comparison, then operator integration, then monitored operation. The teaching example provides no commercial quote or agreed duration. Transition decisions depend on the previous stage's results and operator requirements.\n\nMoved classroom and verification guidance (verbatim): Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate."
  ],
  "s30": [
   20,
-  "Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness."
+  "Discuss value in three dimensions: business outcomes, operating effort/stability and reusable decision assets. Treat each as a target to measure against a common baseline. A synthetic search-score increase is not a measured attendance, revenue, causal or adoption effect.\n\nMoved classroom and verification guidance (verbatim): Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness."
  ],
  "s31": [
   30,
-  "Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it."
+  "Translate the proposed capabilities into operating responsibilities: decision formulation, prediction uncertainty, combinatorial search, simulation, integration and learning. Keep reproducible records of every recommendation as described in the MD.\n\nMoved classroom and verification guidance (verbatim): Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it."
  ],
  "s32": [
   20,
-  "A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here."
+  "This technical extension makes the Response-model/BO concept explicit. A response evaluator scores actions; a BO surrogate and posterior represent evaluated scores and uncertainty; an acquisition rule selects a feasible next candidate; evaluation and posterior update repeat until the budget is spent. BO is useful when evaluations are expensive. The actual classroom operator demo uses seeded ILS and an aggregate synthetic formula. It implements neither a learned real-data response model nor a BO posterior/acquisition loop.\n\nMoved classroom and verification guidance (verbatim): A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here."
  ],
  "s33": [
   30,
-  "Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail."
+  "Read these as a testing strategy: demand surprises, response sensitivity, hard-rule boundaries, historical replay and operator pilot. Scenario checks test the computation; replay tests prediction and search separately; field tests assess observed outcomes and stability. This slide makes no cross-industry delivery or performance claim.\n\nMoved classroom and verification guidance (verbatim): Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail."
  ],
  "s34": [
   25,
@@ -3145,7 +3482,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s35": [
   75,
-  "The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD."
+  "Close with three actionable decisions: prototype scope, useful planning/outcome data, and a single decision owner. The first deliverable is a reproducible feasible comparison with the reference. Full real-data modeling, integration and field operation are proposed next steps; funding, permissions and duration need an agreed scope.\n\nMoved classroom and verification guidance (verbatim): The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD."
  ],
  "s36": [
   30,
@@ -3157,7 +3494,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "a2": [
   0,
-  "Proceed only when the outcome unit, planning cutoff and feasible set are defensible. Validate prediction separately from optimization and operational effects. Stop or revise when critical information is missing, calibration is poor, recommendations violate hard rules or a trial fails the agreed outcome/stability criteria."
+  "Keep four substantive validation gates: base-forecast quality, action-response accuracy and identification, feasible optimization, then dynamic value and stability. Agree thresholds from a measured baseline. Historical counterfactual replay depends on response-model assumptions; operational and causal gains require their own supporting evidence. Retain useful outputs if any gate stops the work.\n\nMoved classroom and verification guidance (verbatim): Proceed only when the outcome unit, planning cutoff and feasible set are defensible. Validate prediction separately from optimization and operational effects. Stop or revise when critical information is missing, calibration is poor, recommendations violate hard rules or a trial fails the agreed outcome/stability criteria."
  ],
  "a3": [
   0,
@@ -3165,7 +3502,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "a4": [
   0,
-  "If Action History is unavailable, use natural experiments, prospective logging, conservative identification, and an adjusted validation scope. Do not claim complete causal identification."
+  "Without Action History, propose natural experiments and prospective logging, qualify the identification assumptions and adjust the validation depth. Shadow operation is a proposed phase, not a scheduled October commitment. Observational replay cannot establish complete causal identification."
  ],
  "a5": [
   0,
@@ -3173,11 +3510,11 @@ table.matrix.apx td b{font-weight:600}
  ],
  "a6": [
   0,
-  "Use only the 47 de-identified or aggregated data categories. Process inside the cinema chain's environment, exclude global-model training, use the existing EAI integration path, and assign deliverable ownership to Cinema."
+  "These are proposed processing and ownership principles, not a verified platform policy or an available 47-category dataset. Agree data access, permitted processing, ownership and security controls with the responsible operator."
  ],
  "a7": [
   0,
-  "Draft constraint catalog: Hard/Soft classification and source data. Confirm with operational teams at kickoff."
+  "This is a draft constraint catalog. Confirm applicability, units, source records and Hard/Soft classification with operating owners. The source-fields column is a proposed collection map, not an available dataset."
  ],
  "a8": [
   0,
@@ -3403,7 +3740,22 @@ addEventListener('beforeprint',function(){hdSaved=hdCur;hdSet(2)});
 addEventListener('afterprint',function(){if(hdSaved!==null){hdSet(hdSaved);hdSaved=null}});
 
 
-hooks.s24=function(){};hooks._frag={};
+var s24=$('#s24');
+s24.setAttribute('data-fragall','');
+function s24Btn(){
+  var frs=$$('.frag',s24);
+  var on=frs.length&&frs[0].classList.contains('on');
+  s24.classList.toggle('ov-on',!!on);
+  $('#s24btn').textContent=on?'− Hide modeling and search track':'+ Show modeling and search track';
+}
+$('#s24btn').addEventListener('click',function(){
+  var frs=$$('.frag',s24);
+  var on=frs[0].classList.contains('on');
+  frs.forEach(function(f){f.classList.toggle('on',!on)});
+  s24Btn();
+});
+hooks.s24=s24Btn;
+hooks._frag={s24:s24Btn};
 
 
 var amenu=$('#amenu');

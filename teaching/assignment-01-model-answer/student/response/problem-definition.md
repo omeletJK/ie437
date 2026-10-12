@@ -1,11 +1,11 @@
 # Response Schedule Optimizer: An Aggregate Cinema Planning Case
 
-**IE437 Assignment 1 · Public worked example · English · 11 October 2026 · Demo release 1.5 · Document v5.0**
+**IE437 Assignment 1 · Public worked example · English · 11 October 2026 · Package release 1.6 · Demo runtime 1.5 · Document v6.0**
 
 Author / student ID: Public teaching sample; not a student submission.  
 LLM use: OpenAI Codex, a GPT-6-based assistant, supported source inspection, English drafting, importer implementation and independent review. Three actual review decisions appear in Section 7.
 
-The [Response Schedule Optimizer](demo.html) is an independent aggregate-response application with four operator steps: **Import planning data → Objective & constraints → Run optimization → Review results**. It uses the existing SIM2 response equation and Iterated Local Search (ILS), with an explicit planning-package loader. It creates no individual synthetic audience and calls no audience-twin choice/seat engine. The established 44-slide [Response proposal](proposal.html) and identical [extended proposal](extended-proposal.html) retain their original design. [Demo guide](demo-guide.md) · [Verification](verification.json) · [All worked examples](../index.html).
+The [Response Schedule Optimizer](demo.html) is an independent aggregate-response application with four operator steps: **Import planning data → Objective & constraints → Run optimization → Review results**. It uses the existing SIM2 response equation and Iterated Local Search (ILS), with an explicit planning-package loader. It creates no individual synthetic audience and calls no audience-twin choice/seat engine. The established 44-slide [Response proposal](proposal.html) and identical [extended proposal](extended-proposal.html) retain their original design. Proposal revision 1.6 restores the operating-structure diagram and presents the proposed data, implementation and adoption plans in their original visual layouts; the detailed provenance and verification guidance appears in Appendix A and the built-in speaker notes (`N`). [Demo guide](demo-guide.md) · [Verification](verification.json) · [All worked examples](../index.html).
 
 The film/site response coefficients are declared synthetic assumptions; the application does not fit a learned model from purchases or implement BO. The original proposal's broader learned-model and rolling-operation concepts remain proposed extensions. Release 1.5 starts from the uploaded timetable without a presolve. Its observed classroom search is **4,969 → 5,247**, rather than inheriting a previous release's search result. The exact artifact passed 39 independent Node checks; actual HTTP upload/configuration/rejection/export flows were exercised on the preceding candidate, with their scope recorded in Section 5. Final-SHA source replay and responsive checks passed; course-prefix navigation and staging checks passed. Direct offline execution remains unverified.
 
@@ -161,3 +161,68 @@ These are actual preparation reviews, not an invented student's discussion histo
 | Reuse the previous search result or export a CSV with extra prediction fields | Fresh UI gave 4,969→5,247 after explicit-start import; canonical gaps change the seeded trajectory. Source review also found an extra CSV column incompatible with the declared importer; the generator was corrected to five columns. | Report only new-run observations, keep a common uploaded baseline/settings, and verify the corrected five-column export/reimport, final-artifact engine audit and separately scoped HTTP evidence before recording passes. |
 
 Source basis: the [assignment](../reference/assignment.md), [template](../reference/problem-definition-template.md), [classification reference](../reference/problem-classification-reference.md), original 44-slide Response proposal, original S13/SIM2 source, explicit [planning JSON](CinemaPlanning.json) and [screening CSV](Screenings.csv). [Verification](verification.json) records the source/test scope. LLM output alone is not evidence of response accuracy, external facts or operational value.
+
+
+## Appendix A. Proposal presentation notes and evidence boundaries
+
+The presentation follows a decision story: **baseline forecasting and scheduling → schedule-dependent audience response → response evaluator → feasible search → operator decisions → proposed learning and rollout**. The 44 section IDs and 31-slide compact presentation path are retained. The diagram in `s03` is an illustrative classroom baseline, not an observed company workflow. Its original P1–P4 and A1–A4 labels have been restored.
+
+### A.1 Proposed architecture and demonstrated calculation
+
+The proposed architecture adds learned response estimation, uncertainty, service integration and rolling operation to a forecast-and-scheduling baseline. `s32` describes a possible constrained BO loop: **response estimate and uncertainty → acquisition choice → feasible candidate evaluation → posterior update**. The executable operator application remains the release 1.5 aggregate synthetic-response equation with seeded ILS. It does not fit purchase data or execute BO; its numerical engine and measured sample results are unchanged in proposal revision 1.6. The embedded rolling illustration also uses synthetic signals and scripted learning assumptions.
+
+The proposed inputs in `s21` are a collection map: film/demand context, scheduling actions and screening outcomes, and operating constraints. The classroom purchase-field brief supplies transaction semantics, not a complete screening dataset. Purchase events must be joined to the entire screening inventory, capacities, zero-sales shows, schedule versions and event times before defining a real response target. No original data-category count is asserted as an available Assignment 1 dataset.
+
+`s24` and `s29` show a proposed sequence and adoption path; they make no calendar, budget, licensing or commercial promise. `s30` describes value dimensions to measure. `s33` replaces vendor references with a test strategy. `s35` requests a focused prototype, useful inputs and a decision owner. `a2` retains meaningful validation gates and reusable outputs.
+
+### A.2 Guidance moved out of audience-facing slides
+
+The passages below preserve the previous classroom/audit wording verbatim. They are retained as evidence and planning notes, and are also available through the proposal’s built-in speaker-note view (`N`). Their location here prevents provenance bookkeeping from interrupting the problem-solving explanation.
+
+#### `s03` — Start with separate forecasting and scheduling flows, then connect them through response
+
+> A declared reference workflow, pending an operator audit The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement.
+
+#### `s21` — Organize the proposed inputs by their role in the decision loop
+
+> Purchase records establish transactions, not demand response Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset.
+
+#### `s24` — Build in three stages: feasibility → response → integrated operation
+
+> Sequence the work by evidence, not calendar promises Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known.
+
+#### `s29` — Adopt a phased structure : prototype → integration → ongoing operation
+
+> Adopt through evidence gates Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate.
+
+#### `s30` — The value goes beyond time saved on scheduling
+
+> Value must be measured against a declared baseline Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness.
+
+#### `s31` — Connect decision models to operating systems
+
+> Make the analysis auditable Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it.
+
+#### `s32` — Use response estimates to choose the next schedule to evaluate
+
+> Separate evaluator choice from search choice A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here.
+
+#### `s33` — Test the recommendation under changing demand and operating conditions
+
+> Stress the model before making an operational claim Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail.
+
+#### `s35` — Turn the proposal into action with three decisions
+
+> Request a bounded data and rule audit The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD.
+
+#### `a2` — Validate through four gates, and retain useful assets at every outcome
+
+> Proceed, revise or stop at explicit evidence gates Proceed only when the outcome unit, planning cutoff and feasible set are defensible. Validate prediction separately from optimization and operational effects. Stop or revise when critical information is missing, calibration is poor, recommendations violate hard rules or a trial fails the agreed outcome/stability criteria.
+
+### A.3 Practical validation and record keeping
+
+Before a real-data model or trial, agree the outcome unit, planning cutoff, feasible set, reference process and operator ownership. Split prediction assessment, optimizer assessment and observed operating effects. Check time leakage, zero-sales coverage, film/site calibration, capacity censoring, policy changes and substitution assumptions. Historical counterfactual comparisons depend on the response model and identification assumptions; they do not alone establish causal business improvement.
+
+Retain input snapshots, source showing IDs, cutoffs, operating rules, evaluator versions, seeds, reference plans, candidate scores, accepted recommendations and rejection reasons. Use the same scenario and rules to compare the reference and candidate; repeat sensitivity tests before expanding the operating scope. A colleague should be able to reproduce the recommendation and state when it ceases to apply.
+
+Agree data-processing permission, deidentification/aggregation, environment boundaries, retention and deliverable ownership with the relevant operator. The proposed security and integration diagrams describe design intent, not a completed platform or security audit.

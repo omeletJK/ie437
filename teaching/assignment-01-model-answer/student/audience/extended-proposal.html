@@ -458,8 +458,8 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s03 .tl3 .tseg:nth-child(2) .th i{background:var(--teal)}
   #s03 .tl3 .tseg:nth-child(3) .th i{background:var(--purple)}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">03</span><span> Cinema business requirements </span></div>
-  <h1 class="head rise" style="--d:0"> The cinema chain needs a demand outlook that keeps updating <br> across three forecast horizons </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">03</span><span> Planning horizons </span></div>
+  <h1 class="head rise" style="--d:0"> Plan a movie portfolio with a demand outlook that updates <br> across three forecast horizons </h1>
   <div class="fill">
     <div class="tl3wrap rise" style="--d:1">
       <div class="tl3">
@@ -479,7 +479,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
     <div class="thesis rise" style="--d:2"> The same Audience Twin <strong>updates its belief</strong> as new evidence arrives, instead of creating three separate models. </div>
   </div>
-  <div class="foot"><span>03 · Cinema DEMAND FORECAST TIMELINE</span></div>
+  <div class="foot"><span>03 · CASE PLANNING CADENCE · ANNUAL → PRE-RELEASE → BOOKINGS</span></div>
 </section>
 
 <!-- ═══════════════ S04 · 현재 예측 방식 ═══════════════ -->
@@ -494,8 +494,8 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     font:600 17px/1.3 var(--mono);letter-spacing:.01em;display:flex;flex-direction:column;gap:10px}
   #s04 .keyphrase small{font:500 9.5px var(--mono);letter-spacing:.14em;color:var(--ink3)}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">04</span><span> Current forecasting approach </span></div>
-  <h1 class="head rise" style="--d:0"> Today's approach estimates total demand directly from movie features: <br> a top-down forecast </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">04</span><span> Reference forecasting approach </span></div>
+  <h1 class="head rise" style="--d:0"> A movie-level baseline estimates total demand directly from movie features: <br> a top-down forecast </h1>
   <div class="fill">
     <div class="stagearea">
       <div class="flow row rise" style="--d:1">
@@ -516,7 +516,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       </div>
     </div>
   </div>
-  <div class="foot"><span>04 · CURRENT APPROACH · BASELINE</span></div>
+  <div class="foot"><span>04 · MOVIE-FEATURE BASELINE · ILLUSTRATIVE FORECAST</span></div>
 </section>
 
 <!-- ═══════════════ S04A · 회귀 모델의 근본적 한계 ═══════════════ -->
@@ -534,19 +534,19 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s04a .consequences{margin-top:20px}
   </style>
   <div class="kicker"><span class="tick"></span><span class="kn">04A</span><span> Limits of movie-level regression </span></div>
-  <h1 class="head rise" style="--d:0"> Only a few hundred movies are released nationwide each year. <br> Regression struggles to ensure accuracy and reliable uncertainty estimates </h1>
+  <h1 class="head rise" style="--d:0"> With a limited movie-level sample, <br> new combinations are difficult to forecast </h1>
   <div class="fill">
     <div class="statrow rise" style="--d:1">
       <div class="stat">
         <div class="lab"> Training samples for movie-level regression </div>
-        <div class="num">300~600<small> movies / year </small></div>
-        <div class="sub"> Annual nationwide releases; dozens of features such as genre, cast, director and IP </div>
+        <div class="num">300–600<small>example films</small></div>
+        <div class="sub"> Illustrative training size; many genre, cast, director and IP features </div>
       </div>
       <div class="vs">VS</div>
       <div class="stat good">
         <div class="lab"> Bottom-up viewer × movie observations </div>
-        <div class="num">400,000+<small>observations</small></div>
-        <div class="sub"> Interactions across Cinema members and movies in their viewing histories </div>
+        <div class="num">400,000+<small>example pairs</small></div>
+        <div class="sub"> Viewer–movie interactions across linked histories </div>
       </div>
     </div>
     <ul class="bullets bl-slate consequences rise" style="--d:2">
@@ -555,7 +555,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <li> One or two outliers, such as a blockbuster or major flop, can <strong>distort all regression coefficients</strong>. </li>
     </ul>
   </div>
-  <div class="thesis rise" style="--d:3"> Replacing movie counts with member × movie observations enables <strong>much more stable statistical estimates</strong> within the same market. </div>
+  <div class="thesis rise" style="--d:3"> Viewer × movie observations add behavioral detail. <strong>Test whether that detail improves forecasts</strong> on later movies. </div>
   <div class="foot"><span>04A · SMALL-N REGRESSION · WHY BOTTOM-UP</span></div>
 </section>
 
@@ -607,7 +607,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
   </div>
   <div class="thesis rise" style="--d:2"> Total attendance is generated from <strong>the sum of individual choices</strong> rather than predicted as a single number. </div>
-  <div class="foot"><span>05 · MOVIE-LEVEL → INDIVIDUAL-LEVEL</span></div>
+  <div class="foot"><span>05 · MOVIE-LEVEL → INDIVIDUAL-LEVEL · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S06 · AUDIENCE DIGITAL TWIN 정의 ═══════════════ -->
@@ -658,8 +658,8 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s07 .dcol:nth-child(2) li::before{color:var(--teal)}
   #s07 .dcol:nth-child(3) li::before{color:var(--purple)}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">07</span><span> The cinema chain's distinctive data asset </span></div>
-  <h1 class="head rise" style="--d:0"> The cinema chain holds actual theater choice data <br> that general movie forecasting providers rarely have </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">07</span><span> Inputs for individual audience modeling </span></div>
+  <h1 class="head rise" style="--d:0"> Link viewing history, audience feedback <br> and movie information to model choices </h1>
   <div class="cols3">
     <div class="dcol panel rise" style="--d:1">
       <div class="phead"><span class="dot" style="background:var(--blue)"></span>User History</div>
@@ -674,8 +674,8 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <ul><li> Genre · cast · director </li><li> Synopsis · poster · trailer </li><li> Awareness · buzz </li><li> Advance bookings </li></ul>
     </div>
   </div>
-  <div class="thesis rise" style="--d:4"> the cinema chain's advantage is <strong>longitudinal data linking movies to actual audience choices</strong>, beyond movie information alone. </div>
-  <div class="foot"><span>07 · Cinema DATA ADVANTAGE</span></div>
+  <div class="thesis rise" style="--d:4"> <strong>Linked histories connect movie content to viewer preferences</strong>; time and theater information then support the choice model. </div>
+  <div class="foot"><span>07 · REQUIRED INPUTS · HISTORY + FEEDBACK + CONTENT</span></div>
 </section>
 
 <!-- ═══════════════ S08 · FEEDBACK LOOP ═══════════════ -->
@@ -766,7 +766,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
     <div class="tech rise" style="--d:5"><span> Start with a simple, testable baseline. Adopt a more complex history model only when it delivers verified improvement. </span><span class="ap"> Step-by-step sampling: next slide · Equations: Appendix A13 </span></div>
   </div>
-  <div class="foot"><span>09 · PHASE 1 · HISTORY → DESIRE → DAILY CHOICE → POPULATION SUM</span></div>
+  <div class="foot"><span>09 · PHASE 1 · DESIRE → DAILY CHOICE → POPULATION SUM · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S09A · 샘플링 프로세스 STEP BY STEP (HERO) ═══════════════ -->
@@ -879,7 +879,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
   </div>
   <div class="thesis rise" style="--d:3"><span> Attendance is calculated by <strong>weighting each person's share of paths that watched the movie</strong>, rather than counting one sampled choice per person. After a visit, desire becomes 0. Nine visits per year is an expectation, not a quota. </span></div>
-  <div class="foot"><span>09A · HERO · PAIR INTENT ONCE · DAILY JOINT DRAW · PATH AVERAGE · POPULATION SUM</span></div>
+  <div class="foot"><span>09A · DAILY JOINT DRAW → PATH AVERAGE → POPULATION SUM · ILLUSTRATIVE PATH</span></div>
 </section>
 
 <!-- ═══════════════ S10 · 3개 HORIZON (HERO) ═══════════════ -->
@@ -944,7 +944,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
   </div>
   <div class="thesis rise" style="--d:2"> New evidence updates the same distribution for <strong>the same model and population</strong>, instead of creating three separate models. </div>
-  <div class="foot"><span>10 · HERO · ROLLING HORIZON · BAYESIAN UPDATE</span></div>
+  <div class="foot"><span>10 · PROPOSED FORECAST UPDATES · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S11 · NEW MOVIE COLD START ═══════════════ -->
@@ -1048,7 +1048,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         <div class="lg">
           <span><i style="background:#6D4AFF"></i>SF</span><span><i style="background:#2563EB"></i> Action </span><span><i style="background:#D97706"></i> Drama </span>
           <span><em style="background:#6D4AFF"></em> λ_A New movie A (SF) </span><span><em style="background:#2563EB"></em> λ_B New movie B (romance) </span>
-          <span style="margin-left:auto"> ◎ = this person's actual viewing event </span>
+          <span style="margin-left:auto"> ◎ = simulated viewing event </span>
         </div>
       </div>
       <div class="cards rise" style="--d:2">
@@ -1069,9 +1069,9 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         </div>
       </div>
     </div>
-    <div class="guard rise" style="--d:3"><strong>M0 (baseline)</strong> starts with frequency and intervals as the history term in ②, keeping it interpretable without learning. <strong>M1 (research model)</strong> extends it with graph history state g(Hᵤ,m). Adopt only if it beats M0 on a real holdout (A12). The method follows KDD 2023 research learning multivariate Hawkes processes with graph recurrent neural networks. </div>
+    <div class="guard rise" style="--d:3"><strong>M0 (baseline)</strong> starts with frequency and intervals as the history term in ②, keeping it interpretable without learning. <strong>M1 (research model)</strong> extends it with graph history state g(Hᵤ,m). Compare both models on held-out data (A12). </div>
   </div>
-  <div class="foot"><span>11A · HISTORY-DEPENDENT INTENSITY · MARKED TEMPORAL POINT PROCESS</span></div>
+  <div class="foot"><span>11A · PROPOSED M1 EXTENSION · HISTORY-DEPENDENT INTENSITY</span></div>
 </section>
 
 <!-- ═══════════════ S12 · 개인 예측 DEMO (HERO) ═══════════════ -->
@@ -1154,9 +1154,9 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         </div>
       </div>
     </div>
-    <div class="explainnote rise" style="--d:2"> This value measures desire for the movie itself. Phase 2 adds suitable showtimes (CAN) and actual choice (CHOOSE). Evidence lists show connections used by the model; actual contributions are tested by removing evidence and recalculating (A12). </div>
+    <div class="explainnote rise" style="--d:2"> Movie desire comes first. Phase 2 adds suitable showtimes (CAN) and recalculates actual choice (CHOOSE). </div>
   </div>
-  <div class="foot"><span>12 · HERO · INDIVIDUAL PREDICTION · WANT</span></div>
+  <div class="foot"><span>12 · INDIVIDUAL MOVIE DESIRE · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S13 · INDIVIDUAL → MARKET ═══════════════ -->
@@ -1225,8 +1225,8 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       </div>
     </div>
   </div>
-  <div class="thesis rise" style="--d:4"> The aggregate can be broken down into <strong>which viewer, on which date, and why</strong>; forecasts and explanations come from the same model. </div>
-  <div class="foot"><span>13 · BOTTOM-UP AGGREGATION · Σ OVER POPULATION</span></div>
+  <div class="thesis rise" style="--d:4"> Break down the aggregate by <strong>viewer segment and date</strong> to understand where predicted demand comes from. </div>
+  <div class="foot"><span>13 · WEIGHTED AGGREGATION · SYNTHETIC MARKET EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S14 · MARKET CALIBRATION ═══════════════ -->
@@ -1253,7 +1253,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         <ul><li> Nationwide equivalent attendance </li></ul></div>
     </div>
   </div>
-  <div class="thesis rise" style="--d:2"> Separate individual modeling from market calibration to produce <strong>stable total attendance forecasts</strong>. </div>
+  <div class="thesis rise" style="--d:2"> Separate individual modeling from market calibration <br> before interpreting the aggregate as market demand </div>
   <div class="foot"><span>14 · MEMBER → MARKET</span></div>
 </section>
 
@@ -1275,7 +1275,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
   </div>
   <div class="thesis rise" style="--d:2"> For annual planning, <strong>quantifying uncertainty</strong> is more useful than forcing false precision. </div>
-  <div class="foot"><span>15 · PREDICTION INTERVAL NARROWING</span></div>
+  <div class="foot"><span>15 · FORECAST + UNCERTAINTY · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S16 · PHASE 1 VALIDATION ═══════════════ -->
@@ -1302,10 +1302,10 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   <div class="fill">
     <div class="steps rise" style="--d:1">
       <div class="st"><span class="n">01</span><h3> Select past movies </h3><p> Choose released movies with known outcomes for validation. </p></div>
-      <div class="st cut"><span class="n"> 02 · PREVENT LEAKAGE </span><h3> Hide information after <br> the forecast date </h3><p> Mask all information learned after release. </p></div>
+      <div class="st cut"><span class="n"> 02 · PREVENT LEAKAGE </span><h3> Hide information after <br> the forecast date </h3><p> Mask all information learned after the selected forecast cutoff. </p></div>
       <div class="st"><span class="n">03</span><h3> Use history available <br> at that time </h3><p> Build the Twin only from history available at the forecast date. </p></div>
       <div class="st"><span class="n">04</span><h3> Calculate individual movie desire </h3><p> Store each member's desire for each movie. </p></div>
-      <div class="st"><span class="n">05</span><h3> Aggregate demand </h3><p> Add individual desire to forecast attendance. </p></div>
+      <div class="st"><span class="n">05</span><h3> Aggregate demand </h3><p> Aggregate daily movie choices to forecast attendance. </p></div>
       <div class="st out"><span class="n"> 06 · COMPARE </span><h3> Reveal actual attendance </h3><p> Measure error by comparing forecasts with actual outcomes. </p></div>
     </div>
     <div class="two rise" style="--d:2">
@@ -1424,7 +1424,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     <div class="loopnote rise" style="--d:6"> Return from ⑤ to ② and repeat ↺ </div>
   </div>
   <div class="thesis rise" style="--d:7"> Phase 1 builds <strong>WANT</strong>; Phase 2 repeats <strong>CAN → CHOOSE → AGGREGATE</strong> for each schedule to <strong>OPTIMIZE</strong>. </div>
-  <div class="foot"><span>17B · PREPARED ILLUSTRATION · WANT → CAN → CHOOSE → AGGREGATE → OPTIMIZE</span></div>
+  <div class="foot"><span>17B · WANT → CAN → CHOOSE → AGGREGATE → OPTIMIZE · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S18 · PHASE 1 → PHASE 2 ═══════════════ -->
@@ -1454,7 +1454,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         <div class="wrow"><span>Movie A</span><b>82</b><span class="wbar"><i style="width:82%"></i></span></div>
         <div class="wrow"><span>Movie B</span><b>47</b><span class="wbar"><i style="width:47%"></i></span></div>
         <div class="wrow"><span>Movie C</span><b>18</b><span class="wbar"><i style="width:18%"></i></span></div>
-        <div class="src"> Learned in Phase 1 · schedule-independent · reused unchanged </div></div>
+        <div class="src"> Estimated in Phase 1 · schedule-independent · reused unchanged </div></div>
       <div class="ar rise" style="--d:2">→</div>
       <div class="mid rise" style="--d:3">
         <div class="persona"><span class="av">1,842</span><span class="pn"><b>User 1,842</b><small> Same person · same memory </small></span></div>
@@ -1540,19 +1540,19 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   <div class="fill">
     <div class="pipe rise" style="--d:1">
       <div class="prow">
-        <div class="fbox"><span class="idx">01</span><b>Movie desire (static)</b><small> Taste · content · visit frequency → date-independent intensity </small><span class="tag wip"> Design finalized </span></div>
+        <div class="fbox"><span class="idx">01</span><b>Movie desire (static)</b><small> Taste · content · visit frequency → date-independent intensity </small><span class="tag done"> M0 workflow </span></div>
         <div class="farrow">→</div>
-        <div class="fbox"><span class="idx">02</span><b>Phase 1-A potential demand</b><small> Theatrical run · competing movies · daily travel patterns </small><span class="tag wip"> Design finalized </span></div>
+        <div class="fbox"><span class="idx">02</span><b>Phase 1-A potential demand</b><small> Theatrical run · competing movies · daily travel patterns </small><span class="tag done"> M0 workflow </span></div>
         <div class="farrow">→</div>
-        <div class="fbox" style="border-color:var(--purple);background:rgba(109,74,255,.05)"><span class="idx">03</span><b>Phase 1-B baseline schedule</b><small> Place showtimes within operating constraints </small><span class="tag wip"> Design finalized </span></div>
+        <div class="fbox" style="border-color:var(--purple);background:rgba(109,74,255,.05)"><span class="idx">03</span><b>Phase 1-B baseline schedule</b><small> Place showtimes within operating constraints </small><span class="tag done"> M0 workflow </span></div>
         <div class="farrow">→</div>
-        <div class="fbox"><span class="idx">04</span><b>Phase 2 local improvement</b><small> Reforecast the same population · repeat </small><span class="tag wip"> Design finalized </span></div>
+        <div class="fbox"><span class="idx">04</span><b>Phase 2 local improvement</b><small> Reforecast the same population · repeat </small><span class="tag done"> M0 workflow </span></div>
       </div>
     </div>
-    <div class="badge"> Design and validation contract finalized (2026-09-17) · engine implementation not started </div>
+    <div class="badge"> Runnable M0 demonstrator · movie inputs → potential demand → baseline → local improvement </div>
   </div>
-  <div class="thesis rise" style="--d:2"> Implementation must pass <strong>a contract checked against eight mathematical oracles</strong> before it is considered complete. </div>
-  <div class="foot"><span>18B · MOVIE-FIRST PIPELINE · DESIGN CONFIRMED, ENGINE PENDING</span></div>
+  <div class="thesis rise" style="--d:2"> Start from the demand-based schedule, then <strong>compare feasible changes using the same synthetic audience</strong>. </div>
+  <div class="foot"><span>18B · MOVIE-FIRST M0 PIPELINE · LEARNED M1 IS A PROPOSED EXTENSION</span></div>
 </section>
 
 <!-- ═══════════════ S18C · 실제 실행 화면 (증거) ═══════════════ -->
@@ -1571,18 +1571,18 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s18c .shot .cap b{font:600 11.5px/1.3 var(--sans);color:var(--wink)}
   #s18c .shot .cap small{font:400 9.5px/1.5 var(--mono);color:var(--wink3)}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">18C</span><span> Reusable infrastructure (earlier-generation evidence) </span></div>
-  <h1 class="head rise" style="--d:0"> Population, seat assignment and annual state engines have been validated </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">18C</span><span> Reusable simulator components </span></div>
+  <h1 class="head rise" style="--d:0"> Population, seats and history <br> support the same operating loop </h1>
   <div class="fill">
     <div class="grid rise" style="--d:1">
-      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of annual schedule input evidence"><span class="evlabel">ENGLISH SCHEMATIC OF PROTOTYPE EVIDENCE</span><div class="evstats"><span><b>200</b>Movies</span><span><b>32,850</b>Screenings</span><span><b>6 / 30</b>Theaters / screens</span></div><div class="evflow">Movie input <i>→</i> Theater / screen <i>→</i> Annual schedule</div></div><div class="cap"><b>01 · Annual schedule input</b><small> 200 movies · 32,850 screenings · 6 theaters / 30 screens </small></div></div>
-      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of annual results evidence"><span class="evlabel">ENGLISH SCHEMATIC OF PROTOTYPE EVIDENCE</span><div class="evstats"><span><b>107,359</b>Annual visits</span><span><b>9,996 / 10,000</b>Visitors</span></div><div class="evflow">Annual state engine <i>→</i> Aggregated results</div></div><div class="cap"><b>02 · Annual results dashboard</b><small> 107,359 annual visits · 9,996 / 10,000 visitors </small></div></div>
-      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of viewer timeline evidence"><span class="evlabel">ENGLISH SCHEMATIC OF PROTOTYPE EVIDENCE</span><div class="evstats"><span><b>Viewing history</b>Individual state</span><span><b>0.56%</b>Today's visit probability</span></div><div class="evflow">Visit probability <i>×</i> Conditional movie choice <i>→</i> Timeline</div></div><div class="cap"><b>03 · Viewer timeline</b><small> Today's visit probability 0.56% × conditional movie choice </small></div></div>
-      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of screening and booking evidence"><span class="evlabel">ENGLISH SCHEMATIC OF PROTOTYPE EVIDENCE</span><div class="evstats"><span><b>Seat assignment</b>By screening</span><span><b>24h / 48h</b>Freeze windows</span></div><div class="evflow">Confirmed bookings <i>→</i> Preserved allocations</div></div><div class="cap"><b>04 · Screenings and confirmed bookings</b><small> Screening assignments · 24h / 48h freeze policy </small></div></div>
+      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of annual schedule input evidence"><span class="evlabel">ARCHIVED SYNTHETIC EXAMPLE</span><div class="evstats"><span><b>200</b>Movies</span><span><b>32,850</b>Screenings</span><span><b>6 / 30</b>Theaters / screens</span></div><div class="evflow">Movie input <i>→</i> Theater / screen <i>→</i> Annual schedule</div></div><div class="cap"><b>01 · Annual schedule input</b><small> 200 movies · 32,850 screenings · 6 theaters / 30 screens </small></div></div>
+      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of annual results evidence"><span class="evlabel">ARCHIVED SYNTHETIC EXAMPLE</span><div class="evstats"><span><b>107,359</b>Annual visits</span><span><b>9,996 / 10,000</b>Visitors</span></div><div class="evflow">Annual state engine <i>→</i> Aggregated results</div></div><div class="cap"><b>02 · Annual results dashboard</b><small> 107,359 annual visits · 9,996 / 10,000 visitors </small></div></div>
+      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of viewer timeline evidence"><span class="evlabel">ARCHIVED SYNTHETIC EXAMPLE</span><div class="evstats"><span><b>Viewing history</b>Individual state</span><span><b>0.56%</b>Today's visit probability</span></div><div class="evflow">Visit probability <i>×</i> Conditional movie choice <i>→</i> Timeline</div></div><div class="cap"><b>03 · Viewer timeline</b><small> Today's visit probability 0.56% × conditional movie choice </small></div></div>
+      <div class="shot"><div class="evdiag" role="img" aria-label="English schematic of screening and booking evidence"><span class="evlabel">ARCHIVED SYNTHETIC EXAMPLE</span><div class="evstats"><span><b>Seat assignment</b>By screening</span><span><b>24h / 48h</b>Freeze windows</span></div><div class="evflow">Confirmed bookings <i>→</i> Preserved allocations</div></div><div class="cap"><b>04 · Screenings and confirmed bookings</b><small> Screening assignments · 24h / 48h freeze policy </small></div></div>
     </div>
   </div>
-  <div class="thesis rise" style="--d:2"> These views represent <strong>the earlier v2 prototype</strong>. The S18B pipeline reuses its population, seat assignment and state engines. </div>
-  <div class="foot"><span>18C · V2 PROTOTYPE EVIDENCE · INFRASTRUCTURE REUSED</span></div>
+  <div class="thesis rise" style="--d:2"> Reuse <strong>population, seat assignment and state tracking</strong> while changing the movie-choice model. </div>
+  <div class="foot"><span>18C · EARLIER PROTOTYPE SCHEMATICS · REUSABLE COMPONENTS</span></div>
 </section>
 
 <!-- ═══════════════ S19 · CHOICE MODEL ═══════════════ -->
@@ -1614,8 +1614,8 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         <div class="ulab"><span></span><span>MOVIE</span><span>THEATER · TIME · FORMAT</span><span>UTILITY (WANT + CAN)</span><span></span></div>
         <div class="cset" style="margin-top:6px">
           <div class="copt"><span class="n">1</span><span class="mv a">Movie A</span><span class="det"> Site A · 18:30 · IMAX <small> Preferred theater · time · format </small></span><span class="ub"><i style="width:87%"></i></span><span class="uv">8.7</span></div>
-          <div class="copt"><span class="n">2</span><span class="mv a">Movie A</span><span class="det"> Wangsimni · 21:40 · 2D <small> Distant theater · late time </small></span><span class="ub"><i style="width:52%"></i></span><span class="uv">5.2</span></div>
-          <div class="copt"><span class="n">3</span><span class="mv b">Movie B</span><span class="det"> Gangnam · 19:10 · 2D <small> Lower desire, but a good time </small></span><span class="ub"><i style="width:79%"></i></span><span class="uv">7.9</span></div>
+          <div class="copt"><span class="n">2</span><span class="mv a">Movie A</span><span class="det"> Site B · 21:40 · 2D <small> Distant theater · late time </small></span><span class="ub"><i style="width:52%"></i></span><span class="uv">5.2</span></div>
+          <div class="copt"><span class="n">3</span><span class="mv b">Movie B</span><span class="det"> Site C · 19:10 · 2D <small> Lower desire, but a good time </small></span><span class="ub"><i style="width:79%"></i></span><span class="uv">7.9</span></div>
           <div class="copt"><span class="n">4</span><span class="mv c">Movie C</span><span class="det"> Site A · 20:00 · 4DX <small> Low desire </small></span><span class="ub"><i style="width:38%"></i></span><span class="uv">3.8</span></div>
           <div class="copt oo"><span class="n">5</span><span class="mv">No Movie</span><span class="det"> No Movie today <small> Defer to a future opportunity (outside option) </small></span><span class="ub"><i style="width:61%"></i></span><span class="uv">6.1</span></div>
         </div>
@@ -1629,7 +1629,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     </div>
   </div>
   <div class="thesis rise" style="--d:3"> Movie choice and showtime choice are connected: <strong>a good showtime can attract someone to a less desired movie; without one, they may abandon their first choice.</strong></div>
-  <div class="foot"><span>19 · FULL CHOICE SET · MOVIE × THEATER × SHOWTIME × OUTSIDE OPTION</span></div>
+  <div class="foot"><span>19 · MOVIE × THEATER × SHOWTIME × NO MOVIE · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S20 · 지역·시간 수요 BOTTOM-UP ═══════════════ -->
@@ -1721,7 +1721,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     <div class="bigmsg rise" style="--d:3"> Programming changes <em>choice probabilities themselves, instead of allocating fixed demand.</em></div>
   </div>
   <div class="thesis rise" style="--d:4"> When programming changes, the same person may <strong>choose a different movie or make a new visit</strong>. Phase 2's response model is the choice model itself. </div>
-  <div class="foot"><span>21 · HERO · BEFORE / AFTER · SAME AUDIENCE, DIFFERENT SCHEDULE</span></div>
+  <div class="foot"><span>21 · SAME AUDIENCE, DIFFERENT SCHEDULE · SYNTHETIC EXAMPLE</span></div>
 </section>
 
 <!-- ═══════════════ S22 · SCHEDULE A/B SIMULATION (HERO, DARK) ═══════════════ -->
@@ -1771,11 +1771,11 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <div class="panel outs">
         <div class="rl"><span class="t">Attendance</span><span class="v" id="scAtt">31,420</span></div>
         <div class="rtrack"><div class="rfill" id="scFill" style="width:70%"></div></div>
-        <div class="revrow"><span class="t" style="letter-spacing:.14em">Mock revenue units</span><span class="v" id="scRev">410M units</span></div>
+        <div class="revrow"><span class="t" style="letter-spacing:.14em">Revenue units</span><span class="v" id="scRev">410M units</span></div>
         <div class="mv"><div class="t"><span>Audience Movement · vs Schedule A</span><span id="scDelta"></span></div><div id="scFlows"></div><div class="lg"><span><i style="background:var(--d-green)"></i> A new visit = higher total attendance </span><span><i style="background:var(--d-purple)"></i> A switch between movies = unchanged total attendance </span></div></div>
       </div>
     </div>
-    <div class="badge" style="margin-top:10px">Prepared illustration · synthetic revenue units · not executed outcomes</div>
+    <div class="badge" style="margin-top:10px">Synthetic illustration · revenue in example units</div>
   </div>
   <div class="foot"><span>22 · HERO · SCHEDULE A/B · WHY ATTENDANCE MOVED</span></div>
 </section>
@@ -1867,16 +1867,16 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         </div>
       </div>
       <div class="panel simpanel">
-        <div class="scorehead"><span class="ctl-label" style="margin:0"> PREPARED MOCK AUDIENCE SCORE </span><span class="sv" id="s23Score">4,820<small>candidate 1/6</small></span></div>
+        <div class="scorehead"><span class="ctl-label" style="margin:0"> SYNTHETIC AUDIENCE SCORE </span><span class="sv" id="s23Score">4,820<small>candidate 1/6</small></span></div>
         <div class="screens" id="s23Screens"></div>
         <div class="axis"><span></span><div class="ax"><span style="left:0%">10:00</span><span style="left:33%">14:40</span><span style="left:66%">19:20</span><span style="left:100%">24:00</span></div></div>
         <div class="legend2"><span><i style="background:rgba(37,99,235,.4);border:1px solid rgba(37,99,235,.6)"></i> Movie A </span><span><i style="background:rgba(15,157,138,.35);border:1px solid rgba(15,157,138,.6)"></i> Movie B </span><span><i style="background:rgba(217,119,6,.4);border:1px solid rgba(217,119,6,.6)"></i> Movie C </span><span style="margin-left:auto"> ■ Purple border = screening changed in this step </span></div>
-        <div class="traj"><div class="tl"><span> PREPARED SEARCH TRAJECTORY · SIX MOCK CANDIDATE SCORES </span><span id="s23TrajN"></span></div><div class="bars" id="s23Traj"></div></div>
+        <div class="traj"><div class="tl"><span> ILLUSTRATIVE SEARCH TRAJECTORY · SIX CANDIDATES </span><span id="s23TrajN"></span></div><div class="bars" id="s23Traj"></div></div>
       </div>
     </div>
   </div>
-  <div class="thesis rise" style="--d:3"><span><strong>Schedule → Audience Response → Outcome → Better Schedule.</strong> Local improvement, not a guaranteed global optimum. Report the best candidate explored. Validate the reference optimizer alongside the cinema chain's current programming system. </span></div>
-  <div class="foot"><span>23 · PREPARED STORYBOARD · PRIMARY EXECUTED SEARCH: DEMO.HTML</span></div>
+  <div class="thesis rise" style="--d:3"><span><strong>Schedule → Audience Response → Outcome → Better Schedule.</strong> Search feasible changes, retain the best candidate explored, and compare it with the reference schedule. </span></div>
+  <div class="foot"><span>23 · SCHEDULE → RESPONSE → OUTCOME → BETTER SCHEDULE · ILLUSTRATIVE SEARCH</span></div>
 </section>
 
 <!-- ═══════════════ S25 · DYNAMIC RE-PROGRAMMING (HERO) ═══════════════ -->
@@ -1902,7 +1902,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s25 .lanewrap{display:flex;flex-direction:column;justify-content:center;height:100%}
   </style>
   <div class="kicker"><span class="tick"></span><span class="kn">25</span><span>Dynamic Re-programming</span></div>
-  <h1 class="head rise" style="--d:0"> Actual booking response updates <br> the Audience Twin again </h1>
+  <h1 class="head rise" style="--d:0"> Update the audience response <br> and revise eligible future screenings </h1>
   <div class="sameline rise" style="--d:0"><span>Same Audience</span><i></i><span>Different Schedule</span><i></i><em>Different Choice</em></div>
   <div class="fill">
     <div class="hero rise" style="--d:1">
@@ -1927,7 +1927,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       </div>
     </div>
   </div>
-  <div class="foot"><span>25 · HERO · ROLLING RE-FORECAST LOOP</span></div>
+  <div class="foot"><span>25 · REVISE FUTURE SCREENINGS · ILLUSTRATIVE OPERATING LOOP</span></div>
 </section>
 
 <!-- ═══════════════ S24 · Cinema EXISTING PROGRAMMING과의 관계 ═══════════════ -->
@@ -1942,19 +1942,19 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s24 .track.b.frag{transition:opacity .45s ease,transform .45s ease}
   #s24 .compbtn{margin:14px auto 0;display:block}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">24</span><span> Relationship with the cinema chain's existing programming </span></div>
-  <h1 class="head rise" style="--d:0"> The cinema chain can keep using its current programming system </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">24</span><span> Integrating audience forecasts with programming </span></div>
+  <h1 class="head rise" style="--d:0"> Use the same audience forecasts <br> with existing programming or a reference optimizer </h1>
   <div class="fill">
     <div class="apihead rise" style="--d:1"><span class="apibox">Audience Digital Twin / Prediction API</span></div>
     <div class="tracks rise" style="--d:2">
-      <div class="track panel"><div class="phead"><span class="dot" style="background:var(--slate)"></span>A. Cinema Existing Programming</div>
-        <p class="lede" style="font-size:12px"> Keep the Cinema engine if it is sufficient. </p></div>
+      <div class="track panel"><div class="phead"><span class="dot" style="background:var(--slate)"></span>A. Existing programming</div>
+        <p class="lede" style="font-size:12px"> Feed audience forecasts into the current schedule workflow. </p></div>
       <div class="track panel b frag" style="--d:0"><div class="phead"><span class="dot" style="background:var(--purple)"></span>B. Reference Optimizer</div>
-        <p class="lede" style="font-size:12px"> Choose a reference module if additional use of Audience Score is needed. </p></div>
+        <p class="lede" style="font-size:12px"> Evaluate alternative schedules with the same Audience Score. </p></div>
     </div>
-    <button type="button" class="btn ghost compbtn noprint" id="s24btn"> + Show Project Team track </button>
+    <button type="button" class="btn ghost compbtn noprint" id="s24btn"> + Show reference optimizer </button>
   </div>
-  <div class="thesis rise" style="--d:3"> the cinema chain retains the choice while we validate <strong>whether predictions improve actual performance</strong> through to the outcome. </div>
+  <div class="thesis rise" style="--d:3"> Compare both programming paths against <strong>the same inputs, rules and outcome measures</strong>. </div>
   <div class="foot"><span>24 · SAME PREDICTION · DECISION BENCHMARK</span></div>
 </section>
 
@@ -1996,18 +1996,18 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s27 .tl4 .tseg li{font:300 10.5px/1.5 var(--sans);color:var(--ink2)}
   #s27 .tl4 .tseg.gate{background:rgba(100,116,139,.06)}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">27</span><span> Planning sequence </span></div>
-  <h1 class="head rise" style="--d:0"> Validate Phase 1 first; extend to Phase 2 if successful </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">27</span><span> Implementation sequence </span></div>
+  <h1 class="head rise" style="--d:0"> Build audience forecasts first, <br> then connect them to schedule decisions </h1>
   <div class="fill">
     <div class="tl4 rise" style="--d:1">
-      <div class="tseg"><div class="dur"> Audit scope: TBD </div><h4>Phase 0</h4><ul><li> Data diagnosis </li><li> Check user-level data availability </li><li> Define historical snapshots </li><li> Finalize security and pseudonymization </li></ul></div>
-      <div class="tseg"><div class="dur"> Effort: TBD </div><h4>Phase 1</h4><ul><li>Baseline</li><li>User / Movie Representation</li><li>Watch Propensity</li><li>Population Calibration</li><li>3-Horizon Backtest</li><li>Prototype</li></ul></div>
-      <div class="tseg gate"><div class="dur"> Evidence gate </div><h4>Gate Review</h4><ul><li> Technical results </li><li> Business usability </li><li>Phase 2 Go/No-Go</li></ul></div>
-      <div class="tseg"><div class="dur"> Scope / effort: TBD </div><h4>Phase 2</h4><ul><li> Visit frequency and attendance model </li><li> Choice model · annual slate </li><li>Schedule Simulator</li><li>Reference Optimizer</li></ul></div>
+      <div class="tseg"><div class="dur"> INPUTS </div><h4>Prepare inputs</h4><ul><li>Movie metadata and releases</li><li>Linked audience history</li><li>Theater and screen supply</li><li>Reference rules and schedule</li></ul></div>
+      <div class="tseg"><div class="dur"> MODELING </div><h4>Phase 1</h4><ul><li>Baseline</li><li>User / Movie Representation</li><li>Watch Propensity</li><li>Population Calibration</li><li>3-Horizon Backtest</li><li>Prototype</li></ul></div>
+      <div class="tseg gate"><div class="dur"> COMPARISON </div><h4>Compare forecasts</h4><ul><li>Forecast error and calibration</li><li>Held-out movie ranking</li><li>Choose the stronger model</li></ul></div>
+      <div class="tseg"><div class="dur"> SCHEDULING </div><h4>Phase 2</h4><ul><li> Visit frequency and attendance model </li><li> Choice model · annual slate </li><li>Schedule Simulator</li><li>Reference Optimizer</li></ul></div>
     </div>
-    <p class="lede rise" style="--d:2;margin-top:10px"> At the gate review, agree whether Phase 2 covers a single schedule or an annual slate. Estimate duration after data coverage, dependencies and validation effort are known. </p>
+    <p class="lede rise" style="--d:2;margin-top:10px"> The audience representation carries forward: <strong>predict movie demand → simulate accessible choices → improve the schedule</strong>. </p>
   </div>
-  <div class="foot"><span>27 · PHASE 0 → 1 → GATE → 2</span></div>
+  <div class="foot"><span>27 · INPUTS → AUDIENCE MODEL → FORECAST COMPARISON → SCHEDULING</span></div>
 </section>
 
 <!-- ═══════════════ S28 · 검증 가설 ═══════════════ -->
@@ -2047,7 +2047,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     <div class="dcol panel"><div class="phead"><span class="dot" style="background:var(--purple)"></span>Movie / Market</div>
       <ul><li>metadata · synopsis</li><li>poster · trailer</li><li>awareness / buzz</li><li>actual admissions · Cinema share</li></ul></div>
   </div>
-  <div class="important rise" style="--d:2"> Aggregate data alone cannot adequately test the core hypotheses. Personal identity is unnecessary, but <strong>the same anonymous user's viewing history must remain linked over time</strong>. This provides <strong>an initial estimate of individual visit frequency and intervals</strong>. After that, update movies and schedules. Use explicit synthetic frequency assumptions for viewers without history, labeling assumptions separately from estimates. </div>
+  <div class="important rise" style="--d:2"> Aggregate data alone cannot adequately test the core hypotheses. Personal identity is unnecessary, but <strong>the same anonymous user's viewing history must remain linked over time</strong>. This provides <strong>an initial estimate of individual visit frequency and intervals</strong>. After that, update movies and schedules. Use declared frequency profiles when linked history is unavailable. </div>
   <div class="foot"><span>29 · PSEUDONYMOUS LONGITUDINAL DATA</span></div>
 </section>
 
@@ -2066,7 +2066,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <li> If needed, isolate content analysis through a multimodal API </li>
     </ul>
   </div>
-  <div class="thesis rise" style="--d:2"><span class="c-red"> Note </span>: legal and privacy details require consultation with the cinema chain's policies and responsible teams. </div>
+  <div class="thesis rise" style="--d:2">Keep <strong>preference modeling</strong> separate from direct personal identification. </div>
   <div class="foot"><span>30 · PRIVACY BY DESIGN</span></div>
 </section>
 
@@ -2097,11 +2097,11 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <div class="mcard lb-purple"><span class="no">08</span><h3>Phase 2 Choice Simulation Prototype (concept/demo)</h3></div>
     </div>
     <div class="oos rise" style="--d:2">
-      <b>NOT INCLUDED</b>
-      <span class="x"> Full Cinema production deployment </span>
-      <span class="x"> Replacing nationwide live programming </span>
-      <span class="x"> Continuous production operations </span>
-      <span class="x"> Verified real-world benefit </span>
+      <b>LATER OPERATING PHASE</b>
+      <span class="x"> Production integration </span>
+      <span class="x"> Live schedule rollout </span>
+      <span class="x"> Serving and retraining </span>
+      <span class="x"> Operational monitoring </span>
     </div>
   </div>
   <div class="foot"><span>31 · POC DELIVERABLES</span></div>
@@ -2120,22 +2120,22 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s32 .parrow{display:flex;align-items:center;justify-content:center;color:var(--ink4);font:400 16px/1 var(--mono)}
   #s32 .planningnote{margin-top:16px}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">32</span><span>Scope and Validation Plan</span></div>
-  <h1 class="head rise" style="--d:0"> A phased approach: decide Phase 2 and operations after Phase 1 validation </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">32</span><span>Operator workflow</span></div>
+  <h1 class="head rise" style="--d:0"> An operator solves the problem <br> from inputs to a schedule comparison </h1>
   <div class="fill">
     <div class="phases rise" style="--d:1">
-      <div class="pc panel lb-blue"><div class="pbody"><div class="scopeheading"><small>PHASE 1</small>Audience Digital Twin PoC</div>
-        <ul class="bullets" style="margin-top:auto"><li> Audit data semantics and coverage </li><li> Agree the target and baseline </li><li> Define held-out validation </li></ul></div></div>
+      <div class="pc panel lb-blue"><div class="pbody"><div class="scopeheading"><small>01 · PREPARE</small>Import &amp; prepare</div>
+        <ul class="bullets" style="margin-top:auto"><li>Load movie metadata</li><li>Prepare synthetic audience profiles</li><li>Inspect potential movie demand</li></ul></div></div>
       <div class="parrow">→</div>
-      <div class="pc panel lb-purple"><div class="pbody"><div class="scopeheading"><small>PHASE 2</small>Choice Simulation / Programming Intelligence</div>
-        <ul class="bullets" style="margin-top:auto"><li> Proceed if validation gates pass </li><li> Confirm constraints and bookings </li><li> Compare common-input schedules </li></ul></div></div>
+      <div class="pc panel lb-purple"><div class="pbody"><div class="scopeheading"><small>02 · EXPERIMENT</small>Configure &amp; compare</div>
+        <ul class="bullets" style="margin-top:auto"><li>Set objective and operating rules</li><li>Build a feasible baseline</li><li>Run local schedule improvement</li></ul></div></div>
       <div class="parrow">→</div>
-      <div class="pc panel lb-slate"><div class="pbody"><div class="scopeheading"><small>FUTURE OPERATIONS</small> Deployment readiness review </div>
-        <ul class="bullets" style="margin-top:auto"><li>Serving and retraining requirements</li><li>Operational approval and monitoring</li><li> Budget and duration: TBD </li></ul></div></div>
+      <div class="pc panel lb-slate"><div class="pbody"><div class="scopeheading"><small>03 · DECIDE</small>Review &amp; revise </div>
+        <ul class="bullets" style="margin-top:auto"><li>Compare admissions and revenue</li><li>Inspect movies, dates and viewers</li><li>Try a response shock and replan</li></ul></div></div>
     </div>
-    <div class="plate planningnote rise" style="--d:2"> Cost, duration and benefit estimates are TBD until data availability, scope and validation effort are known. </div>
+    <div class="plate planningnote rise" style="--d:2"> <a href="demo.html" style="color:var(--purple);font-weight:600">Open the live Movie First M0 demo →</a> Import inputs, set rules, run the experiment, then inspect and save the comparison. </div>
   </div>
-  <div class="foot"><span>32 · AUDIT → VALIDATION → READINESS REVIEW</span></div>
+  <div class="foot"><span>32 · LIVE M0 DEMO · PREPARE → EXPERIMENT → DECIDE</span></div>
 </section>
 
 <!-- ═══════════════ S33 · DATA AND VALIDATION RESPONSIBILITIES ═══════════════ -->
@@ -2144,22 +2144,22 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #s33 .fill{justify-content:center}
   #s33 table.matrix{margin-top:0}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">33</span><span> Data and validation responsibilities </span></div>
-  <h1 class="head rise" style="--d:0"> Confirm data evidence and validation responsibilities </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">33</span><span> Operator and simulator responsibilities </span></div>
+  <h1 class="head rise" style="--d:0"> The operator sets the decision; <br> the simulator compares its consequences </h1>
   <div class="fill">
     <table class="matrix rise" style="--d:1">
-      <thead><tr><th>Data / Operations Owner</th><th>Modeling / Validation Role</th></tr></thead>
+      <thead><tr><th>Operator action</th><th>Simulator output</th></tr></thead>
       <tbody>
-        <tr><td> Record semantics and coverage </td><td>Declare modeling assumptions</td></tr>
-        <tr><td> Full supply and operational rules </td><td>Define response / choice baselines</td></tr>
-        <tr><td>Outcome units and information cutoff</td><td>Design held-out comparisons</td></tr>
-        <tr><td>Reference plan and commitments</td><td>Check feasible schedule comparisons</td></tr>
-        <tr><td>Versioned decision / outcome logs</td><td>Report uncertainty and failure cases</td></tr>
+        <tr><td> Supply movie and audience inputs </td><td>Potential demand by movie</td></tr>
+        <tr><td> Set screens, hours and commitments </td><td>Feasible baseline schedule</td></tr>
+        <tr><td>Choose admissions or revenue</td><td>Comparable schedule scores</td></tr>
+        <tr><td>Run a bounded schedule experiment</td><td>Best explored plan and paired check</td></tr>
+        <tr><td>Review changes and save the run</td><td>Input, rule and result records</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="thesis rise" style="--d:2"> A prototype supports validation; <strong>deployment follows agreed evidence and operational gates</strong>. </div>
-  <div class="foot"><span>33 · DATA EVIDENCE AND VALIDATION RESPONSIBILITIES</span></div>
+  <div class="thesis rise" style="--d:2"> A clear division of work connects <strong>operating choices to reproducible simulation results</strong>. </div>
+  <div class="foot"><span>33 · OPERATOR INPUTS → SIMULATOR OUTPUTS</span></div>
 </section>
 
 <!-- ═══════════════ S34 · IMPLEMENTATION CAPABILITIES ═══════════════ -->
@@ -2191,7 +2191,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <div class="mcard lb-green"><h3>Combinatorial Optimization</h3></div>
       <div class="mcard lb-slate"><h3>Enterprise Integration</h3></div>
     </div>
-    <div class="plate rise" style="--d:3;margin-top:14px;display:block"> Production case: graph recurrent neural networks for temporal event prediction (KDD 2023), validated on 20.7M financial-services transactions from 4M people </div>
+    <div class="plate rise" style="--d:3;margin-top:14px;display:block"> One shared pipeline links audience profiles, movie demand, seat-constrained choices and schedule experiments. </div>
   </div>
   <div class="thesis rise" style="--d:4"> The Audience Digital Twin begins with prediction and can extend into <strong>programming, promotions and marketing decisions</strong>. </div>
   <div class="foot"><span>34 · IMPLEMENTATION CAPABILITIES</span></div>
@@ -2245,7 +2245,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
     <h1 class="rise" style="--d:0"> Prediction AI becomes <br> a Digital Twin for operating experiments </h1>
     <div class="fourwords rise" style="--d:1">WANT<i></i>CAN<i></i>CHOOSE<i></i>AGGREGATE<i></i>OPTIMIZE</div>
     <p class="closecopy rise" style="--d:2"> People want different movies (WANT). Schedules determine what is accessible (CAN), changing actual choices (CHOOSE). Summing choices gives attendance (AGGREGATE). Testing different schedules on the same audience finds better programming (OPTIMIZE). </p>
-    <p class="oneline rise" style="--d:3"> The cinema chain's most distinctive asset is actual audience choice data. An Audience Digital Twin connects that data to demand forecasting and programming through one model. </p>
+    <p class="oneline rise" style="--d:3"> Audience profiles explain potential demand. A shared choice simulator connects that demand to feasible programming and repeatable operating experiments. </p>
     <div class="cvfoot rise" style="--d:4"><b>IE437</b><span>2026.09</span><span> Thank you </span></div>
   </div>
 </section>
@@ -2258,7 +2258,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   <h1 class="head rise" style="--d:0"> Top-down feature forecasts vs bottom-up Audience Twins </h1>
   <div class="fill">
     <table class="matrix rise" style="--d:1">
-      <thead><tr><th> Dimension </th><th> Current · top-down feature-based </th><th>Audience Digital Twin · Bottom-up</th></tr></thead>
+      <thead><tr><th> Dimension </th><th> Reference · top-down features </th><th>Audience Digital Twin · Bottom-up</th></tr></thead>
       <tbody>
         <tr><td> Forecast unit </td><td> Whole movie </td><td> Individual members → aggregate </td></tr>
         <tr><td> Core inputs </td><td> Genre · cast · director · past box office </td><td> Member viewing history + movie representation </td></tr>
@@ -2269,7 +2269,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       </tbody>
     </table>
   </div>
-  <div class="foot"><span>APPENDIX A1</span></div>
+  <div class="foot"><span>APPENDIX A1 · BASELINE VS PROPOSED AUDIENCE MODEL</span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · A2 — 3개 예측 Horizon 상세 ═══════════════ -->
@@ -2287,14 +2287,14 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       </tbody>
     </table>
   </div>
-  <div class="foot"><span> APPENDIX A2 · Agree decision thresholds after data diagnosis </span></div>
+  <div class="foot"><span> APPENDIX A2 · SYNTHETIC FORECAST EXAMPLE </span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · A3 — User Representation 후보 ═══════════════ -->
 <section class="slide appendix" id="a3" data-alabel="A3">
   <style>#a3 .fill{justify-content:center}</style>
   <div class="kicker"><span class="tick"></span><span class="kn">A3</span><span> Viewer representation candidates </span></div>
-  <h1 class="head rise" style="--d:0"> Select the method after data diagnosis; these are candidates </h1>
+  <h1 class="head rise" style="--d:0"> Compare candidate encoders for shared audience preferences </h1>
   <div class="fill">
     <div class="cols4 rise" style="--d:1">
       <div class="mcard lb-blue"><h3>Two-Tower</h3><p> Train separate viewer and movie encoders; use their inner product for propensity. </p></div>
@@ -2303,7 +2303,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <div class="mcard lb-blue"><h3>Hybrid Representation</h3><p> An ensemble combining these methods with content features. </p></div>
     </div>
   </div>
-  <div class="foot"><span> APPENDIX A3 · No model is committed in advance </span></div>
+  <div class="foot"><span> APPENDIX A3 · PROPOSED LEARNED MODEL CANDIDATES </span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · A4 — Movie Representation 후보 ═══════════════ -->
@@ -2384,7 +2384,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
       <li><strong>Purpose Limitation</strong>: prohibit use beyond this PoC or for external model training </li>
     </ul>
   </div>
-  <div class="foot"><span> APPENDIX A8 · Based on the case platform policies </span></div>
+  <div class="foot"><span> APPENDIX A8 · PROPOSED DATA-HANDLING CONTROLS </span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · A9 — Phase 2 Optimizer 상세 ═══════════════ -->
@@ -2394,9 +2394,9 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   <h1 class="head rise" style="--d:0"> Objective, constraints, starting schedule and local improvement </h1>
   <div class="fill">
     <div class="cols3 rise" style="--d:1">
-      <div class="mcard lb-purple"><h3>Objective</h3><p> Maximize attendance or revenue minus change penalties; do not call it profit without cost data </p></div>
+      <div class="mcard lb-purple"><h3>Objective</h3><p> Maximize admissions or ticket revenue; include a change penalty when the operating objective requires it </p></div>
       <div class="mcard lb-slate"><h3>Constraints</h3><p> Operating hours · runtime · cleaning · screen quotas · format compatibility · booking locks · programming rules </p></div>
-      <div class="mcard lb-amber"><h3> Starting schedule · search </h3><p> Local search starts from Phase 1-B's demand-based schedule; no global-optimum guarantee </p></div>
+      <div class="mcard lb-amber"><h3> Starting schedule · search </h3><p> Local search starts from Phase 1-B's demand-based schedule; bounded local improvement </p></div>
     </div>
     <p class="lede rise" style="--d:2;margin-top:14px"> Audience Score uses <strong>one joint distribution</strong> from the same intensities λ (S18A), not separately multiplied visit and choice probabilities. Report the best schedule explored, and validate on paths excluded from search. </p>
   </div>
@@ -2427,23 +2427,23 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #a11 table.matrix td:nth-child(2){font-family:var(--mono);font-size:11.5px}
   #a11 .note{margin-top:12px;font:300 11.5px/1.6 var(--sans);color:var(--ink2)}
   </style>
-  <div class="kicker"><span class="tick"></span><span class="kn">A11</span><span> V2 development status (earlier prototype) </span></div>
-  <h1 class="head rise" style="--d:0"> V2 demonstrates infrastructure feasibility; the next design starts with movie desire </h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">A11</span><span> Current M0 and proposed extensions </span></div>
+  <h1 class="head rise" style="--d:0"> Use M0 for operating experiments; <br> extend the learned model separately </h1>
   <div class="fill">
     <table class="matrix rise" style="--d:1">
-      <thead><tr><th> Metric </th><th> Value </th><th> Notes </th></tr></thead>
+      <thead><tr><th>Component</th><th>Current M0 demonstrator</th><th>Proposed extension</th></tr></thead>
       <tbody>
-        <tr><td> Fixed development workload </td><td> 2,000 profiles · 10,000 viewers · 200 movies · 32,850 screenings · 365 days </td><td> A performance-test workload, not actual market size </td></tr>
-        <tr><td> Annual visits (representative path) </td><td> 107,359 visits </td><td> Reproducible hash family `ed896fe0` </td></tr>
-        <tr><td> People with at least one visit </td><td> 9,996 / 10,000 viewers </td><td> 0 competitor visits; 0 seat-shortage failures </td></tr>
-        <tr><td> Annual runtime (2k profiles) </td><td> 88.66s → 17.03s </td><td> Optimization checked against identical input and result hash </td></tr>
-        <tr><td> Independent statistical validation </td><td> 100 calibration + 100 evaluation + 100 null + 100 misspecified worlds </td><td> status = pass (synthetic scope only) </td></tr>
-        <tr><td>Production E2E</td><td> Edit movie → annual run → viewer detail → manifest replay </td><td> Real Chromium; 0 console errors / external requests </td></tr>
+        <tr><td>Audience model</td><td>Explicit taste, frequency and recovery rules</td><td>Learn preference/history representations</td></tr>
+        <tr><td>Movie demand</td><td>Daily joint choices over release windows</td><td>Update forecasts from new audience signals</td></tr>
+        <tr><td>Screening supply</td><td>Hours, runtime, cleaning, seats and formats</td><td>Integrate actual operator rules and supply</td></tr>
+        <tr><td>Schedule search</td><td>Bounded local improvement of a feasible baseline</td><td>Broaden candidate search if useful</td></tr>
+        <tr><td>Comparison</td><td>Common synthetic people and separate validation paths</td><td>Held-out predictive and operating comparisons</td></tr>
+        <tr><td>Revision</td><td>Hypothetical shock and future replanning</td><td>Observed signals and booking-sensitive updates</td></tr>
       </tbody>
     </table>
-    <p class="note rise" style="--d:2"> These are measured results from <strong>V2 (annual-v3: visit hazard → conditional choice)</strong>. As of 2026-09-17, <strong>the movie-first architecture is finalized</strong> (A12), with implementation not yet started. Population, seat assignment and annual state engines are reused. <strong>annualReleaseReady=false, realWorldValidated=false</strong>.</p>
+    <p class="note rise" style="--d:2"> The live application executes <strong>Movie First M0 with synthetic inputs</strong>. Learned graph-history M1 is a proposed extension (A12).</p>
   </div>
-  <div class="foot"><span> APPENDIX A11 · 2026-09-15 V2 snapshot · Earlier-generation evidence </span></div>
+  <div class="foot"><span> APPENDIX A11 · RUNNABLE M0 · PROPOSED LEARNING / OPERATING EXTENSIONS </span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · A12 — Movie 선택 모델링 방법론 (M0 → M1) ═══════════════ -->
@@ -2461,22 +2461,22 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   #a12 .srcrow{margin-top:10px;font:400 11px/1.6 var(--sans);color:var(--ink3)}
   </style>
   <div class="kicker"><span class="tick"></span><span class="kn">A12</span><span> Movie choice methodology (M0 → M1) </span></div>
-  <h1 class="head rise" style="--d:0"> Implement the interpretable baseline M0 first; <br> adopt graph model M1 only after validation </h1>
+  <h1 class="head rise" style="--d:0"> Start with interpretable M0; <br> compare learned graph-history M1 </h1>
   <div class="fill">
     <div class="mvrow rise" style="--d:1">
-      <div class="mv panel m0"><span class="tag"> M0 · BASELINE </span>
+      <div class="mv panel m0"><span class="tag"> M0 · LIVE DEMONSTRATOR </span>
         <h3> Static content fit + frequency intercept </h3>
-        <p> Convert taste–content fit and individual frequency intercepts to softplus intensity. Interpretable without learning; implement first. </p>
+        <p> Convert taste–content fit and individual frequency intercepts to softplus intensity. Interpretable without learning; used in the live demo. </p>
       </div>
       <div class="mv panel m1"><span class="tag"> M1 · RESEARCH MODEL </span>
         <h3> Content graph + individual history state </h3>
         <p> Place movies in genre, style and IP clusters. Propagate recent viewing history through a similarity graph. Watching a similar movie may <strong>raise or lower intensity</strong> through persistent taste, fatigue or budget depletion. </p>
       </div>
     </div>
-    <div class="gatebox rise" style="--d:2"> Adoption gate: <strong>M1 must beat both M0 and a learned model without a graph on a real holdout</strong>. Otherwise retain M0. Attention identifies referenced connections; verify contribution by removing evidence and recalculating. Do not present attention scores as causal explanations. </div>
-    <div class="srcrow rise" style="--d:3"> Method reference: <em>Learning Multivariate Hawkes Process via Graph Recurrent Neural Network.</em> KDD 2023: production validation on 20.7M financial-services transactions from 4M people. Explainability limitations follow <em>Attention is not Explanation</em>, NAACL 2019. </div>
+    <div class="gatebox rise" style="--d:2"> Compare <strong>M1, M0 and a learned model without a graph</strong> on the same held-out target. Inspect history contributions by removing signals and recalculating. </div>
+    <div class="srcrow rise" style="--d:3"> M1 adds a learned history state; shared movie content supports new releases. Keep the same choice and schedule-comparison contract. </div>
   </div>
-  <div class="foot"><span> APPENDIX A12 · Design dated 2026-09-17 · M1 implementation not started </span></div>
+  <div class="foot"><span> APPENDIX A12 · M0 RULE MODEL → PROPOSED LEARNED M1 </span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · A13 — Technical Formulation ═══════════════ -->
@@ -2512,9 +2512,9 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
         <div class="f"><span class="p">P(m | S)</span> = e<sup>RU(m)</sup> / (e<sup>U₀</sup> + Σₘ′ e<sup>RU(m′)</sup>),&nbsp; P(j | m, S) = softmax<sub>j</sub> ShowtimeUtility</div>
         <div class="d"> Includes outside option U₀. Equivalent expression: λ <sub>observed</sub> = λᵤₘ · exp(β·Accessibility). Accessibility enters movie-level probability; choice is not a one-way movie-then-showtime process. Nested calculations feed inclusive value back upward. </div></div>
     </div>
-    <div class="guard rise" style="--d:3"> Potential demand and schedule accessibility A may not be fully identifiable from observations alone. Fix travel, price and availability assumptions first; report supplyAdjustedAssumption. Compare M0 (interpretable baseline) and M1 (graph history) under the same evaluation contract (A12). </div>
+    <div class="guard rise" style="--d:3"> Potential demand and schedule accessibility A may not be fully identifiable from observations alone. Travel, price and availability define the accessible choice set. Use the same conditions for model and schedule comparisons (A12). </div>
   </div>
-  <div class="foot"><span> APPENDIX A13 · See S09, S18 and S19 · Design dated 2026-09-17 </span></div>
+  <div class="foot"><span> APPENDIX A13 · PROPOSED FORMULATION · S09, S18 AND S19 </span></div>
 </section>
 
 <!-- ═══════════════ APPENDIX · Q&A HOLDING (dark) ═══════════════ -->
@@ -2527,12 +2527,12 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
   <div class="kicker"><span class="tick"></span><span class="kn">Q&amp;A</span><span> Questions and answers </span></div>
   <h1 class="head rise" style="--d:0"> Six points to return to </h1>
   <ul class="qlist rise" style="--d:1">
-    <li> The cinema chain needs annual, 1–2 month and 2-week forecasts. The same Audience Twin updates as new information arrives. </li>
+    <li> Planning uses annual, 1–2 month and 2-week forecasts. The same Audience Twin updates as new information arrives. </li>
     <li><strong>WANT</strong>: people want different movies. Predict individual movie desire from viewing history and taste. </li>
     <li><strong>CAN</strong>: desire does not guarantee attendance. Theater, time, format and distance affect access. </li>
     <li><strong>CHOOSE → AGGREGATE</strong>: a new schedule changes the same person's choices. Summing those choices gives attendance. </li>
     <li><strong>OPTIMIZE</strong>: test several schedules through the Digital Twin to find the best candidate. Validate alongside existing programming. </li>
-    <li> Audit data and rules first. Define a common baseline and validation gates; cost, duration and benefit estimates remain TBD. </li>
+    <li> The live M0 workflow connects movie inputs, synthetic audience demand, feasible schedules and a reproducible comparison. </li>
   </ul>
   <div class="foot"><span>Q&amp;A HOLDING · A opens appendix · Esc returns </span></div>
 </section>
@@ -2605,19 +2605,19 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s03": [
   35,
-  "Start with the cinema chain's operational requirements. Forecasts at three horizons are belief updates in the same Twin."
+  "Connect the business question to three horizons: annual portfolio choices, pre-release updates, then booking-sensitive decisions. Each stage updates the same audience model. Presenter context: The annual Aug–Sep, 50–60-film portfolio and pre-release dates are illustrative planning assumptions. The assignment supplies purchase-field meanings; it does not establish a real operator cadence or approval process."
  ],
  "s04": [
   25,
-  "The current approach provides a necessary baseline. Its limitation is that it does not directly model the individual choice process."
+  "Introduce the movie-feature forecast as the comparison baseline. It forecasts the total directly, while the proposed audience approach explains choices and schedule response. Presenter context: The baseline is a declared comparator for this case, not an observation of current cinema operations. The 5.0M value is a prepared synthetic illustration."
  ],
  "s04a": [
   35,
-  "Explain the statistical motivation. A few hundred annual releases provide a small sample for both regression accuracy and reliable prediction intervals. Member × film observations change the scale of the available sample."
+  "Contrast a small movie-level training set with richer viewer–movie observations. More records can support shared preference learning, but correlated observations do not automatically establish better accuracy. Presenter context: The two sample counts are illustrative. Evaluate performance on held-out movies and time periods; repeated records for the same viewer or movie are not independent samples."
  ],
  "s05": [
   50,
-  "Change the question. Use the three-audience × three-film matrix to show different preferences. No schedule has been introduced yet. Adding individual propensities gives 4.7M for Film A. Aggregate demand begins with individual choice."
+  "Change the question. Use the three-audience × three-film matrix to show different preferences. No schedule has been introduced yet. Adding individual propensities gives 4.7M for Film A. Aggregate demand begins with individual choice. Presenter context: The prepared percentages and 4.7M weighted market forecast explain aggregation. They are not output from the local 10,000-person M0 seat market; member-to-market weighting belongs to S14."
  ],
  "s06": [
   50,
@@ -2625,27 +2625,27 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s07": [
   30,
-  "Emphasize the cinema chain's longitudinal data connecting film information to actual audience choices."
+  "Read the three input groups as the proposed data design: linked history, preference feedback and movie/market information. These inputs support different parts of the audience model. Presenter context: Availability of linked attendee histories, companions, ratings, clicks and complete screening supply is not established by the assignment. A purchase account is not necessarily an individual attendee. Request and validate observation units, linkage, exposure, cutoff and coverage before learning from real records."
  ],
  "s08": [
   25,
-  "Use lightweight feedback to enrich preferences missing from viewing history. Long written reviews are unnecessary."
+  "Use lightweight feedback to enrich preferences missing from viewing history. Long written reviews are unnecessary. Optional input design: feedback collection is proposed; the assignment does not establish that ratings, comments or watchlists are available. Keep response bias and incentive effects separate from observed viewing behavior."
  ],
  "s09": [
   50,
-  "Phase 1 in one slide: User 1,842's history → film-level desire, WANT → daily simulations of whether and what to watch during the release window → a weighted aggregate of 10,000 people, yielding 4.7M. Equations for intensities and the joint distribution are in A13. Start with a baseline and adopt a more complex history model only after validation."
+  "Explain the proposed shared model, then daily competing choices and aggregation. The runnable M0 uses explicit taste/content/frequency coefficients; learned graph history is the M1 extension in A12. Presenter context: The prepared desire values and 4.7M total illustrate the broader calibrated market proposal. The M0 demonstration uses fictional histories and rule coefficients, not a fitted real-viewer predictor."
  ],
  "s11a": [
   75,
-  "Methodology slide. Left: a year of viewing events and intensity curves for new Films A and B. Release kernels activate; recent SF history propagates through the graph, making A's intensity higher than B's; recovery after a viewing event lowers total intensity. Right: equations for when, what, and the next event, using the survival integral. Implement M0 first. Adopt graph-based M1 only if it wins on held-out data. Reference: KDD 2023 GRTPP methodology."
+  "Methodology slide. Left: a year of viewing events and intensity curves for new Films A and B. Release kernels activate; recent SF history propagates through the graph, making A's intensity higher than B's; recovery after a viewing event lowers total intensity. Right: equations for when, what, and the next event, using the survival integral. Implement M0 first. Adopt graph-based M1 only if it wins on held-out data. Reference: KDD 2023 GRTPP methodology. Presenter context: The graph-state/GRU diagram is a proposed M1 model, not executed by the M0 demonstrator. The source proposal references KDD 2023 graph recurrent temporal-point-process research. Adoption requires target-matched comparisons with M0 and a learned non-graph baseline; a research result in another industry is not cinema validation."
  ],
  "s09a": [
   75,
-  "Hero: press ▶ to sample one day at a time from DAY 1. STEP 1 estimates the desire table once. Each day, intensity for active, unseen films equals desire × release kernel × recovery. One random draw selects an outcome from a single joint distribution, shown by the red marker. A watched film's intensity becomes zero, followed by a recovery period. The calendar shows four weeks; four simulated paths accumulate below. The fraction of paths that watch A estimates Pᵤ(A); weighted aggregation across all users produces attendance."
+  "Hero: press ▶ to sample one day at a time from DAY 1. STEP 1 estimates the desire table once. Each day, intensity for active, unseen films equals desire × release kernel × recovery. One random draw selects an outcome from a single joint distribution, shown by the red marker. A watched film's intensity becomes zero, followed by a recovery period. The calendar shows four weeks; four simulated paths accumulate below. The fraction of paths that watch A estimates Pᵤ(A); weighted aggregation across all users produces attendance. Presenter context: This four-week classroom widget illustrates the daily joint draw. Its small prepared example and four displayed paths are separate from the full annual M0 application and its configured search/validation paths."
  ],
  "s10": [
   60,
-  "Hero: toggle the forecast horizon. The previous forecast is the Prior, shown as a gray dashed curve; new evidence, such as posters, buzz, and advance bookings, supplies the Likelihood; the updated forecast is the Posterior, shown in blue. The 90% interval narrows from 2.5M to 1.4M to 0.8M. The same Twin updates the same distribution across horizons."
+  "Hero: toggle the forecast horizon. The previous forecast is the Prior, shown as a gray dashed curve; new evidence, such as posters, buzz, and advance bookings, supplies the Likelihood; the updated forecast is the Posterior, shown in blue. The 90% interval narrows from 2.5M to 1.4M to 0.8M. The same Twin updates the same distribution across horizons. Presenter context: The three prepared distributions illustrate Bayesian forecast updates; the current M0 application does not fit these posteriors or estimate real 90% intervals. The illustrative narrowing is not a guarantee that every new signal reduces uncertainty."
  ],
  "s11": [
   20,
@@ -2653,19 +2653,19 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s12": [
   60,
-  "Hero: switch users. A person's viewing-history timeline produces WANT for Films A, B, and C. These values represent the film's appeal before schedule accessibility is introduced. The next section adds CAN and CHOOSE."
+  "Hero: switch users. A person's viewing-history timeline produces WANT for Films A, B, and C. These values represent the film's appeal before schedule accessibility is introduced. The next section adds CAN and CHOOSE. Presenter context: The displayed values and supporting connections are prepared illustrations. A learned model explanation requires contribution checks such as removal/recalculation (A12); a connection or attention weight alone is not a causal explanation."
  ],
  "s13": [
   40,
-  "Each dot is one person's probability of choosing Film A; darker purple means higher probability. Sum 10,000 Twins to get attendance, or sum by date to get the daily curve. Phase 2 recalculates choices for each schedule candidate using the same population."
+  "Each dot is one person's probability of choosing Film A; darker purple means higher probability. Sum 10,000 Twins to get attendance, or sum by date to get the daily curve. Phase 2 recalculates choices for each schedule candidate using the same population. Presenter context: The 10,000 illustrated profiles and 4.7M total describe weighted market forecasting, not 4.7M local seat allocations. Interpret model-derived reasons as model contributions, not causal proof."
  ],
  "s14": [
   30,
-  "Keep individual modeling separate from market calibration. Predictions for Cinema members require calibration before being interpreted as nationwide attendance."
+  "Keep individual modeling separate from market calibration. Predictions for Cinema members require calibration before being interpreted as nationwide attendance. Presenter context: The current M0 app retains a 10,000-person local seat market. Proposed national weights are not seat-capacity multipliers; coverage and competitor attendance require separate calibration."
  ],
  "s15": [
   25,
-  "Provide intervals alongside point estimates. Annual forecasts should reflect uncertainty instead of implying unsupported precision."
+  "Provide intervals alongside point estimates. Annual forecasts should reflect uncertainty instead of implying unsupported precision. Presenter context: The displayed intervals are prepared examples, not estimated M0 uncertainty or real coverage measurements. Validate calibration at each forecast cutoff and account for model, population and scenario uncertainty."
  ],
  "s16": [
   40,
@@ -2681,11 +2681,11 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s17b": [
   45,
-  "Phase 2's five-step frame: WANT, from Phase 1 → CAN → CHOOSE → AGGREGATE → OPTIMIZE, then return from ⑤ to ②. Subsequent Phase 2 slides follow this order. The numbers are prepared illustrations, including synthetic revenue units. They are not outcomes of the primary seven-day application."
+  "Follow WANT → CAN → CHOOSE → AGGREGATE → OPTIMIZE, then repeat from CAN for a new schedule. The prepared numbers explain the mechanism; actual experiment results come from demo.html. Presenter context: The attendance/revenue values are stored illustrations, in synthetic revenue units. They are not measurements of the latest M0 workflow or of real operations."
  ],
  "s18": [
   60,
-  "Key concept slide: the same User 1,842 is in the center. Movie Desire, WANT, on the left is learned in Phase 1 and reused. Schedule Accessibility, CAN, on the right changes with each schedule. Together they produce Realized Choice, CHOOSE. The same audience with a different schedule creates different realized demand."
+  "Key concept slide: the same User 1,842 is in the center. Movie Desire, WANT, on the left is learned in Phase 1 and reused. Schedule Accessibility, CAN, on the right changes with each schedule. Together they produce Realized Choice, CHOOSE. The same audience with a different schedule creates different realized demand. Presenter context: The M0 demonstration uses an explicit rule model. Phase 1 learning and graph-history estimation are proposed extensions; the same model/population is reused when comparing schedules."
  ],
  "s18a": [
   45,
@@ -2693,15 +2693,15 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s18b": [
   40,
-  "Four-stage pipeline: film desire → Phase 1-A potential demand → Phase 1-B baseline schedule → Phase 2 local improvement. The design and validation contract, with eight oracles, was confirmed on 2026-09-17. The source deck labels engine implementation as pending; retain that status accurately."
+  "The four stages now run in the M0 application. The illustrative pipeline diagram covers static movie desire, potential demand, constrained baseline construction and bounded local improvement. Presenter context: The original deck recorded a 2026-09-17 design snapshot before implementation. Current M0 is executable; that does not establish learned M1, real-user calibration or field performance. Historical contract/oracle status belongs to development evidence, not the slide narrative."
  ],
  "s18c": [
   45,
-  "Show evidence from the previous-generation v2 prototype. Explain that the population, seat-allocation, and annual-state engines were validated and can be reused. Distinguish this evidence from the new movie-first pipeline. If English schematics replace screenshots, identify them explicitly as schematics of the original prototype evidence."
+  "Use the four cards to explain reusable simulator components. They summarize the earlier V2 prototype rather than the current movie-first run. Presenter context: These English schematics are not screenshots of the current app. The 200-film/32,850-screening workload, 107,359 visits, 9,996 visitors and 0.56% are archived V2 examples. Its visit-hazard→conditional-choice model and 24h/48h freezing differ from current M0. Archived synthetic checks do not validate real consumers or current release readiness."
  ],
  "s19": [
   50,
-  "The real choice set is film × theater × screening × format, plus not watching today. Different screenings of A have different utility. A convenient screening can make the less-desired B the actual choice. Film choice and screening accessibility interact."
+  "The real choice set is film × theater × screening × format, plus not watching today. Different screenings of A have different utility. A convenient screening can make the less-desired B the actual choice. Film choice and screening accessibility interact. Presenter context: The utility values and probabilities are prepared examples of accessibility feedback. They do not come from fitted real choice parameters."
  ],
  "s20": [
   20,
@@ -2709,23 +2709,23 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s21": [
   70,
-  "Core Hero. BEFORE: the person wants A most, but only 14:00 and 21:40 screenings are available; B receives 48% and No Movie 23%. Reveal AFTER: add A at 19:00; A rises to 61%, B falls to 22%, and No Movie to 12%. Film programming changes choice probabilities."
+  "Core Hero. BEFORE: the person wants A most, but only 14:00 and 21:40 screenings are available; B receives 48% and No Movie 23%. Reveal AFTER: add A at 19:00; A rises to 61%, B falls to 22%, and No Movie to 12%. Film programming changes choice probabilities. Presenter context: The A/B/No-Movie percentages are prepared to illustrate substitution and newly induced visits. They are not an executed intervention or causal effect estimate."
  ],
  "s22": [
   60,
-  "Switch Schedule A to B to display prepared illustrative values, not a newly executed simulation. Attendance is 31,420 versus 34,180; mock revenue is 410M versus 448M synthetic units, with no currency interpretation. The prepared movements illustrate new visits versus substitution. For actual application results, use demo.html and the recorded results in problem-definition.md."
+  "Switch Schedule A to B to display prepared illustrative values, not a newly executed simulation. Attendance is 31,420 versus 34,180; mock revenue is 410M versus 448M synthetic units, with no currency interpretation. The prepared movements illustrate new visits versus substitution. For actual application results, use demo.html and the recorded results in problem-definition.md. Presenter context: The toggles display stored values: attendance 31,420 versus 34,180 and revenue 410M versus 448M example units. They are neither new simulator computations nor real commercial outcomes. Use demo.html and the measured runs in this MD for actual M0 outputs."
  ],
  "s23": [
   60,
-  "This six-frame prepared storyboard illustrates the conceptual loop: change a schedule, evaluate the same audience, inspect choices and outcomes, and retain a better candidate. The animation displays stored mock scores; it does not execute an optimizer. Use demo.html for the actual bounded reference search. Preserve the distinction between a mechanism diagram and executed evidence."
+  "Animate the feedback loop: change a schedule, evaluate the same audience, inspect outcomes, retain a better candidate. Move next to operating revision and then to the live M0 demo. Presenter context: This storyboard animates six stored mock scores and does not execute an optimizer. The live M0 demo executes bounded local search and reports best explored, with separate validation paths; it provides no global-optimum guarantee or field uplift evidence."
  ],
  "s24": [
   40,
-  "Use → or the button to overlay the Project Team workstream. Emphasize building a shared benchmark alongside the cinema chain's existing scheduling system."
+  "Use → or the button to overlay the Project Team workstream. Emphasize building a shared benchmark alongside the cinema chain's existing scheduling system. Presenter context: The two tracks are proposed integration options, not a claim that the real operator uses the depicted interface. Confirm actual controls/current schedule and evaluate alternatives on a common information cutoff and feasible set."
  ],
  "s25": [
   45,
-  "Hero: toggle Before Booking Opens, +1 Week, and +2 Weeks. Screenings with confirmed bookings stay locked; only future intervals are eligible for reoptimization."
+  "Show how later response information changes the remaining schedule while protecting commitments. The slide illustrates future booking-sensitive operations; the M0 app offers a hypothetical response shock and replanning experiment. Presenter context: The timeline is a prepared illustration, not a live booking ledger. M0 fixes a synthetic history prefix and any supplied reservations; its default empty bookings do not verify nonempty real-reservation preservation. One shock/revision cycle does not establish a continuous controller."
  ],
  "s26": [
   25,
@@ -2733,35 +2733,35 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s27": [
   25,
-  "Sequence data diagnosis, baseline modeling, a validation gate, and any later choice or schedule extension. Duration is TBD after data availability, permissions, scope and validation effort are known."
+  "Walk through the proposed implementation order: prepare computable inputs, estimate audience preferences and frequency, compare forecasts, then add constrained choice and schedule improvement. Do not present a calendar commitment. Presenter context: Real data availability, semantics, permissions and scope must be established before estimating cost, duration or benefit. The original 2–3/12–16/1–2/10–16-week calendar and commercial pricing are historical proposal choices, not justified promises for this teaching case. A schedule or annual slate extension is selected after baseline comparison."
  ],
  "s28": [
   30,
-  "Validate in sequence: H1 forecasting → H2 aggregation improvement → H3 explanatory power of choice → H4 scheduling improvement."
+  "Test five hypotheses in order: H1 individual new-movie choice; H2 aggregated attendance and ranking; H3 visit frequency and timing; H4 site/time/format choices; H5 schedule improvement versus the agreed reference. Use each comparison to decide whether the next model component adds useful information."
  ],
  "s29": [
   25,
-  "Member-level longitudinal history is the most important input. Aggregated data alone makes the core hypotheses difficult to validate."
+  "Member-level longitudinal history is the most important input. Aggregated data alone makes the core hypotheses difficult to validate. Presenter context: Do not infer personal attendance history from booking accounts or ticket count. Check observation units and time linkage. Distinguish frequency estimated from suitable histories from explicitly declared synthetic profiles; use sensitivity analysis for viewers without history."
  ],
  "s30": [
   20,
-  "Individual behavior modeling requires clear observation units and justified assumptions. Confirm applicable privacy, access and retention requirements with responsible data and operations roles."
+  "Individual behavior modeling requires clear observation units and justified assumptions. Confirm applicable privacy, access and retention requirements with responsible data and operations roles. Presenter context: Before using actual records, responsible teams must establish applicable permissions, purpose, access, retention and policies. This educational package uses fictional profiles and establishes no approval to process real personal data."
  ],
  "s31": [
   15,
-  "Deliverables are a prototype, APIs, and a backtest harness. The proposal does not cover replacing the entire production system."
+  "Deliverables are a prototype, APIs, and a backtest harness. The proposal does not cover replacing the entire production system. Presenter context: The proposal describes prototype deliverables first. Live integration, ongoing operations and business impact require separate operational comparison and agreement; none is established by the synthetic M0 demonstration."
  ],
  "s32": [
   30,
-  "Audit data semantics and coverage, agree the target and baseline, and define held-out validation. Proceed to schedule comparisons only when gates pass. Serving, retraining, monitoring, budget and duration require a later readiness review. This teaching sample establishes no justified cost or benefit estimate."
+  "Use this as the handoff to the live application. The operator prepares the synthetic audience/movie inputs, configures rules and objective, executes baseline/improvement, then explores outcomes or replans after a hypothetical shock. Presenter context: M0 operates on explicit rules and fictional inputs; it is not learned M1 or a real-business trial. Cost, duration, benefit, serving, retraining and operational approval need later evidence and scope decisions. The MD describes exact demo paths, objectives, validation limits and export/replay behavior."
  ],
  "s33": [
   15,
-  "The data and operations owners confirm semantics, coverage, supply, constraints, outcomes, cutoff, reference plans and logs. The modeling role states assumptions and baselines, checks feasible comparisons and reports uncertainty. Deployment follows agreed evidence and operational gates."
+  "Explain what the human operator controls and what the simulator produces. Simulation supports review of a candidate, not automatic authority to change live schedules. Presenter context: In real use, data and operations owners must establish record semantics, complete supply, cutoff, objective units, reference plan and commitments. Modeling owners state assumptions, check feasible comparable plans and report uncertainty/failure. Deployment follows agreed predictive and operational evidence. Original ownership/license terms are outside this classroom decision example."
  ],
  "s34": [
   25,
-  "The modeling framework's strength is connecting predictions to operational decisions."
+  "The modeling framework's strength is connecting predictions to operational decisions. Presenter context: The source proposal cited KDD 2023 graph recurrent temporal-point-process research with a financial-services workload. It is methodological background, not evidence of cinema model accuracy or this demonstrator performance. Current M0 uses interpretable rules; learned M1 remains proposed."
  ],
  "s35": [
   15,
@@ -2773,7 +2773,7 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "s37": [
   30,
-  "Close with the move from predictive AI to a Digital Twin for operational experiments. Repeat the five steps: WANT → CAN → CHOOSE → AGGREGATE → OPTIMIZE."
+  "Close with the move from predictive AI to a Digital Twin for operational experiments. Repeat the five steps: WANT → CAN → CHOOSE → AGGREGATE → OPTIMIZE. Presenter context: The presentation proposes learning from appropriate real longitudinal data later. The live classroom exercise uses synthetic profiles; its results demonstrate a decision mechanism, not field benefit."
  ],
  "a1": [
   0,
@@ -2781,11 +2781,11 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "a2": [
   0,
-  "Detail available features, outputs, and uncertainty at each forecast horizon."
+  "Detail available features, outputs, and uncertainty at each forecast horizon. Presenter context: The values are prepared synthetic forecast examples. Set target-matched error, ranking and interval-coverage thresholds after measuring the agreed baseline and before operational comparison."
  ],
  "a3": [
   0,
-  "User-representation candidates. No specific model is selected in advance."
+  "User-representation candidates. No specific model is selected in advance. Presenter context: The current M0 demonstrator does not fit these encoders. Choose a learned representation after target/cutoff/input review and held-out comparison; none is a committed production design."
  ],
  "a4": [
   0,
@@ -2805,11 +2805,11 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "a8": [
   0,
-  "Detailed pseudonymous data-handling principles."
+  "Detailed pseudonymous data-handling principles. Presenter context: These are proposed controls. Actual policy, permission, access, retention and transfer requirements must be established for the specific operating environment."
  ],
  "a9": [
   0,
-  "Phase 2 optimizer: objective, constraints, and search. Audience Score comes from the joint distribution; the initial solution is the Phase 1-B baseline schedule."
+  "Phase 2 optimizer: objective, constraints, and search. Audience Score comes from the joint distribution; the initial solution is the Phase 1-B baseline schedule. Presenter context: Current M0 uses zero UI edit penalty. Ticket revenue excludes operating costs and is not profit. Local search reports best explored rather than a global optimum; use evaluation paths excluded from search and preserve the same feasible-set/input contract."
  ],
  "a10": [
   0,
@@ -2817,19 +2817,19 @@ path.draw,line.draw{stroke-dasharray:1;stroke-dashoffset:1}
  ],
  "a11": [
   0,
-  "Use this slide for evidence questions. The v2 prototype completed 18 of 20 tasks and passed statistical validation across 100 worlds × four checks. This supports the previous generation, visit hazard → conditional choice. The source deck identifies movie-first, A12, as the new direction with implementation pending."
+  "The live demo executes Movie First M0 on synthetic inputs. The table separates its implemented decision mechanism from learned/operational extensions. Historical V2 evidence is archived below and in the MD; do not transfer it to the current build. Archived source slide: A11 V2 development status (earlier prototype) V2 demonstrates infrastructure feasibility; the next design starts with movie desire Metric Value Notes Fixed development workload 2,000 profiles · 10,000 viewers · 200 movies · 32,850 screenings · 365 days A performance-test workload, not actual market size Annual visits (representative path) 107,359 visits Reproducible hash family `ed896fe0` People with at least one visit 9,996 / 10,000 viewers 0 competitor visits; 0 seat-shortage failures Annual runtime (2k profiles) 88.66s → 17.03s Optimization checked against identical input and result hash Independent statistical validation 100 calibration + 100 evaluation + 100 null + 100 misspecified worlds status = pass (synthetic scope only) Production E2E Edit movie → annual run → viewer detail → manifest replay Real Chromium; 0 console errors / external requests These are measured results from V2 (annual-v3: visit hazard → conditional choice) . As of 2026-09-17, the movie-first architecture is finalized (A12), with implementation not yet started. Population, seat assignment and annual state engines are reused. annualReleaseReady=false, realWorldValidated=false . APPENDIX A11 · 2026-09-15 V2 snapshot · Earlier-generation evidence"
  ],
  "a12": [
   0,
-  "Implement the interpretable M0 baseline first. Adopt graph-based M1, in the GRTPP family, only if it wins on a real held-out set. The cited methodology was validated with 20.7 million actual financial-services transactions."
+  "M0 is the live interpretable baseline. M1 proposes graph/history learning. Use common held-out targets, compare against M0 and a learned non-graph model, then inspect incremental contribution. Presenter context: M1 remains proposed and is not executed by demo.html. Retain M0 unless M1 delivers a justified target-matched improvement. Attention shows referenced connections, not causal explanations. The source cites KDD 2023 graph recurrent Hawkes-process research and NAACL 2019 Attention is not Explanation; cited financial-services workloads do not validate cinema forecasts."
  ],
  "a13": [
   45,
-  "For technical reviewers: Phase 1 intensity λ, the joint distribution, and aggregation equations. Phase 2 uses Accessibility = logsumexp(screening utility) and RealizedUtility = BaseDesire + β × Accessibility. Scheduling feeds back into film-level probabilities."
+  "For technical reviewers: Phase 1 intensity λ, the joint distribution, and aggregation equations. Phase 2 uses Accessibility = logsumexp(screening utility) and RealizedUtility = BaseDesire + β × Accessibility. Scheduling feeds back into film-level probabilities. Presenter context: The equations describe the proposed family; not every display formula is identical to the M0 implementation. Potential desire and schedule accessibility are not automatically identifiable from purchases alone. State travel/price/availability assumptions and the supply-adjusted interpretation; the development reporting field was supplyAdjustedAssumption. M0 implementation details are in this MD."
  ],
  "aqa": [
   0,
-  "Q&A holding slide. Six sentences capture the core message."
+  "Q&A holding slide. Six sentences capture the core message. Presenter context: Planning cadence is illustrative, M0 inputs are synthetic and learned M1 is proposed. The case establishes no real cost, duration or benefit estimate. Actual input semantics, rules, current practice and target-matched comparisons must be agreed before operational adoption."
  ]
 }
 </script>

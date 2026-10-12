@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "version": "1.5",
+  "version": "1.6",
   "purpose": "IE437 Assignment 1 public worked examples",
   "disclosure": "All records, outcomes and engine results are synthetic. Case A supports planning JSON/CSV import, operating-rule configuration, aggregate-response ILS optimization and timetable inspection/export; learned response models and BO are not implemented. Case B uses the movie-first M0 individual-consumer simulator. Both demo sites and guides are English.",
   "files": [
     {
       "file": "index.html",
-      "bytes": 497444,
-      "sha256": "817275261e4afbeb2266c4ffe072bb6c0ada8c184fac46e02ef99cce55eb963f"
+      "bytes": 497439,
+      "sha256": "e370038f6b3880357c72cb14abbb9dc47256dffa4c60bbf72e6e961b317914d7"
     },
     {
       "file": "THIRD_PARTY_NOTICES.md",
@@ -36,38 +36,38 @@
     },
     {
       "file": "response/verification.json",
-      "bytes": 19620,
-      "sha256": "9e863488288015843a51ddc5255cfa520d7cc2785aec9dcb122d68eaf2a9a5f7"
+      "bytes": 20652,
+      "sha256": "789143289a3774081094b9e51ccb765ffb58bf753c4a1ce597fea9c8546de359"
     },
     {
       "file": "README.md",
-      "bytes": 7204,
-      "sha256": "1a4330de59bbb0f7c19fc927c4daf2d599e683ca23ef2ece107ec3e86af97b1a"
+      "bytes": 4710,
+      "sha256": "e4063ef8feccbf906085039c4916afb4bd0c6849d303f3ea458113e8c5ea3101"
     },
     {
       "file": "README.html",
-      "bytes": 500898,
-      "sha256": "9fe73fdd2c40995a3bc23b43ccf8d6dd3614cbbc0ad363ae6f434e96264e7996"
+      "bytes": 498097,
+      "sha256": "6b53b223a128f855b5c3db9b5059385fe4baf83763d15ffb3007792ca849a5ad"
     },
     {
       "file": "verification.md",
-      "bytes": 13414,
-      "sha256": "2ea435f0845f2e678314bee751cbf91b26c7be86fe20b8d32b6b2874aecd2eba"
+      "bytes": 15015,
+      "sha256": "d5fe0576f893de92ada9f99e0a049a2670f619d0b937733a113aaa2cb164b40c"
     },
     {
       "file": "verification.html",
-      "bytes": 508617,
-      "sha256": "f43e137babc96dc7e9a70b13e5a7a214fc863de05ff6f6c95cd6f2adc2125ade"
+      "bytes": 510246,
+      "sha256": "0286edc1495d434f4dfd1984715d37769c0ee05ed398b4340b8d99f5501afc2a"
     },
     {
       "file": "response/problem-definition.md",
-      "bytes": 27950,
-      "sha256": "443f9e16485879e642d7467b8adf36dfb3b93cb323f651a5672f65bad39b263d"
+      "bytes": 36009,
+      "sha256": "40300e1487880bf841c48d6a4517dd598f8698db29eea5b4558eef032df04d32"
     },
     {
       "file": "response/problem-definition.html",
-      "bytes": 524685,
-      "sha256": "299df306d0610baf8d72f9ef22d1e9016861c172345de2de6ac68934d8f82cfb"
+      "bytes": 533405,
+      "sha256": "83ab88dbca4f7209c1bdfa1fb68aef1675396b6c3d57f99df7683f1bccfc39b1"
     },
     {
       "file": "response/demo.html",
@@ -76,13 +76,13 @@
     },
     {
       "file": "response/proposal.html",
-      "bytes": 245265,
-      "sha256": "405374641a46c50c10c9c5983b1f112b7844f68a00854b751d5887945137702d"
+      "bytes": 268821,
+      "sha256": "81186fb0eeb11d32ba7da221f335db20526b660c30734e710d58822890589416"
     },
     {
       "file": "response/extended-proposal.html",
-      "bytes": 245265,
-      "sha256": "405374641a46c50c10c9c5983b1f112b7844f68a00854b751d5887945137702d"
+      "bytes": 268821,
+      "sha256": "81186fb0eeb11d32ba7da221f335db20526b660c30734e710d58822890589416"
     },
     {
       "file": "response/CinemaPlanning.json",
@@ -96,13 +96,13 @@
     },
     {
       "file": "audience/problem-definition.md",
-      "bytes": 33564,
-      "sha256": "55483565a3931c612b00970e201af1a1e53f439d1aad2a1973e34bafe227c1b9"
+      "bytes": 42692,
+      "sha256": "f06a09ad47411dfa6d8238ac3e247f2f5dde24f0b747ae7b6fb6591a02673013"
     },
     {
       "file": "audience/problem-definition.html",
-      "bytes": 531892,
-      "sha256": "c1cc091970b4a4822fd1eee474ccb9a7c1fa5969ac249fe29016ea6b58f9125e"
+      "bytes": 542360,
+      "sha256": "b0a68a2219764c5b93c9dc93d21fab5cd09b1e0b74152a15e85e6501f8fbc896"
     },
     {
       "file": "audience/demo.html",
@@ -111,13 +111,13 @@
     },
     {
       "file": "audience/proposal.html",
-      "bytes": 259488,
-      "sha256": "42be750bfe875bac314759ce0e30fed69c2f7bef88ee34db3bfa7651fb41eecc"
+      "bytes": 268920,
+      "sha256": "18dce0139094c6888200307f7eee8ea2fa40a58c8689c3f5c7314906b6043455"
     },
     {
       "file": "audience/extended-proposal.html",
-      "bytes": 259488,
-      "sha256": "42be750bfe875bac314759ce0e30fed69c2f7bef88ee34db3bfa7651fb41eecc"
+      "bytes": 268920,
+      "sha256": "18dce0139094c6888200307f7eee8ea2fa40a58c8689c3f5c7314906b6043455"
     },
     {
       "file": "response/demo-guide.md",

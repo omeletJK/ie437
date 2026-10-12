@@ -1,11 +1,11 @@
 # Synthetic Audience: Movie-First Cinema Programming
 
-**HW1 sample answer · English · 2026-10-11**
+**HW1 sample answer · English · Proposal flow revision 1.6 · 2026-10-11**
 
 Author / student ID: Public teaching sample; `N/A — not a student submission`.  
 LLM use: OpenAI Codex assistant, 2026-10-11, for source inspection, scope review, English drafting, translation and functional-check design. The exact deployed model identifier was not recorded.
 
-This worked example connects this definition, the latest Movie First M0 application in [demo.html](demo.html), and the original-design [proposal.html](proposal.html): 45 main slides plus 14 appendix/Q&A slides, with its diagrams and animations retained. The full presentation is the primary proposal; [extended-proposal.html](extended-proposal.html) is an alternate copy of the same deck. Its prepared illustrations and broader development plans must be distinguished from the M0 calculations described here. The application uses fictional people, histories, movies, rules and DEMO money. It does not reconstruct real attendees from purchase accounts or establish real business improvement. Earlier seven-day applications and their measured outputs are outside this example.
+This worked example connects this definition, the latest Movie First M0 application in [demo.html](demo.html), and the original-design [proposal.html](proposal.html): 45 main slides plus 14 appendix/Q&A slides, with its diagrams and animations retained. The full presentation is the primary proposal; [extended-proposal.html](extended-proposal.html) is an alternate copy of the same deck. The presentation follows planning → audience model → demand → accessible choices → schedule experiments → operating decisions. Prepared illustrations and broader development plans are documented in the presentation-context appendix below, separate from the M0 calculations described here. The application uses fictional people, histories, movies, rules and DEMO money. It does not reconstruct real attendees from purchase accounts or establish real business improvement. Earlier seven-day applications and their measured outputs are outside this example.
 
 ## 1. Decision, Scope & Problem Structure
 
@@ -210,13 +210,13 @@ For model evaluation, use a held-out period/cutoff and target-matched error/cali
 
 ## 6. Client Proposal
 
-Request a bounded information and operating-rule audit first. The data owner verifies semantics, coverage and temporal availability. The operations owner supplies controllable variables, current policy, capacities, rights, commitments and approval rules. The modeling owner chooses tickets versus admissions, states assumptions, sets the cutoff and plans common-baseline validation. Customer identity reconstruction is unnecessary.
+Build a shared audience model and connect it to constrained schedule experiments. Begin with an agreed reference forecast and schedule, movies and releases, audience profiles, complete screening supply and operating rules. The data owner establishes semantics and cutoff; the operations owner provides capacities, controllable variables and commitments; the modeling owner defines admissions or ticket revenue and a common comparison. The result should let an operator prepare inputs, set rules, run candidates and inspect consequences.
 
 The first deliverable is a reproducible shadow comparison: current practice versus a feasible candidate, with hard-rule audits, held-out predictive checks and sensitivity to latent worlds. Agree practical-value, error, calibration and stability thresholds after measuring the baseline and before a trial. Require zero hard violations and preserved reservations. M0 demonstrates comparison mechanics, not deployment readiness or commercial benefit.
 
 **Proceed** when information is adequate and agreed gates pass. **Revise** when rankings depend strongly on plausible worlds, calibration is unresolved or workload is impractical. **Stop or narrow scope** when the target is unsupported, critical exposure/constraint information is absent, commitments fail or a controlled comparison does not justify adoption. Shadow work precedes a live pilot. Pilot unit/duration/sample size, cost and benefit are `TBD`, to estimate from variance, workload and operations after the audit. Revenue is not profit without costs.
 
-The original full proposal presents the wider concept. Prepared scores, diagrams and future learning plans do not replace M0's source-backed mechanism and verified observations. The next decision requested is authorization of the audit and appointment of data, operations and modeling owners; deployment needs separate evidence and approval.
+The original full proposal presents the wider concept. Prepared scores, diagrams and future learning plans do not replace M0's source-backed mechanism and verified observations. The next decision is to approve a bounded prototype comparison with assigned data, operations and modeling roles. Estimate effort, cost and practical value from that scope; operational adoption follows the measured comparison and preserved commitments.
 
 ## 7. LLM Review & Key Revisions
 
@@ -229,3 +229,59 @@ These are actual review decisions during this sample's preparation, not an inven
 | Carry over penalized revenue, BO and 48-hour freezing | Checked `objectiveNow`, `scorePlan`, `improvePlan`, `validateImprovement`, `executeReplanWorkflow`, `replanAt` and default rules | M0 selects admissions/ticket revenue with zero edit penalty, bounded search, four search paths, 20 paired unused paths and synthetic-prefix preservation | State exact mechanism/units; distinguish simulator validation from field evidence; keep unexecuted checks `Not run` |
 
 Source basis: the [HW1 brief](../reference/assignment.md), [seven-section template](../reference/problem-definition-template.md), [classification reference](../reference/problem-classification-reference.md), [Movies.csv](Movies.csv), and reviewed functions above. Development README/checklist/source establish implementation scope, not observation of this public build. The purchase-unit audit independently checks why accounts cannot establish personal attendee histories.
+
+
+## Appendix — Presentation context and presenter notes
+
+The proposal retains the original visual system, diagrams and controls: **59 sections**, including **35 slides in the compact main path**. The MD explains scope and source limitations without inserting an administrative review between the business question and the solution. Press **N** in the proposal for the corresponding presenter note. A short **synthetic example** or **proposed extension** label remains beside numerical illustrations and future-model diagrams.
+
+### Suggested presentation flow
+
+- **S01–S04A:** planning horizons and a movie-feature reference forecast; why viewer behavior adds information.
+- **S05–S15:** individual memory and preferences, daily joint movie choices, aggregation, market calibration and forecast uncertainty.
+- **S16–S17:** time-cutoff backtesting and target-matched accuracy, calibration and usefulness measures.
+- **S17A–S23:** desire versus accessible showtimes, choice among movie/site/time/no movie, before/after effects and constrained schedule search.
+- **S25–S29:** revision of eligible future screenings, the integration options, development sequence, hypotheses and model inputs.
+- **S30–S37:** privacy-aware data design, deliverables, operator workflow and end-to-end capabilities. **S32 links directly to the runnable M0 demo.**
+- **A1–A13:** technical comparison, representations, calibration, backtesting, constraints, current M0/proposed M1 and formulation detail.
+
+### Guidance moved out of the slide narrative
+
+These entries preserve the distinctions that matter for evaluating the sample. They are attached to the same slide IDs in presenter notes; they are not a second presentation track.
+
+| Slide(s) | Context, assumptions and evidence handling |
+|---|---|
+| **S03, Q&A** | Annual Aug–Sep planning, a 50–60-film portfolio and the pre-release horizons are declared case assumptions, not observed company practice. Confirm the actual decision window, current plan, approval rights and revision trigger for a real operator. |
+| **S04, A1** | The top-down feature forecast is the reference comparator. The assignment does not establish that a company uses the pictured workflow; 5.0M is a prepared example. |
+| **S04A** | The 300–600-film and 400,000+ viewer–movie sizes are illustrative. Viewer/movie repeats are dependent observations; extra records do not by themselves prove smaller uncertainty or better accuracy. Compare on later movies and time periods. |
+| **S05, S09, S13, S14** | The 4.7M totals are prepared, weighted market examples. They are not local M0 admissions. The current M0 seat market is 10,000 distinct people, and national population weights are never seat multipliers. Real market expansion needs coverage/competitor calibration. |
+| **S07, S08, S29** | Linked attendee history, companions, ratings, clicks and complete exposure/supply are proposed input types. Purchase accounts/ticket counts do not establish individual attendee histories. Inspect observation units, linkage, cutoff and coverage. Feedback is optional and may have response/incentive bias. Frequency from suitable history differs from a declared synthetic fallback. |
+| **S09A** | The small four-week sampling widget illustrates one daily joint draw and repeated paths. It is distinct from the annual M0 application, its local person pool and its search/validation paths. |
+| **S10, S15, A2** | Prior/posterior curves and 90% intervals are stored synthetic illustrations. M0 does not fit them or establish real coverage. Additional signals do not guarantee narrower uncertainty. Set target-matched forecast and interval criteria for actual comparison. |
+| **S11A, S18, A3, A12** | The live M0 uses explicit taste/content/frequency rules, not trained encoders or GRU graph history. Learned M1 is proposed. Compare M1, M0 and a learned non-graph baseline under the same held-out target and information cutoff before adopting complexity. |
+| **S12, S13, A12** | Prepared “evidence” lists and attention/connections are model references, not causal proof. Test contribution by removing signals and recalculating; forecasts and decompositions do not establish intervention effects. |
+| **S17B, S19, S21, S22** | Desire, utility, choice and attendance values are prepared examples. The 31,420/34,180 attendance and 410M/448M example-unit revenue in S22 are stored A/B values, not a new simulation, actual currency or business improvement. Actual M0 observations appear in Section 5 above. |
+| **S18B, A11** | The source deck's 2026-09-17 movie-first “engine pending” statement is a historical snapshot. The current packaged Movie First M0 is executable. Its execution does not establish learned M1, real-user calibration, independent-world validation or live benefit. |
+| **S18C** | The four English diagrams summarize the earlier V2 prototype, rather than screenshots or results from current M0. Its 200-film workload, 107,359 visits, 9,996 visitors, 0.56% visit probability and 24h/48h freezing belong to the earlier visit-hazard→conditional-choice generation. |
+| **S23, A9** | S23 animates six stored mock scores; the storyboard itself does not run an optimizer. M0 executes bounded local search, with zero UI edit penalty and separate evaluation paths. “Best” means best explored, not a guaranteed global optimum. Ticket revenue excludes costs and is not profit. |
+| **S24, S25** | Integration and booked-showtime diagrams are proposed operating mechanisms. M0 offers one hypothetical shock/revision cycle, fixes a synthetic past and preserves supplied commitments. Default empty bookings do not test a nonempty real ledger or a continuous feedback controller. |
+| **S27, S31–S33** | Cost, duration, commercial licensing, serving/retraining and operating approvals require a scoped real comparison. Original 2–3/12–16/1–2/10–16-week calendar and fee choices are not justified promises in this teaching example. S27 now presents implementation order; S32 hands off to the live experiment; S33 shows operator inputs versus simulator outputs. |
+| **S30, A8** | Pseudonyms, limited purposes, minimum retention and controlled access are proposed design principles. Real records require applicable policies, permissions and responsible data roles; this package supplies no permission to process personal data. |
+| **S34, S11A, A12** | The source proposal references *Learning Multivariate Hawkes Process via Graph Recurrent Neural Network* (KDD 2023) and *Attention is not Explanation* (NAACL 2019). Its cited financial-services workload is research background, not cinema accuracy or M0 performance evidence. |
+| **S37** | The conclusion is the reusable decision mechanism: profiles → demand → accessible choices → feasible schedules → experiment. Synthetic comparisons demonstrate that mechanism and do not establish field benefit. |
+| **A13** | Desire and schedule accessibility are not automatically identifiable from purchases. Declare travel, price, availability and supply interpretation, and use common conditions for comparisons. The source's internal reporting field was `supplyAdjustedAssumption`. The equations describe a proposed model family; the actual M0 functions and paths are specified above. |
+
+### Archived earlier-generation figures (S18C / former A11)
+
+The following figures were reported in the original V2 source deck. They are retained here for source traceability, **not as measurements of the current deployed M0 build** and not as real customer/business validation. A11 now compares the current M0 mechanism with proposed extensions.
+
+| Archived V2 item | Source-deck report | Scope |
+|---|---|---|
+| Development workload | 2,000 profiles; 10,000 viewers; 200 movies; 32,850 screenings; 365 days | Fixed synthetic performance workload, not market size |
+| Representative path | 107,359 visits; 9,996 / 10,000 people with a visit | Source hash family `ed896fe0`; 0 competitor visits and 0 seat-shortage failures reported |
+| Runtime | 88.66s → 17.03s | Source reported matched input/result hash, not a fresh current-build timing |
+| Statistical checks | 100 calibration + 100 evaluation + 100 null + 100 misspecified worlds | Source reported pass within synthetic scope; not transferred to M0 |
+| UI/replay | Edit movie → annual run → viewer detail → manifest replay | Source reported Chromium execution with 0 console errors/external requests |
+| Readiness flags | `annualReleaseReady=false`, `realWorldValidated=false` | Historical source flags, not a current release decision |
+
+The current measured application outputs and unexecuted checks remain in Section 5. No numerical demo code was changed by this presentation revision.

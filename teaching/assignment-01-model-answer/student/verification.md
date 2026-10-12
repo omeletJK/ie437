@@ -1,8 +1,8 @@
 # Verification record — IE437 worked examples
 
-Version 1.5 · Updated 11 October 2026 · Synthetic classroom fixtures
+Version 1.6 · Presentation revision · Synthetic classroom fixtures
 
-There are two demo sites. Case A now provides the operator flow **Import planning data → Objective & constraints → Run optimization → Review results**, with the dark sidebar, light workspace and fixed action bar used by Case B. The old film exchange is a collapsed Results experiment. Case B and all four original proposal files remain byte-identical to the archived 1.4 package. These examples execute different fictional evaluators, not measured business effects.
+There are two demo sites. Case A now provides the operator flow **Import planning data → Objective & constraints → Run optimization → Review results**, with the dark sidebar, light workspace and fixed action bar used by Case B. The old film exchange is a collapsed Results experiment. Both demo files remain byte-identical to the published 1.5 apps. The four proposal files are revised for presentation flow in 1.6; each main/compatibility pair remains byte-identical. These examples execute different fictional evaluators, not measured business effects.
 
 ## Case A — executed operator-flow checks
 
@@ -85,19 +85,25 @@ The multiplier **6** disabled the run action. The valid boundary **0** enabled i
 
 ## Presentations, navigation and package
 
-The original proposal files remain unchanged from 1.4: **44 Response sections**, **59 Audience sections**, original diagrams/animations/notes/controls, and byte-identical primary/compatibility pairs. Case B retains its exact earlier build; these preservation claims are checked against `authoring/previous-demo-versions/release-1.4/`, not inferred from appearance.
+The revised proposals retain **44 Response sections** and **59 Audience sections** and their original visual systems, with byte-identical main/compatibility pairs. Case A slide 03 restores the two-column operating structure. Classroom provenance/audit notices that interrupted the solution narrative are moved into presenter notes and each case’s Markdown appendix. Modeling assumptions, operating constraints, backtesting and decision evaluation remain in the relevant slides. Both apps retain their published 1.5 bytes.
 
 The hub and reading views retain course portal styling. Case A's new operator shell matches Case B's dark sidebar/light workspace/fixed action bar. The public allowlist contains **29 files**, adding the two Response planning assets. [manifest.json](manifest.json) identifies delivered checksums; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) preserves 11 library notices and three font families. Private archives, grading notes, student work and customer records are excluded.
 
-**Release 1.5 exact-app Node verification passed 39/39, alongside the independent parser's 25 passes and the scoped live upload/configuration/export observations above. Final exact-build browser Run–Pause–Finish, responsive Import/Results review and actual CSV reimport passed. The 29-file assembler, approved installer/site build, `node tests/worked-examples.mjs` and `node tests/assignments.mjs` passed on the staged assembly, including archive/publication-boundary checks.** These are fresh 1.5 results; older passes are not substituted. No public deployment, commit or push was performed.
+**Release 1.5 exact-app Node verification passed 39/39, alongside the independent parser's 25 passes and the scoped live upload/configuration/export observations above. Final exact-build browser Run–Pause–Finish, responsive Import/Results review and actual CSV reimport passed. The 29-file assembler, approved installer/site build, `node tests/worked-examples.mjs` and `node tests/assignments.mjs` passed on the staged assembly, including archive/publication-boundary checks.** These are fresh 1.5 results; older passes are not substituted. These checks preceded publication. The same release was subsequently deployed to GitHub Pages (commit `7c183a9`, successful workflow run `38187603308`). Public checks confirmed both direct MD downloads, both proposal/guide/definition pages, all 29 ZIP files and both complete default demo workflows.
 
 Fresh course-prefix CUA ran the exact staged app through the complete pipeline: **4,969 → 5,247 / 1,742 evaluations / 2,600 iterations / 89 retained screenings / PASS**. Its home link returned to the hub. The Response guide and original proposal also returned to the hub. Course portal reached Assignment 1, and Open worked examples reopened the hub. The refreshed hub showed the new **Import** workflow copy.
 
 ## Remaining checks and limits
 
 - **Direct-from-disk offline browser execution:** not run. Embedded assets alone do not establish this requirement.
-- **Case B fresh independent full-workflow repeat:** not remeasured; its unchanged bytes retain the earlier observations above.
+- **Case B public default-workflow repeat (release 1.5):** completed with 2,000 profiles and two classroom films: 757 potential / 726 baseline realized viewings / 241 showings. Frequency calibration reported 120.5 seconds. Improvement/shock runs retain their earlier stated scopes.
 - **Real-world validation:** no learned response accuracy, causal effects, real reservations, calibrated market uncertainty or production readiness is established. M1 remains future work.
 - **Strategy comparison:** distinct fixtures, horizons and units prevent numerical ranking of the approaches.
 
 These instructor-authorized examples use synthetic data and follow the public assignment brief.
+
+## Presentation flow in release 1.6
+
+The main slides develop the operating problem, the model and the proposed decision process. Case A starts from forecasting and timetable programming, examines why programming changes response, and develops constrained optimization and an operating loop. Case B starts from individual movie intent, connects choices and competition to demand and capacity, then develops schedule evaluation and replanning. Presenter notes and the appended Markdown guidance retain the assumptions and evidence that the original generic notice slides carried. Short labels still identify illustrative inputs, prepared values and proposed components.
+
+This is a presentation/documentation revision. It does not add learning, BO, M1, measured customer effects or new demo algorithms. Checksums and slide identities identify the delivered deck revisions; the numerical and public execution evidence above applies to unchanged app bytes.
