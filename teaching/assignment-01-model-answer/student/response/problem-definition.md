@@ -1,5 +1,7 @@
 # Response Schedule Optimizer: An Aggregate Cinema Planning Case
 
+[One-page comparison of the course brief, case data and assumptions](../classroom-comparison.html).
+
 **IE437 Assignment 1 · Public worked example · English · 11 October 2026 · Package release 1.6 · Demo runtime 1.5 · Document v6.0**
 
 Author / student ID: Public teaching sample; not a student submission.  
@@ -169,7 +171,7 @@ The presentation follows a decision story: **baseline forecasting and scheduling
 
 ### A.1 Proposed architecture and demonstrated calculation
 
-The proposed architecture adds learned response estimation, uncertainty, service integration and rolling operation to a forecast-and-scheduling baseline. `s32` describes a possible constrained BO loop: **response estimate and uncertainty → acquisition choice → feasible candidate evaluation → posterior update**. The executable operator application remains the release 1.5 aggregate synthetic-response equation with seeded ILS. It does not fit purchase data or execute BO; its numerical engine and measured sample results are unchanged in proposal revision 1.6. The embedded rolling illustration also uses synthetic signals and scripted learning assumptions.
+The proposed architecture adds learned response estimation, uncertainty, service integration and rolling operation to a forecast-and-scheduling baseline. `s32` describes a possible constrained BO loop: **response estimate and uncertainty → acquisition choice → feasible candidate evaluation → posterior update**. The executable operator application remains the release 1.5 aggregate synthetic-response equation with seeded ILS. It does not fit purchase data or execute BO; its numerical engine and measured sample results are unchanged in proposal revision 1.7. The embedded rolling illustration also uses synthetic signals and scripted learning assumptions.
 
 The proposed inputs in `s21` are a collection map: film/demand context, scheduling actions and screening outcomes, and operating constraints. The classroom purchase-field brief supplies transaction semantics, not a complete screening dataset. Purchase events must be joined to the entire screening inventory, capacities, zero-sales shows, schedule versions and event times before defining a real response target. No original data-category count is asserted as an available Assignment 1 dataset.
 

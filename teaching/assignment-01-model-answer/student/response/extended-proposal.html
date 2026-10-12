@@ -807,7 +807,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
           <span class="sw"><i style="background:var(--d-green)"></i>Learn</span>
         </div>
       </div>
-      <div class="cvfoot rise" style="--d:4"><b>IE437</b><span>Assignment 1</span><span>Classroom edition</span></div>
+      <div class="cvfoot rise" style="--d:4"><b>IE437</b><span>Assignment 1</span><a href="../classroom-comparison.html" style="color:inherit;text-decoration:underline;text-underline-offset:3px">Case scope</a></div>
     </div>
     <div class="cvr" aria-hidden="true">
       <svg width="640" height="700" viewBox="0 0 640 700" fill="none">
@@ -930,7 +930,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 <section class="slide" id="s03">
   <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">03</span><span>Part I — Baseline operating structure</span></div>
-  <h1 class="head rise" style="--d:0">Start with separate forecasting and scheduling flows,<br>then <em class="c-blue">connect them through response</em></h1>
+  <h1 class="head rise" style="--d:0">Forecast demand and build each site’s timetable,<br>then <em class="c-blue">connect the two through response</em></h1>
   <div class="fill">
     <div class="duo">
       <div class="panel mini-flow rise" style="--d:1">
@@ -961,7 +961,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <span style="font-weight:300;color:var(--ink2)">The two domains <em class="c-purple" style="font-weight:600">connect more effectively</em> through a stronger decision layer.</span>
     </div>
   </div>
-  <div class="foot"><span>Classroom baseline · Illustrative operating structure</span></div>
+  <div class="foot"><span>Operating structure · Demand forecasts → screen allocation → site timetables</span></div>
 </section>
 
 
@@ -1516,7 +1516,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <span style="font-weight:300;color:var(--ink2)">— they become the <em style="font-weight:600;color:var(--ink)">operating grammar</em> it must respect.</span>
     </div>
   </div>
-  <div class="foot"><span>Proposed constraint structure · Operating hours, turnaround, capacity, format and booking rules</span></div>
+  <div class="foot"><span>Scheduling constraints · Operating hours, turnaround, capacity, format and booking rules</span></div>
 </section>
 
 
@@ -1799,7 +1799,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 <section class="slide" id="s21">
   <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">21</span><span>Part VI — Data for the decision loop</span></div>
-  <h1 class="head rise" style="--d:0">Organize the proposed inputs<br>by <em class="c-blue">their role in the decision loop</em></h1>
+  <h1 class="head rise" style="--d:0">Connect film, booking and site data<br>to <em class="c-blue">each part of the scheduling decision</em></h1>
   <div class="fill">
     <div class="cols3">
       <div class="panel dcol rise" style="--d:1">
@@ -1830,7 +1830,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <div class="panel dcol rise" style="--d:3">
         <div class="phead"><span class="dot" style="background:var(--slate)"></span>Constraint · Programming<span class="cnt">Scheduling constraints</span></div>
         <div class="dchips">
-          <span class="chip">Operating hours<small>To agree</small></span>
+          <span class="chip">Operating hours<small>Site</small></span>
           <span class="chip">Cleaning time<small>Site</small></span>
           <span class="chip">Premium-screen share cap<small>Site</small></span>
           <span class="chip">Screen-quota information<small>Site</small></span>
@@ -1840,7 +1840,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>Proposed data map · Demand context → action and outcome records → feasibility rules</span></div>
+  <div class="foot"><span>Decision inputs · Demand context → schedule and audience response → feasible timetables</span></div>
 </section>
 
 
@@ -1907,89 +1907,74 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 
 <section class="slide" id="s23">
-  <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">23</span><span>Part VI — Required support</span></div>
-  <h1 class="head rise" style="--d:0">The available operating inputs determine<br>the <em class="c-green">depth of validation</em></h1>
+  <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">23</span><span>Part VI — Data-to-decision interfaces</span></div>
+  <h1 class="head rise" style="--d:0">Turn operating inputs into<br><em class="c-green">a usable scheduling recommendation</em></h1>
   <div class="fill">
     <table class="matrix rise" style="--d:1">
-      <thead><tr>
-        <th style="width:250px">Operating input or support</th><th style="width:270px">Why it is needed</th>
-        <th style="width:170px">Testable hypotheses</th><th>If unavailable</th>
-      </tr></thead>
+      <thead><tr><th style="width:250px">Operating input</th><th style="width:270px">Processing step</th><th style="width:170px">Decision component</th><th>Output for the operator</th></tr></thead>
       <tbody>
-        <tr><td>Historical schedules · Action History</td><td>Learn response effects of schedule changes</td>
-          <td><span class="hset"><i class="on h1">H1</i><i class="on h2">H2</i><i>H3</i><i>H4</i></span></td>
-          <td>Validation limited to Base Forecast</td></tr>
-        <tr><td>Actual rules · Policies · Exceptions</td><td>Generate schedules operators can execute</td>
-          <td><span class="hset"><i>H1</i><i>H2</i><i class="on h3">H3</i><i>H4</i></span></td>
-          <td>Technical feasibility without operational usability</td></tr>
-        <tr><td>Booking + actual attendance outcomes</td><td>Forecast calibration</td>
-          <td><span class="hset"><i class="on h1">H1</i><i class="on h2">H2</i><i>H3</i><i>H4</i></span></td>
-          <td>Limited Response validation</td></tr>
-        <tr><td>Operator interviews · Review</td><td>Extract hidden constraints</td>
-          <td><span class="hset"><i>H1</i><i>H2</i><i class="on h3">H3</i><i>H4</i></span></td>
-          <td>More operator overrides in use</td></tr>
-        <tr><td>Shadow · Limited A/B permission</td><td>Verify incremental impact</td>
-          <td><span class="hset"><i>H1</i><i>H2</i><i class="on h3">H3</i><i class="on h4">H4</i></span></td>
-          <td>Offline counterfactual validation only</td></tr>
-        <tr><td>EAI · DX AI integration support</td><td>Validate operational integration</td>
-          <td><span class="hset"><i>H1</i><i>H2</i><i>H3</i><i class="on h4">H4</i></span></td>
-          <td>Standalone validation only</td></tr>
+        <tr><td>Film attributes · Release date · Booking signals</td><td>Estimate film demand by planning period</td><td>Base Forecast</td><td>Demand outlook for each film</td></tr>
+        <tr><td>Schedule versions · Booking and attendance outcomes</td><td>Relate film, site and time choices to audience response</td><td>Response Model</td><td>Expected audience for a candidate timetable</td></tr>
+        <tr><td>Screen capacities · Formats · Operating hours</td><td>Describe the screens and time available for each site</td><td>Screen inventory</td><td>Site-specific planning workspace</td></tr>
+        <tr><td>Runtime · Cleaning time · Quotas · Booking locks</td><td>Check hard rules and apply scheduling policies</td><td>Constraint Engine</td><td>Feasible schedules and reasons for rejected moves</td></tr>
+        <tr><td>Reference schedule · Candidate scores</td><td>Compare film allocation, showtimes and expected attendance</td><td>Programming Engine</td><td>Recommended schedule with changes highlighted</td></tr>
+        <tr><td>Selected schedule · Operator edits · Observed outcomes</td><td>Publish the timetable and feed outcomes into the next cycle</td><td>Execution and feedback</td><td>Booking-ready timetable and updated decision history</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="foot"><span>Support determines validation depth. Agree the scope jointly with Cinema.</span></div>
+  <div class="foot"><span>Operating interfaces · Source inputs → decision engines → timetable and feedback</span></div>
 </section>
 
 
 <section class="slide" id="s24">
   <div class="kicker"><span class="tick" style="background:var(--green)"></span><span class="kn">24</span><span>Part VI — Three-stage implementation plan</span></div>
-  <h1 class="head rise" style="--d:0">Build in three stages:<br><em class="c-ink">feasibility → response → integrated operation</em></h1>
+  <h1 class="head rise" style="--d:0">Build in three stages:<br><em class="c-ink">feasible timetable → response model → integrated planning</em></h1>
   <div class="fill">
     <div class="ctx rise" style="--d:1">
-      <span>PROPOSED SEQUENCE</span><span>—</span><span><b>Feasible schedules</b></span><span>→</span><span><b>Better decisions</b></span>
+      <span>IMPLEMENTATION FLOW</span><span>—</span><span><b>Feasible schedules</b></span><span>→</span><span><b>Better decisions</b></span>
       <button type="button" class="btn ghost ovbtn noprint" id="s24btn" style="padding:7px 12px;font-size:10px">+ Show modeling and search track</button>
     </div>
     <div class="pretrack rise" style="--d:1">
       <b>PRE-TRACK</b>
-      <span>Prepare reference schedules, input data, operating rules and evaluation metrics</span>
-      <span class="pt-note">Common baseline for all three stages</span>
+      <span>Load the reference timetable, film and screen data, operating rules and planning objective</span>
+      <span class="pt-note">Shared inputs for all three stages</span>
     </div>
     <div class="phases">
       <div class="panel ph rise" style="--d:2">
         <div class="phead" style="flex-direction:column;align-items:flex-start;gap:3px">
           <span class="dates">STAGE 1</span><span class="pname">Feasible scheduling · Model ①</span></div>
         <div class="srclab">Operator track</div>
-        <div class="cinemarows"><div class="row">Validate automated scheduling independently</div><div class="row">Check scheduling criteria · Rule compliance</div></div>
+        <div class="cinemarows"><div class="row">Create a timetable from screen and film inputs</div><div class="row">Review showtimes and operating rules</div></div>
         <div class="srclab frag">Modeling and search track</div>
         <div class="omrows">
-          <div class="row op frag">Programming Engine feasibility</div>
-          <div class="row op frag">Target: zero hard-constraint violations</div>
-          <div class="row op frag">Reproduce the current scheduling baseline</div>
+          <div class="row op frag">Pack screenings within opening and closing hours</div>
+          <div class="row op frag">Check runtime, turnaround and film requirements</div>
+          <div class="row op frag">Keep the reference timetable for comparison</div>
         </div>
       </div>
       <div class="panel ph rise" style="--d:3">
         <div class="phead" style="flex-direction:column;align-items:flex-start;gap:3px">
           <span class="dates">STAGE 2</span><span class="pname">Response-aware decisions · Models ① + ②</span></div>
         <div class="srclab">Operator track</div>
-        <div class="cinemarows"><div class="row">Occupancy forecast — current vs. prototype in parallel</div><div class="row">Same period · Same conditions</div></div>
+        <div class="cinemarows"><div class="row">Compare film allocations and expected audiences</div><div class="row">Inspect changes for each site and screen</div></div>
         <div class="srclab frag">Modeling and search track</div>
         <div class="omrows">
-          <div class="row ob frag">Compare current and improved forecasts</div>
-          <div class="row op frag">Compare under the same Programming Engine</div>
-          <div class="row ot frag">Validate Response signals</div>
+          <div class="row ob frag">Estimate demand by film, site and time</div>
+          <div class="row op frag">Score reference and candidate timetables</div>
+          <div class="row ot frag">Search for a better response-aware schedule</div>
         </div>
       </div>
       <div class="panel ph rise" style="--d:4">
         <div class="phead" style="flex-direction:column;align-items:flex-start;gap:3px">
-          <span class="dates">STAGE 3</span><span class="pname">Integrated pilot · Models ① + ②</span></div>
+          <span class="dates">STAGE 3</span><span class="pname">Integrated planning · Models ① + ②</span></div>
         <div class="srclab">Operator track</div>
-        <div class="cinemarows"><div class="row">Validate both models in integrated operation</div><div class="row">Evaluate under operating conditions</div></div>
+        <div class="cinemarows"><div class="row">Review, adjust and publish the selected timetable</div><div class="row">Update the plan as booking signals arrive</div></div>
         <div class="srclab frag">Modeling and search track</div>
         <div class="omrows">
           <div class="row ob frag">Integrate Base + Response + Programming</div>
-          <div class="row ot frag">Historical Replay validation</div>
-          <div class="row ot frag">Shadow · Limited experiments (if permitted)</div>
-          <div class="row oa frag">Dynamic Re-programming simulation</div>
+          <div class="row ot frag">Return audience outcomes to the learning loop</div>
+          <div class="row ot frag">Keep booked screenings fixed during updates</div>
+          <div class="row oa frag">Reoptimize the remaining available screenings</div>
         </div>
       </div>
     </div>
@@ -1998,7 +1983,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <span style="font-weight:300;color:var(--ink2)">and add <em class="c-green" style="font-weight:600">capabilities step by step</em>.</span>
     </div>
   </div>
-  <div class="foot"><span>Proposed implementation sequence · Baseline, model comparison, then integrated pilot</span></div>
+  <div class="foot"><span>Implementation sequence · Build a feasible timetable → add response-aware search → connect daily operations</span></div>
 </section>
 
 
@@ -2199,72 +2184,72 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
 
 
 <section class="slide" id="s29">
-  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">29</span><span>Part VII — Adoption plan</span></div>
-  <h1 class="head rise" style="--d:0">Adopt a <em class="c-ink">phased structure</em>:<br>prototype → integration → ongoing operation</h1>
+  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">29</span><span>Part VII — Connecting the operating workflow</span></div>
+  <h1 class="head rise" style="--d:0">Connect the recommendation to<br><em class="c-ink">the cinema’s daily planning workflow</em></h1>
   <div class="fill">
     <div class="phases">
       <div class="panel pc rise" style="--d:1">
-        <div class="phead"><span class="dot" style="background:var(--purple)"></span>Phase 1 — Build and compare</div>
+        <div class="phead"><span class="dot" style="background:var(--purple)"></span>Step 1 — Planning workspace</div>
         <div class="pbody">
-          <div class="fee"><small>Working prototype</small>One evaluator and one feasible search loop</div>
+          <div class="fee"><small>Prepare the planning run</small>One objective, one reference and one search loop</div>
           <ul class="bullets">
-            <li>Build Base Forecast · Response Model · Optimizer</li>
-            <li>Historical Replay validation environment</li>
-            <li>Reference schedule and candidate comparison</li>
+            <li>Load film, booking and screen inputs</li>
+            <li>Set operating rules and the planning objective</li>
+            <li>Generate a response-aware candidate timetable</li>
           </ul>
         </div>
       </div>
       <div class="parrow rise" style="--d:2">→</div>
       <div class="panel pc rise" style="--d:2">
-        <div class="phead"><span class="dot" style="background:var(--teal)"></span>Phase 2 — Production integration</div>
+        <div class="phead"><span class="dot" style="background:var(--teal)"></span>Step 2 — Operator review and publication</div>
         <div class="pbody">
-          <div class="fee"><small>Integration · Hardening</small>Production build · Integration
-            <span style="font:400 10px var(--mono);color:var(--ink3)">Connect the validated recommendation service</span></div>
+          <div class="fee"><small>Connect the timetable</small>Review changes · Publish schedule
+            <span style="font:400 10px var(--mono);color:var(--ink3)">Send the selected schedule to booking systems</span></div>
           <ul class="bullets">
-            <li>API · EAI integration</li>
-            <li>Monitoring framework</li>
-            <li>Performance · Failover hardening</li>
+            <li>Compare the reference and recommended time slots</li>
+            <li>Accept the recommendation or retain operator edits</li>
+            <li>Publish showtimes through the existing interfaces</li>
           </ul>
         </div>
       </div>
       <div class="parrow rise" style="--d:3">→</div>
       <div class="panel pc rise" style="--d:3">
-        <div class="phead"><span class="dot" style="background:var(--green)"></span>Phase 3 — Operations</div>
+        <div class="phead"><span class="dot" style="background:var(--green)"></span>Step 3 — Booking feedback and updates</div>
         <div class="pbody">
-          <div class="fee"><small>Operations</small>Operating phase</div>
+          <div class="fee"><small>Repeat the decision loop</small>Update the next planning run</div>
           <ul class="bullets">
-            <li><span><b>Programming Engine operation</b> — versioned models and policies</span></li>
-            <li>Prediction operation · Retraining support</li>
-            <li>Policy · Model improvement support</li>
+            <li><span><b>Preserve booked screenings</b> — change eligible slots</span></li>
+            <li>Feed booking and attendance outcomes to Prediction</li>
+            <li>Reoptimize available slots when demand changes</li>
           </ul>
         </div>
       </div>
     </div>
-    <span class="plate pricenote rise" style="--d:4;font-size:12.5px;color:var(--slate)">Keep each phase useful: <b style="color:var(--ink)">working model and search → integrated recommendation → monitored operations</b>.</span>
+    <span class="plate pricenote rise" style="--d:4;font-size:12.5px;color:var(--slate)">Carry the decision into operation: <b style="color:var(--ink)">prepare inputs → review and publish → learn and replan</b>.</span>
   </div>
-  <div class="foot"><span>Proposed adoption path · Expand the operating scope as the preceding phase proves useful</span></div>
+  <div class="foot"><span>Daily operation · A recommendation becomes a published timetable and the next planning input</span></div>
 </section>
 
 
 <section class="slide" id="s30">
-  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">30</span><span>Part VII — Operational value to measure</span></div>
+  <div class="kicker"><span class="tick" style="background:var(--slate)"></span><span class="kn">30</span><span>Part VII — What the operator gains</span></div>
   <h1 class="head rise" style="--d:0">The value goes beyond<br><em class="c-green">time saved on scheduling</em></h1>
   <div class="fill">
     <div class="cols3">
       <div class="panel vcol rise" style="--d:1">
         <div class="phead"><span class="dot" style="background:var(--green)"></span>Business</div>
         <ul>
-          <li>Target better audience coverage<small>More realized viewers from equal potential demand</small></li>
-          <li>Potential occupancy · Revenue gains<small>Compare actual outcomes with the reference process</small></li>
-          <li>Improve premium-screen utilization<small>Evaluate film × format matching</small></li>
+          <li>Audience coverage<small>Expected viewers reached by the available screenings</small></li>
+          <li>Occupancy and revenue<small>Track audience-to-seat ratio and ticket revenue</small></li>
+          <li>Premium-screen utilization<small>Match film demand to screen capacity and format</small></li>
         </ul>
       </div>
       <div class="panel vcol rise" style="--d:2">
         <div class="phead"><span class="dot" style="background:var(--blue)"></span>Operation</div>
         <ul>
-          <li>Reduce scheduling time<small>Faster schedules · Earlier booking openings</small></li>
-          <li>Reduce reliance on individual expertise<small>Turn scheduling expertise into a system</small></li>
-          <li>Respond faster to demand surprises<small>Reprogram when box office demand shifts</small></li>
+          <li>Scheduling time<small>Time from planning inputs to a publishable timetable</small></li>
+          <li>Operator review effort<small>Rule exceptions, manual edits and review time</small></li>
+          <li>Replanning speed and stability<small>Response time and number of affected screenings</small></li>
         </ul>
       </div>
       <div class="panel vcol rise" style="--d:3">
@@ -2277,31 +2262,29 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </div>
     </div>
   </div>
-  <div class="foot"><span>Proposed value dimensions · Measure business, operating and learning outcomes against the same baseline</span></div>
+  <div class="foot"><span>Operating metrics · Audience coverage, screen use, planning effort and schedule stability</span></div>
 </section>
 
 
 <section class="slide" id="s31">
-
-<div class="kicker"><span class="tick"></span><span class="kn">31</span><span>Implementation capabilities</span></div>
-<h1 class="head rise" style="--d:0">Connect decision models<br>to <em class="c-blue">operating systems</em></h1>
-<p class="lede rise" style="--d:1">Operational intelligence combines forecasts, simulation, optimization, execution, and feedback.</p>
+<div class="kicker"><span class="tick"></span><span class="kn">31</span><span>Part VII — A daily operator run</span></div>
+<h1 class="head rise" style="--d:0">A natural operating sequence:<br><em class="c-blue">inputs → settings → search → timetable</em></h1>
+<p class="lede rise" style="--d:1">The operator starts from a reference schedule, reviews a recommendation, and carries the selected plan into the next cycle.</p>
 <div class="fill"><div class="cols3" style="margin:auto 0;gap:16px">
-<div class="mcard lb-blue rise" style="--d:2"><h3>Decision modeling</h3><p>Translate operating goals into decision variables, constraints, and objectives.</p></div>
-<div class="mcard lb-teal rise" style="--d:3"><h3>Prediction and uncertainty</h3><p>Estimate audience outcomes and describe the uncertainty around those estimates.</p></div>
-<div class="mcard lb-purple rise" style="--d:4"><h3>Combinatorial optimization</h3><p>Search feasible allocations of films, auditoriums, showtimes, and formats.</p></div>
-<div class="mcard lb-amber rise" style="--d:5"><h3>Simulation</h3><p>Evaluate candidate decisions before they enter operating systems.</p></div>
-<div class="mcard lb-slate rise" style="--d:6"><h3>System integration</h3><p>Connect models and decision services to APIs, data stores, and operator interfaces.</p></div>
-<div class="mcard lb-green rise" style="--d:7"><h3>Continuous learning</h3><p>Record actions and observed outcomes to update models and future decisions.</p></div>
+<div class="mcard lb-blue rise" style="--d:2"><h3>01 · Import planning inputs</h3><p>Load films, screens, operating rules and the reference timetable into one planning workspace.</p></div>
+<div class="mcard lb-teal rise" style="--d:3"><h3>02 · Set the planning goal</h3><p>Choose the audience objective, available operating window and search budget.</p></div>
+<div class="mcard lb-purple rise" style="--d:4"><h3>03 · Run feasible search</h3><p>Evaluate candidate film allocations and showtimes while respecting screen and timing constraints.</p></div>
+<div class="mcard lb-amber rise" style="--d:5"><h3>04 · Inspect the recommendation</h3><p>Compare expected audiences, screen utilization and changed time slots with the reference.</p></div>
+<div class="mcard lb-slate rise" style="--d:6"><h3>05 · Review and export</h3><p>Keep the selected plan, record operator edits and export the timetable for publication.</p></div>
+<div class="mcard lb-green rise" style="--d:7"><h3>06 · Learn and replan</h3><p>Return booking and attendance outcomes to the models and update eligible future screenings.</p></div>
 </div></div>
-<div class="foot"><span>IE437 · ASSIGNMENT 1 · FROM MODELS TO DECISIONS</span></div>
-
+<div class="foot"><span>Operator workflow · Import → configure → optimize → inspect → publish → update</span></div>
 </section>
 
 
 <section class="slide" id="s32">
-  <div class="kicker"><span class="tick"></span><span class="kn">32</span><span>Technical extension — search strategy</span></div>
-  <h1 class="head rise" style="--d:0">Use response estimates to<br><em class="c-purple">choose the next schedule to evaluate</em></h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">32</span><span>Part VIII — Bayesian optimization for schedule search</span></div>
+  <h1 class="head rise" style="--d:0">Use <em class="c-purple">Bayesian optimization</em> to choose<br>the next schedule worth evaluating</h1>
   <div class="fill">
     <div class="strapwrap rise" style="--d:1">
       <div class="strap">
@@ -2315,7 +2298,7 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
     <div class="caps">
       <div class="mcard lb-purple rise" style="--d:2"><h3>Feasible schedule space</h3><p>Define film, screen and time decisions under operating constraints.</p></div>
       <div class="mcard lb-blue rise" style="--d:3"><h3>Response evaluator</h3><p>Score a candidate schedule with a formula, simulator or learned model.</p></div>
-      <div class="mcard lb-purple rise" style="--d:4"><h3>Surrogate and posterior</h3><p>In a BO extension, model score and uncertainty from evaluated schedules.</p></div>
+      <div class="mcard lb-purple rise" style="--d:4"><h3>Surrogate and posterior</h3><p>Learn schedule-score estimates and uncertainty from evaluated candidates.</p></div>
       <div class="mcard lb-teal rise" style="--d:5"><h3>Acquisition rule</h3><p>Balance promising improvements with informative evaluations.</p></div>
       <div class="mcard lb-slate rise" style="--d:6"><h3>Candidate evaluation</h3><p>Check feasibility, call the evaluator and record the resulting score.</p></div>
       <div class="mcard lb-green rise" style="--d:7"><h3>Update and repeat</h3><p>Add the new evaluation; update the posterior until the budget is spent.</p></div>
@@ -2325,33 +2308,33 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       <span style="font:500 13px var(--mono);color:var(--ink2);letter-spacing:.01em">Cheap response calls: local search · Expensive response calls: consider constrained BO</span>
     </div>
   </div>
-  <div class="foot"><span>Proposed BO extension · The executable classroom demo uses synthetic response rules and ILS</span></div>
+  <div class="foot"><span>BO search loop · Feasible candidate → response evaluation → posterior update → next candidate</span></div>
 </section>
 
 
 <section class="slide" id="s33">
-  <div class="kicker"><span class="tick"></span><span class="kn">33</span><span>Part VIII — Testing the operating decision</span></div>
-  <h1 class="head rise" style="--d:0">Test the recommendation under<br><em class="c-purple">changing demand and operating conditions</em></h1>
+  <div class="kicker"><span class="tick"></span><span class="kn">33</span><span>Part VIII — Reading the recommendation</span></div>
+  <h1 class="head rise" style="--d:0">Compare the reference and recommended plan<br><em class="c-purple">at the level where the operator acts</em></h1>
   <div class="fill">
     <div class="refstats">
-      <span class="rs rise" style="--d:1"><b>Same cutoff</b> No future information<small>Time-separated evaluation</small></span>
-      <span class="rs rise" style="--d:2"><b>Same rules</b> Feasible comparisons<small>Reference and candidate</small></span>
-      <span class="rs rise" style="--d:3"><b>Same metric</b> Comparable outcomes<small>Attendance and stability</small></span>
-      <span class="rs rise" style="--d:4"><b>Repeatable</b> Recorded decisions<small>Inputs · version · seed</small></span>
+      <span class="rs rise" style="--d:1"><b>Reference</b> Starting timetable<small>Before search</small></span>
+      <span class="rs rise" style="--d:2"><b>Recommendation</b> Best feasible candidate<small>After search</small></span>
+      <span class="rs rise" style="--d:3"><b>Difference</b> Audience and allocation<small>What changed</small></span>
+      <span class="rs rise" style="--d:4"><b>Selected plan</b> Operator decision<small>Timetable export</small></span>
     </div>
     <div class="refs">
-      <div class="ref rise" style="--d:2"><span class="dom">Forecast</span><h3>Demand surprise</h3><span class="stag tech">Scenario comparison</span><div class="flowl"><span class="fstep fp"><i></i>Vary film demand and site preferences</span><span class="fstep fd"><i></i>Search under the same constraints</span><span class="fstep ff"><i></i>Compare gains and schedule sensitivity</span></div></div>
-      <div class="ref rise" style="--d:3"><span class="dom">Response</span><h3>Substitution assumptions</h3><span class="stag tech">Sensitivity analysis</span><div class="flowl"><span class="fstep fp"><i></i>Vary timing, crowding and cannibalization</span><span class="fstep fd"><i></i>Rescore the same reference and candidate</span><span class="fstep ff"><i></i>Check whether the preferred plan changes</span></div></div>
-      <div class="ref rise" style="--d:4"><span class="dom">Feasibility</span><h3>Operating limits</h3><span class="stag tech">Boundary tests</span><div class="flowl"><span class="fstep fp"><i></i>Change closing, cleaning or film caps</span><span class="fstep fd"><i></i>Reject invalid references and candidates</span><span class="fstep ff"><i></i>Retain a feasible fallback schedule</span></div></div>
-      <div class="ref rise" style="--d:5"><span class="dom">Evaluation</span><h3>Historical replay</h3><span class="stag tech">Proposed real-data test</span><div class="flowl"><span class="fstep fp"><i></i>Keep zero-sales shows and planning cutoffs</span><span class="fstep fd"><i></i>Check calibration by film, site and time</span><span class="fstep ff"><i></i>Separate predictive error from search quality</span></div></div>
-      <div class="ref rise" style="--d:6"><span class="dom">Operation</span><h3>Shadow and limited pilot</h3><span class="stag tech">Proposed field test</span><div class="flowl"><span class="fstep fp"><i></i>Review recommendations with operators</span><span class="fstep fd"><i></i>Track actual attendance and overrides</span><span class="fstep ff"><i></i>Assess gains alongside disruption and stability</span></div></div>
+      <div class="ref rise" style="--d:2"><span class="dom">Audience</span><h3>Expected attendance</h3><span class="stag tech">Response score</span><div class="flowl"><span class="fstep fp"><i></i>Read reference and candidate totals</span><span class="fstep fd"><i></i>Inspect each film and site contribution</span><span class="fstep ff"><i></i>Identify where the audience gain comes from</span></div></div>
+      <div class="ref rise" style="--d:3"><span class="dom">Allocation</span><h3>Film × site coverage</h3><span class="stag tech">Allocation map</span><div class="flowl"><span class="fstep fp"><i></i>Compare screenings and seats by film</span><span class="fstep fd"><i></i>Inspect the film mix at each site</span><span class="fstep ff"><i></i>Connect allocation changes to demand</span></div></div>
+      <div class="ref rise" style="--d:4"><span class="dom">Timetable</span><h3>Screen and time changes</h3><span class="stag tech">Before and after</span><div class="flowl"><span class="fstep fp"><i></i>Select a site and screen</span><span class="fstep fd"><i></i>Inspect films, start times and turnaround</span><span class="fstep ff"><i></i>Review moves around peak viewing hours</span></div></div>
+      <div class="ref rise" style="--d:5"><span class="dom">Feasibility</span><h3>Operating rule checks</h3><span class="stag tech">Executable timetable</span><div class="flowl"><span class="fstep fp"><i></i>Read opening, closing and cleaning checks</span><span class="fstep fd"><i></i>Inspect capacity, coverage and film caps</span><span class="fstep ff"><i></i>Resolve any rejected operator edit</span></div></div>
+      <div class="ref rise" style="--d:6"><span class="dom">Execution</span><h3>Selected schedule</h3><span class="stag tech">Timetable output</span><div class="flowl"><span class="fstep fp"><i></i>Accept the plan or retain the reference</span><span class="fstep fd"><i></i>Export showtimes and the decision record</span><span class="fstep ff"><i></i>Use the selected plan in the next cycle</span></div></div>
     </div>
     <div class="thesis rise" style="--d:6">
-      <span style="font-weight:300;color:var(--ink2)">Use the same</span>
-      <strong><em class="c-blue">Predict</em> → <em class="c-purple">Decide</em> → <em class="c-green">Feedback</em> loop to improve the next scheduling decision.</strong>
+      <span style="font-weight:300;color:var(--ink2)">The result is a timetable the operator can</span>
+      <strong><em class="c-blue">understand</em>, <em class="c-purple">review</em> and <em class="c-green">put into operation</em>.</strong>
     </div>
   </div>
-  <div class="foot"><span>Evaluation strategy · Scenario checks support development; real-data replay and field tests assess operational value</span></div>
+  <div class="foot"><span>Result review · Audience score → film allocation → screen timetable → selected schedule</span></div>
 </section>
 
 
@@ -2377,8 +2360,8 @@ html[lang="en"] #pmode { font-size:8.5px; letter-spacing:0; }
       </div>
       <div class="mcard lb-amber rise" style="--d:2">
         <span class="no">ASK 02</span>
-        <h3>Provide data support<span>Validation Depth</span></h3>
-        <p>Provide film, screening and outcome inputs; prioritize <strong>scheduling Action History</strong> and actual rules/policies. These determine the validation depth for H1–H4.</p>
+        <h3>Connect the planning inputs<span>Data for the decision loop</span></h3>
+        <p>Connect film, screen and outcome inputs; include <strong>scheduling Action History</strong> and operating rules so demand, response and feasible search use one planning context.</p>
       </div>
       <div class="mcard lb-ink rise" style="--d:3">
         <span class="no">ASK 03</span>
@@ -2706,7 +2689,7 @@ em{font-style:normal}
 #s23 table.matrix{margin:auto 0}
 #s23 table.matrix td{padding:15px 14px}
 #s24 .omrows{position:relative;min-height:100px}
-#s24:not(.ov-on) .omrows::after{content:"+ Project Team validation track — click or press →";
+#s24:not(.ov-on) .omrows::after{content:"+ Modeling and search track — click or press →";
   position:absolute;left:13px;right:13px;top:8px;font:500 9.5px var(--mono);letter-spacing:.06em;
   color:var(--ink4);border:1px dashed var(--line);padding:14px 10px;text-align:center;border-radius:2px}
 #s25 .kcol ul{flex:1;justify-content:space-evenly;gap:0;padding:10px 18px}
@@ -3354,7 +3337,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s03": [
   35,
-  "Walk through the original operating structure: P1 national forecast, P2 chain allocation, P3 site allocation and feedback, P4 site-performance weights; A1 operating/cleaning setup, A2 scheduling rules, A3 site fit, A4 site timetables. Retain both flows. The next slide explains their forecast-then-allocate logic; s05 then questions schedule-independent demand.\n\nMoved classroom and verification guidance (verbatim): The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement."
+  "Walk through the original operating structure: P1 national forecast, P2 chain allocation, P3 site allocation and feedback, P4 site-performance weights; A1 operating/cleaning setup, A2 scheduling rules, A3 site fit, A4 site timetables. Retain both flows. The next slide explains their forecast-then-allocate logic; s05 then questions schedule-independent demand.\n\nMoved classroom and verification guidance (verbatim): The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 03 Part I — Baseline operating structure Start with separate forecasting and scheduling flows, then connect them through response Prediction — occupancy forecasting Model ② · Occupancy forecasting P1 Forecast simulation · National market forecast NATIONAL ↓ P2 Company-wide allocation — screen operating plan COMPANY ↓ P3 Site-level allocation · Feedback SITE ↓ P4 Weights derived from site performance data WEIGHT Programming — automated scheduling Model ① · Automated scheduling A1 Scheduling criteria — operating and cleaning hours SETUP ↓ A2 Apply automated scheduling rules RULE ↓ A3 Refine rules for site characteristics SITE-FIT ↓ A4 Produce site-level screening schedules SCHEDULE This proposal builds on that architecture. The two domains connect more effectively through a stronger decision layer. Classroom baseline · Illustrative operating structure"
  ],
  "s04": [
   30,
@@ -3426,7 +3409,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s21": [
   20,
-  "Group the proposed data by purpose: potential demand, action-dependent response, then feasibility. This is an input design, not a claim that all data exist. The assignment's purchase row is one completed purchase and is insufficient alone for screening-level demand, zero-sales inventory or causal response identification.\n\nMoved classroom and verification guidance (verbatim): Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset."
+  "Group the proposed data by purpose: potential demand, action-dependent response, then feasibility. This is an input design, not a claim that all data exist. The assignment's purchase row is one completed purchase and is insufficient alone for screening-level demand, zero-sales inventory or causal response identification.\n\nMoved classroom and verification guidance (verbatim): Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 21 Part VI — Data for the decision loop Organize the proposed inputs by their role in the decision loop Base Demand Estimate potential demand Film attributes Film Viewing intent Booking Awareness Booking Reviews · Buzz (quantitative · qualitative) Booking Advance-booking schedule Booking Release date · First screening date Film Genre · Director · Cast · Synopsis Film Response Learn audience response Show count Site Scheduled seats Site Screening date · Booking date Booking Booking opening timestamp Booking Booked seats · Tickets Booking Screening format Film Aggregated audience segments Booking Sales channel · Film occupancy Booking Constraint · Programming Scheduling constraints Operating hours To agree Cleaning time Site Premium-screen share cap Site Screen-quota information Site Premium-screen space · Technology Site Screen name · Operating floor Site Proposed data map · Demand context → action and outcome records → feasibility rules"
  ],
  "s22": [
   30,
@@ -3434,11 +3417,11 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s23": [
   30,
-  "The available support determines the depth of validation. Agree the validation scope together at project kickoff."
+  "Follow the six operating interfaces: film and booking inputs become a demand outlook; schedule and audience history support response estimates; screen inventory defines the workspace; runtime, turnaround and locks form the constraints; reference and candidate scores produce a recommendation; publication and outcomes close the loop. The case-scope page separately distinguishes requested real data from the actual teaching fixtures.\n\nPreserved earlier speaker guidance:\nThe available support determines the depth of validation. Agree the validation scope together at project kickoff.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 23 Part VI — Required support The available operating inputs determine the depth of validation Operating input or support Why it is needed Testable hypotheses If unavailable Historical schedules · Action History Learn response effects of schedule changes H1 H2 H3 H4 Validation limited to Base Forecast Actual rules · Policies · Exceptions Generate schedules operators can execute H1 H2 H3 H4 Technical feasibility without operational usability Booking + actual attendance outcomes Forecast calibration H1 H2 H3 H4 Limited Response validation Operator interviews · Review Extract hidden constraints H1 H2 H3 H4 More operator overrides in use Shadow · Limited A/B permission Verify incremental impact H1 H2 H3 H4 Offline counterfactual validation only EAI · DX AI integration support Validate operational integration H1 H2 H3 H4 Standalone validation only Support determines validation depth. Agree the scope jointly with Cinema."
  ],
  "s24": [
   60,
-  "The three columns describe a proposed implementation sequence, not a committed calendar: feasible scheduling, response-aware comparison, then integrated pilot. Click the reveal button to add the modeling/search track to the operator track. Start from common reference schedules, cutoffs, rules and metrics. Read duration and permission details from the MD.\n\nMoved classroom and verification guidance (verbatim): Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known."
+  "The three columns describe a proposed implementation sequence, not a committed calendar: feasible scheduling, response-aware comparison, then integrated pilot. Click the reveal button to add the modeling/search track to the operator track. Start from common reference schedules, cutoffs, rules and metrics. Read duration and permission details from the MD.\n\nMoved classroom and verification guidance (verbatim): Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 24 Part VI — Three-stage implementation plan Build in three stages: feasibility → response → integrated operation PROPOSED SEQUENCE — Feasible schedules → Better decisions + Show modeling and search track PRE-TRACK Prepare reference schedules, input data, operating rules and evaluation metrics Common baseline for all three stages STAGE 1 Feasible scheduling · Model ① Operator track Validate automated scheduling independently Check scheduling criteria · Rule compliance Modeling and search track Programming Engine feasibility Target: zero hard-constraint violations Reproduce the current scheduling baseline STAGE 2 Response-aware decisions · Models ① + ② Operator track Occupancy forecast — current vs. prototype in parallel Same period · Same conditions Modeling and search track Compare current and improved forecasts Compare under the same Programming Engine Validate Response signals STAGE 3 Integrated pilot · Models ① + ② Operator track Validate both models in integrated operation Evaluate under operating conditions Modeling and search track Integrate Base + Response + Programming Historical Replay validation Shadow · Limited experiments (if permitted) Dynamic Re-programming simulation Keep one shared baseline and add capabilities step by step . Proposed implementation sequence · Baseline, model comparison, then integrated pilot"
  ],
  "s25": [
   25,
@@ -3458,23 +3441,23 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s29": [
   30,
-  "Explain the adoption path: working model/search comparison, then operator integration, then monitored operation. The teaching example provides no commercial quote or agreed duration. Transition decisions depend on the previous stage's results and operator requirements.\n\nMoved classroom and verification guidance (verbatim): Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate."
+  "Explain the operator integration sequence: prepare one planning run, review and publish its timetable, then return booking and attendance signals to update the next run. This is a service and workflow design, not a claim that production deployment is already implemented.\n\nPreserved earlier speaker guidance:\nExplain the adoption path: working model/search comparison, then operator integration, then monitored operation. The teaching example provides no commercial quote or agreed duration. Transition decisions depend on the previous stage's results and operator requirements.\n\nMoved classroom and verification guidance (verbatim): Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 29 Part VII — Adoption plan Adopt a phased structure : prototype → integration → ongoing operation Phase 1 — Build and compare Working prototype One evaluator and one feasible search loop Build Base Forecast · Response Model · Optimizer Historical Replay validation environment Reference schedule and candidate comparison → Phase 2 — Production integration Integration · Hardening Production build · Integration Connect the validated recommendation service API · EAI integration Monitoring framework Performance · Failover hardening → Phase 3 — Operations Operations Operating phase Programming Engine operation — versioned models and policies Prediction operation · Retraining support Policy · Model improvement support Keep each phase useful: working model and search → integrated recommendation → monitored operations . Proposed adoption path · Expand the operating scope as the preceding phase proves useful"
  ],
  "s30": [
   20,
-  "Discuss value in three dimensions: business outcomes, operating effort/stability and reusable decision assets. Treat each as a target to measure against a common baseline. A synthetic search-score increase is not a measured attendance, revenue, causal or adoption effect.\n\nMoved classroom and verification guidance (verbatim): Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness."
+  "Discuss value in three dimensions: business outcomes, operating effort/stability and reusable decision assets. Treat each as a target to measure against a common baseline. A synthetic search-score increase is not a measured attendance, revenue, causal or adoption effect.\n\nMoved classroom and verification guidance (verbatim): Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 30 Part VII — Operational value to measure The value goes beyond time saved on scheduling Business Target better audience coverage More realized viewers from equal potential demand Potential occupancy · Revenue gains Compare actual outcomes with the reference process Improve premium-screen utilization Evaluate film × format matching Operation Reduce scheduling time Faster schedules · Earlier booking openings Reduce reliance on individual expertise Turn scheduling expertise into a system Respond faster to demand surprises Reprogram when box office demand shifts Intelligence Asset Action–Response data asset Accumulate decisions and responses Reusable constraint framework Document operational grammar Continuously improving capability Compounding value from the learning loop Proposed value dimensions · Measure business, operating and learning outcomes against the same baseline"
  ],
  "s31": [
   30,
-  "Translate the proposed capabilities into operating responsibilities: decision formulation, prediction uncertainty, combinatorial search, simulation, integration and learning. Keep reproducible records of every recommendation as described in the MD.\n\nMoved classroom and verification guidance (verbatim): Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it."
+  "Walk through the daily operator sequence: import, configure, search, inspect, review/export, then learn/replan. The standalone Case A app executes the first five stages using a synthetic response evaluator and ILS. Booking-system publication, real audience learning and rolling replanning are architecture goals; the shared comparison page states the executable boundaries.\n\nPreserved earlier speaker guidance:\nTranslate the proposed capabilities into operating responsibilities: decision formulation, prediction uncertainty, combinatorial search, simulation, integration and learning. Keep reproducible records of every recommendation as described in the MD.\n\nMoved classroom and verification guidance (verbatim): Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 31 Implementation capabilities Connect decision models to operating systems Operational intelligence combines forecasts, simulation, optimization, execution, and feedback. Decision modeling Translate operating goals into decision variables, constraints, and objectives. Prediction and uncertainty Estimate audience outcomes and describe the uncertainty around those estimates. Combinatorial optimization Search feasible allocations of films, auditoriums, showtimes, and formats. Simulation Evaluate candidate decisions before they enter operating systems. System integration Connect models and decision services to APIs, data stores, and operator interfaces. Continuous learning Record actions and observed outcomes to update models and future decisions. IE437 · ASSIGNMENT 1 · FROM MODELS TO DECISIONS"
  ],
  "s32": [
   20,
-  "This technical extension makes the Response-model/BO concept explicit. A response evaluator scores actions; a BO surrogate and posterior represent evaluated scores and uncertainty; an acquisition rule selects a feasible next candidate; evaluation and posterior update repeat until the budget is spent. BO is useful when evaluations are expensive. The actual classroom operator demo uses seeded ILS and an aggregate synthetic formula. It implements neither a learned real-data response model nor a BO posterior/acquisition loop.\n\nMoved classroom and verification guidance (verbatim): A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here."
+  "This technical extension makes the Response-model/BO concept explicit. A response evaluator scores actions; a BO surrogate and posterior represent evaluated scores and uncertainty; an acquisition rule selects a feasible next candidate; evaluation and posterior update repeat until the budget is spent. BO is useful when evaluations are expensive. The actual classroom operator demo uses seeded ILS and an aggregate synthetic formula. It implements neither a learned real-data response model nor a BO posterior/acquisition loop.\n\nMoved classroom and verification guidance (verbatim): A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 32 Technical extension — search strategy Use response estimates to choose the next schedule to evaluate Response estimate → Uncertainty → Next candidate → Evaluate → Update Feasible schedule space Define film, screen and time decisions under operating constraints. Response evaluator Score a candidate schedule with a formula, simulator or learned model. Surrogate and posterior In a BO extension, model score and uncertainty from evaluated schedules. Acquisition rule Balance promising improvements with informative evaluations. Candidate evaluation Check feasibility, call the evaluator and record the resulting score. Update and repeat Add the new evaluation; update the posterior until the budget is spent. Match the search strategy to the evaluation cost Cheap response calls: local search · Expensive response calls: consider constrained BO Proposed BO extension · The executable classroom demo uses synthetic response rules and ILS"
  ],
  "s33": [
   30,
-  "Read these as a testing strategy: demand surprises, response sensitivity, hard-rule boundaries, historical replay and operator pilot. Scenario checks test the computation; replay tests prediction and search separately; field tests assess observed outcomes and stability. This slide makes no cross-industry delivery or performance claim.\n\nMoved classroom and verification guidance (verbatim): Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail."
+  "Read the five result views as one operator review: expected audience, film/site allocation, screen/time changes, hard-rule checks and the selected timetable. Compare the same reference and candidate within one planning run. Expected scores describe the evaluator output; observed business or causal effects require separate evidence.\n\nPreserved earlier speaker guidance:\nRead these as a testing strategy: demand surprises, response sensitivity, hard-rule boundaries, historical replay and operator pilot. Scenario checks test the computation; replay tests prediction and search separately; field tests assess observed outcomes and stability. This slide makes no cross-industry delivery or performance claim.\n\nMoved classroom and verification guidance (verbatim): Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 33 Part VIII — Testing the operating decision Test the recommendation under changing demand and operating conditions Same cutoff No future information Time-separated evaluation Same rules Feasible comparisons Reference and candidate Same metric Comparable outcomes Attendance and stability Repeatable Recorded decisions Inputs · version · seed Forecast Demand surprise Scenario comparison Vary film demand and site preferences Search under the same constraints Compare gains and schedule sensitivity Response Substitution assumptions Sensitivity analysis Vary timing, crowding and cannibalization Rescore the same reference and candidate Check whether the preferred plan changes Feasibility Operating limits Boundary tests Change closing, cleaning or film caps Reject invalid references and candidates Retain a feasible fallback schedule Evaluation Historical replay Proposed real-data test Keep zero-sales shows and planning cutoffs Check calibration by film, site and time Separate predictive error from search quality Operation Shadow and limited pilot Proposed field test Review recommendations with operators Track actual attendance and overrides Assess gains alongside disruption and stability Use the same Predict → Decide → Feedback loop to improve the next scheduling decision. Evaluation strategy · Scenario checks support development; real-data replay and field tests assess operational value"
  ],
  "s34": [
   25,
@@ -3482,7 +3465,7 @@ table.matrix.apx td b{font-weight:600}
  ],
  "s35": [
   75,
-  "Close with three actionable decisions: prototype scope, useful planning/outcome data, and a single decision owner. The first deliverable is a reproducible feasible comparison with the reference. Full real-data modeling, integration and field operation are proposed next steps; funding, permissions and duration need an agreed scope.\n\nMoved classroom and verification guidance (verbatim): The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD."
+  "Close with three actionable decisions: prototype scope, useful planning/outcome data, and a single decision owner. The first deliverable is a reproducible feasible comparison with the reference. Full real-data modeling, integration and field operation are proposed next steps; funding, permissions and duration need an agreed scope.\n\nMoved classroom and verification guidance (verbatim): The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD.\n\nVisible-slide wording moved to speaker notes in 1.7 (verbatim text, reading order): 35 Next steps — decisions requested Turn the proposal into action with three decisions ASK 01 Approve a focused prototype Phase 1 — Build & Validate Improve Base Forecast; build Audience Response Model and Programming Engine; compare it with the reference schedule. Deliver all D1–D7 outputs. First result one feasible improvement Common inputs · Explicit objective · Reproducible comparison ASK 02 Provide data support Validation Depth Provide film, screening and outcome inputs; prioritize scheduling Action History and actual rules/policies. These determine the validation depth for H1–H4. ASK 03 Appoint the collaboration structure Single Escalation Path One cinema Decision Owner plus operator interviews and review windows. Use one decision path to resolve policy conflicts and approve schedule changes. Prototype and operating scope Prototype — model, search and comparison Build a working decision loop : response evaluator, feasible search, reference comparison and operator review; document the data and API contract. Operating rollout — integration and monitoring After a useful prototype, connect the recommendation service to the operator workflow and add monitoring, rollback and model updates . Decision today → Inputs · Reference schedule · Rules → Build · Compare · Review Next-step plan · One owner, one reference schedule and one measurable operating objective"
  ],
  "s36": [
   30,

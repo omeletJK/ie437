@@ -4,9 +4,11 @@ worked_examples:
     assignment: 1
     title: Movie Programming — Two Worked Examples
     summary: Read the completed Markdown definitions, present the English 44-slide and 59-slide proposals in their original designs, and experiment with the independent Response Model Simulator and latest movie-first M0 audience app. Each case exposes one English demo site and guide.
-    version: '1.6'
+    version: '1.7'
     entry: index.html
     files:
+      - classroom-comparison.html
+      - classroom-comparison.md
       - index.html
       - README.md
       - README.html
@@ -44,3 +46,5 @@ Keep instructor notes and student submissions outside the allowlist.
 The two public demos use different engines. Case A restores the aggregate response simulation from the original proposal as a standalone English Response Model Simulator, with planning-file import, rule review, optimization and results. The film-exchange experiment remains optional in Results. Its response coefficients are assumptions; learning and Bayesian optimization are not implemented. Case B uses the latest movie-first M0 app to simulate individual consumers. Older demos and revisions are archived outside the public package.
 
 The primary proposal.html files preserve the original visual designs with revised English presentation narratives; extended-proposal.html files are compatibility copies of the same full decks. Newly authored short decks remain in the private authoring archive and are not published.
+
+Explain brief-versus-case scope once in classroom-comparison.html before presenting the two solution narratives.

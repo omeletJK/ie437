@@ -1,5 +1,7 @@
 # Synthetic Audience: Movie-First Cinema Programming
 
+[One-page comparison of the course brief, case data and assumptions](../classroom-comparison.html).
+
 **HW1 sample answer · English · Proposal flow revision 1.6 · 2026-10-11**
 
 Author / student ID: Public teaching sample; `N/A — not a student submission`.  

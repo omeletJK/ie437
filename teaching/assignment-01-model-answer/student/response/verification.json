@@ -1,6 +1,6 @@
 {
   "case": "Case A: Response Schedule Optimizer \u2014 independent aggregate SIM2",
-  "release": "1.6",
+  "release": "1.7",
   "updatedAt": "2026-10-12T04:12:57.303199+00:00",
   "artifact": "demo.html",
   "implementation": {
@@ -120,7 +120,7 @@
   "currentBuild": {
     "demoSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
     "demoBytes": 650464,
-    "identityStatus": "Published 1.5 app bytes preserved in presentation release 1.6.",
+    "identityStatus": "Published 1.5 app bytes preserved in presentation release 1.7.",
     "exactStandaloneCoreComparison": "Pass: 12 numerical core ASTs and 39 exact-artifact Node checks.",
     "independentHTTPUI": "Pass for exact final source/staged default pipeline, replay, Run/Pause/Finish, actual final JSON/CSV downloads and CSV reupload, invalid-file/recovery and responsive views. Earlier 100-iteration/seed-7, REF104/closing settings retain their stated candidate scope.",
     "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
@@ -465,8 +465,8 @@
   },
   "evidenceBoundary": "The exact 1.5 engine passed 39/39 Node checks and the unchanged importer passed 25/25. Final-SHA source/staged-course pipeline, replay, pause/finish, actual final exports and optimized-CSV reupload, rejection/recovery, responsive and course navigation passed. Earlier-candidate configuration evidence retains its stated scope. Course build/integration checks passed separately. Direct offline opening remains unverified. Legacy native/manual and old shift outputs are regressions, not operator benchmarks. Declared assumptions do not establish learned response accuracy, the purchased-ticket target, causal effects, business uplift, BO or a global optimum.",
   "presentationRevision": {
-    "release": "1.6",
-    "scope": "Original diagram/design preservation and coherent problem-solving narrative; detailed assumption/verification guidance moved to speaker notes and Markdown. Apps unchanged.",
+    "release": "1.7",
+    "scope": "Main proposal focuses on cinema problem-solving. Brief-versus-case data/assumptions and proposal/demo scope are consolidated in a separate shared classroom-comparison.html page; detailed notes/MD preserved. Apps unchanged.",
     "sections": 44,
     "slide03": "Original forecasting/programming structure restored."
   },

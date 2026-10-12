@@ -1,13 +1,23 @@
 {
   "schemaVersion": 1,
-  "version": "1.6",
+  "version": "1.7",
   "purpose": "IE437 Assignment 1 public worked examples",
   "disclosure": "All records, outcomes and engine results are synthetic. Case A supports planning JSON/CSV import, operating-rule configuration, aggregate-response ILS optimization and timetable inspection/export; learned response models and BO are not implemented. Case B uses the movie-first M0 individual-consumer simulator. Both demo sites and guides are English.",
   "files": [
     {
+      "file": "classroom-comparison.html",
+      "bytes": 178650,
+      "sha256": "b6f52780241d856c8f227a7e5e56495b308962643b6d3b16bdb55874347d29d4"
+    },
+    {
+      "file": "classroom-comparison.md",
+      "bytes": 4269,
+      "sha256": "a4b8300a60aba478495acd14a9e555f2389bd987d7badeb83300b7624ab53ffe"
+    },
+    {
       "file": "index.html",
-      "bytes": 497439,
-      "sha256": "e370038f6b3880357c72cb14abbb9dc47256dffa4c60bbf72e6e961b317914d7"
+      "bytes": 497530,
+      "sha256": "121758a38094bcb74251b66ec3a83fd9c50d784e852943f602452e2fd5abf0d8"
     },
     {
       "file": "THIRD_PARTY_NOTICES.md",
@@ -36,38 +46,38 @@
     },
     {
       "file": "response/verification.json",
-      "bytes": 20652,
-      "sha256": "789143289a3774081094b9e51ccb765ffb58bf753c4a1ce597fea9c8546de359"
+      "bytes": 20703,
+      "sha256": "d7ba51bc1faf7a9cc7434bec6cd069d67bcea6a6782cd81c3aab3b44838f30c7"
     },
     {
       "file": "README.md",
-      "bytes": 4710,
-      "sha256": "e4063ef8feccbf906085039c4916afb4bd0c6849d303f3ea458113e8c5ea3101"
+      "bytes": 4921,
+      "sha256": "ec75215f2cd47b65a2f9a0a083e2161fb2f5f4473930c8d1dce44d8785df16c0"
     },
     {
       "file": "README.html",
-      "bytes": 498097,
-      "sha256": "6b53b223a128f855b5c3db9b5059385fe4baf83763d15ffb3007792ca849a5ad"
+      "bytes": 498319,
+      "sha256": "2e3aa66a89b580565c2223ef469cc62d8d0c205e7d8c4f2c1e2e23f388d12843"
     },
     {
       "file": "verification.md",
-      "bytes": 15015,
-      "sha256": "d5fe0576f893de92ada9f99e0a049a2670f619d0b937733a113aaa2cb164b40c"
+      "bytes": 15308,
+      "sha256": "375eeaf6221bf82b84411eb2338d78e8b2a137ce4783360d2c825a1574b61e69"
     },
     {
       "file": "verification.html",
-      "bytes": 510246,
-      "sha256": "0286edc1495d434f4dfd1984715d37769c0ee05ed398b4340b8d99f5501afc2a"
+      "bytes": 510550,
+      "sha256": "d695af98f59b546dd107614503bc323b5c301de3e22507f06072cec280e2cdb2"
     },
     {
       "file": "response/problem-definition.md",
-      "bytes": 36009,
-      "sha256": "40300e1487880bf841c48d6a4517dd598f8698db29eea5b4558eef032df04d32"
+      "bytes": 36110,
+      "sha256": "64653ff289ebb29935158a4c7d8a2c409bc338bf7cff980d631d81d26180bba4"
     },
     {
       "file": "response/problem-definition.html",
-      "bytes": 533405,
-      "sha256": "83ab88dbca4f7209c1bdfa1fb68aef1675396b6c3d57f99df7683f1bccfc39b1"
+      "bytes": 533523,
+      "sha256": "9af85884df6d08a91431e69e261b1b76018efc6200dce39449519763d9dc45d9"
     },
     {
       "file": "response/demo.html",
@@ -76,13 +86,13 @@
     },
     {
       "file": "response/proposal.html",
-      "bytes": 268821,
-      "sha256": "81186fb0eeb11d32ba7da221f335db20526b660c30734e710d58822890589416"
+      "bytes": 282103,
+      "sha256": "2ba44464262b67586d40a9e0f1bab56685a752b0deee70266b965c456a32100a"
     },
     {
       "file": "response/extended-proposal.html",
-      "bytes": 268821,
-      "sha256": "81186fb0eeb11d32ba7da221f335db20526b660c30734e710d58822890589416"
+      "bytes": 282103,
+      "sha256": "2ba44464262b67586d40a9e0f1bab56685a752b0deee70266b965c456a32100a"
     },
     {
       "file": "response/CinemaPlanning.json",
@@ -96,13 +106,13 @@
     },
     {
       "file": "audience/problem-definition.md",
-      "bytes": 42692,
-      "sha256": "f06a09ad47411dfa6d8238ac3e247f2f5dde24f0b747ae7b6fb6591a02673013"
+      "bytes": 42793,
+      "sha256": "bc5ff029dbeac21d8156aae492ee1a018bc9324439962efcca2cf9253912aaf9"
     },
     {
       "file": "audience/problem-definition.html",
-      "bytes": 542360,
-      "sha256": "b0a68a2219764c5b93c9dc93d21fab5cd09b1e0b74152a15e85e6501f8fbc896"
+      "bytes": 542478,
+      "sha256": "641e618929fc25d953a002fb02aed5ddfce59ce1116e89e0a6098d888d5f152d"
     },
     {
       "file": "audience/demo.html",

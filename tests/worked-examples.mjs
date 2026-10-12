@@ -49,6 +49,8 @@ for(const [folder,sections] of [['response',44],['audience',59]]){
  }
 }
 const hub=fs.readFileSync(path.join(out,'index.html'),'utf8');
+assert.ok(names.includes('classroom-comparison.html')&&names.includes('classroom-comparison.md'),'One shared brief-versus-case comparison page and Markdown must be public');
+assert.match(hub,/href="classroom-comparison.html"/,'The hub must expose the one-page comparison before the two cases');
 assert.deepEqual(names.filter(name=>name.endsWith('/demo.html')).sort(),['audience/demo.html','response/demo.html'],'Exactly one demo site per case must be shared');
 assert.ok(!names.some(name=>name.startsWith('advanced/')),'Older demo versions must stay outside the public package');
 assert.doesNotMatch(hub,/Additional demos|advanced\//,'Hub must expose only the two selected demo sites');
