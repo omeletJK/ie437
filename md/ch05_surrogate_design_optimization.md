@@ -401,21 +401,40 @@ Because $f_\theta$ changes at every training step, $\mu_\theta$ is regenerated a
 Source alignment: Part 2 pp. 26–29. The paper describes $\mu$ as "several steps of gradient ascent" from data points; its implementation uses a single step (Trabucco et al., 2021, §3.4). Written as a distribution, $\mu_\theta=\frac1M\sum_j\delta_{x_T^{(j)}}$ — a point mass $1/M$ at each end point — which is why its expectation is the plain average above. The toy widgets collect every point the 25-step ascent visits, not only the end points; with the paper's one step the two coincide.
 :::
 
-### First attempt — push the attacker's designs down
-$$L_1(\theta)=\tfrac12\,\E_{(x,y)\sim\mathcal D}\big[(f_\theta(x)-y)^2\big]+\alpha\,\E_{x\sim\mu_\theta}\big[f_\theta(x)\big]$$
+### Three terms, three fits
+{sub: add a term to the loss and watch the surrogate move · the same fifteen points, α = 0.3}
+{math: compact}
 
-::: widget conservative-coms {"mode":"first","alpha":0.3,"seed":17}
-The cheapest way to lower the attacker's scores is to lower everything: the red surface sinks below the very data it was fitted to.
+::: cols c3
+::: col (i) fit the data
+$$\tfrac12\,\E_{\mathcal D}\big[(f_\theta-y)^2\big]$$
+
+::: widget conservative-coms {"mode":"term","term":1,"alpha":0.3,"seed":17}
+The plain fit: right on the data, and it keeps climbing where there is none.
 :::
-
+:::
+::: col (ii) + push the attacker's designs down
 ::: reveal
-::: keypoint
-**The fix — hold the data up:** subtract $\alpha\,\E_{\mathcal D}[f_\theta]$, so only the ==gap== between the attacker's scores and the data's is penalised.
+$$\tfrac12\,\E_{\mathcal D}\big[(f_\theta-y)^2\big]+\hl{\alpha\,\E_{\mu_\theta}[f_\theta]}$$
+
+::: widget conservative-coms {"mode":"term","term":2,"alpha":0.3,"seed":17}
+The cheapest way to lower the attacker's scores is to lower everything: the surface sinks below the very data it was fitted to, by exactly $\alpha$.
+:::
+:::
+:::
+::: col.accent (iii) + hold the data up
+::: reveal
+$$\tfrac12\,\E_{\mathcal D}\big[(f_\theta-y)^2\big]+\alpha\,\E_{\mu_\theta}[f_\theta]\;\hl{-\;\alpha\,\E_{\mathcal D}[f_\theta]}$$
+
+::: widget conservative-coms {"mode":"term","term":3,"alpha":0.3,"seed":17}
+A constant shift now moves both averages alike, so sinking no longer pays: lifted back by $\alpha$ inside the data, the push stays ==where the attacker went==.
+:::
+:::
 :::
 :::
 
 ::: note
-Source alignment: Part 2 p. 30 ("Problem: underestimation. Solution: regularise by maximising function values under the data distribution"). In the toy at α = 0.3 the first attempt's mean error on D is −0.30 — exactly −α: lowering the whole surface by $c$ cuts the penalty by $\alpha c$ and costs the fit $\tfrac12c^2$, so the balance is $c=\alpha$ (equivalently, the penalty's gradient on the constant term is α). With the data term the mean error is 0.00: a constant shift moves $\E_\mu[f]$ and $\E_{\mathcal D}[f]$ alike, so the penalty no longer rewards it. 14 of the 15 points sit above the first attempt, by up to 0.81 at the right end of D, where the attacker's designs (the grey strip) crowd. The full COMs curve is the first attempt lifted by 0.30 (exactly, inside D), so the attacker's paths — and any later search — are unchanged: only the level was wrong. If asked why that matters: the surrogate's own values are biased low even on the designs we measured, and α would set the level as well as the relative push; with the data term it sets only the gap. The attacker never goes past x ≈ 5.8. The first attempt is low at x = 8–10 only because the slope it was bent to near 5–6 continues outward, and the far edge is still over-rated (1.98 here, 2.31 for full COMs, against a true −0.14) — the point of "Conservatism is learned where the attacker went". The right panel deliberately shows no search; Algorithm 2 comes two slides later.
+Source alignment: Part 2 p. 30 ("Problem: underestimation. Solution: regularise by maximising function values under the data distribution"). The three panels are one widget in three instances, each trained for real on the same fifteen points at α = 0.3. Panel (ii): the first attempt's mean error on D is −0.30 — exactly −α: lowering the whole surface by c cuts the penalty by αc and costs the fit ½c², so the balance is c = α; 14 of the 15 points sit above it, by up to 0.81 at the right end of D, where the attacker's designs (the grey strip) crowd. Panel (iii): with the data term the mean error is 0.00 — a constant shift moves E_μ[f] and E_D[f] alike, so the penalty no longer rewards it. The full COMs curve is the first attempt lifted by 0.30 exactly inside D, so the attacker's paths, and any later search, are unchanged: only the level was wrong. If asked why that matters: without the data term the surrogate is biased low even on the designs we measured, and α would set the level as well as the relative push; with it α sets only the gap. The attacker never goes past x ≈ 5.8, and the far edge is still over-rated (1.98 for the first attempt, 2.31 for full COMs, against a true −0.14) — the point of "Conservatism is learned where the attacker went". No search is drawn: Algorithm 2 comes two slides later.
 :::
 
 ### The loss, term by term
@@ -548,46 +567,21 @@ The 2 × 2 of model and search, 450 steps from the best design in $D$: plain fit
 ==COMs is the pair==: a surrogate flattened where the attacker went, and a short, slow search on it.
 :::
 
-### Why it works — one value per design
-{sub: a tabular simplification, for intuition}
-{math: compact}
+### What conservatism promises, and what it does not
+{sub: a lower bound on average over the attacker's designs — not design by design}
 
-Take a finite set of designs, one free value $\hat f(x)$ for each, data frequencies $d(x)$ and attacker frequencies $\mu(x)$:
-
-$$L=\tfrac12\sum_x d(x)\big(\hat f(x)-y(x)\big)^2+\alpha\Big(\sum_x\mu(x)\hat f(x)-\sum_x d(x)\hat f(x)\Big)$$
-
-Setting $\partial L/\partial \hat f(x)=d(x)\big(\hat f(x)-y(x)\big)+\alpha\big(\mu(x)-d(x)\big)=0$:
-
-$$\hat f(x)=y(x)-\alpha\Big(\frac{\mu(x)}{d(x)}-1\Big)$$
-
-::: reveal
-$$\E_\mu\big[\hat f-y\big]=-\alpha\Big(\sum_x\frac{\mu(x)^2}{d(x)}-1\Big)=-\alpha\sum_x\frac{\big(\mu(x)-d(x)\big)^2}{d(x)}\;\le\;0,\qquad \E_d\big[\hat f-y\big]=0.$$
-
+::: widget coms-tabular
+Three designs, one value each; grey is how often the data sees it, red how often the attacker does. Press → to apply $\hat f=y-\alpha(\mu/d-1)$, and again for what follows.
 :::
 
 ::: reveal
 ::: keypoint
-Under the attacker's distribution the model is a lower bound on average; under the data it is unbiased. Where the attacker visits more often than the data, $\hat f$ is pushed down — and where less often, it is pushed ==up==.
-:::
-:::
-
-::: small
-Assumed: $\mu$ and $d$ are distributions on the same finite set, $\mu(x)>0$ only where $d(x)>0$, $y(x)$ is the mean measured value at $x$, and $\mu$ is held fixed. If the attacker reaches a design with $d(x)=0$ — genuinely out of distribution — the tabular loss has no minimum there at all: this explains the mechanism; it does not show that OOD is solved.
-:::
-
-### What the calculation promises, and what it does not
-::: widget coms-tabular
-Three designs, each with a free value. Grey: how often the data sees it; red: how often the attacker does. Press → to apply $\hat f=y-\alpha(\mu/d-1)$, and again for what follows.
-:::
-
-::: reveal
-::: block Proposition 1 *(informal)* | Trabucco et al., 2021
-For a neural network under regularity assumptions, a large enough $\alpha$ gives $\;\E_{x_0\sim\mathcal D,\,x_T\sim\mu(x_T\mid x_0)}\big[\hat f(x_T)\big]\le\E_{x_0\sim\mathcal D,\,x_T\sim\mu(x_T\mid x_0)}\big[f(x_T)\big]$ — the same kind of statement: an average over the optimiser's own outputs. Its proof needs Lipschitz and kernel-style assumptions on the network (see the paper).
+Averaged over the attacker's designs the surrogate ==sits below the truth== — the paper's Proposition 1; averaged over the data it is unbiased. Design by design it can sit above, and it can pull the best design down: the cost $A$.
 :::
 :::
 
 ::: note
-Numbers behind the picture (α = 0.5): d = (0.5, 0.3, 0.2), μ = (0.1, 0.3, 0.6), y = (1, 2, 3), so f̂ = (1.4, 2.0, 2.0). E_μ[f̂ − y] = −0.56 = −α Σ(μ − d)²/d with Σ(μ − d)²/d = 1.12; E_d[f̂ − y] = 0.
+Where the formula comes from, in one line: the penalty pushes a design down in proportion to μ(x), holds it up in proportion to d(x), and the fit term resists in proportion to d(x), so with one free value per design the balance is f̂ = y − α(μ/d − 1). The two-line derivation is the appendix slide "Backup — the tabular COMs solution". Numbers behind the picture (α = 0.5): d = (0.5, 0.3, 0.2), μ = (0.1, 0.3, 0.6), y = (1, 2, 3), so f̂ = (1.4, 2.0, 2.0); E_μ[f̂ − y] = −0.56 ≤ 0, E_d[f̂ − y] = 0. Proposition 1 (Trabucco et al., 2021) is the network version of the same statement: with α large enough, the surrogate's average over the optimiser's own outputs is at most the truth's, under Lipschitz and kernel-style assumptions. The calculation holds μ fixed and needs μ(x) > 0 only where d(x) > 0: where the attacker leaves the data altogether the tabular loss has no minimum, so this explains the mechanism inside the data and does not show that OOD is solved.
 :::
 
 ### Conservatism is a dial — make it a budget
@@ -685,25 +679,30 @@ Source alignment: Part 2 pp. 54–55. The source writes PRIME's loss without COM
 :::
 
 ### RoMA — make the surrogate smooth where the optimiser stands
-{sub: Yu, Ahn, Song & Shin · NeurIPS 2021 · the objectives are in the appendix}
+{sub: Yu, Ahn, Song & Shin · NeurIPS 2021}
+{math: compact}
 
 ::: cols wide-l
 ::: col
-::: figure roma-smoothness | 560
-Same crosses, same dashed truth. The jagged surrogate's tallest spike is a ==wrong solution==; the smoothed one peaks on the truth. {p}(Yu et al., 2021, Fig. 2)
+::: figure roma-smoothness | 440
+The jagged surrogate's tallest spike is a ==wrong solution==; the smooth one peaks on the truth. {p}(Yu et al., 2021, Fig. 2)
 :::
 :::
 ::: col
-The assumption it adds: over-estimates come from a network that is **not smooth** — spurious spikes between and beyond the data. So it changes the surrogate's *shape* near each candidate, not its *level*.
+Its assumption: over-estimates come from a network that is **not smooth**, with spurious spikes between and beyond the data. So it changes the surrogate's *shape* near each candidate, not its *level*.
 :::
 :::
 
 ::: cols
 ::: col Stage 1 — train it smooth
-Fit the data under noise on the inputs and the worst nearby perturbation of the weights.
+$$L(\theta)=\max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \hl{\delta\sim\mathcal N(0,\sigma)}}\Big[\big(f(\hl{x+\delta};\tilde\theta)-y\big)^2\Big]$$
+
+Noise on the inputs and the worst weights nearby: the fit must hold on a neighbourhood of each point, not at the point alone.
 :::
 ::: col.accent Stage 2 — re-smooth at each step
-Before each ascent step, adapt the model to be flat at the current candidate, without moving its prediction there far.
+$$\theta_t=\argmin_{\tilde\theta\in B(\theta)}\ \hl{\big\lVert\nabla_x f(x^{(t)};\tilde\theta)\big\rVert_2}+\alpha\big[f(x^{(t)};\tilde\theta)-f(x^{(t)};\theta_{t-1})\big]^2$$
+
+Flat at the candidate (the gradient term) without moving its prediction there (the second). Then one ascent step on $f(\cdot;\theta_t)$.
 :::
 :::
 
@@ -712,7 +711,7 @@ Adjacent to COMs rather than the same idea: COMs lowers the scores the optimiser
 :::
 
 ::: note
-Source alignment: Part 2 pp. 41–49. The picture is the paper's Figure 2; the two objectives and the paper's pipeline figure are on the appendix slide "Backup — RoMA's two stages".
+Source alignment: Part 2 pp. 41–49. The picture is the paper's Figure 2; the objectives are the source's pp. 47 and 49, with $B(\theta)=\{\tilde\theta:\lVert\theta_l-\tilde\theta_l\rVert_F\le\epsilon\lVert\theta_l\rVert_F\ \forall l\}$ (Stage 1 is the double-perturbation loss of Adversarial Weight Perturbation, NeurIPS 2020; the inner maximisation runs by projected gradient ascent). Stage 1 smooths only where the data is, which is why Stage 2 re-adapts at every candidate — the paper's pipeline figure is on the appendix slide "Backup — RoMA's two stages".
 :::
 
 ### Session 1 — what conservatism fixed, and what it left
@@ -813,20 +812,31 @@ Ten members, each fitted to a resample of the same fifteen points. Their spread 
 ### NEMO — uncertainty as how easily the model could be talked into any answer
 {sub: Fu & Levine · ICLR 2021}
 
-::: figure nemo-cnml | 760
+::: figure nemo-cnml | 640
 **Left:** we want $p(y\mid x)$ at a design far from the data. **Middle:** pretend each possible label $y$ was observed there, and refit. **Right:** normalise across all those refits. {p}(Fu & Levine, 2021, Fig. 1)
 :::
 
-$$p_{\text{NML}}(y\mid x)=\frac{p\big(y\mid x;\hat\theta_{\mathcal D\cup(x,y)}\big)}{\int p\big(y'\mid x;\hat\theta_{\mathcal D\cup(x,y')}\big)\,dy'}$$
+$$p_{\text{NML}}(y\mid x)=\frac{\overbrace{p\big(y\mid x;\hat\theta_{\mathcal D\cup(x,y)}\big)}^{\text{pretend this label was measured here and refit — how likely is it now?}}}{\underbrace{\textstyle\int p\big(y'\mid x;\hat\theta_{\mathcal D\cup(x,y')}\big)\,dy'}_{\text{the same score for every label — so they sum to one}}}$$
 
 ::: keypoint
-Far from the data, one extra point can be fitted whatever its label, so the distribution is ==wide==; near the data, only labels close to the trend survive.
+==How easily could one extra point drag the model to any answer?== Far from the data, easily: every label passes its own test, the scores come out equal, and the distribution is flat — *I don't know*. Inside the data, the neighbours hold the model: only labels near the trend pass, and it is narrow.
 :::
 
-**The decision.** Climb $x$ on $\E_{p_{\text{NML}}}[y\mid x]$: where the distribution is wide, it is pulled toward the middle of the label range, so ==optimistic extrapolation stops paying==.
+::: note
+$\hat\theta_{\mathcal D\cup(x,y)}$ is the model refit on the data plus one pretend point $(x,y)$ — a different refit for every label. Source alignment: Part 2 pp. 15–16. Computing it exactly would mean refitting for every label; NEMO quantises $y$ into $K$ bins and keeps $K$ models that it updates *while* it optimises $x$ (Part 2 pp. 17–20; see the appendix backup).
+:::
+
+### The NML formula, one label at a time
+::: widget nml-explain {"x":8.5,"try":"Drag x into the data","tryAt":"bar"}
+The same fifteen points. Press → four times: pretend and refit, score each label (the numerator), normalise (the denominator), decide. Drag the design $x$ into the data and back out at any step.
+:::
+
+::: keypoint
+**The decision.** NEMO climbs $x$ on $\E_{p_{\text{NML}}}[y\mid x]$. Where the distribution is flat, that mean sits mid-range, so ==optimistic extrapolation stops paying== and the climb stays near the data.
+:::
 
 ::: note
-Source alignment: Part 2 pp. 15–16. Computing it exactly would mean refitting for every label; NEMO quantises $y$ into $K$ bins and keeps $K$ models that it updates *while* it optimises $x$ (Part 2 pp. 17–20; see the appendix backup).
+The model class here is kernel ridge regression — the GP mean of Lecture 4 (linear trend plus RBF, noise sd 0.1); refitting with one extra point $(x,y)$ moves the prediction at $x$ by the share $s^2(x)/(s^2(x)+0.1^2)$ of the way to $y$. Numbers: at $x=3$ one new point moves the model 26% of the way, and the NML spread is 0.14 with mean 1.45 (the model's own prediction); at $x=8.5$ it moves it 99%, the NML is flat over the labels $[-0.5,3.5]$ (spread 1.17) and its mean is 1.53, where the model says 3.50. The NML mean peaks at $x=5.52$ (worth 2.56; best in $\mathcal D$ 2.43); the model's own mean peaks at the edge, $x=10$ (worth $-0.14$). The pull to mid-range comes from the bounded label set, as in NEMO's quantised labels.
 :::
 
 ### NEMO's own test — against the ensemble
@@ -1136,6 +1146,30 @@ Gradient descent decreases $v$, reducing the unsupported high prediction.
 
 ::: keypoint
 ==Fit measured targets and shrink the score gap to tempting candidates.== In a network the two updates share parameters, so each moves the other's prediction too.
+:::
+
+### Backup — the tabular COMs solution
+{sub: one free value per design, for intuition}
+{math: compact}
+
+Take a finite set of designs, one free value $\hat f(x)$ for each, data frequencies $d(x)$ and attacker frequencies $\mu(x)$. The loss is a sum over designs, so each $\hat f(x)$ is solved on its own:
+
+$$L=\tfrac12\sum_x d(x)\big(\hat f(x)-y(x)\big)^2+\alpha\Big(\sum_x\mu(x)\hat f(x)-\sum_x d(x)\hat f(x)\Big)$$
+
+Setting $\partial L/\partial \hat f(x)=d(x)\big(\hat f(x)-y(x)\big)+\alpha\big(\mu(x)-d(x)\big)=0$:
+
+$$\hat f(x)=y(x)-\alpha\Big(\frac{\mu(x)}{d(x)}-1\Big)$$
+
+Average the error under each distribution, using $\sum_x\mu(x)=\sum_x d(x)=1$:
+
+$$\E_\mu\big[\hat f-y\big]=-\alpha\Big(\sum_x\frac{\mu(x)^2}{d(x)}-1\Big)=-\alpha\sum_x\frac{\big(\mu(x)-d(x)\big)^2}{d(x)}\;\le\;0,\qquad \E_d\big[\hat f-y\big]=0.$$
+
+::: keypoint
+A lower bound ==on average under the attacker==, unbiased under the data — not design by design, and only inside the data, where $d(x)>0$.
+:::
+
+::: note
+Assumed: μ and d are distributions on the same finite set, μ(x) > 0 only where d(x) > 0, y(x) is the mean measured value at x, and μ is held fixed. Where the attacker visits less often than the data, f̂ is pushed above y. If the attacker reaches a design with d(x) = 0 — genuinely out of distribution — the tabular loss has no minimum there at all: this explains the mechanism; it does not show that OOD is solved. The paper's Proposition 1 is the network version of the same average statement, under Lipschitz and kernel-style assumptions.
 :::
 
 ### Backup — RoMA's two stages

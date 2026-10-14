@@ -28,7 +28,13 @@
                       alpha 0       x 10.00, f -0.14    x 10.00, f -0.14
                       alpha 0.3     x 10.00, f -0.14    x  6.32, f  2.62
                     In this toy neither half works alone.
-   mode "first"     alpha fixed (0.3): the source's first attempt, alpha E_mu[f]
+   mode "term"      {term: 1|2|3}, alpha fixed (0.3): one compact panel per term
+                    of the loss, three instances side by side on "Three terms,
+                    three fits" — (1) the plain fit; (2) + alpha E_mu[f], the
+                    source's first attempt, with the data marked above it;
+                    (3) - alpha E_D[f], full COMs, the first attempt lifted by
+                    alpha inside D. Each panel prints the model's mean error on D.
+   mode "first"     (kept; no longer on a slide) alpha fixed (0.3): the source's first attempt, alpha E_mu[f]
                     with no data term. Red lines mark the data above it:
                     14 of 15 points sit above the surface fitted to them (mean
                     error on D exactly -alpha). The arrow key adds full COMs —
@@ -58,7 +64,8 @@
 IE437.widget('conservative-coms', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', GREEN = '#16A34A',
       RED = '#D64545', SLATE = '#64748B', AMBER = '#B45309';
-  var MODE = (opts.mode === 'optimiser' || opts.mode === 'global') ? 'optimiser' : opts.mode === 'first' ? 'first' : 'dial';
+  var MODE = (opts.mode === 'optimiser' || opts.mode === 'global') ? 'optimiser' : opts.mode === 'first' ? 'first' : opts.mode === 'term' ? 'term' : 'dial';
+  var TERM = Math.max(1, Math.min(3, (opts.term | 0) || 1));
 
   var X0 = 0, X1 = 10, DL = 0.8, DR = 5.4, LAM = 0.06, ETA = 0.35, TMAX = 40, N = 15;
   var ROUNDS = 40, MSTEP = 25, DAMP = 0.25;
@@ -175,6 +182,7 @@ IE437.widget('conservative-coms', function (host, opts) {
   var bar = MODE === 'dial'
     ? '<div class="wbar"><span class="wt">Conservatism, dialled</span><span class="wspacer"></span>' +
       '<span class="wlabel">conservatism</span><span class="wnum" data-a></span><span data-sl></span></div>'
+    : MODE === 'term' ? ''
     : MODE === 'first'
     ? '<div class="wbar"><span class="wt">Push the attacker down — with and without holding the data up</span><span class="wspacer"></span>' +
       '<span class="wlabel">penalty</span><span class="wnum">α = 0.30</span></div>'
@@ -184,7 +192,9 @@ IE437.widget('conservative-coms', function (host, opts) {
      from", surrogate-exploit mode "bound"): the design axis, the faint truth,
      the surrogate dashed, a choice x̂ as a dot on the surrogate with a line down
      to a ring on the truth — plus the attacker's region on the floor. */
-  host.innerHTML = bar +
+  host.innerHTML = MODE === 'term'
+    ? '<div class="wbody" style="padding:8px 6px 4px;align-items:center;justify-content:center"><div data-c1></div></div>'
+    : bar +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:flex-start;justify-content:center">' +
     '<div data-c1></div>' +
     '<div style="width:250px;display:flex;flex-direction:column;gap:9px">' +
@@ -192,27 +202,35 @@ IE437.widget('conservative-coms', function (host, opts) {
     '<div data-note style="font:400 11.5px/1.55 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.075);padding-top:9px"></div></div></div>';
 
-  var CW = 640, CH = 300, s1 = IE437.svg(CW, CH);
+  var CW = MODE === 'term' ? 372 : 640, CH = MODE === 'term' ? 222 : 300, s1 = IE437.svg(CW, CH);
+  var FL = MODE === 'term' ? 30 : 34, FR = MODE === 'term' ? 10 : 118, FT = MODE === 'term' ? 14 : 16, FB = MODE === 'term' ? 26 : 30;
   host.querySelector('[data-c1]').appendChild(s1);
   var stage = 0;
 
   function frame() {
     while (s1.firstChild) s1.removeChild(s1.firstChild);
-    var L = 34, Rr = 118, T = 16, B = 30;
+    var L = FL, Rr = FR, T = FT, B = FB;
     var PX = function (v) { return L + (v - X0) / (X1 - X0) * (CW - L - Rr); };
     var PY = function (v) { return CH - B - (v - YLO) / (YHI - YLO) * (CH - T - B); };
     E('rect', { x: PX(DL), y: T, width: PX(DR) - PX(DL), height: CH - B - T, fill: SLATE, 'fill-opacity': .09 }, s1);
-    E('text', { x: PX(DR) - 6, y: T + 12, 'text-anchor': 'end', 'font-size': 9,
-      'font-family': MONO, fill: INK, 'fill-opacity': .45, text: 'the dataset D' }, s1);
-    E('text', { x: (PX(DR) + PX(X1)) / 2, y: T + 12, 'text-anchor': 'middle', 'font-size': 9,
-      'font-family': MONO, fill: INK, 'fill-opacity': .3, text: 'no data' }, s1);
+    if (MODE === 'term') {              /* compact panel: the key owns the top-left, so label the regions under the axis */
+      E('text', { x: (PX(DL) + PX(DR)) / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9,
+        'font-family': MONO, fill: INK, 'fill-opacity': .45, text: 'the dataset D' }, s1);
+      E('text', { x: (PX(DR) + PX(X1)) / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9,
+        'font-family': MONO, fill: INK, 'fill-opacity': .3, text: 'no data' }, s1);
+    } else {
+      E('text', { x: PX(DR) - 6, y: T + 12, 'text-anchor': 'end', 'font-size': 9,
+        'font-family': MONO, fill: INK, 'fill-opacity': .45, text: 'the dataset D' }, s1);
+      E('text', { x: (PX(DR) + PX(X1)) / 2, y: T + 12, 'text-anchor': 'middle', 'font-size': 9,
+        'font-family': MONO, fill: INK, 'fill-opacity': .3, text: 'no data' }, s1);
+    }
     E('line', { x1: L, x2: CW - Rr, y1: PY(0), y2: PY(0), stroke: INK, 'stroke-opacity': .22 }, s1);
     E('line', { x1: L, x2: L, y1: T, y2: CH - B, stroke: INK, 'stroke-opacity': .28 }, s1);
     [0, 2, 4].forEach(function (v) {
       E('text', { x: L - 5, y: PY(v) + 3.2, 'text-anchor': 'end', 'font-size': 9, fill: INK,
         'fill-opacity': .45, 'font-family': MONO, text: v }, s1);
     });
-    E('text', { x: L + (CW - L - Rr) / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9.5,
+    if (MODE !== 'term') E('text', { x: L + (CW - L - Rr) / 2, y: CH - 5, 'text-anchor': 'middle', 'font-size': 9.5,
       'font-style': 'italic', fill: INK, 'fill-opacity': .45, text: 'x' }, s1);
     var g = { PX: PX, PY: PY };
     curve(g, ftrue, INK, '', 2.2, .34);
@@ -255,7 +273,9 @@ IE437.widget('conservative-coms', function (host, opts) {
   function floorMu(g, w) {
     var MU = attack(w), mx = Math.max.apply(null, MU);
     strip(s1, g.PX, g.PY(YLO), MU, X0, X1);
-    E('text', { x: g.PX(mx) + 6, y: g.PY(YLO) - 4, 'font-size': 9, 'font-family': MONO, fill: INK,
+    if (MODE === 'term') E('text', { x: CW - FR - 2, y: g.PY(YLO) - 4, 'text-anchor': 'end', 'font-size': 9,
+      'font-family': MONO, fill: INK, 'fill-opacity': .55, text: 'where the attacker went (μ)' }, s1);
+    else E('text', { x: g.PX(mx) + 6, y: g.PY(YLO) - 4, 'font-size': 9, 'font-family': MONO, fill: INK,
       'fill-opacity': .55, text: 'where the attacker went (μ)' }, s1);
   }
   /* the stretch of surrogate a search slid along, from the start */
@@ -383,7 +403,36 @@ IE437.widget('conservative-coms', function (host, opts) {
       : 'The slow search on the plain fit reaches the edge too. <b>It takes both</b>: a flattened surrogate and a short, slow search.';
   }
 
-  var draw = MODE === 'dial' ? drawDial : MODE === 'first' ? drawFirst : drawOptimiser;
+  /* one term of the loss per panel: the fit it produces, and the fit before it, faint */
+  function drawTerm() {
+    var a = ALPHA[ai], W1 = model1(a), W = model(a);
+    var res = function (w) { var s = 0; D.forEach(function (d) { s += ev(w, d.x) - d.y; }); return s / N; };
+    var g = frame();
+    if (TERM >= 2) floorMu(g, W1);
+    if (TERM === 1) {
+      surrogate(g, W0, BLUE);
+      key(g, [{ col: BLUE, lab: 'plain fit' }]);
+    } else if (TERM === 2) {
+      surrogate(g, W0, BLUE, .35);
+      surrogate(g, W1, RED);
+      D.forEach(function (d) {            /* the data sit above the first attempt */
+        E('line', { x1: g.PX(d.x), x2: g.PX(d.x), y1: g.PY(d.y), y2: g.PY(ev(W1, d.x)), stroke: RED,
+          'stroke-opacity': .7, 'stroke-width': 2 }, s1);
+      });
+      key(g, [{ col: BLUE, op: .35, lab: 'plain fit' }, { col: RED, lab: 'first attempt' }]);
+    } else {
+      surrogate(g, W1, RED, .4);
+      surrogate(g, W, GREEN);
+      key(g, [{ col: RED, op: .4, lab: 'first attempt' }, { col: GREEN, lab: 'full COMs' }]);
+    }
+    dots(g);
+    var m = res(TERM === 1 ? W0 : TERM === 2 ? W1 : W), col = m < -0.005 ? RED : TERM === 3 ? GREEN : INK;
+    var lines = TERM === 1 ? 2 : 3;                  /* key rows above it: truth + the fits drawn */
+    E('text', { x: g.PX(0.15), y: g.PY(4.45) + 15 * lines + 3, 'font-size': 9.5, 'font-family': MONO,
+      fill: col, 'fill-opacity': col === INK ? .6 : 1, text: 'mean error on D: ' + f2(m) }, s1);
+  }
+
+  var draw = MODE === 'dial' ? drawDial : MODE === 'first' ? drawFirst : MODE === 'term' ? drawTerm : drawOptimiser;
   var dial = null;
   if (MODE === 'dial') {
     dial = IE437.slider(host.querySelector('[data-sl]'), {
@@ -399,6 +448,7 @@ IE437.widget('conservative-coms', function (host, opts) {
       finish: function () { ai = 2; dial.set(2, false); draw(); }
     };
   }
+  if (MODE === 'term') return { reset: function () { draw(); }, finish: function () { draw(); } };
   var NST = MODE === 'optimiser' ? 2 : 1;
   var show = function (i) { stage = Math.max(0, Math.min(NST, i)); draw(); };
   return { steps: NST, step: show, reset: function () { show(0); }, finish: function () { show(NST); } };

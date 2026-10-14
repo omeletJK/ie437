@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "html",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8437", "--directory", "html"],
+      "port": 8437
+    },
+    {
+      "name": "html-mobo",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8445", "--directory", "html"],
+      "port": 8445
+    }
+  ]
+}

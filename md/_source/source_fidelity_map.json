@@ -2459,13 +2459,13 @@
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Five ways to optimise a black box, and what every one of them needs",
-              "slide_at_review": 73,
+              "slide_at_review": 75,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Backup 1 — offline MBO against Bayesian optimisation",
-              "slide_at_review": 67,
+              "slide_at_review": 68,
               "placement_at_review": "appendix"
             }
           ],
@@ -2595,7 +2595,7 @@
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Three answers, side by side",
-              "slide_at_review": 59,
+              "slide_at_review": 60,
               "placement_at_review": "main"
             },
             {
@@ -2613,8 +2613,14 @@
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Backup 2 — NEMO, made tractable",
-              "slide_at_review": 68,
+              "slide_at_review": 69,
               "placement_at_review": "appendix"
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "The NML formula, one label at a time",
+              "slide_at_review": 46,
+              "placement_at_review": "main"
             }
           ],
           "note": "원본은 NEMO 먼저, HTML은 COMs 후. refit/normalise와 근사 알고리즘 보존, 전체 theorem 증명 없음. 논문 비중 조정: 관련 상세 설명을 심화 appendix로 이동하고 본문의 개념 비교는 유지."
@@ -2642,24 +2648,24 @@
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Backup — one COMs loss calculation",
-              "slide_at_review": 69,
+              "slide_at_review": 70,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Turning the dial",
-              "slide_at_review": 27,
+              "slide_at_review": 28,
               "placement_at_review": "main"
             },
             {
               "deck": "ch05_surrogate_design_optimization",
-              "heading": "Why it works — one value per design",
-              "slide_at_review": 30,
-              "placement_at_review": "main"
+              "heading": "Backup — the tabular COMs solution",
+              "slide_at_review": 71,
+              "placement_at_review": "appendix"
             },
             {
               "deck": "ch05_surrogate_design_optimization",
-              "heading": "What the calculation promises, and what it does not",
+              "heading": "What conservatism promises, and what it does not",
               "slide_at_review": 31,
               "placement_at_review": "main"
             },
@@ -2695,7 +2701,7 @@
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "What the benchmark says",
-              "slide_at_review": 71,
+              "slide_at_review": 73,
               "placement_at_review": "appendix"
             }
           ],
@@ -2729,19 +2735,19 @@
             {
               "deck": "ch05_surrogate_design_optimization",
               "heading": "Where we are — a forward model, then a search",
-              "slide_at_review": 61,
-              "placement_at_review": "main"
-            },
-            {
-              "deck": "ch05_surrogate_design_optimization",
-              "heading": "Offline, every number off the data is a guess — decide accordingly.",
               "slide_at_review": 62,
               "placement_at_review": "main"
             },
             {
               "deck": "ch05_surrogate_design_optimization",
-              "heading": "Questions?",
+              "heading": "Offline, every number off the data is a guess — decide accordingly.",
               "slide_at_review": 63,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch05_surrogate_design_optimization",
+              "heading": "Questions?",
+              "slide_at_review": 64,
               "placement_at_review": "main"
             }
           ],

@@ -231,7 +231,7 @@
     "ch05_surrogate_design_optimization": {
       "previous_slides": 49,
       "previous_core_slides": 39,
-      "slides": 74,
+      "slides": 75,
       "core_slides": 64,
       "appendix_start": 65,
       "first_topic_slide": 4,
@@ -243,6 +243,8 @@
         "offline-heater",
         "mbo-papers",
         "conservative-coms",
+        "conservative-coms",
+        "conservative-coms",
         "lookahead-brake",
         "conservative-coms",
         "conservative-coms",
@@ -250,6 +252,7 @@
         "mbo-papers",
         "lcb-flip",
         "ensemble-alarm",
+        "nml-explain",
         "fgm-stitch",
         "fgm-stitch",
         "ko-discrepancy"
@@ -322,7 +325,8 @@
         64
       ],
       "moved_to_appendix": [
-        53
+        70,
+        71
       ]
     },
     "ch06_generative_design_optimization": {
