@@ -10,9 +10,12 @@
      equally consistent, and the fitted surrogate is simply whichever
      one the architecture prefers. The true value out there (the hollow
      mark) was never measured, and offline it never will be.
-   Right (source part 1, p.24): the valid designs are a small region
-     inside a large input space. Ascent started inside it leaves almost
-     at once, and the returned designs are not designs at all.
+   Right (source part 1, p.24, redrawn): only when designs must satisfy
+     a constraint. The valid designs are a thin curve in a large input
+     space; ascent from a data point leaves it at once. Two marks separate
+     the problems: a point right next to the data can already be off the
+     curve (near D, invalid), and a point far from the data can still be
+     on it (out of distribution, valid). OOD and invalid are independent.
    ============================================================ */
 IE437.widget('two-failures', function (host, opts) {
   var E = IE437.el, INK = '#16181D', RED = '#D64545', GREEN = '#16A34A', SLATE = '#64748B';
@@ -26,7 +29,7 @@ IE437.widget('two-failures', function (host, opts) {
     'PROBLEM 1 &mdash; D DOES NOT DETERMINE f OFF D</div></div>' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:8px">' +
     '<div data-b></div><div style="font:600 11px/1.4 var(--mono);letter-spacing:.06em;color:' + RED + '">' +
-    'PROBLEM 2 &mdash; AND ASCENT LEAVES THE VALID SET</div></div></div>';
+    'PROBLEM 2 &mdash; WITH A CONSTRAINT: ASCENT LEAVES THE VALID SET</div></div></div>';
 
   function cross(sv, x, y, r, col, w) {
     E('line', { x1: x - r, y1: y - r, x2: x + r, y2: y + r, stroke: col, 'stroke-width': w, 'stroke-linecap': 'round' }, sv);
@@ -75,40 +78,50 @@ IE437.widget('two-failures', function (host, opts) {
       'font-weight': 700, text: 'every one of these fits D' }, A);
   })();
 
-  /* ---------------- panel B — the valid manifold ---------------- */
+  /* ---------------- panel B — the valid set, a thin curve ---------------- */
   var B2 = IE437.svg(W, H);
   host.querySelector('[data-b]').appendChild(B2);
   (function () {
-    var cx = 146, cy = 142, Rout = 122, vx = 124, vy = 100, Rin = 52;
-    E('circle', { cx: cx, cy: cy, r: Rout, fill: SLATE, 'fill-opacity': .10, stroke: INK,
+    var X0 = 18, X1 = 282, Y0 = 18, Y1 = 270;
+    E('rect', { x: X0, y: Y0, width: X1 - X0, height: Y1 - Y0, rx: 10, fill: SLATE, 'fill-opacity': .10, stroke: INK,
       'stroke-opacity': .25, 'stroke-width': 1.2 }, B2);
-    E('circle', { cx: vx, cy: vy, r: Rin, fill: GREEN, 'fill-opacity': .16, stroke: GREEN, 'stroke-width': 1.8 }, B2);
-    [[-27, -25], [-5, -32], [17, -20], [-30, 5], [5, 3], [30, 10], [-12, 22], [15, 27]]
-      .forEach(function (d) { cross(B2, vx + d[0], vy + d[1], 4, INK, 2); });
-
-    var sx = vx - 17, sy = vy + Rin - 6;
-    [[-86, 96, -116, 42], [-19, 130, -70, 92], [37, 122, 8, 76]].forEach(function (e) {
-      var ex = vx + e[0], ey = vy + e[1], qx = vx + e[2], qy = vy + e[3];
-      E('path', { d: 'M' + sx + ' ' + sy + 'Q' + qx + ' ' + qy + ' ' + ex + ' ' + ey,
-        fill: 'none', stroke: RED, 'stroke-width': 2, 'stroke-opacity': .85 }, B2);
-      cross(B2, ex, ey, 5, RED, 2.6);
-    });
+    /* the valid designs: a thin band along a curve */
+    var cy = function (x) { return 150 - 58 * Math.sin((x - 30) / 236 * 5.2); };
+    var pts = [], x;
+    for (x = 30; x <= 270; x += 3) pts.push(x.toFixed(1) + ' ' + cy(x).toFixed(1));
+    E('path', { d: 'M' + pts.join('L'), fill: 'none', stroke: GREEN, 'stroke-width': 12, 'stroke-opacity': .22, 'stroke-linecap': 'round' }, B2);
+    E('path', { d: 'M' + pts.join('L'), fill: 'none', stroke: GREEN, 'stroke-width': 1.6, 'stroke-opacity': .8 }, B2);
+    /* the data: on one stretch of the curve */
+    [44, 60, 76, 92, 108, 124, 140].forEach(function (u) { cross(B2, u, cy(u), 4, INK, 2); });
+    /* ascent from a data point leaves the curve at once */
+    var sx = 124, sy = cy(124);
+    E('path', { d: 'M' + sx + ' ' + sy + 'Q' + 150 + ' ' + 150 + ' ' + 170 + ' ' + 232, fill: 'none', stroke: RED, 'stroke-width': 2, 'stroke-opacity': .85 }, B2);
+    cross(B2, 170, 232, 5, RED, 2.6);
     E('circle', { cx: sx, cy: sy, r: 5, fill: '#FAFAF8', stroke: INK, 'stroke-width': 2.2 }, B2);
+    /* next to the data, but off the curve */
+    var nx = 84, ny = cy(84) + 22;
+    E('circle', { cx: nx, cy: ny, r: 5.5, fill: 'none', stroke: RED, 'stroke-width': 2.2 }, B2);
+    /* far from the data, but on the curve */
+    var fx = 250, fy = cy(250);
+    E('circle', { cx: fx, cy: fy, r: 5.5, fill: 'none', stroke: GREEN, 'stroke-width': 2.4 }, B2);
 
     var LX = 300;
-    [['valid designs', GREEN, 'sw'], ['every input', SLATE, 'sw'], ['the dataset D', INK, 'x'],
-     ['ascent starts here', INK, 'o'], ['and ends here', RED, 'x']].forEach(function (r, i) {
-      var y = 44 + i * 26;
-      if (r[2] === 'sw') E('rect', { x: LX, y: y - 9, width: 14, height: 14, rx: 2, fill: r[1],
-        'fill-opacity': r[1] === GREEN ? .3 : .18, stroke: r[1], 'stroke-opacity': .85 }, B2);
-      else if (r[2] === 'o') E('circle', { cx: LX + 7, cy: y - 2, r: 5, fill: 'none', stroke: r[1],
+    [['valid designs', GREEN, 'band'], ['every input', SLATE, 'sw'], ['the dataset D', INK, 'x'],
+     ['ascent starts here', INK, 'o'], ['and ends here', RED, 'x'],
+     ['next to D, not a design', RED, 'ring'], ['far from D, a design', GREEN, 'ring']].forEach(function (r, i) {
+      var y = 34 + i * 24;
+      if (r[2] === 'band') { E('line', { x1: LX, x2: LX + 14, y1: y - 2, y2: y - 2, stroke: GREEN, 'stroke-width': 8, 'stroke-opacity': .3 }, B2);
+        E('line', { x1: LX, x2: LX + 14, y1: y - 2, y2: y - 2, stroke: GREEN, 'stroke-width': 1.4 }, B2); }
+      else if (r[2] === 'sw') E('rect', { x: LX, y: y - 9, width: 14, height: 14, rx: 2, fill: r[1],
+        'fill-opacity': .18, stroke: r[1], 'stroke-opacity': .85 }, B2);
+      else if (r[2] === 'o' || r[2] === 'ring') E('circle', { cx: LX + 7, cy: y - 2, r: 5, fill: 'none', stroke: r[1],
         'stroke-width': 2.2 }, B2);
       else cross(B2, LX + 7, y - 2, 4.5, r[1], 2.2);
       E('text', { x: LX + 23, y: y + 2, 'font-size': 10.5, fill: INK, 'fill-opacity': .72, text: r[0] }, B2);
     });
-    ['A molecule plus one', 'gradient step is', 'usually not a molecule.'].forEach(function (s, i) {
-      E('text', { x: LX, y: 196 + i * 16, 'font-size': 10.5, 'font-style': 'italic', fill: INK,
-        'fill-opacity': .5, text: s }, B2);
+    ['Only when designs must', 'satisfy a constraint.', 'A molecule plus one', 'gradient step is', 'usually not a molecule.'].forEach(function (t, i) {
+      E('text', { x: LX, y: 214 + i * 15 + (i >= 2 ? 6 : 0), 'font-size': 10.5, 'font-style': 'italic', fill: INK,
+        'fill-opacity': i < 2 ? .75 : .5, 'font-weight': i < 2 ? 700 : 400, text: t }, B2);
     });
   })();
 

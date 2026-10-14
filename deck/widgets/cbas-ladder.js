@@ -13,6 +13,10 @@
      w_i   <- [p(x_i | theta_0) / q(x_i | phi_t)] * P(y >= gamma | x_i)
      q^(t+1) <- weighted MLE on {x_i, w_i}                             (refit)
 
+   Walked by the deck's ->: 0 the prior; 1 one shot at the target;
+   2-4 rounds 1-3 of the ladder; 5 all eight rounds. A mount with
+   {"target":3} asks for 3.00 instead.
+
    Verified in node before shipping (seed 31, M = 400 per round, Q = 0.85,
    8 rounds; one-shot uses 4000 prior draws, seed 29):
 
@@ -110,15 +114,12 @@ IE437.widget('cbas-ladder', function (host, opts) {
   }
 
   var TARGETS = [2.65, 3.00], LAD = TARGETS.map(ladder), ONE = TARGETS.map(oneShot);
-  var ti = 0, r = 0, showOne = false;
+  var ti = opts.target === 3 ? 1 : 0, r = 0, showOne = false;
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">a hard conditional query, replaced by a sequence of easy ones</span>' +
     '<span class="wspacer"></span>' +
-    '<button class="wb" data-tg style="min-width:104px"></button>' +
-    '<button class="wb" data-one>one shot</button>' +
-    '<button class="wb" data-step>step</button>' +
-    '<button class="wb" data-auto data-run>run the ladder</button>' +
+    '<span class="wlabel">target</span><span class="wnum">y ≥ ' + TARGETS[ti].toFixed(2) + '</span>' +
     '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:flex-start;padding:11px 16px 9px">' +
     '<div data-c></div><div data-t style="flex:1;min-width:0"></div></div>';
@@ -150,10 +151,10 @@ IE437.widget('cbas-ladder', function (host, opts) {
       'fill-opacity': .45, 'font-family': 'IBM Plex Mono, monospace', text: 'design x' }, sv);
 
     /* the two landmarks */
-    [[5.43, 'best design in D', SLATE], [6.04, 'true optimum', GREEN]].forEach(function (m) {
+    [[5.43, 'best design in D', SLATE, 'end', -4], [6.04, 'true optimum', GREEN, 'start', 4]].forEach(function (m) {
       E('line', { x1: cx(m[0]), y1: PT, x2: cx(m[0]), y2: BT, stroke: m[2], 'stroke-width': 1.3,
         'stroke-opacity': .6, 'stroke-dasharray': '3 3' }, sv);
-      E('text', { x: cx(m[0]) + 4, y: PT + 10, 'font-size': 9.5, fill: m[2], 'fill-opacity': .95,
+      E('text', { x: cx(m[0]) + m[4], y: PT + 10, 'text-anchor': m[3], 'font-size': 9.5, fill: m[2], 'fill-opacity': .95,
         'font-family': 'IBM Plex Mono, monospace', text: m[1] }, sv);
     });
 
@@ -179,7 +180,7 @@ IE437.widget('cbas-ladder', function (host, opts) {
     E('text', { x: cx(MU), y: BT - nd(MU, MU, SD) / mx * HB - 6, 'text-anchor': 'middle', 'font-size': 10,
       fill: SLATE, 'font-weight': 700, text: 'prior' }, sv);
     var cur = H[Math.min(r, H.length - 1)];
-    E('text', { x: cx(cur.mu), y: BT - 1 / (cur.sd * Math.sqrt(2 * Math.PI)) / mx * HB - 6, 'text-anchor': 'middle',
+    if (r > 0) E('text', { x: cx(cur.mu), y: BT - 1 / (cur.sd * Math.sqrt(2 * Math.PI)) / mx * HB - 6, 'text-anchor': 'middle',
       'font-size': 10.5, fill: BLUE, 'font-weight': 700,
       text: cur.last ? 'final q' : 'q at round ' + r }, sv);
 
@@ -196,7 +197,6 @@ IE437.widget('cbas-ladder', function (host, opts) {
     }
     var fin = H[H.length - 1], done = (r >= ROUNDS);
     var worst = Math.min.apply(null, H.slice(0, ROUNDS).map(function (h) { return h.eff / MS; }));
-    host.querySelector('[data-tg]').textContent = 'target ' + T.toFixed(2);
     host.querySelector('[data-t]').innerHTML =
       '<div class="wlabel" style="margin-bottom:6px">the relaxed conditions</div>' +
       '<table style="font:400 11.5px/1.5 var(--mono);color:var(--ink2);border-collapse:collapse">' +
@@ -215,17 +215,14 @@ IE437.widget('cbas-ladder', function (host, opts) {
           '.<br>Final <b>q = N(' + fin.mu.toFixed(2) + ', ' + fin.sd.toFixed(2) + '&sup2;)</b>; the design at its mean is worth ' +
           '<b style="color:' + (ftrue(fin.mu) > BEST ? GREEN : AMBER) + '">' + ftrue(fin.mu).toFixed(3) + '</b>' +
           ' <span style="color:var(--ink4)">(best in D ' + BEST.toFixed(3) + ', true optimum 2.657)</span>'
-        : '<span style="color:var(--ink4)">Step the ladder: relax the bar to the 85th percentile of the model’s own ' +
-          'predictions, refit, tighten, repeat.</span>') +
+        : '<span style="color:var(--ink4)">' + (showOne ? 'Press → to climb: relax the bar to the 85th percentile of the model’s own ' +
+          'predictions, refit, tighten, repeat.' : 'Press → to ask for the target in one shot.') + '</span>') +
       '</div>';
   }
 
-  host.querySelector('[data-step]').onclick = function () { r = Math.min(ROUNDS, r + 1); draw(); };
-  host.querySelector('[data-run]').onclick = function () { r = ROUNDS; draw(); };
-  host.querySelector('[data-one]').onclick = function () { showOne = !showOne; draw(); };
-  var __reset = function () { r = 0; showOne = false; draw(); };
-  host.querySelector('[data-tg]').onclick = function () { ti = (ti + 1) % TARGETS.length; r = 0; draw(); };
-
-  draw();
-  return { reset: __reset, finish: function () { ti = 0; r = ROUNDS; showOne = true; draw(); } };
+  /* the deck's -> : 0 the prior, 1 one shot, then rounds 1, 2, 3 and the rest */
+  var RS = [0, 0, 1, 2, 3, ROUNDS], NS = RS.length - 1;
+  var show = function (k) { k = Math.max(0, Math.min(NS, k)); r = RS[k]; showOne = k >= 1; draw(); };
+  show(0);
+  return { steps: NS, step: show, reset: function () { show(0); }, finish: function () { show(NS); } };
 });

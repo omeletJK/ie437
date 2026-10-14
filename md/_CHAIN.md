@@ -9,8 +9,8 @@ The opening names a usable prerequisite and one new question; the closing names 
 | 2 | Basic probability | Specify a likelihood, update a parameter belief and predict a new observation |
 | 3 | Bayes and marginalization | Represent → infer → learn local tables → filter a hidden state → choose by utility |
 | 4 | Gaussian conditioning | GP → acquisition → evaluation → posterior update |
-| 5 | Regression and optimization | Diagnose selected-model error; fit and use COMs conservatively |
-| 6 | Probability distributions and latent variables | VAE → DDPM training/sampling → conditioning toward successful designs |
+| 5 | Regression and optimization | Diagnose selected-model error (the decision bound); three grounds for trust — conservatism (COMs), uncertainty (μ − κσ, NEMO), system knowledge (FGM) |
+| 6 | Sampling and weighting (3), Lecture 5's performance model | KL → VAE/DDPM → four places for a performance signal: coordinates (latent search), distribution (CbAS), condition (MINs/DDOM), sampler (guidance/RGD) — with Lecture 5's tools wherever a surrogate enters |
 | 7 | One-step decisions and conditional expectation | MDP → Bellman backup → policy/value iteration → convergence meaning |
 | 8 | Bellman targets | MC/TD → sampled control → Q-learning → DQN and Double DQN |
 | 9 | Calculus and Bellman reasoning | One-step feedback → LQR → HJB interpretation → PMP interpretation |

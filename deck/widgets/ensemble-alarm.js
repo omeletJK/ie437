@@ -16,11 +16,15 @@
      truth is 18.2 standard deviations outside the band they agree on
    and more members do not help: K = 4 gives 18.2 sigma, K = 40 gives 15.4.
    ============================================================ */
+/* Revised 2026-10-11: the true f is drawn faintly from the start (no reveal
+   toggle), and the dial is kappa in the offline rule mu - kappa*sigma with
+   K = 10 members: the pick stays at the far edge (truth -0.14) until kappa
+   is about 10, because the members' spread there is only 0.24.            */
 IE437.widget('ensemble-alarm', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', RED = '#D64545', SLATE = '#64748B';
 
   var X0 = 0, X1 = 10, DL = 0.8, DR = 5.4, LAM = 0.06, ETA = 0.35, N = 15;
-  var KS = [4, 10, 20, 40], ki = 1, reveal = false;
+  var KS = [4, 10, 20, 40], ki = 1, reveal = true, KAP0 = typeof opts.kappa === 'number' ? opts.kappa : 2, kap = KAP0;
 
   function ftrue(x) {
     return 2.55 * Math.exp(-0.5 * Math.pow((x - 6.1) / 1.75, 2))
@@ -80,8 +84,7 @@ IE437.widget('ensemble-alarm', function (host, opts) {
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">Would an ensemble have caught it?</span><span class="wspacer"></span>' +
-    '<label class="wtog" data-rev><i></i><span>reveal the true f</span></label>' +
-    '<span class="wlabel">members</span><span class="wnum" data-k></span>' +
+    '<span class="wlabel">10 members · risk weight</span><span class="wnum" data-k></span>' +
     '<span data-sl></span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:15px;align-items:flex-start;justify-content:center">' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:3px">' +
@@ -102,13 +105,17 @@ IE437.widget('ensemble-alarm', function (host, opts) {
     var K = KS[ki], k, x;
     var YLO = -0.7, YHI = 4.8, L = 34, Rr = 14, T = 16, B = 30;
 
-    /* where ascent on the ensemble mean ends up */
-    var gm = function (z) { return (stat(z + 1e-4, K).m - stat(z - 1e-4, K).m) / 2e-4; };
-    var xa = D[0].x, ya = D[0].y;
-    D.forEach(function (d) { if (d.y > ya) { ya = d.y; xa = d.x; } });
-    var xs = xa;
-    for (k = 0; k < 40; k++) xs = Math.max(X0, Math.min(X1, xs + ETA * gm(xs)));
+    /* the offline rule: the design maximising mu - kappa*sigma */
+    var xs = X0, bv = -1e9;
+    for (k = 0; k <= 400; k++) { x = X0 + (X1 - X0) * k / 400; var sk = stat(x, K), vk = sk.m - kap * sk.sd; if (vk > bv) { bv = vk; xs = x; } }
     var st = stat(xs, K), sig = Math.abs(st.m - ftrue(xs)) / Math.max(st.sd, 1e-9);
+    /* the kappa it would take to stop the rule at the data */
+    var kneed = null;
+    for (var kk = 0; kk <= 30; kk += 0.25) {
+      var bx = X0, bb = -1e9;
+      for (k = 0; k <= 200; k++) { x = X0 + (X1 - X0) * k / 200; var s5 = stat(x, K), v5 = s5.m - kk * s5.sd; if (v5 > bb) { bb = v5; bx = x; } }
+      if (bx <= DR + 0.6) { kneed = kk; break; }
+    }
 
     /* aggregate diagnostics */
     var inSd = 0, inEr = 0, inN = 0, ouSd = 0, ouEr = 0, ouN = 0;
@@ -144,16 +151,21 @@ IE437.widget('ensemble-alarm', function (host, opts) {
     var mm = [];
     for (k = 0; k <= 220; k++) { x = X0 + (X1 - X0) * k / 220; mm.push(PX(x).toFixed(1) + ' ' + PY(stat(x, K).m).toFixed(1)); }
     E('path', { d: 'M' + mm.join('L'), fill: 'none', stroke: BLUE, 'stroke-width': 2.1, 'stroke-dasharray': '5 3' }, s1);
+    var lc = [];
+    for (k = 0; k <= 220; k++) { x = X0 + (X1 - X0) * k / 220; var s6 = stat(x, K); lc.push(PX(x).toFixed(1) + ' ' + PY(s6.m - kap * s6.sd).toFixed(1)); }
+    E('path', { d: 'M' + lc.join('L'), fill: 'none', stroke: '#16A34A', 'stroke-width': 2.3 }, s1);
+    E('text', { x: PX(9.6), y: PY(stat(9.6, K).m - kap * stat(9.6, K).sd) + 16, 'text-anchor': 'end', 'font-size': 10.5,
+      fill: '#16A34A', 'font-weight': 700, text: 'μ − κσ' }, s1);
     if (reveal) {
       var tt = [];
       for (k = 0; k <= 300; k++) { x = X0 + (X1 - X0) * k / 300; tt.push(PX(x).toFixed(1) + ' ' + PY(ftrue(x)).toFixed(1)); }
-      E('path', { d: 'M' + tt.join('L'), fill: 'none', stroke: INK, 'stroke-width': 2.3, 'stroke-opacity': .8 }, s1);
-      E('text', { x: PX(8.9), y: PY(ftrue(8.9)) - 12, 'text-anchor': 'end', 'font-size': 10.5, fill: INK,
-        'fill-opacity': .75, 'font-weight': 700, text: 'true f' }, s1);
+      E('path', { d: 'M' + tt.join('L'), fill: 'none', stroke: INK, 'stroke-width': 2.2, 'stroke-opacity': .34 }, s1);
+      E('line', { x1: PX(5.9), x2: PX(5.9) + 16, y1: PY(-0.35), y2: PY(-0.35), stroke: INK, 'stroke-width': 2.2, 'stroke-opacity': .34 }, s1);
+      E('text', { x: PX(5.9) + 21, y: PY(-0.35) + 3.5, 'font-size': 10, fill: INK, 'fill-opacity': .55, 'font-weight': 700, text: 'true f — never queried' }, s1);
     }
     D.forEach(function (d) { E('circle', { cx: PX(d.x), cy: PY(d.y), r: 2.9, fill: INK }, s1); });
     E('line', { x1: PX(xs), y1: T, x2: PX(xs), y2: CH - B, stroke: RED, 'stroke-opacity': .35, 'stroke-dasharray': '2 3' }, s1);
-    E('circle', { cx: PX(xs), cy: PY(st.m), r: 4.5, fill: RED }, s1);
+    E('circle', { cx: PX(xs), cy: PY(st.m - kap * st.sd), r: 5, fill: '#16A34A' }, s1);
     if (reveal) E('circle', { cx: PX(xs), cy: PY(ftrue(xs)), r: 4.5, fill: 'none', stroke: INK, 'stroke-width': 2 }, s1);
     E('text', { x: PX(7.4), y: PY(stat(7.4, K).m + 2 * stat(7.4, K).sd) - 10, 'text-anchor': 'middle',
       'font-size': 10.5, fill: BLUE, 'font-weight': 700, text: 'ensemble mean ± 2σ' }, s1);
@@ -188,7 +200,7 @@ IE437.widget('ensemble-alarm', function (host, opts) {
       'font-style': 'italic', fill: INK, 'fill-opacity': .45, text: 'x' }, s2);
 
     /* ---------- readout ---------- */
-    host.querySelector('[data-k]').textContent = K;
+    host.querySelector('[data-k]').textContent = 'κ = ' + kap.toFixed(1);
     host.querySelector('[data-num]').innerHTML =
       '<span style="color:var(--ink4)">inside D</span><br>' +
       'spread <b>' + inSd.toFixed(3) + '</b> · error <b>' + inEr.toFixed(3) + '</b><br>' +
@@ -197,20 +209,20 @@ IE437.widget('ensemble-alarm', function (host, opts) {
       'spread ×<b>' + (ouSd / inSd).toFixed(1) + '</b>, error <b style="color:' + RED + '">×' +
       (ouEr / inEr).toFixed(0) + '</b>';
     host.querySelector('[data-note]').innerHTML =
-      'Ascent on the ensemble mean returns x* = <b>' + xs.toFixed(2) + '</b>, where the truth lies <b style="color:' +
-      RED + '">' + sig.toFixed(0) + 'σ</b> outside the band. ' +
-      (K > 10 ? 'More members do not close it &mdash; they share a basis, so they extrapolate wrongly <i>together</i>.'
-              : 'Try more members.');
+      'The rule picks x = <b>' + xs.toFixed(2) + '</b>, worth <b>' + (ftrue(xs) < 0 ? '−' : '') + Math.abs(ftrue(xs)).toFixed(2) +
+      '</b>; the truth there lies <b style="color:' + RED + '">' + sig.toFixed(0) + 'σ</b> outside the band. ' +
+      (kneed !== null ? 'It would take κ ≈ <b>' + kneed.toFixed(0) + '</b> to keep the pick at the data. ' : '') +
+      'The members share an architecture and data, so they extrapolate wrongly <i>together</i>; more members do not help.';
   }
 
-  host.querySelector('[data-rev]').onclick = function () { reveal = !reveal; this.classList.toggle('on', reveal); draw(); };
-  IE437.slider(host.querySelector('[data-sl]'), {
-    bare: true, min: 0, max: KS.length - 1, step: 1, value: ki,
-    on: function (v) { ki = v; draw(); }
+  var dial = IE437.slider(host.querySelector('[data-sl]'), {
+    bare: true, min: 0, max: 12, step: 0.5, value: kap,
+    on: function (v) { kap = +v; draw(); }
   });
 
   draw();
   return {
-    finish: function () { reveal = true; ki = 1; host.querySelector('[data-rev]').classList.add('on'); draw(); }
+    reset: function () { kap = KAP0; dial.set(KAP0, false); draw(); },
+    finish: function () { kap = KAP0; dial.set(KAP0, false); draw(); }
   };
 });

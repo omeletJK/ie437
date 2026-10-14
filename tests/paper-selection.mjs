@@ -18,10 +18,12 @@ const advanced=(ch,prefix)=>assert.ok(position(ch,prefix)>position(ch,'Appendix 
 const order=(ch,prefixes)=>{
  const ps=prefixes.map(h=>position(ch,h));assert.ok(ps.every((n,i)=>!i||n>ps[i-1]),ch+': prerequisite order');
 };
-for(const h of ['COMs — train','The loss, term by term','One COMs loss'])core('ch05',h);
-for(const h of ['NEMO — how','RoMA — flatten','What the benchmark says'])advanced('ch05',h);
-order('ch06',['The evidence is intractable','DDPM training','CbAS — fit','Diffusion Policy —']);
-for(const h of ['The 2023 descendants','DDOM — reweight','BootGen — generated'])advanced('ch06',h);
+// Lectures 5–6 follow the 2026-10-11 rewrite: the problem, then research streams with their representative papers.
+for(const h of ['COMs — what we want','The loss, term by term','NEMO — uncertainty as','Structure — count'])core('ch05',h);
+for(const h of ['Backup — one COMs loss','Backup — RoMA','What the benchmark says'])advanced('ch05',h);
+order('ch05',['Offline model-based','COMs — what we want','Uncertainty is Lecture 4','Knowledge, ordered','Appendix —']);
+order('ch06',['Comparing two distributions','VAE — encode','Diffusion — learn the noise','CbAS — fit','G3 — ask','Classifier-free guidance','A KL-regularised view','How the KL view','G4 — use performance','Diffusion Policy —','Appendix —']);
+for(const h of ['Backup — one VAE calculation','DDOM and BootGen — the reported','BootGen — generated'])advanced('ch06',h);
 order('ch08',['Double DQN —','What comes after DQN']);
 order('ch10',['A deterministic actor explores','TD3 — keep','Calculate a TD3 target','SAC — reward','SAC in the learning loop','PPO and SAC —','Appendix —']);
 order('ch11',['Dyna — the same update','MBPO — branch','Dreamer — learn','What imagination teaches','From Dreamer to DreamerV3','Appendix —']);
