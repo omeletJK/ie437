@@ -438,7 +438,7 @@ The source's picture of the same sum: regression on real designs, a push up on r
 {math: compact}
 
 ::: cols
-::: col Algorithm 1 — training
+::: col Algorithm 1 — train the conservative surrogate
 ```
 initialise f_θ; pick η, α
 repeat:
@@ -450,21 +450,26 @@ repeat:
   θ   ← θ − λ ∇_θ L
 ```
 :::
-::: col.accent Algorithm 2 — finding the design
+::: col.accent Algorithm 2 — search it, slowly
 ```
 x₀ = argmax_{(x,y)∈D} y    ← the best design we own
 for t = 0 … T−1:            ← T = 450 in the paper
   x_{t+1} = x_t + η ∇_x L_opt(x_t)
-
+                            ← L_opt: f̂ with a brake, next slide
 return x̂ = x_T
 ```
 :::
 :::
 
 ::: reveal
-$$L_{\text{opt}}(x)=\hat f_{\theta^*}(x)-\beta\,\hat f_{\theta^*}\big(x+\eta\nabla_x\hat f_{\theta^*}(x)\big)\;\approx\;(1-\beta)\,\hat f_{\theta^*}(x)-\beta\eta\,\lVert\nabla_x\hat f_{\theta^*}(x)\rVert^2$$
-
-A **trust region**: it penalises the value one look-ahead step further on, so the search climbs slowly and favours flat ground — up to second order, gradient ascent with a penalty on the gradient's size. The paper uses $\beta=0.9$ and a **fixed** $T=450$ steps: it is not run to convergence.
+::: cols
+::: col
+**Left — learn.** Ordinary regression on $\mathcal D$ plus the penalty of the last two slides. The attacker is re-run on the *current* $f_\theta$ every round, so the surrogate is flattened exactly where it was tempting. Out comes one model, $\hat f_{\theta^*}$.
+:::
+::: col.accent
+**Right — search.** Start from the best design we own and take $T$ small steps uphill — not on $\hat f_{\theta^*}$ itself but on $L_{\text{opt}}$, a braked copy of it that distrusts what the surrogate promises one step further on.
+:::
+:::
 :::
 
 ::: reveal
@@ -474,7 +479,24 @@ Training flattens the surrogate on a distribution of challenging designs near th
 :::
 
 ::: note
-Source alignment: Part 2 p. 35 (Algorithms 1 and 2); the trust-region objective is Trabucco et al. (2021), Eq. 4 and §3.4 (β = 0.9, T = 450; the paper also reports that using the trust-region procedure to build μ performs similarly). The toy in the next widgets: the attacker takes K = 25 plain ascent steps from every data point; the search is Algorithm 2 with β = 0.9 and T = 450. With the paper's one-step attacker this 1-D toy is too local to protect anything.
+Source alignment: Part 2 p. 35 (Algorithms 1 and 2). The toy in the next widgets: the attacker takes K = 25 plain ascent steps from every data point; the search is Algorithm 2 with β = 0.9 and T = 450. With the paper's one-step attacker this 1-D toy is too local to protect anything.
+:::
+
+### The brake — what Algorithm 2 climbs
+{sub: a trust region, as in Lecture 1: do not trust the model further than one step}
+{math: compact}
+
+$$L_{\text{opt}}(x)=\underbrace{\hat f_{\theta^*}(x)}_{\text{what the surrogate says here}}\;-\;\beta\,\underbrace{\hat f_{\theta^*}\big(x+\eta\,\nabla_x\hat f_{\theta^*}(x)\big)}_{\text{what it promises one trial step up}}\,,\qquad \beta=0.9$$
+
+::: widget lookahead-brake
+:::
+
+::: small
+To second order, $L_{\text{opt}}\approx(1-\beta)\,\hat f-\beta\eta\lVert\nabla\hat f\rVert^2$: a tenth of the climb, minus a penalty on steepness. $T=450$ steps is a budget, not convergence.
+:::
+
+::: note
+Trabucco et al. (2021), Eq. 4 and §3.4: β = 0.9, T = 450; the paper also reports that using the trust-region procedure to build μ performs similarly. On flat ground the trial step promises about what the surrogate says, so nine tenths of the same number is subtracted and a tenth is left: the search climbs at a tenth of the pace. On a steep slope the promise is larger by about η‖∇f̂‖², and nine tenths of that is subtracted too, so L_opt falls where f̂ is steep — the edge beyond the data, where a plain fit extrapolates, is downhill for the search. In the toy of the next widgets η = 0.34 and the conservative surrogate's slope beyond the data is about 0.07, so the brake acts mostly through the pace: 450 steps travel about 1.1 units.
 :::
 
 ### Turning the dial

@@ -231,9 +231,9 @@
     "ch05_surrogate_design_optimization": {
       "previous_slides": 49,
       "previous_core_slides": 39,
-      "slides": 73,
-      "core_slides": 63,
-      "appendix_start": 64,
+      "slides": 74,
+      "core_slides": 64,
+      "appendix_start": 65,
       "first_topic_slide": 4,
       "widgets": [
         "two-failures",
@@ -243,6 +243,7 @@
         "offline-heater",
         "mbo-papers",
         "conservative-coms",
+        "lookahead-brake",
         "conservative-coms",
         "conservative-coms",
         "coms-tabular",
@@ -317,7 +318,8 @@
         60,
         61,
         62,
-        63
+        63,
+        64
       ],
       "moved_to_appendix": [
         53
