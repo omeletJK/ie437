@@ -2699,7 +2699,7 @@
               "placement_at_review": "appendix"
             }
           ],
-          "note": "두 단계 손실과 benchmark 유지. 원본 p47 inner max의 descent 표기는 ascent로 수정. 논문 비중 조정: 관련 상세 설명을 심화 appendix로 이동하고 본문의 개념 비교는 유지."
+          "note": "두 단계 손실과 benchmark 유지. 원본 p47 inner max의 descent 표기는 ascent로 수정. 논문 비중 조정: 관련 상세 설명을 심화 appendix로 이동하고 본문의 개념 비교는 유지. 논문 원본 그림 추가: Fig. 2(smoothness prior 효과, 원본 p43)는 본문 RoMA 슬라이드에, Fig. 1(two-stage pipeline, 원본 p41)은 backup 슬라이드에 첨부 (assets/ch05/roma-smoothness.png, roma-pipeline.png)."
         },
         {
           "pages": [

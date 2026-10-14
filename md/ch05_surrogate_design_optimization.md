@@ -665,7 +665,16 @@ Source alignment: Part 2 pp. 54–55. The source writes PRIME's loss without COM
 ### RoMA — make the surrogate smooth where the optimiser stands
 {sub: Yu, Ahn, Song & Shin · NeurIPS 2021 · the objectives are in the appendix}
 
+::: cols wide-l
+::: col
+::: figure roma-smoothness | 560
+Same crosses, same dashed truth. The jagged surrogate's tallest spike is a ==wrong solution==; the smoothed one peaks on the truth. {p}(Yu et al., 2021, Fig. 2)
+:::
+:::
+::: col
 The assumption it adds: over-estimates come from a network that is **not smooth** — spurious spikes between and beyond the data. So it changes the surrogate's *shape* near each candidate, not its *level*.
+:::
+:::
 
 ::: cols
 ::: col Stage 1 — train it smooth
@@ -681,7 +690,7 @@ Adjacent to COMs rather than the same idea: COMs lowers the scores the optimiser
 :::
 
 ::: note
-Source alignment: Part 2 pp. 41–49. The two objectives are on the appendix slide "Backup — RoMA's two stages".
+Source alignment: Part 2 pp. 41–49. The picture is the paper's Figure 2; the two objectives and the paper's pipeline figure are on the appendix slide "Backup — RoMA's two stages".
 :::
 
 ### Session 1 — what conservatism fixed, and what it left
@@ -1110,6 +1119,10 @@ Gradient descent decreases $v$, reducing the unsupported high prediction.
 ### Backup — RoMA's two stages
 {sub: Yu, Ahn, Song & Shin · NeurIPS 2021}
 
+::: figure roma-pipeline | 600
+Step 1 pre-trains under input noise and weight perturbation, but only smooths where the data is; so Step 2 re-adapts the model (yellow) at every candidate $x^{(t)}$ before the solution update. {p}(Yu et al., 2021, Fig. 1)
+:::
+
 ::: cols
 ::: col Stage 1 — train it smooth
 $$L(\theta) = \max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \delta\sim\mathcal N(0,\sigma)}\Big[\big(f(x+\delta;\tilde\theta)-y\big)^2\Big]$$
@@ -1124,10 +1137,6 @@ $$\begin{aligned}
 
 Flatten the model at the current candidate, without moving its prediction there far.
 :::
-:::
-
-::: small
-Stage 1 only smooths where the data is, so Stage 2 re-adapts the model at every intermediate solution. The source figure shows it in two panels: without the prior, a jagged surrogate's tallest spike is a wrong solution; with it, the surrogate lies on the truth.
 :::
 
 ### What the benchmark says
