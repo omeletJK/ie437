@@ -1,0 +1,993 @@
+{
+  "verifiedAt": "2026-10-11T23:54:56.592Z",
+  "method": "Node VM execution of emitted SIM2 and embedded dataset parser with rendering-only DOM stubs; independent imported/exported-plan, configured constraint, factor and score audits. Includes preserved legacy regression and new operator-input cases. This is not browser or offline-file execution.",
+  "artifact": {
+    "path": "student/response/demo.html",
+    "sha256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17"
+  },
+  "sources": {
+    "archiveSHA256": "66021195ceeb0228cf022b096671e2f2a7959bfe73ff6926024bdd4d084d341b",
+    "upstreamSHA256": "70c888ab9547b939ee891b71b0fbd90a04108620f89d8ca9da9c125ebc2dc531",
+    "embeddedDatasetSHA256": "ea378b4694c820f81b36219159fc4f2ac80d72cd9bc12ac471ce7cc1fafc3e3f"
+  },
+  "inputs": {
+    "planningSHA256": "bc92fdc48f88dd6216a4363df2f4a4466cddb72a04750ad945ea82123092a2dc",
+    "screeningsSHA256": "f87dc8fe6bc4bb368ce61384702ca51b34e819cc8afa8f49b1f9f9e85bd06dea"
+  },
+  "checks": [
+    {
+      "name": "All embedded scripts compile",
+      "status": "pass",
+      "result": {
+        "scripts": 2
+      }
+    },
+    {
+      "name": "12 numerical core functions retain original AST",
+      "status": "pass",
+      "result": {
+        "allIdentical": true,
+        "functions": [
+          {
+            "name": "tw",
+            "sha256": "6a4ad544ec66d4d3f5deb2fd06d8fa11d54d8851db01e8ac1a0c42033a05a3db"
+          },
+          {
+            "name": "rnd",
+            "sha256": "345d0d71b9598baf5531c59eb267b047a502459619034430306a3f3bfaf9ae88"
+          },
+          {
+            "name": "ri",
+            "sha256": "001e32834c337c6e8e13ae43672ce1107b1412db3320b3225010ff48468989b5"
+          },
+          {
+            "name": "clone",
+            "sha256": "d73d0b0f9628ad6b12d347fd320fb2150ce16d2cef263f8a351d3c9eb5f4e5c7"
+          },
+          {
+            "name": "packSite",
+            "sha256": "5a007ddc1a572107c388edc23187061f76dba787602e1795b1a435e578992e7a"
+          },
+          {
+            "name": "packAll",
+            "sha256": "3c84ba963ad2d96f0a531432e6fc754dc6a3909718779db98ff8bfd9be59e323"
+          },
+          {
+            "name": "feasible",
+            "sha256": "4b3be3ad9c88c53f13010ab7f67ae78f9955c694d5104074b4c9fb736e823c1a"
+          },
+          {
+            "name": "predict",
+            "sha256": "b583f0bd274c01fd92872129f984418c77f8b0a78c786852dd9a91b75db7d380"
+          },
+          {
+            "name": "evalS",
+            "sha256": "483cb50d74e5ac29c2ab8e358c946f0bdb49cb94e57e606584b04a0afccb80c3"
+          },
+          {
+            "name": "presolve",
+            "sha256": "4cf3fe94cfb8436ca0b4d8f369eee45826681f57dd76666ae5a3ccfaae51bd8d"
+          },
+          {
+            "name": "ruleBaseline",
+            "sha256": "9273d341a279c5672afe0c57287b5b5d8d27bff502f60a7d04fdafa015843bac"
+          },
+          {
+            "name": "move",
+            "sha256": "1d15c12e6815684fdccca940aca72c3dbbacbbce896c95fb77a217c8bbf951dd"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Initial reset produces a feasible scored plan",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 5134,
+          "best": 5134,
+          "iterations": 0,
+          "calls": 1,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5133.6954752787815,
+          "roundedScore": 5134,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        }
+      }
+    },
+    {
+      "name": "Normal preview uses the engine without changing retained best",
+      "status": "pass",
+      "result": {
+        "shift": 0,
+        "site": "Site D",
+        "screen": 1,
+        "lastEnd": 1111,
+        "close": 1480,
+        "maxShift": 365,
+        "status": "feasible",
+        "score": 5134,
+        "showings": 90,
+        "closingSlack": 369,
+        "reason": "Original packing, feasibility and response functions accept and evaluate this plan."
+      }
+    },
+    {
+      "name": "Latest five-minute boundary preview is valid",
+      "status": "pass",
+      "result": {
+        "shift": 365,
+        "site": "Site D",
+        "screen": 1,
+        "lastEnd": 1476,
+        "close": 1480,
+        "maxShift": 365,
+        "status": "feasible",
+        "score": 5099,
+        "showings": 90,
+        "closingSlack": 4,
+        "reason": "Original packing, feasibility and response functions accept and evaluate this plan."
+      }
+    },
+    {
+      "name": "Boundary + 5 minutes returns infeasible and cannot load",
+      "status": "pass",
+      "result": {
+        "shift": 370,
+        "site": "Site D",
+        "screen": 1,
+        "lastEnd": 1481,
+        "close": 1480,
+        "maxShift": 365,
+        "status": "infeasible",
+        "reason": "The shifted final screening ends after 24:40. The original schedule packing function rejects the plan; no score is returned."
+      }
+    },
+    {
+      "name": "Invalid inputs return no score and retain the accepted plan",
+      "status": "pass",
+      "result": {
+        "inputs": [
+          "",
+          "   ",
+          "abc",
+          "-5",
+          "1",
+          "2.5",
+          "10005",
+          "NaN",
+          "Infinity",
+          "9007199254740992"
+        ],
+        "methods": [
+          "inspectCase",
+          "loadCase"
+        ]
+      }
+    },
+    {
+      "name": "Reset → finish searches and retains a non-decreasing best",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 5134,
+          "best": 5265,
+          "iterations": 2600,
+          "calls": 1739,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5265.135703459555,
+          "roundedScore": 5265,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        }
+      }
+    },
+    {
+      "name": "Finished best remains stable on repeated finish and failed load",
+      "status": "pass",
+      "result": {
+        "retainedBest": 5265
+      }
+    },
+    {
+      "name": "Fresh independent reset → finish exactly repeats",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 5134,
+          "best": 5265,
+          "iterations": 2600,
+          "calls": 1739,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5265.135703459555,
+          "roundedScore": 5265,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        }
+      }
+    },
+    {
+      "name": "Same engine reset → finish exactly repeats",
+      "status": "pass",
+      "result": {
+        "baseline": 5134,
+        "best": 5265,
+        "iterations": 2600,
+        "calls": 1739,
+        "valid": true,
+        "showings": 90,
+        "seed": 20260829,
+        "iterationBudget": 2600,
+        "running": false
+      }
+    },
+    {
+      "name": "Apply valid normal preview matches preview and can search",
+      "status": "pass",
+      "result": {
+        "applied": {
+          "baseline": 5134,
+          "best": 5134,
+          "iterations": 0,
+          "calls": 1,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "searched": {
+          "baseline": 5134,
+          "best": 5134,
+          "iterations": 2600,
+          "calls": 1715,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5133.6954752787815,
+          "roundedScore": 5134,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        }
+      }
+    },
+    {
+      "name": "Apply boundary exports the shifted plan and can search",
+      "status": "pass",
+      "result": {
+        "applied": {
+          "baseline": 5099,
+          "best": 5099,
+          "iterations": 0,
+          "calls": 1,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "searched": {
+          "baseline": 5099,
+          "best": 5352,
+          "iterations": 2600,
+          "calls": 1750,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5351.708587770224,
+          "roundedScore": 5352,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        }
+      }
+    },
+    {
+      "name": "Export is JSON serializable and repeated exports are stable",
+      "status": "pass",
+      "result": {
+        "jsonBytes": 144392,
+        "snapshot": {
+          "baseline": 5099,
+          "best": 5352,
+          "iterations": 2600,
+          "calls": 1750,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        }
+      }
+    },
+    {
+      "name": "Comparison reset exposes three independently auditable reference records",
+      "status": "pass",
+      "result": {
+        "original": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5133.6954752787815,
+          "roundedScore": 5134,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        },
+        "applied": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5133.6954752787815,
+          "roundedScore": 5134,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        },
+        "best": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5133.6954752787815,
+          "roundedScore": 5134,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Positive paired swap repacks exactly two films and audits all responses",
+      "status": "pass",
+      "result": {
+        "edit": {
+          "kind": "swap",
+          "first": "1-1-0",
+          "second": "1-2-1",
+          "delayMinutes": 0
+        },
+        "delta": 14,
+        "packing": {
+          "changedFilms": 2,
+          "changedResponses": 9,
+          "filmCounts": [
+            26,
+            16,
+            14,
+            14,
+            10,
+            10
+          ],
+          "independentPackingPassed": true
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5148.099226031125,
+          "roundedScore": 5148,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            898.3494868157334,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Negative paired swap exposes propagated competition effects",
+      "status": "pass",
+      "result": {
+        "edit": {
+          "kind": "swap",
+          "first": "3-1-0",
+          "second": "3-2-4",
+          "delayMinutes": 0
+        },
+        "delta": -165,
+        "packing": {
+          "changedFilms": 2,
+          "changedResponses": 10,
+          "filmCounts": [
+            26,
+            16,
+            14,
+            14,
+            10,
+            10
+          ],
+          "independentPackingPassed": true
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 4968.820371149739,
+          "roundedScore": 4969,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            819.665903359529,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Swap added-gap normal, latest boundary and next-grid failure use actual packing",
+      "status": "pass",
+      "result": {
+        "normalGap": 5,
+        "boundaryGap": 65,
+        "boundaryEnd": 1478,
+        "closingSlack": 2,
+        "failureGap": 70
+      }
+    },
+    {
+      "name": "Invalid swap addresses, identical films and malformed delay do not mutate state",
+      "status": "pass",
+      "result": {
+        "invalidCases": 14,
+        "methods": [
+          "inspectSwap",
+          "loadSwap"
+        ],
+        "roomFitFailure": [
+          "0-0-0",
+          "0-1-0"
+        ]
+      }
+    },
+    {
+      "name": "Apply paired swap preserves original, records applied edit and resets search",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 4969,
+          "best": 4969,
+          "iterations": 0,
+          "calls": 1,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 4968.820371149739,
+          "roundedScore": 4969,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            819.665903359529,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Search from manual loss recovers while original and applied comparisons remain fixed",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 4969,
+          "best": 5302,
+          "iterations": 2600,
+          "calls": 1711,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "recoveryOverApplied": 333,
+        "gainOverOriginal": 168,
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5302.326161374253,
+          "roundedScore": 5302,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        },
+        "comparisonAudit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5302.326161374253,
+          "roundedScore": 5302,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            890.5733136779867,
+            972.4604396634013,
+            799.4715844934001,
+            955.610070128065,
+            828.6347358810735,
+            855.5760175303252
+          ]
+        }
+      }
+    },
+    {
+      "name": "Invalid post-search swap and repeated finish retain all three comparison records",
+      "status": "pass",
+      "result": {
+        "retainedBest": 5302
+      }
+    },
+    {
+      "name": "Seeded swap replay is independent of intervening previews and rejected loads",
+      "status": "pass",
+      "result": {
+        "independentEngineAndSameEngineReplay": true,
+        "snapshot": {
+          "baseline": 4969,
+          "best": 5302,
+          "iterations": 2600,
+          "calls": 1711,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        }
+      }
+    },
+    {
+      "name": "Mutating an exported fixture, log or comparison cannot alter engine state or future score",
+      "status": "pass",
+      "result": {
+        "detachedFixtureLogAndComparison": true,
+        "futureSnapshot": {
+          "baseline": 4969,
+          "best": 5302,
+          "iterations": 2600,
+          "calls": 1711,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5302.326161374253,
+          "roundedScore": 5302,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            890.5733136779867,
+            972.4604396634013,
+            799.4715844934001,
+            955.610070128065,
+            828.6347358810735,
+            855.5760175303252
+          ]
+        }
+      }
+    },
+    {
+      "name": "Applied auxiliary delay updates comparison without replacing original reference",
+      "status": "pass",
+      "result": {
+        "edit": {
+          "kind": "shift",
+          "shiftMinutes": 365,
+          "site": "Site D",
+          "screen": 1
+        },
+        "applied": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5098.570550678906,
+          "roundedScore": 5099,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            949.4160828886954,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        },
+        "best": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5098.570550678906,
+          "roundedScore": 5099,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            949.4160828886954,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Swap and three-way comparison controls are present in the wrapper",
+      "status": "pass",
+      "result": {
+        "pairedSwapAndBeforeAfterControls": true
+      }
+    },
+    {
+      "name": "Embedded operator parser equals the current pure source and sample CSV",
+      "status": "pass",
+      "result": {
+        "sampleRows": 90,
+        "CSVAndJSONSameInput": true
+      }
+    },
+    {
+      "name": "Inspect uploaded package evaluates all rows without changing the native accepted state",
+      "status": "pass",
+      "result": {
+        "fidelity": {
+          "inputRows": 90,
+          "exactFilmScreenAndStartFidelity": true,
+          "canonicalSiteAndScreenIdentity": true
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 4968.820371149739,
+          "roundedScore": 4969,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            819.665903359529,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Load uploaded reference preserves all input rows and requires no hidden presolve",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 4969,
+          "best": 4969,
+          "iterations": 0,
+          "calls": 1,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "fidelity": {
+          "inputRows": 90,
+          "exactFilmScreenAndStartFidelity": true,
+          "canonicalSiteAndScreenIdentity": true
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 4968.820371149739,
+          "roundedScore": 4969,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        },
+        "factors": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 4968.820371149739,
+          "roundedScore": 4969,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            819.665903359529,
+            755.0810519298801,
+            846.3482065051652
+          ]
+        }
+      }
+    },
+    {
+      "name": "Imported current timetable searches to a feasible independently audited result",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 4969,
+          "best": 5247,
+          "iterations": 2600,
+          "calls": 1742,
+          "valid": true,
+          "showings": 89,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "inputRows": 90,
+        "audit": {
+          "showings": 89,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5246.789178502658,
+          "roundedScore": 5247,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        },
+        "factors": {
+          "showings": 89,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5246.789178502658,
+          "roundedScore": 5247,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250,
+          "identitiesAndFactorsPassed": true,
+          "bySite": [
+            807.9647453699555,
+            851.679058544405,
+            809.2894850756193,
+            1008.4534808943475,
+            937.6240656536056,
+            831.7783429647252
+          ]
+        }
+      }
+    },
+    {
+      "name": "Uploaded reference and explicit 100-iteration budget/seed replay exactly",
+      "status": "pass",
+      "result": {
+        "snapshot": {
+          "baseline": 4969,
+          "best": 5126,
+          "iterations": 100,
+          "calls": 63,
+          "valid": true,
+          "showings": 90,
+          "seed": 7,
+          "iterationBudget": 100,
+          "running": false
+        },
+        "exportReplaysExactly": true
+      }
+    },
+    {
+      "name": "Changed uploaded response coefficient and room threshold drive actual scored factors",
+      "status": "pass",
+      "result": {
+        "changedReferenceScore": 9512,
+        "changedLargeThresholdScore": 4900,
+        "configuredSearch": {
+          "baseline": 9512,
+          "best": 9590,
+          "iterations": 100,
+          "calls": 69,
+          "valid": true,
+          "showings": 90,
+          "seed": 0,
+          "iterationBudget": 100,
+          "running": false
+        }
+      }
+    },
+    {
+      "name": "Configured closing/cleaning boundaries and opening directly govern imported feasibility",
+      "status": "pass",
+      "result": {
+        "openingBoundary": 620,
+        "closingBoundary": 1478,
+        "maxCleaning": 15,
+        "nextMinuteRejects": true,
+        "configuredSearch": {
+          "baseline": 4969,
+          "best": 5075,
+          "iterations": 100,
+          "calls": 66,
+          "valid": true,
+          "showings": 89,
+          "seed": 2147483647,
+          "iterationBudget": 100,
+          "running": false
+        }
+      }
+    },
+    {
+      "name": "Invalid imported packages and malformed run settings preserve the entire completed result",
+      "status": "pass",
+      "result": {
+        "invalidSettings": 14,
+        "methods": [
+          "inspectDataset",
+          "loadDataset"
+        ],
+        "fullStateRetained": true
+      }
+    },
+    {
+      "name": "Duplicate display names and custom screen IDs retain canonical identity on inspect/load/search",
+      "status": "pass",
+      "result": {
+        "duplicateVisibleNames": 6,
+        "canonicalIdentities": 18,
+        "firstAndSecondInspectionMetadataCorrect": true,
+        "searched": {
+          "baseline": 4969,
+          "best": 5126,
+          "iterations": 100,
+          "calls": 63,
+          "valid": true,
+          "showings": 90,
+          "seed": 7,
+          "iterationBudget": 100,
+          "running": false
+        }
+      }
+    },
+    {
+      "name": "Imported package/options and detached exported inputs cannot mutate accepted engine or future replay",
+      "status": "pass",
+      "result": {
+        "detachedInputsAndConfiguration": true,
+        "exportReplayExactly": true,
+        "snapshot": {
+          "baseline": 4969,
+          "best": 5247,
+          "iterations": 2600,
+          "calls": 1742,
+          "valid": true,
+          "showings": 89,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        }
+      }
+    },
+    {
+      "name": "Native reset after imported configuration restores declared legacy fixture",
+      "status": "pass",
+      "result": {
+        "nativeReset": {
+          "baseline": 5134,
+          "best": 5134,
+          "iterations": 0,
+          "calls": 1,
+          "valid": true,
+          "showings": 90,
+          "seed": 20260829,
+          "iterationBudget": 2600,
+          "running": false
+        },
+        "audit": {
+          "showings": 90,
+          "screenCount": 18,
+          "expectedAttendanceSum": 5133.6954752787815,
+          "roundedScore": 5134,
+          "allConstraintsPassed": true,
+          "largeScreenThreshold": 250
+        }
+      }
+    },
+    {
+      "name": "Operator workflow exposes actual data/settings/run/result controls",
+      "status": "pass",
+      "result": {
+        "actualParserAndEngineBindings": true
+      }
+    },
+    {
+      "name": "Wrapper dependencies and source metadata are static and local",
+      "status": "pass",
+      "result": {
+        "externalScriptLinks": 0,
+        "untranslatedHangul": 0
+      }
+    }
+  ],
+  "limitations": [
+    "No browser UI or direct file execution was performed.",
+    "Audits use exported model/constraint values; legacy exports without a large-screen threshold fall back to 250.",
+    "Native reset, imported reference and manually swapped reference use different entry paths; each reproducibility check repeats its own entry path."
+  ],
+  "caseTarget": {
+    "site": 3,
+    "hall": 0,
+    "slack": 369,
+    "lastEnd": 1111,
+    "maxShift": 365
+  },
+  "status": "pass",
+  "counts": {
+    "passed": 39,
+    "failed": 0,
+    "total": 39
+  }
+}

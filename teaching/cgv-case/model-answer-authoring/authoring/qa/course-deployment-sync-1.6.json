@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-12T04:22:41.771063+00:00",
+  "oldHead": "7c183a964a9dd28c73ba65ede652903f205f9f5e",
+  "newHead": "7627bba6a369178ff334a87eb3e0da91ecb8514e",
+  "trackedAndUntrackedWorktreeFilesUnchanged": true,
+  "filesChecked": 452,
+  "statusAfter": " M deck/widgets/cbas-ladder.js\n M deck/widgets/conservative-coms.js\n M deck/widgets/ensemble-alarm.js\n M deck/widgets/surrogate-exploit.js\n M md/_SCHEMA.md\n M md/_source/source_fidelity_map.json\n M md/_source/teaching_route_map.json\n M md/ch05_surrogate_design_optimization.md\n M md/ch06_generative_design_optimization.md\n M tests/paper-selection.mjs\n?? .claude/\n?? assets/ch05/\n?? assets/ch06/bootgen-loop.png\n?? assets/ch06/cbas-iterations.png\n?? assets/ch06/cvae-svhn.png\n?? assets/ch06/ddom-modes.png\n?? assets/ch06/guidance-scale.png\n?? assets/ch06/mins-thick-three.png\n?? deck/widgets/coms-tabular.js\n?? deck/widgets/cond-bars.js\n?? deck/widgets/fgm-stitch.js\n?? deck/widgets/kl-tilt.js\n?? deck/widgets/ko-discrepancy.js\n?? deck/widgets/lcb-flip.js\n?? deck/widgets/mbo-papers.js\n?? deck/widgets/offline-heater.js\n?? md/_source/ch05_ch06_plan.md\n?? teaching/assignment-01-model-answer/student/advanced/\n"
+}

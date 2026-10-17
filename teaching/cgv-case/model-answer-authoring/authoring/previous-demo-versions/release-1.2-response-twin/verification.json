@@ -1,0 +1,140 @@
+{
+  "case": "Case A: Response concept with existing Schedule Studio full-app reference",
+  "updatedAt": "2026-10-11",
+  "artifact": "demo.html",
+  "defaultRoute": "#schedule",
+  "implementation": {
+    "source": "Existing English-packaged seven-day application: src/main.tsx → src/App.tsx → ScheduleStudioPage, engine Worker and scheduleEvaluator/scheduleOptimizer.",
+    "evaluator": "Declared synthetic audience choice and physical seat allocation; not a separately learned Response model.",
+    "search": "Eight bounded rounds of validated neighboring schedules, reduced-particle screening and full evaluation of selected candidates; not the archived widget ILS and not BO.",
+    "seed": 20260913,
+    "defaultProfiles": 10000,
+    "fixedLocalPeople": 10000,
+    "initialShowings": 630,
+    "objective": "J(x)=R(x)-0.2*U(x)*14-2*c(x,x0)",
+    "revenue": "Synthetic ticket plus concession units; not real currency or profit.",
+    "operatingWindow": "09:00–24:30",
+    "cleaningMinutes": 20,
+    "proposal": "Original-design 44-slide Response presentation retained; broader concepts/prepared figures are not full-app verification."
+  },
+  "currentBuild": {
+    "demoSHA256": "12e74234b5076208ddcf460ca39fee0136e3026950cc32f48920041a7bae59e8",
+    "applicationSourceSHA256": "35811838ee6e70062dacbcaed29e02bbff9ee49628321608bca552326564b1a2",
+    "sourceHashProvenance": "Source tree hash calculated by the app rebuild; the builder verified the original application source was unchanged.",
+    "buildAndStaticChecks": "Rebuild passed with identical demo checksum. English main and embedded Worker text were checked after decoding JavaScript Unicode escapes; no external demo dependencies.",
+    "independentHTTPUI": "Pass for the single chained sequence and search/application observations recorded below; independent fresh repeat and other views not re-executed.",
+    "directOfflineFileExecution": "Not verified"
+  },
+  "checks": [
+    {
+      "name": "Default generation and baseline evaluation",
+      "status": "pass",
+      "input": "Default 10,000-profile fixture, first show 10:00",
+      "observed": {
+        "admissions": 5229,
+        "roundedRevenueUnits": 97013,
+        "occupancyPercent": 4.4,
+        "unmetDemand": 0,
+        "evaluatedPlanHash": "901ea84a"
+      }
+    },
+    {
+      "name": "Normal edit in chain",
+      "status": "pass",
+      "input": "From 10:00, +30 min once → 10:30; apply and re-simulate",
+      "observed": {
+        "admissions": 5229,
+        "roundedRevenueUnits": 97013,
+        "occupancyPercent": 4.4,
+        "unmetDemand": 0,
+        "evaluatedPlanHash": "25526c16"
+      }
+    },
+    {
+      "name": "Opening boundary in chain",
+      "status": "pass",
+      "input": "From 10:30, −30 min three times → 09:00; apply and re-simulate",
+      "observed": {
+        "admissions": 5229,
+        "roundedRevenueUnits": 97013,
+        "occupancyPercent": 4.4,
+        "unmetDemand": 0,
+        "evaluatedPlanHash": "01e09ee2"
+      }
+    },
+    {
+      "name": "Failure in chain",
+      "status": "pass",
+      "input": "From 09:00, −30 min once → 08:30; apply and re-simulate",
+      "observed": {
+        "planStatus": "STALE",
+        "recalculationRequired": true,
+        "optimizerDisabled": true,
+        "previousKPIsVisible": true,
+        "previousKPIsAreValidDraftResult": false,
+        "exactErrorMessage": null
+      }
+    },
+    {
+      "name": "Recovery in chain",
+      "status": "pass",
+      "input": "From 08:30, +30 min three times → 10:00; apply and re-simulate",
+      "observed": {
+        "admissions": 5229,
+        "roundedRevenueUnits": 97013,
+        "occupancyPercent": 4.4,
+        "unmetDemand": 0,
+        "evaluatedPlanHash": "6434c256"
+      }
+    },
+    {
+      "name": "Reference optimizer on recovered plan",
+      "status": "pass",
+      "observed": {
+        "displayedObjectiveGain": 19030.9,
+        "displayedBaselineRoundedRevenueUnits": 97013,
+        "displayedCandidateRoundedRevenueUnits": 116476
+      }
+    },
+    {
+      "name": "Apply optimized plan",
+      "status": "pass",
+      "observed": {
+        "admissions": 6418,
+        "roundedRevenueUnits": 116476,
+        "occupancyPercent": 5.4,
+        "unmetDemand": 0,
+        "evaluatedPlanHash": "17d4a52f"
+      }
+    },
+    {
+      "name": "Fresh independent repeatability",
+      "status": "not-run",
+      "criterion": "Regenerate identical fixture and repeat the exact chain in the same runtime; compare KPIs/hash."
+    },
+    {
+      "name": "Separately reset normal/boundary/failure cases",
+      "status": "not-run",
+      "criterion": "Reset independently before each case; do not treat chained revision hashes as reset hashes."
+    },
+    {
+      "name": "Direct offline file execution",
+      "status": "not-verified"
+    },
+    {
+      "name": "Return navigation",
+      "status": "pass",
+      "criterion": "All worked examples returns to ../index.html from full app and original presentation.",
+      "observed": "The app, its English guide, and the original proposal returned via visible All worked examples links to the package index under the /ie437/ course prefix."
+    }
+  ],
+  "evidenceBoundary": "Executed current-build HTTP checks cover one chained edit/recovery/search workflow and package return navigation. They do not establish offline execution, an independent fresh repeat, learned Response accuracy, BO, causal effects, real business improvement or a global optimum. Prior separate-reset and slide-widget evidence was not reused as a pass for this release.",
+  "observationMethod": {
+    "date": "2026-10-11",
+    "method": "Independent CUA review of the current English Schedule Studio app served over HTTP; observations supplied by the root reviewer.",
+    "sequence": "One generated fixture: baseline 10:00 → normal 10:30 → boundary 09:00 → failure 08:30 → recovery 10:00 → reference optimizer → apply candidate.",
+    "independentResetBetweenCases": false,
+    "freshIndependentRepeat": "Not run",
+    "exactFailureMessage": "Not captured"
+  }
+}

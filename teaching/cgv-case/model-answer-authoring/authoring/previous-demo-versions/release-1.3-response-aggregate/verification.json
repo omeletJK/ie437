@@ -1,0 +1,315 @@
+{
+  "case": "Case A: Response Model Simulator \u2014 independent aggregate SIM2",
+  "updatedAt": "2026-10-11",
+  "artifact": "demo.html",
+  "implementation": {
+    "evaluator": "Explicit aggregate synthetic expected-attendance rule; no individual synthetic consumers and no real-data fitting.",
+    "objective": "J(x)=round(sum_j min(capacity_j, declared response_j))",
+    "search": "Deterministic Iterated Local Search (ILS); not Bayesian Optimization.",
+    "seed": 20260829,
+    "sites": 6,
+    "films": 6,
+    "screens": 18,
+    "searchIterations": 2600,
+    "operatingWindow": "10:00\u201324:40",
+    "betweenFilmCleaningMinutes": 15,
+    "closingTest": "Final film runtime must finish by 24:40; cleaning after the final film is not included.",
+    "baseline": "Capacity-based rotations presolved for 2,600 moves with uniform site taste, then evaluated with the same site-specific response rule as displayed candidates.",
+    "experiment": "Shift one reference screen; declared default Site D / Screen 1 selected for maximum closing slack. Preview invokes original packing/feasibility/response; apply enabled only when valid.",
+    "feasibilityIndicator": "Dynamic PASS/FAIL from feasible(bestShows.shows), not a hardcoded zero or cumulative rejected-candidate count.",
+    "proposal": "Original-design 44-slide Response proposal retained; broader concepts and prepared illustrations are distinct from this standalone execution.",
+    "exportButton": "Export results",
+    "startingModes": "Reset continues the RNG stream after uniform-response presolve; Apply evaluated schedule restarts at seed 20260829 directly. Normal 0 loaded search can have no gain while Reset search improves."
+  },
+  "sourceProvenance": {
+    "origin": "Original desktop Response proposal, index.html S13/SIM2.",
+    "latestRevision": "285e698",
+    "latestRevisionDate": "2026-08-30",
+    "introducedAtRevision": "1ddfa6a",
+    "promotedToS13AtRevision": "862298a",
+    "introductionDate": "2026-08-29",
+    "originalHTMLSHA256": "70c888ab9547b939ee891b71b0fbd90a04108620f89d8ca9da9c125ebc2dc531",
+    "archivedEnglishExtractionSHA256": "66021195ceeb0228cf022b096671e2f2a7959bfe73ff6926024bdd4d084d341b",
+    "coreFunctionComparison": {
+      "method": "TypeScript syntax-tree parse and print with comments removed, comparing original desktop source with archived English extraction. Scope: this earlier comparison covers those two sources; the final standalone comparison is recorded separately below.",
+      "status": "pass",
+      "functions": [
+        "tw",
+        "rnd",
+        "ri",
+        "clone",
+        "packSite",
+        "packAll",
+        "feasible",
+        "predict",
+        "evalS",
+        "presolve",
+        "ruleBaseline",
+        "move"
+      ],
+      "allIdentical": true
+    },
+    "independence": "Aggregate screening-response rule; no dependency on the audience twin application, generated people or its seat-choice evaluator.",
+    "standaloneCoreFunctionComparison": {
+      "method": "Independent exact-artifact Node verifier compared original desktop source, archived English extraction and final standalone HTML; 12 core function ASTs identical.",
+      "status": "pass",
+      "functions": [
+        "tw",
+        "rnd",
+        "ri",
+        "clone",
+        "packSite",
+        "packAll",
+        "feasible",
+        "predict",
+        "evalS",
+        "presolve",
+        "ruleBaseline",
+        "move"
+      ],
+      "allIdentical": true
+    }
+  },
+  "currentBuild": {
+    "demoSHA256": "126b881250e394e725b3995ac10c70cce9f5929ccad1cb75568d498c50faeb37",
+    "demoBytes": 526169,
+    "exactStandaloneCoreComparison": "Pass: final HTML/original/archive equality for the 12 core functions.",
+    "staticChecks": "Exact artifact SHA/size verified; Node verifier passed all 16 checks.",
+    "independentHTTPUI": "Pass for exact final build: main and loaded searches, pause/finish/both speeds, preview/apply/failure/recovery, heatmap/Gantt, method panel, actual export and responsive observations.",
+    "directOfflineFileExecution": "Not verified",
+    "coursePrefixReturnNavigation": "Pass: staged demo, guide and original proposal returned to the hub under the course URL prefix."
+  },
+  "checks": [
+    {
+      "name": "Normal experiment",
+      "status": "pass",
+      "shiftMinutes": 0,
+      "observed": {
+        "baseline": 5134,
+        "best": 5134,
+        "calls": 1715,
+        "iterations": 2600,
+        "feasible": true
+      },
+      "method": "Node and exact-build HTTP"
+    },
+    {
+      "name": "Boundary experiment",
+      "status": "pass",
+      "shiftMinutes": 365,
+      "observed": {
+        "site": "Site D",
+        "screen": 1,
+        "previewScore": 5099,
+        "finalFilmEnd": "24:36",
+        "closing": "24:40",
+        "slackMinutes": 4,
+        "bestAfterLoadedSearch": 5352,
+        "calls": 1750,
+        "iterations": 2600,
+        "feasible": true
+      },
+      "method": "Node and exact-build HTTP"
+    },
+    {
+      "name": "Failure experiment",
+      "status": "pass",
+      "shiftMinutes": 370,
+      "observed": {
+        "status": "INFEASIBLE",
+        "validPreviewScore": false,
+        "applyDisabled": true,
+        "searchDisabled": true,
+        "priorBestRetained": 5352
+      },
+      "method": "Node non-mutation checks and exact-build HTTP"
+    },
+    {
+      "name": "Invalid shift input",
+      "status": "pass",
+      "observed": {
+        "nodeInvalidInputs": 10,
+        "planMutation": false,
+        "browserEmptyStatus": "INVALID",
+        "applyDisabled": true,
+        "searchDisabled": true
+      }
+    },
+    {
+      "name": "Recovery",
+      "status": "pass",
+      "observed": "Normal 0 application restores a valid loaded search; Reset restores the main baseline/search stream."
+    },
+    {
+      "name": "Run/pause/finish/reset/speed",
+      "status": "pass",
+      "observed": {
+        "baseline": 5134,
+        "best": 5265,
+        "calls": 1739,
+        "iterations": 2600,
+        "showings": 90,
+        "feasibility": "PASS",
+        "speedsChecked": [
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "name": "Repeatability",
+      "status": "pass",
+      "scope": "Node fresh/same VM replay plus exact-build HTTP Reset/Finish and completed speed comparison; not a direct-file browser test."
+    },
+    {
+      "name": "Heatmap and Gantt inspection",
+      "status": "pass",
+      "observed": "Site D selected and displayed corresponding screen plan."
+    },
+    {
+      "name": "Data and method",
+      "status": "pass",
+      "observed": "Exact equation; six films/six sites; six fictional purchases,13 tickets,five accounts; English."
+    },
+    {
+      "name": "Export results",
+      "status": "pass",
+      "observed": "Actual browser download and independent Node export/recompute checks."
+    },
+    {
+      "name": "Return navigation",
+      "status": "pass",
+      "criterion": "Course-prefix All worked examples resolves to ../index.html.",
+      "observed": "All worked examples opened ../index.html under the /ie437/ prefix."
+    }
+  ],
+  "evidenceBoundary": "Current exact-artifact Node and HTTP checks establish synthetic fixture functionality only. Course-prefix return navigation passed; direct offline opening remains unverified. No learned response accuracy, individual audience model, causal effect, real business benefit, BO or global optimum is claimed; historical checks are not reused as release passes.",
+  "nodeVerification": {
+    "date": "2026-10-11",
+    "status": "pass",
+    "checksPassed": 16,
+    "method": "Independent Node verifier on the exact HTML, with rendering-only DOM stubs. It compared original/archive/final core ASTs and independently checked packing constraints, response recomputation and exports. These checks do not establish browser or direct-file behavior.",
+    "freshVMRepeat": "pass",
+    "sameVMRepeat": "pass",
+    "invalidInputsChecked": 10,
+    "invalidInputPlanMutation": false,
+    "repeatedFinishAndExportStable": true,
+    "mainResult": {
+      "baseline": 5134,
+      "best": 5265,
+      "calls": 1739,
+      "iterations": 2600,
+      "showings": 90,
+      "feasible": true
+    },
+    "boundaryResult": {
+      "baseline": 5099,
+      "best": 5352,
+      "calls": 1750,
+      "iterations": 2600,
+      "feasible": true
+    },
+    "appliedNormalResult": {
+      "baseline": 5134,
+      "best": 5134,
+      "calls": 1715,
+      "iterations": 2600,
+      "feasible": true
+    }
+  },
+  "httpBrowserVerification": {
+    "date": "2026-10-11",
+    "method": "Independent CUA review served over HTTP; supplied by the root reviewer for the exact final artifact.",
+    "exactArtifactSHA256": "126b881250e394e725b3995ac10c70cce9f5929ccad1cb75568d498c50faeb37",
+    "mainSearch": {
+      "initialScore": 5134,
+      "initialFeasibility": "PASS",
+      "initialShowings": 90,
+      "runObservedIteration": 42,
+      "pauseObservedIteration": 54,
+      "finishedScore": 5265,
+      "calls": 1739,
+      "iterations": 2600,
+      "feasibility": "PASS"
+    },
+    "speed4xSearch": {
+      "runObservedIteration": 108,
+      "paused": true,
+      "baseline": 5134,
+      "best": 5265,
+      "calls": 1739,
+      "iterations": 2600,
+      "feasibility": "PASS"
+    },
+    "resetFinishRepeat": {
+      "baseline": 5134,
+      "best": 5265,
+      "calls": 1739,
+      "iterations": 2600,
+      "feasibility": "PASS"
+    },
+    "boundary": {
+      "shiftMinutes": 365,
+      "previewScore": 5099,
+      "finalFilmEnd": "24:36",
+      "slackMinutes": 4,
+      "applyEnabled": true,
+      "searchDisabledUntilApplied": true,
+      "appliedBaseline": 5099,
+      "best": 5352,
+      "calls": 1750,
+      "iterations": 2600,
+      "feasibility": "PASS"
+    },
+    "failure": {
+      "shiftMinutes": 370,
+      "status": "INFEASIBLE",
+      "validPreviewScore": false,
+      "applyDisabled": true,
+      "searchDisabled": true,
+      "retainedPriorBest": 5352
+    },
+    "emptyInput": {
+      "status": "INVALID",
+      "applyDisabled": true,
+      "searchDisabled": true
+    },
+    "normalApplyFinish": {
+      "baseline": 5134,
+      "best": 5134,
+      "calls": 1715,
+      "iterations": 2600
+    },
+    "siteDHeatmapAndGantt": "pass",
+    "dataAndMethod": {
+      "status": "pass",
+      "filmRows": 6,
+      "siteRows": 6,
+      "formulaDisplayed": true,
+      "fictionalPurchaseRows": 6,
+      "purchasedTickets": 13,
+      "purchasingAccounts": 5,
+      "allEnglish": true
+    },
+    "actualExport": {
+      "status": "pass",
+      "filename": "response-simulation-results.json",
+      "downloadSHA256": "1071edecc99b7506790ac6bff07488024209f2d5908896a992af4a88ddd2013a",
+      "baseline": 5134,
+      "best": 5265,
+      "iterations": 2600,
+      "calls": 1739,
+      "bestFeasibleShowings": 90,
+      "roundedPerShowAttendanceSum": 5265,
+      "fixtureSeedAndSourceInfoIncluded": true
+    },
+    "responsive": {
+      "mobileViewportWidth": 390,
+      "mobileBodyWidth": 390,
+      "methodDialogWidth": 352,
+      "restoredDesktopBodyWidth": 1280
+    },
+    "directOfflineFileExecution": "Not verified",
+    "coursePrefixReturnNavigation": "Pass: staged demo, guide and original proposal returned to the hub under the course URL prefix."
+  }
+}

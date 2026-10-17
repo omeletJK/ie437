@@ -1,0 +1,491 @@
+{
+  "case": "Case A: Response Schedule Optimizer \u2014 independent aggregate SIM2",
+  "release": "1.7",
+  "updatedAt": "2026-10-12T04:12:57.303199+00:00",
+  "artifact": "demo.html",
+  "implementation": {
+    "workflow": [
+      "Import planning data",
+      "Objective & constraints",
+      "Run optimization",
+      "Review results"
+    ],
+    "evaluator": "Explicit aggregate synthetic expected-attendance rule, no individual synthetic people or real-data fitting.",
+    "objective": "J(x)=round(sum_j min(capacity_j, declared response_j))",
+    "search": "Seeded Iterated Local Search (ILS), not Bayesian Optimization.",
+    "datasetShape": "Exactly six films A\u2013F, six sites A\u2013F and three screens/site;18\u2013600 reference showings using all18screens, subject to declared rules.",
+    "baseline": "Exact uploaded and confirmed feasible reference timetable, without presolve.",
+    "sampleInputShowings": 90,
+    "sampleObservedRetainedShowings": 89,
+    "defaultSeed": 20260829,
+    "defaultIterations": 2600,
+    "iterationRange": {
+      "min": 100,
+      "max": 20000,
+      "step": 100
+    },
+    "seedRange": {
+      "min": 0,
+      "max": 2147483647
+    },
+    "realSettings": [
+      "opening",
+      "closing",
+      "cleaningMinutes",
+      "minimumSites",
+      "maxShowsPerFilmSite",
+      "referenceResponse",
+      "iterations",
+      "seed"
+    ],
+    "fixedRules": {
+      "startGridMinutes": 5,
+      "dayBeforeMinute": 1020,
+      "primeFromMinute": 1080,
+      "nearbySameFilmMinutes": 90,
+      "nearbySameFilmFactor": 0.72,
+      "nearbyOtherFilmMinutes": 20,
+      "nearbyOtherFilmFactor": 0.94,
+      "dailySameFilmFactor": 0.93
+    },
+    "samplePlanningJSON": "CinemaPlanning.json",
+    "sampleTimetableCSV": "Screenings.csv",
+    "inputLimitBytes": 2097152,
+    "CSVColumns": [
+      "showing_id",
+      "site_id",
+      "screen_id",
+      "film_id",
+      "start_time"
+    ],
+    "CSVFixture": "Currently loaded planning package, or classroom definitions if none loaded.",
+    "closingTest": "Last film ends by declared closing; cleaning after final film is not added to closing.",
+    "feasibilityIndicator": "Dynamic best-plan PASS/FAIL from actual feasibility.",
+    "extraExperiments": "Collapsed Results film-exchange and closing tests; valid application prepares reoptimization in Step3.",
+    "exports": {
+      "CSV": "Five importable columns and stableIDs, per corrected source; actual download/reimport pending.",
+      "JSON": "Full input package,fixture,run settings,records/factors and retained best showings."
+    },
+    "proposal": "Established original-design44-slide proposal retained; broader learning/rolling concepts are separate future capabilities."
+  },
+  "sourceProvenance": {
+    "origin": "Original desktop Response proposal, index.html S13/SIM2.",
+    "latestRevision": "285e698",
+    "latestRevisionDate": "2026-08-30",
+    "introducedAtRevision": "1ddfa6a",
+    "promotedToS13AtRevision": "862298a",
+    "introductionDate": "2026-08-29",
+    "originalHTMLSHA256": "70c888ab9547b939ee891b71b0fbd90a04108620f89d8ca9da9c125ebc2dc531",
+    "archivedEnglishExtractionSHA256": "66021195ceeb0228cf022b096671e2f2a7959bfe73ff6926024bdd4d084d341b",
+    "coreFunctionComparison": {
+      "method": "TypeScript syntax-tree parse and print with comments removed, comparing original desktop source with archived English extraction. Scope: this earlier comparison covers those two sources; the final standalone comparison is recorded separately below.",
+      "status": "pass",
+      "functions": [
+        "tw",
+        "rnd",
+        "ri",
+        "clone",
+        "packSite",
+        "packAll",
+        "feasible",
+        "predict",
+        "evalS",
+        "presolve",
+        "ruleBaseline",
+        "move"
+      ],
+      "allIdentical": true
+    },
+    "independence": "Aggregate screening-response rule; no dependency on the audience twin application, generated people or its seat-choice evaluator.",
+    "standaloneCoreFunctionComparison": {
+      "method": "The exact 1.5 artifact preserves the 12 numerical core function ASTs. The 39 app checks include 27 regressions and 12 new loader/configuration/operator cases. Legacy native/manual results are separate from the uploaded sample result.",
+      "status": "pass",
+      "functions": [
+        "tw",
+        "rnd",
+        "ri",
+        "clone",
+        "packSite",
+        "packAll",
+        "feasible",
+        "predict",
+        "evalS",
+        "presolve",
+        "ruleBaseline",
+        "move"
+      ],
+      "allIdentical": true
+    }
+  },
+  "currentBuild": {
+    "demoSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+    "demoBytes": 650464,
+    "identityStatus": "Published 1.5 app bytes preserved in presentation release 1.7.",
+    "exactStandaloneCoreComparison": "Pass: 12 numerical core ASTs and 39 exact-artifact Node checks.",
+    "independentHTTPUI": "Pass for exact final source/staged default pipeline, replay, Run/Pause/Finish, actual final JSON/CSV downloads and CSV reupload, invalid-file/recovery and responsive views. Earlier 100-iteration/seed-7, REF104/closing settings retain their stated candidate scope.",
+    "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
+    "directOfflineFileExecution": "Not verified",
+    "importerModuleSHA256": "66b0197b5595d7fe163287f0fe90d5d888b1c1050f4deec19e67288e3714fa25",
+    "courseStaging": "Pass: 29-file assembly, approved installer, course build, worked-examples and assignment checks passed. Build/integration checks are separate from numerical evidence."
+  },
+  "sampleFiles": {
+    "CinemaPlanning.json": {
+      "bytes": 16108,
+      "sha256": "bc92fdc48f88dd6216a4363df2f4a4466cddb72a04750ad945ea82123092a2dc"
+    },
+    "Screenings.csv": {
+      "bytes": 2929,
+      "sha256": "f87dc8fe6bc4bb368ce61384702ca51b34e819cc8afa8f49b1f9f9e85bd06dea"
+    }
+  },
+  "importerVerification": {
+    "status": "pass",
+    "checksPassed": 25,
+    "moduleSHA256": "66b0197b5595d7fe163287f0fe90d5d888b1c1050f4deec19e67288e3714fa25",
+    "method": "Independent pure-factory Node tests using actual archived numerical engine: shape,IDs,mapping,packing/prediction/coefficient changes,feasibility/boundaries,CSVJSON parsing/roundtrip/UTF8limit and detached outputs. Tests apply to this unchanged parser module, not new operator UI or the current sample search.",
+    "browserUploadEvidence": "Real JSON/CSV file-selection checks were performed with the documented candidate scope; the final app also reimported its exported 89-row CSV at reference score 5,247."
+  },
+  "checks": [
+    {
+      "name": "Sample import/review",
+      "status": "pass-scoped",
+      "observed": {
+        "baseline": 4969,
+        "referenceShowings": 90
+      },
+      "method": "Exact-artifact Node plus actual HTTP preceding-candidate file/sample review."
+    },
+    {
+      "name": "Confirmation without optimization",
+      "status": "pass-scoped",
+      "observed": "Confirmed uploaded reference4969; no optimization yet.",
+      "method": "Exact-artifact Node plus actual HTTP preceding-candidate file/sample review."
+    },
+    {
+      "name": "Uploaded-reference optimization",
+      "status": "pass-scoped",
+      "observed": {
+        "baseline": 4969,
+        "best": 5247,
+        "gain": 278,
+        "calls": 1742,
+        "iterations": 2600,
+        "retainedShowings": 89,
+        "feasibility": "PASS",
+        "relativeGainPercentApprox": 5.6
+      },
+      "method": "Exact-artifact Node plus actual HTTP preceding-candidate file/sample review."
+    },
+    {
+      "name": "Pure importer",
+      "status": "pass",
+      "observed": "25independent checks on unchanged module;18\u2013600 bounds,exact supportedshape,IDs,feasibility,actualcore mapping,parsing/roundtrip/nonmutation.",
+      "method": "Independent parser Node suite."
+    },
+    {
+      "name": "Actual JSON/CSV upload and rejection gates",
+      "status": "pass-scoped",
+      "observed": {
+        "actualPlanningJSONUpload": {
+          "referenceShowings": 90,
+          "baseline": 4969
+        },
+        "CSVWithCurrentModel": {
+          "referenceResponse": 104,
+          "baseline": 3975
+        },
+        "unknownFilmCSV": {
+          "film": "X",
+          "row": 2,
+          "field": "filmId",
+          "rejected": true,
+          "previousAcceptedDataRetained": true,
+          "NextDisabled": true
+        },
+        "validSampleRecoveryBest": 5247
+      },
+      "method": "Actualprecedingcandidate planning/configCSVuploads plus final-SHA optimizedCSVreupload,unknownfilm/recovery sourcechecks."
+    },
+    {
+      "name": "Settings affect objective/constraints/budget/seed and reconfirmation",
+      "status": "pass-scoped",
+      "observed": {
+        "iterations100Seed7": {
+          "baseline": 4969,
+          "best": 5126,
+          "calls": 63,
+          "iterations": 100,
+          "seed": 7
+        },
+        "referenceResponse104SameRun": {
+          "baseline": 3975,
+          "best": 4101,
+          "iterations": 100,
+          "seed": 7
+        },
+        "closing2300Rejected": true,
+        "dirtySettingsDisableResults": true
+      },
+      "method": "Root CUA preceding-candidate actual settings; exact-artifact Node config/state tests independentlypassed."
+    },
+    {
+      "name": "Current numerical core,reference preservation and independent output audit",
+      "status": "pass",
+      "observed": "39/39exact-artifactNodechecks;12numericalASTfunctions;90explicitinputrows/stableIDs;best89rows sum5246.789178502658 rounds5247; no presolve.",
+      "method": "Independent exact-artifact Node."
+    },
+    {
+      "name": "Boundary/failure/nonmutation/recovery",
+      "status": "pass-scoped",
+      "observed": "Exact-artifactNode operating/cleaning boundaries,14invalidrunsettings,package rejects,full-state retention; actualCSV/closing rejection and sample recovery on precedingcandidate.",
+      "method": "Node+scoped root CUA."
+    },
+    {
+      "name": "Run/Pause/Finish/restart/speeds/seed replay",
+      "status": "pass-scoped",
+      "observed": "Exact-artifactNodebudget/seed/replaypasses; final-SHA sourcefullsample repeats4969\u21925247/1742/2600/89 withRun/Pauseobservedat1605\u2192Finish. Freshrestart/speedbrowser coverage is not claimed.",
+      "method": "NodeplusfinalsourceCUA."
+    },
+    {
+      "name": "Site comparison/heatmap/Gantt and responsive UI",
+      "status": "pass-scoped",
+      "observed": {
+        "ImportMobileBodyWidth": 390,
+        "ResultsMobileBodyWidth": 390,
+        "methodDialogWidth": 356,
+        "desktopRestored": true,
+        "resultRecordsAndTimetablesNumericallyAudited": true
+      },
+      "method": "Final-SHA sourceCUA responsivepipeline plusNode numerical records; every-site visual/accessibility audit notclaimed."
+    },
+    {
+      "name": "Actual timetableCSV download/reimport and fullJSON",
+      "status": "pass-scoped",
+      "criterion": "CSV must have exactly5declared importable columns; full JSON retains prediction factors and settings.",
+      "observed": {
+        "JSON": {
+          "downloadSHA256": "248759acff3a39dc05e90f0b42c1ab4de4f8a61b9668804f7daa2fa2f7ad3179",
+          "inputRows": 90,
+          "bestRows": 89,
+          "iterations": 2600,
+          "seed": 20260829,
+          "perShowSum": 5246.789178502658,
+          "roundedBest": 5247,
+          "exactArtifactSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+          "browserSavedFilename": "response-simulation-results (3).json"
+        },
+        "CSV": {
+          "downloadSHA256": "f52df0d3d8b42f88cab80eb76b8d0f95b54d9b65229a58da9725af691972a866",
+          "columns": 5,
+          "rows": 89,
+          "sameDefinitionParserReimport": "pass",
+          "finalSourceBrowserReimport": "pass",
+          "browserReferenceScore": 5247,
+          "browserReferenceRows": 89,
+          "exactArtifactSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+          "browserSavedFilename": "OptimizedTimetable (1).csv"
+        }
+      },
+      "method": "Actual final-SHA CUA downloads audited; actual same-file CSV browser reupload passed; exact-artifact Node independently audited exports and state."
+    },
+    {
+      "name": "Course-prefix navigation/build/assignment integration",
+      "status": "pass",
+      "observed": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
+      "integration": "29-file assembly, approved installer, course build, worked-examples and assignment checks passed.",
+      "method": "Root staged-course CUA and build/test checks."
+    }
+  ],
+  "nodeVerification": {
+    "status": "pass",
+    "verifiedAt": "2026-10-11T23:54:56.592Z",
+    "exactArtifactSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+    "checksPassed": 39,
+    "legacyRegressionChecks": 27,
+    "newOperatorChecks": 12,
+    "method": "Node VM execution of emitted SIM2 and embedded dataset parser with rendering-only DOM stubs; independent imported/exported-plan, configured constraint, factor and score audits. Includes preserved legacy regression and new operator-input cases. This is not browser or offline-file execution.",
+    "coreFunctionsIdentical": 12,
+    "sampleUploadedResult": {
+      "baseline": 4969,
+      "best": 5247,
+      "gain": 278,
+      "calls": 1742,
+      "iterations": 2600,
+      "seed": 20260829,
+      "inputShowings": 90,
+      "retainedShowings": 89,
+      "screenCount": 18,
+      "feasible": true,
+      "baselinePerShowSum": 4968.820371149739,
+      "bestPerShowSum": 5246.789178502658
+    },
+    "explicitShortRun": {
+      "baseline": 4969,
+      "best": 5126,
+      "calls": 63,
+      "iterations": 100,
+      "seed": 7,
+      "retainedShowings": 90
+    },
+    "invalidRunSettingsChecked": 14,
+    "invalidLoadsPreserveEntireCompletedState": true,
+    "customScreenIDsAndDuplicateNames": {
+      "firstAndSecondInspectionCorrect": true,
+      "canonicalIdentities": 18,
+      "loadSearchMetadataCorrect": true
+    },
+    "inputOptionAndExportCopiesDetached": true,
+    "sameEntryPathReplayExactly": true,
+    "limitations": [
+      "No browser UI or direct file execution was performed.",
+      "Audits use exported model/constraint values; legacy exports without a large-screen threshold fall back to 250.",
+      "Native reset, imported reference and manually swapped reference use different entry paths; each reproducibility check repeats its own entry path."
+    ]
+  },
+  "httpBrowserVerification": {
+    "status": "pass-scoped",
+    "method": "Independent root CUA HTTP: final-SHA source and staged-course pipeline, Run/Pause/Finish, actual final exports and optimized-CSV reupload, rejection/recovery, responsive and course navigation passed. Earlier-candidate configuration scopes are retained.",
+    "testedCandidateSHA256": "e59a4fc30346f9b7ef1375d49f124ca076dc0d0557045d3a0c65b3f5fcd62012",
+    "finalEngineSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+    "actualPlanningJSONUpload": {
+      "file": "CinemaPlanning.json",
+      "rows": 90,
+      "baseline": 4969
+    },
+    "confirmation": "Reference4969, no optimizationyet.",
+    "sample": {
+      "baseline": 4969,
+      "best": 5247,
+      "gain": 278,
+      "calls": 1742,
+      "iterations": 2600,
+      "inputShowings": 90,
+      "retainedShowings": 89,
+      "feasibility": "PASS"
+    },
+    "shortRun": {
+      "baseline": 4969,
+      "best": 5126,
+      "calls": 63,
+      "iterations": 100,
+      "seed": 7
+    },
+    "referenceScale104": {
+      "baseline": 3975,
+      "best": 4101,
+      "iterations": 100,
+      "seed": 7
+    },
+    "actualScreeningsCSVUpload": {
+      "file": "Screenings.csv",
+      "currentModelReferenceResponse": 104,
+      "baseline": 3975,
+      "usesCurrentPackageDefinitions": true
+    },
+    "closing2300": {
+      "rejectedForActualRows": true,
+      "resultsNavDisabledAfterSettingChange": true
+    },
+    "actualUnknownFilmCSV": {
+      "film": "X",
+      "row": 2,
+      "fieldPathShown": true,
+      "previousAcceptedDataRetained": true,
+      "NextDisabled": true
+    },
+    "sampleRecovery": {
+      "baseline": 4969,
+      "best": 5247,
+      "calls": 1742,
+      "iterations": 2600,
+      "retainedShowings": 89
+    },
+    "actualJSONExport": {
+      "filename": "response-simulation-results.json",
+      "downloadSHA256": "248759acff3a39dc05e90f0b42c1ab4de4f8a61b9668804f7daa2fa2f7ad3179",
+      "inputRows": 90,
+      "bestRows": 89,
+      "perShowSum": 5246.789178502658,
+      "roundedBest": 5247,
+      "runParamsInputFixtureAndFactorsAudited": true,
+      "exactArtifactSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+      "browserSavedFilename": "response-simulation-results (3).json",
+      "artifactScope": "Actual final-SHA download; 90 input rows,89 best rows,5246.789178502658 per-show sum and run parameters audited."
+    },
+    "actualCSVExport": {
+      "filename": "OptimizedTimetable.csv",
+      "downloadSHA256": "f52df0d3d8b42f88cab80eb76b8d0f95b54d9b65229a58da9725af691972a866",
+      "columns": [
+        "showing_id",
+        "site_id",
+        "screen_id",
+        "film_id",
+        "start_time"
+      ],
+      "rows": 89,
+      "sameInputDefinitionParserReimport": "pass",
+      "finalSourceActualReupload": "pass",
+      "browserReimportRows": 89,
+      "browserReimportReferenceScore": 5247,
+      "sameFixture": true,
+      "exactArtifactSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+      "browserSavedFilename": "OptimizedTimetable (1).csv",
+      "artifactScope": "Actual final-SHA download and reupload of that file; five columns,89 rows,reference5247."
+    },
+    "finalExactReplay": {
+      "status": "pass",
+      "baseline": 4969,
+      "best": 5247,
+      "calls": 1742,
+      "iterations": 2600,
+      "retainedShowings": 89,
+      "feasibility": "PASS",
+      "RunPauseObservedIteration": 1605
+    },
+    "responsive": {
+      "status": "pass",
+      "mobileViewportWidth": 390,
+      "ImportBodyWidth": 390,
+      "ResultsBodyWidth": 390,
+      "methodDialogWidth": 356,
+      "desktopRestored": true
+    },
+    "coursePrefixReturnNavigation": "Pass: staged Response app, guide and original proposal returned to the hub; fresh hub showed the Import workflow; course portal \u2192 Assignment 1 \u2192 Open worked examples returned to the hub.",
+    "directOfflineFileExecution": "Not verified",
+    "finalSourceUnknownFilmAndRecovery": "Pass: film X on CSV row 2 was rejected, Next disabled and the accepted source retained; valid-sample recovery passed.",
+    "stagedCourseDefaultPipeline": {
+      "status": "pass",
+      "baseline": 4969,
+      "best": 5247,
+      "calls": 1742,
+      "iterations": 2600,
+      "retainedShowings": 89,
+      "feasibility": "PASS"
+    }
+  },
+  "evidenceBoundary": "The exact 1.5 engine passed 39/39 Node checks and the unchanged importer passed 25/25. Final-SHA source/staged-course pipeline, replay, pause/finish, actual final exports and optimized-CSV reupload, rejection/recovery, responsive and course navigation passed. Earlier-candidate configuration evidence retains its stated scope. Course build/integration checks passed separately. Direct offline opening remains unverified. Legacy native/manual and old shift outputs are regressions, not operator benchmarks. Declared assumptions do not establish learned response accuracy, the purchased-ticket target, causal effects, business uplift, BO or a global optimum.",
+  "presentationRevision": {
+    "release": "1.7",
+    "scope": "Main proposal focuses on cinema problem-solving. Brief-versus-case data/assumptions and proposal/demo scope are consolidated in a separate shared classroom-comparison.html page; detailed notes/MD preserved. Apps unchanged.",
+    "sections": 44,
+    "slide03": "Original forecasting/programming structure restored."
+  },
+  "publicDeploymentEvidence1_5": {
+    "commit": "7c183a964a9dd28c73ba65ede652903f205f9f5e",
+    "workflowRun": 38187603308,
+    "workflowConclusion": "success",
+    "publicDefaultResponse": {
+      "reference": 4969,
+      "best": 5247,
+      "iterations": 2600,
+      "evaluations": 1742
+    },
+    "publicDefaultAudience": {
+      "profiles": 2000,
+      "potential": 757,
+      "realized": 726,
+      "showings": 241
+    },
+    "actualMDAndZIPDownloads": "PASS; 29-file ZIP exact reviewed bytes."
+  }
+}

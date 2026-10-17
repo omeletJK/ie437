@@ -1,0 +1,37 @@
+{
+  "sourcePath": "public/samples/audience-annual-2027-sample.xlsx",
+  "sourceSHA256": "6cfbc58111765cf28b51f4328d28f709a83162ed75425998626ca52086b1e5ad",
+  "csvPath": "student/audience/Movies.csv",
+  "csvBytes": 5595,
+  "csvSHA256": "77fc6ed98a78e2cba95eba60ef481293c992d9c8d27de06d3c845edcbd233bd2",
+  "films": 24,
+  "releaseMonths": [
+    "2027-01",
+    "2027-02",
+    "2027-03",
+    "2027-04",
+    "2027-05",
+    "2027-06",
+    "2027-07",
+    "2027-08",
+    "2027-09",
+    "2027-10",
+    "2027-11",
+    "2027-12"
+  ],
+  "genres": {
+    "sci-fi": 12,
+    "drama": 12
+  },
+  "runtimeMinutes": [
+    110
+  ],
+  "activeDays": 365,
+  "minActivePerDay": 2,
+  "maxActivePerDay": 2,
+  "sameParsedNonTextMovieFields": true,
+  "importIssues": [],
+  "sourceShowings": 8760,
+  "englishCSVShowings": 0,
+  "averageFrequency": 10.843793088268301
+}

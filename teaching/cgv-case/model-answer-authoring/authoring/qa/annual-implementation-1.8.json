@@ -1,0 +1,54 @@
+{
+  "version": "1.8",
+  "decision": "Restore the existing M0 simulator and its original 24-film annual workbook Movies sheet rather than create another app.",
+  "sourceWorkbook": "public/samples/audience-annual-2027-sample.xlsx",
+  "sourceWorkbookSHA256": "6cfbc58111765cf28b51f4328d28f709a83162ed75425998626ca52086b1e5ad",
+  "movieCSV": {
+    "file": "student/audience/Movies.csv",
+    "bytes": 5595,
+    "sha256": "77fc6ed98a78e2cba95eba60ef481293c992d9c8d27de06d3c845edcbd233bd2"
+  },
+  "population": {
+    "profiles": 2000,
+    "people": 10000
+  },
+  "horizon": {
+    "start": "2027-01-01",
+    "exclusiveEnd": "2028-01-01",
+    "activeDays": 365
+  },
+  "catalog": {
+    "films": 24,
+    "releasesPerMonth": 2,
+    "dailyCompetingFilms": 2,
+    "genres": {
+      "sci-fi": 12,
+      "drama": 12
+    },
+    "runtimeMinutes": [
+      110
+    ]
+  },
+  "translationsOnly": [
+    "title",
+    "synopsis"
+  ],
+  "engineIdentity": {
+    "bytes": 161206,
+    "sha256": "f2baa183497e7461017855716dadf729eaad99ab70484de84f0d9a3716f6e7d5"
+  },
+  "calculationEngineUnchanged": true,
+  "responseAppAndProposalsUnchanged": true,
+  "newTests": "Source-exact 24 films, cutoff, end-exclusive 365-day coverage, overlapping monthly releases, downloadable/embedded fixture identity and unchanged M0 Worker.",
+  "finalAudienceApp": {
+    "file": "student/audience/demo.html",
+    "bytes": 468290,
+    "sha256": "254e341600d41f42f6fb5a1a7e44f2dbe1b79079500d6688cd25b8258d25d96e"
+  },
+  "downloadPatchAudit": {
+    "onlySemanticMainChange": "sample download href uses Movies.csv instead of a data URL",
+    "workerAndCatalogUnchanged": true,
+    "CSSAndShellUnchanged": true,
+    "canonicalMainSHA256": "dc2fecad08fcfab000007913746b28787f2ca136bab751b323be5dd751399e4e"
+  }
+}

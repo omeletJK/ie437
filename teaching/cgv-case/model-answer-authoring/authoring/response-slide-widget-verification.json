@@ -1,0 +1,152 @@
+{
+  "verifiedAt": "2026-10-11T13:16:24.918Z",
+  "method": "Executed the extracted, unmodified packing/feasibility/predict/ILS functions in Node.js with rendering-only DOM stubs; script compilation also passed.",
+  "browser": "Independently reviewed in a static HTTP browser preview on 2026-10-11. Direct offline file execution has not been verified.",
+  "sourceSHA256": "3b0be297f9499b849c6f42aeb3d4b4a46ab86164fb22ff60a50cb81577891b1d",
+  "demoSHA256": "66021195ceeb0228cf022b096671e2f2a7959bfe73ff6926024bdd4d084d341b",
+  "initial": {
+    "baseline": 5134,
+    "best": 5134,
+    "iterations": 0,
+    "calls": 1,
+    "valid": true,
+    "showings": 90,
+    "seed": 20260829
+  },
+  "target": {
+    "site": 3,
+    "hall": 0,
+    "slack": 369,
+    "lastEnd": 1111,
+    "maxShift": 365
+  },
+  "cases": {
+    "normal": {
+      "shift": 0,
+      "site": "Site D",
+      "screen": 1,
+      "lastEnd": 1111,
+      "close": 1480,
+      "maxShift": 365,
+      "status": "feasible",
+      "score": 5134,
+      "showings": 90,
+      "closingSlack": 369,
+      "reason": "Original packing, feasibility and response functions accept and evaluate this plan."
+    },
+    "boundary": {
+      "shift": 365,
+      "site": "Site D",
+      "screen": 1,
+      "lastEnd": 1476,
+      "close": 1480,
+      "maxShift": 365,
+      "status": "feasible",
+      "score": 5099,
+      "showings": 90,
+      "closingSlack": 4,
+      "reason": "Original packing, feasibility and response functions accept and evaluate this plan."
+    },
+    "failure": {
+      "shift": 370,
+      "site": "Site D",
+      "screen": 1,
+      "lastEnd": 1481,
+      "close": 1480,
+      "maxShift": 365,
+      "status": "infeasible",
+      "reason": "The shifted final screening ends after 24:40. The original schedule packing function rejects the plan; no score is returned."
+    },
+    "invalid": {
+      "status": "invalid",
+      "reason": "Enter a nonnegative multiple of 5 minutes, at most 10,000. No score or valid schedule is returned."
+    },
+    "blank": {
+      "status": "invalid",
+      "reason": "Enter a nonnegative multiple of 5 minutes, at most 10,000. No score or valid schedule is returned."
+    }
+  },
+  "searched": {
+    "baseline": 5134,
+    "best": 5265,
+    "iterations": 2600,
+    "calls": 1739,
+    "valid": true,
+    "showings": 90,
+    "seed": 20260829
+  },
+  "repeated": {
+    "baseline": 5134,
+    "best": 5265,
+    "iterations": 2600,
+    "calls": 1739,
+    "valid": true,
+    "showings": 90,
+    "seed": 20260829
+  },
+  "boundaryBaseline": {
+    "baseline": 5099,
+    "best": 5099,
+    "iterations": 0,
+    "calls": 1,
+    "valid": true,
+    "showings": 90,
+    "seed": 20260829
+  },
+  "boundarySearch": {
+    "baseline": 5099,
+    "best": 5352,
+    "iterations": 2600,
+    "calls": 1750,
+    "valid": true,
+    "showings": 90,
+    "seed": 20260829
+  },
+  "claims": "Functional checks on the declared synthetic fixture only; no learned-model, causal, operational-uplift or global-optimum claim.",
+  "httpBrowserVerification": {
+    "observationDate": "2026-10-11",
+    "method": "Independent static-HTTP UI review; observations supplied by the reviewer. This is separate from the Node engine verification above.",
+    "offlineFileExecution": "Not verified",
+    "checks": [
+      {
+        "name": "Normal fixture",
+        "status": "pass",
+        "score": 5134
+      },
+      {
+        "name": "Boundary through original engine",
+        "status": "pass",
+        "shiftMinutes": 365,
+        "score": 5099,
+        "showings": 90,
+        "lastEnd": "24:36",
+        "closing": "24:40",
+        "slackMinutes": 4
+      },
+      {
+        "name": "Failure through original engine",
+        "status": "pass",
+        "shiftMinutes": 370,
+        "validScoreReturned": false,
+        "loadDisabled": true
+      },
+      {
+        "name": "Original ILS at 4x UI speed",
+        "status": "pass",
+        "baseline": 5134,
+        "best": 5265,
+        "responseCalls": 1739,
+        "iterations": 2600,
+        "acceptedPlanViolations": 0
+      }
+    ],
+    "scope": "Functional UI observations under the declared synthetic fixture. No real-world, causal, global-optimum or offline-file execution claim."
+  },
+  "navigationRevision": {
+    "description": "Restored the established 44-slide presentation without redesign; added a relative All worked examples link to the primary, reference and demo toolbar.",
+    "staticCompilation": "pass: all embedded JavaScript compiled; JSON notes parsed; 44 slide IDs/order and note keys/timings preserved; return links resolve; primary/reference bytes identical; canonical source unchanged.",
+    "independentHTTPNavigation": "pass: restored original proposal opened from the course hub, visible HUD home link returned with native Enter; Response demo S18 returned via the toolbar home link; all paths stayed under the /ie437/worked-examples/assignment-01-model-answer/ course prefix.",
+    "offlineFileExecution": "Not verified",
+    "linkPlacement": "Inside the existing #pcount row before Previous slide; no separate overlay."
+  }
+}

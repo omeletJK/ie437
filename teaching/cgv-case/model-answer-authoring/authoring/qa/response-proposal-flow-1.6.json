@@ -1,0 +1,540 @@
+{
+  "revision": "1.6",
+  "case": "A",
+  "source": "/Users/jinkyoo/Projects/cgv-audience-dt/cgv-proposal/IE437_Response_Model_EN.html",
+  "proposal": "/Users/jinkyoo/Projects/cgv-audience-dt/teaching/ie437-model-answer/student/response/proposal.html",
+  "beforeSHA256": "405374641a46c50c10c9c5983b1f112b7844f68a00854b751d5887945137702d",
+  "proposalSHA256": "81186fb0eeb11d32ba7da221f335db20526b660c30734e710d58822890589416",
+  "sectionCount": 44,
+  "sectionIds": [
+    "s01",
+    "s02",
+    "s03",
+    "s04",
+    "s05",
+    "s06",
+    "s07",
+    "s08",
+    "s09",
+    "s10",
+    "s11",
+    "s12",
+    "s13",
+    "s14",
+    "s15",
+    "s16",
+    "s17",
+    "s18",
+    "s19",
+    "s20",
+    "s21",
+    "s22",
+    "s23",
+    "s24",
+    "s25",
+    "s26",
+    "s27",
+    "s28",
+    "s29",
+    "s30",
+    "s31",
+    "s32",
+    "s33",
+    "s34",
+    "s35",
+    "s36",
+    "a8",
+    "a1",
+    "a2",
+    "a3",
+    "a4",
+    "a5",
+    "a6",
+    "a7"
+  ],
+  "compactCount": 31,
+  "allSectionsReviewed": true,
+  "changedSectionIds": [
+    "s02",
+    "s03",
+    "s04",
+    "s13",
+    "s14",
+    "s15",
+    "s18",
+    "s21",
+    "s22",
+    "s23",
+    "s24",
+    "s25",
+    "s28",
+    "s29",
+    "s30",
+    "s31",
+    "s32",
+    "s33",
+    "s35",
+    "s36",
+    "a8",
+    "a1",
+    "a2",
+    "a4",
+    "a5",
+    "a6",
+    "a7"
+  ],
+  "displacedGuidance": [
+    {
+      "slideId": "s03",
+      "previousVisibleText": "S03 Expanded classroom reference A declared reference workflow, pending an operator audit The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "The classroom brief supplies purchase-field meanings. A separated forecast → schedule process is an assumption for this expanded reference, not an observed current practice. Confirm the real planning window, current plan and rule ownership before designing a replacement.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s03"
+      ]
+    },
+    {
+      "slideId": "s21",
+      "previousVisibleText": "S21 Expanded classroom reference Purchase records establish transactions, not demand response Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Known teaching fields: film, venue, screening date/time, purchasing account and paid-ticket count. One row is one completed purchase. No actual dataset is supplied. Request the complete screening inventory, capacities, zero-sales shows, schedule versions and purchase event times. The original 47-category inventory is not an available HW1 dataset.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s21"
+      ]
+    },
+    {
+      "slideId": "s24",
+      "previousVisibleText": "S24 Expanded classroom reference Sequence the work by evidence, not calendar promises Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Stage 1: audit record semantics and operational rules. Stage 2: evaluate a declared response target on time-separated data. Stage 3: run a bounded trial with operator approval. Duration and dependencies: TBD after data coverage, permissions and validation effort are known.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s24"
+      ]
+    },
+    {
+      "slideId": "s29",
+      "previousVisibleText": "S29 Expanded classroom reference Adopt through evidence gates Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Audit → historical validation → bounded operational trial → deployment decision. Define thresholds with the operator using a measured baseline. Budget, timeline and benefit estimates are TBD. This classroom example supplies no justified commercial estimate.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s29"
+      ]
+    },
+    {
+      "slideId": "s30",
+      "previousVisibleText": "S30 Expanded classroom reference Value must be measured against a declared baseline Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Potential operational value: feasible recommendations, transparent tradeoffs and better measured outcomes. The demo establishes computation under a fixture. Search scores do not establish business uplift, causality or adoption readiness.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s30"
+      ]
+    },
+    {
+      "slideId": "s31",
+      "previousVisibleText": "S31 Expanded classroom reference Make the analysis auditable Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Retain the input snapshot, planning cutoff, rules, evaluator version, seed, baseline, accepted candidates and reasons for rejection. A colleague should be able to reproduce a recommendation and explain what would invalidate it.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s31"
+      ]
+    },
+    {
+      "slideId": "s32",
+      "previousVisibleText": "S32 Expanded classroom reference Separate evaluator choice from search choice A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "A response formula or learned predictor evaluates actions. ILS, enumeration, a solver or BO determines which actions to examine. The executed demo uses deterministic ILS. BO would require a posterior, acquisition rule, evaluation and posterior update; these are not implemented here.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s32"
+      ]
+    },
+    {
+      "slideId": "s33",
+      "previousVisibleText": "S33 Expanded classroom reference Stress the model before making an operational claim Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Check time leakage, zero-sales coverage, calibration by film/site, capacity effects, policy changes and assumptions about substitution. Do not use a recommendation outside supported contexts or when hard-rule checks fail.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s33"
+      ]
+    },
+    {
+      "slideId": "s35",
+      "previousVisibleText": "S35 Expanded classroom reference Request a bounded data and rule audit The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "The data owner confirms record semantics and coverage. The operations owner supplies the reference plan and rules. The modeling role defines the outcome and evaluation protocol. Approve an audit scope and a validation gate. Real-data modeling and a field trial remain future work; cost and duration are TBD.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: s35"
+      ]
+    },
+    {
+      "slideId": "a2",
+      "previousVisibleText": "A2 Expanded classroom reference Proceed, revise or stop at explicit evidence gates Proceed only when the outcome unit, planning cutoff and feasible set are defensible. Validate prediction separately from optimization and operational effects. Stop or revise when critical information is missing, calibration is poor, recommendations violate hard rules or a trial fails the agreed outcome/stability criteria. IE437 · Fictional case · Evidence and assumptions must remain separate",
+      "previousSpeakerNote": "Proceed only when the outcome unit, planning cutoff and feasible set are defensible. Validate prediction separately from optimization and operational effects. Stop or revise when critical information is missing, calibration is poor, recommendations violate hard rules or a trial fails the agreed outcome/stability criteria.",
+      "destination": [
+        "problem-definition.md#appendix-a-proposal-presentation-notes-and-evidence-boundaries",
+        "proposal.html speaker notes: a2"
+      ]
+    }
+  ],
+  "restoredVisuals": {
+    "s03": "Original two-column P1–P4 / A1–A4 flow; labels unchanged",
+    "s21": "Three-column modeling-role input map",
+    "s24": "Original three-phase operator/model track diagram and reveal controller",
+    "s29": "Original adoption phase cards without fees",
+    "s30": "Original business/operation/intelligence value cards",
+    "s31": "Original implementation capability cards",
+    "s32": "Original chain/cards repurposed for proposed BO loop",
+    "s33": "Original stats/flow-card layout repurposed for robustness and validation strategy",
+    "s35": "Original three-ask decision layout without fees/dates",
+    "a2": "Original four technical validation gates"
+  },
+  "retainedInterpretation": [
+    "Fixed-demand assumption s05",
+    "Response factors and synthetic numerical labels s06,s07,s11,s13,s17,s18",
+    "Confounding and response identification s12,a4",
+    "Operating constraints s14,a3,a7",
+    "Uncertainty s09,s11,s25,a5",
+    "Hypotheses and distinct forecast/scheduling/operation metrics s19,s25,a2"
+  ],
+  "scope": [
+    "No demo numerical engine edits",
+    "No unsupported real-data/BO implementation claims",
+    "No company/engineer names introduced",
+    "Original source deck not modified",
+    "No packaging or site deployment performed by this task"
+  ],
+  "checks": {
+    "sectionIdsUnchanged": true,
+    "aliasBytesEqual": true,
+    "genericAuditOnlySlidesRemoved": true,
+    "s03OriginalFlowIndices": true,
+    "mdVerbatimGuidanceMapped": true,
+    "speakerNotesJSONValid": true,
+    "speakerNoteCoverage44": true,
+    "inlineScriptSyntaxValid": true,
+    "SIM2SectionByteUnchangedFromPublished15": true,
+    "ROLLSectionByteUnchangedFromPublished15": true,
+    "visibleCompanyOrEngineerNamesAbsent": true,
+    "EnglishOnlyHTMLAndMD": true,
+    "MDAppendixIncluded": true
+  },
+  "slides": [
+    {
+      "id": "s01",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Cinema Programming Response Model",
+      "afterTitle": "Cinema Programming Response Model"
+    },
+    {
+      "id": "s02",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Turn a declared reference forecast into better film programming decisions",
+      "afterTitle": "Turn the baseline forecast into better film programming decisions"
+    },
+    {
+      "id": "s03",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "A declared reference workflow, pending an operator audit",
+      "afterTitle": "Start with separate forecasting and scheduling flows, then connect them through response"
+    },
+    {
+      "id": "s04",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "The current approach is sound: forecast demand , then allocate it",
+      "afterTitle": "The baseline approach is sound: forecast demand , then allocate it"
+    },
+    {
+      "id": "s05",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "One important assumption is embedded in this approach",
+      "afterTitle": "One important assumption is embedded in this approach"
+    },
+    {
+      "id": "s06",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Scheduling changes audience choices as well as allocating demand",
+      "afterTitle": "Scheduling changes audience choices as well as allocating demand"
+    },
+    {
+      "id": "s07",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Even an accurate forecast of 5 million viewers leaves the cinema chain’s captured audience open to change",
+      "afterTitle": "Even an accurate forecast of 5 million viewers leaves the cinema chain’s captured audience open to change"
+    },
+    {
+      "id": "s08",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Distinguish the film’s potential demand from the cinema chain’s realized demand",
+      "afterTitle": "Distinguish the film’s potential demand from the cinema chain’s realized demand"
+    },
+    {
+      "id": "s09",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Prediction estimates outcomes; Programming chooses actions",
+      "afterTitle": "Prediction estimates outcomes; Programming chooses actions"
+    },
+    {
+      "id": "s10",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Base Forecast remains essential: it estimates the film’s potential demand",
+      "afterTitle": "Base Forecast remains essential: it estimates the film’s potential demand"
+    },
+    {
+      "id": "s11",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "The next question is: “ How will audiences respond to this schedule? ”",
+      "afterTitle": "The next question is: “ How will audiences respond to this schedule? ”"
+    },
+    {
+      "id": "s12",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "“Larger auditorium → more viewers” can lead to a false conclusion about scheduling effects",
+      "afterTitle": "“Larger auditorium → more viewers” can lead to a false conclusion about scheduling effects"
+    },
+    {
+      "id": "s13",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Compare thousands of feasible schedules to find the best option",
+      "afterTitle": "Compare thousands of feasible schedules to find the best option"
+    },
+    {
+      "id": "s14",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Keep the cinema chain’s operating rules, and express them as optimization constraints",
+      "afterTitle": "Keep the cinema chain’s operating rules, and express them as optimization constraints"
+    },
+    {
+      "id": "s15",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "The cinema chain’s next-generation film programming AI: the complete architecture",
+      "afterTitle": "The proposed film programming system: the complete architecture"
+    },
+    {
+      "id": "s16",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Once the initial schedule is set, better information starts arriving",
+      "afterTitle": "Once the initial schedule is set, better information starts arriving"
+    },
+    {
+      "id": "s17",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "The next step is AI that operates and improves schedules",
+      "afterTitle": "The next step is AI that operates and improves schedules"
+    },
+    {
+      "id": "s18",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Reoptimize while preserving customer commitments and operational stability",
+      "afterTitle": "Reoptimize while preserving customer commitments and operational stability"
+    },
+    {
+      "id": "s19",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Validate four hypotheses in sequence",
+      "afterTitle": "Validate four hypotheses in sequence"
+    },
+    {
+      "id": "s20",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Build one closed loop from forecasting to validated scheduling decisions",
+      "afterTitle": "Build one closed loop from forecasting to validated scheduling decisions"
+    },
+    {
+      "id": "s21",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Purchase records establish transactions, not demand response",
+      "afterTitle": "Organize the proposed inputs by their role in the decision loop"
+    },
+    {
+      "id": "s22",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Response learning needs “ How did the schedule change? ”",
+      "afterTitle": "Response learning needs “ How did the schedule change? ”"
+    },
+    {
+      "id": "s23",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "The cinema chain’s support determines the depth of validation",
+      "afterTitle": "The available operating inputs determine the depth of validation"
+    },
+    {
+      "id": "s24",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Sequence the work by evidence, not calendar promises",
+      "afterTitle": "Build in three stages: feasibility → response → integrated operation"
+    },
+    {
+      "id": "s25",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Measure Prediction and Programming success separately",
+      "afterTitle": "Measure Prediction and Programming success separately"
+    },
+    {
+      "id": "s26",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Unite distinct expertise in one Decision Modeling framework",
+      "afterTitle": "Unite distinct expertise in one Decision Modeling framework"
+    },
+    {
+      "id": "s27",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Prediction and Programming also operate differently",
+      "afterTitle": "Prediction and Programming also operate differently"
+    },
+    {
+      "id": "s28",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Connect an Intelligence Module to the cinema chain’s existing architecture",
+      "afterTitle": "Connect an Intelligence Module to a cinema operating architecture"
+    },
+    {
+      "id": "s29",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Adopt through evidence gates",
+      "afterTitle": "Adopt a phased structure : prototype → integration → ongoing operation"
+    },
+    {
+      "id": "s30",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Value must be measured against a declared baseline",
+      "afterTitle": "The value goes beyond time saved on scheduling"
+    },
+    {
+      "id": "s31",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Make the analysis auditable",
+      "afterTitle": "Connect decision models to operating systems"
+    },
+    {
+      "id": "s32",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Separate evaluator choice from search choice",
+      "afterTitle": "Use response estimates to choose the next schedule to evaluate"
+    },
+    {
+      "id": "s33",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Stress the model before making an operational claim",
+      "afterTitle": "Test the recommendation under changing demand and operating conditions"
+    },
+    {
+      "id": "s34",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "Functional roles connect models to operating decisions",
+      "afterTitle": "Functional roles connect models to operating decisions"
+    },
+    {
+      "id": "s35",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Request a bounded data and rule audit",
+      "afterTitle": "Turn the proposal into action with three decisions"
+    },
+    {
+      "id": "s36",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "From forecasting 5 million viewers to capturing more of that demand at Cinema",
+      "afterTitle": "From forecasting 5 million viewers to capturing more of that demand at Cinema"
+    },
+    {
+      "id": "a8",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "We welcome your questions",
+      "afterTitle": "We welcome your questions"
+    },
+    {
+      "id": "a1",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Keep Models ① and ②; add Response and Optimization around them",
+      "afterTitle": "Keep Models ① and ②; add Response and Optimization around them"
+    },
+    {
+      "id": "a2",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Proceed, revise or stop at explicit evidence gates",
+      "afterTitle": "Validate through four gates, and retain useful assets at every outcome"
+    },
+    {
+      "id": "a3",
+      "reviewed": true,
+      "changed": false,
+      "beforeTitle": "The system recommends; Cinema operators decide under four operating principles",
+      "afterTitle": "The system recommends; Cinema operators decide under four operating principles"
+    },
+    {
+      "id": "a4",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Without Action History, adapt the identification strategy and validation depth",
+      "afterTitle": "Without Action History, adapt the identification strategy and validation depth"
+    },
+    {
+      "id": "a5",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Choose methods after data diagnosis using clear selection criteria",
+      "afterTitle": "Choose methods after data diagnosis using clear selection criteria"
+    },
+    {
+      "id": "a6",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "Process cinema data within the cinema chain’s environment and exclude it from global-model training",
+      "afterTitle": "Process cinema data within the cinema chain’s environment and exclude it from global-model training"
+    },
+    {
+      "id": "a7",
+      "reviewed": true,
+      "changed": true,
+      "beforeTitle": "The Optimizer’s operating grammar Draft for agreement at kickoff",
+      "afterTitle": "The Optimizer’s operating grammar Draft for agreement at kickoff"
+    }
+  ],
+  "verificationScope": "Static source and prose checks; browser layout and deployment verification handled by root.",
+  "independentReview": {
+    "result": "PASS",
+    "reviewer": "proposal_flow_audit",
+    "basis": "Full deck prose, published1.5 section IDs/compact path/notes, JS syntax, exact SIM2 and ROLL declaration equality, ten verbatim displaced guidance mappings",
+    "minorCorrections": [
+      "s23 plural grammar",
+      "a5/a7 absent Build Spec source labels replaced with public method/catalog descriptions"
+    ]
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "version": "1.8",
+  "settings": {
+    "profiles": 2000,
+    "people": 10000,
+    "frequency": "estimated",
+    "objective": "Admissions",
+    "forecastPaths": 1,
+    "openMinute": 540,
+    "closeMinute": 1470,
+    "cleaningMin": 20,
+    "priceMinor": 1400,
+    "automaticImprovement": false
+  },
+  "fixture": {
+    "films": 24,
+    "year": 2027,
+    "monthlyPairs": 12,
+    "csvSHA256": "77fc6ed98a78e2cba95eba60ef481293c992d9c8d27de06d3c845edcbd233bd2"
+  },
+  "observedProgress": [
+    {
+      "phase": "prepare",
+      "done": 45,
+      "total": 2000
+    },
+    {
+      "phase": "prepare",
+      "done": 191,
+      "total": 2000
+    },
+    {
+      "phase": "prepare",
+      "done": 544,
+      "total": 2000
+    },
+    {
+      "phase": "forecast",
+      "done": 19,
+      "total": 365
+    },
+    {
+      "phase": "forecast",
+      "done": 280,
+      "total": 365
+    }
+  ],
+  "localRun": {
+    "url": "http://127.0.0.1:4174/ie437-model-answer/student/audience/demo.html?v=1.8",
+    "startedAt": "2026-10-12T05:25:56.785Z",
+    "calibrationSeconds": 130.6,
+    "completedObservedAt": "2026-10-12T05:32:56.109Z",
+    "elapsedObservedSeconds": 419,
+    "resultText": "MOVIE-FIRST AUDIENCE INTELLIGENCE\n\nMovie-first demand and scheduling\n\nPredict which movies people want to see, then allocate showtimes and seats to that demand.\n\n01\nRegister population\nTastes & viewing frequency\n02\nRegister movies\nMovies & theatrical runs\n03\nObjective & constraints\nObjective & operating rules\n04\nRun simulation\nDemand → allocation → improvement\n05\nInterpret results\nTimeline & audience composition\n\nFrequency calibration: 130.6 s · 2,000 profiles\n\n05 · MODEL / DECISION\nBaseline schedule evaluation complete\nSchedule-independent potential viewings / local market\n9,576\nRealized viewings under the baseline schedule\n5536\nBaseline showings\n7,467\nEvaluation paths\n1 paths\n\nThe unit is viewings. A person may watch multiple movies, so annual viewings can exceed 10,000. Graph variation is not a prediction interval calibrated on real data.\n\nSave inputs & rules\nDownload reproducibility manifest\nDownload computed results\nChange schedules and compare audience response\nNext task from these results\nFind a better candidate from the baseline schedule\nCompare re-programming after a response change\n\nObjective: Admissions · Run from the fixed action bar below. Confirm changed settings in Objective & constraints, then recalculate.\n\nDisplayed result\nSchedule-independent potential viewings\nRealized viewings under the baseline schedule\nRealized viewings under the improvement candidate\nExisting schedule before the shock\nExisting schedule after the shock\nRe-programmed schedule after the shock\n\nDo not subtract values from different paths as recommendation evidence. The comparison above uses common validation paths to judge improvement.\n\nAnnual movie timeline\n\nSchedule-independent potential viewings · 1 path average. Scroll horizontally to inspect release windows and daily visits, then select a movie.\n\n2027.01\n2027.02\n2027.03\n2027.04\n2027.05\n2027.06\n2027.07\n2027.08\n2027.09\n2027.10\n2027.11\n2027.12\nJanuary · Stellar Voyage\n385.0 visits · View details →\nJanuary · Our Day\n430.0 visits · View details →\nFebruary · Stellar Voyage\n366.0 visits · View details →\nFebruary · Our Day\n399.0 visits · View details →\nMarch · Stellar Voyage\n361.0 visits · View details →\nMarch · Our Day\n422.0 visits · View details →\nApril · Stellar Voyage\n419.0 visits · View details →\nApril · Our Day\n419.0 visits · View details →\nMay · Stellar Voyage\n383.0 visits · View details →\nMay · Our Day\n428.0 visits · View details →\nJune · Stellar Voyage\n362.0 visits · View details →\nJune · Our Day\n434.0 visits · View details →\nJuly · Stellar Voyage\n378.0 visits · View details →\nJuly · Our Day\n426.0 visits · View details →\nAugust · Stellar Voyage\n347.0 visits · View details →\nAugust · Our Day\n453.0 visits · View details →\nSeptember · Stellar Voyage\n378.0 visits · View details →\nSeptember · Our Day\n417.0 visits · View details →\nOctober · Stellar Voyage\n381.0 visits · View details →\nOctober · Our Day\n437.0 visits · View details →\nNovember · Stellar Voyage\n347.0 visits · View details →\nNovember · Our Day\n433.0 visits · View details →\nDecember · Stellar Voyage\n361.0 visits · View details →\nDecember · Our Day\n410.0 visits · View details →\nMOVIE AUDIENCE\nJanuary · Our Day · Audience composition\n\n2027-01-01 ~ 2027-02-01 (end date excluded) · drama\n\nFull release window · Expected local visits\n430 visits\n\nSites and times are reference anchors for potential demand before scheduling, not allocated screenings.\n\nExpected daily visits\n\n1 path average · Select a date bar to inspect its sites and people. Zero-count dates are included.\n\n14\n01.01\n43\n01.02\n31\n01.03\n21\n01.04\n12\n01.05\n19\n01.06\n18\n01.07\n12\n01.08\n35\n01.09\n20\n01.10\n18\n01.11\n8\n01.12\n5\n01.13\n13\n01.14\n7\n01.15\n18\n01.16\n16\n01.17\n15\n01.18\n4\n01.19\n11\n01.20\n9\n01.21\n13\n01.22\n11\n01.23\n18\n01.24\n5\n01.25\n5\n01.26\n5\n01.27\n2\n01.28\n5\n01.29\n8\n01.30\n9\n01.31\nDate for audience details\nFull release window\n2027-01-01 · 14 visits\n2027-01-02 · 43 visits\n2027-01-03 · 31 visits\n2027-01-04 · 21 visits\n2027-01-05 · 12 visits\n2027-01-06 · 19 visits\n2027-01-07 · 18 visits\n2027-01-08 · 12 visits\n2027-01-09 · 35 visits\n2027-01-10 · 20 visits\n2027-01-11 · 18 visits\n2027-01-12 · 8 visits\n2027-01-13 · 5 visits\n2027-01-14 · 13 visits\n2027-01-15 · 7 visits\n2027-01-16 · 18 visits\n2027-01-17 · 16 visits\n2027-01-18 · 15 visits\n2027-01-19 · 4 visits\n2027-01-20 · 11 visits\n2027-01-21 · 9 visits\n2027-01-22 · 13 visits\n2027-01-23 · 11 visits\n2027-01-24 · 18 visits\n2027-01-25 · 5 visits\n2027-01-26 · 5 visits\n2027-01-27 · 5 visits\n2027-01-28 · 2 visits\n2027-01-29 · 5 visits\n2027-01-30 · 8 visits\n2027-01-31 · 9 visits\nShow full period\nFull release window · Mean 430 visits / Path 0 people: 430 people\nExpected visits by site\n\nCentral 1\n70 visits\n\nCentral 2\n65 visits\n\nEast\n75 visits\n\nNorth\n77 visits\n\nSouth\n70 visits\n\nWest\n73 visits\n\nAudience age · Path 0\n\nUnder 30\n90 people\n\n30s\n89 people\n\n40s\n84 people\n\n50 and older\n167 people\n\nReference time band · Path 0\n\nMorning\n86 people\n\nAfternoon\n107 people\n\nEvening\n237 people\n\nLate night\n0 people\n\nPeople who would choose this film · 430 people\n\nSchedule-independent potential viewings · Path 0 lists individual people. The chart averages across paths for the 10,000 people in the local market; this list shows one path, so counts can differ. Select a person ID to inspect their history.\n\nSearch person ID / profile ID\nIndividual people for the selected movie\nPerson ID\tProfile\tAge / annual frequency\tVisit date\tReference site\tReference time\nP00205 ↗\tU00041\t40 years / 8 visits\t2027-01-01\tSouth\t15:30\nP00219 ↗\tU00043\t54 years / 22.8 visits\t2027-01-01\tNorth\t11:30\nP00538 ↗\tU00107\t25 years / 16.9 visits\t2027-01-01\tNorth\t11:30\nP02857 ↗\tU00571\t40 years / 15.7 visits\t2027-01-01\tNorth\t15:30\nP02937 ↗\tU00587\t46 years / 19.7 visits\t2027-01-01\tEast\t11:30\nP03095 ↗\tU00619\t58 years / 27.1 visits\t2027-01-01\tCentral 1\t15:30\nP04017 ↗\tU00803\t21 years / 24.6 visits\t2027-01-01\tCentral 1\t19:30\nP05352 ↗\tU01070\t35 years / 12.6 visits\t2027-01-01\tEast\t15:30\nP05910 ↗\tU01182\t24 years / 11.7 visits\t2027-01-01\tCentral 2\t20:30\nP06496 ↗\tU01299\t48 years / 21.5 visits\t2027-01-01\tCentral 1\t20:30\nP06602 ↗\tU01320\t36 years / 8 visits\t2027-01-01\tNorth\t21:30\nP08258 ↗\tU01651\t21 years / 14.2 visits\t2027-01-01\tCentral 2\t19:30\nP08771 ↗\tU01754\t53 years / 11.1 visits\t2027-01-01\tCentral 1\t19:30\nP08842 ↗\tU01768\t45 years / 2.5 visits\t2027-01-01\tSouth\t11:30\nP00141 ↗\tU00028\t55 years / 28.6 visits\t2027-01-02\tSouth\t11:30\nP00819 ↗\tU00163\t46 years / 16.6 visits\t2027-01-02\tCentral 2\t19:30\nP01181 ↗\tU00236\t27 years / 39.1 visits\t2027-01-02\tWest\t19:30\nP01789 ↗\tU00357\t26 years / 10.8 visits\t2027-01-02\tCentral 1\t21:30\nP02294 ↗\tU00458\t44 years / 7.4 visits\t2027-01-02\tSouth\t19:30\nP02415 ↗\tU00483\t60 years / 14.2 visits\t2027-01-02\tNorth\t19:00\nP02943 ↗\tU00588\t53 years / 32.6 visits\t2027-01-02\tSouth\t21:30\nP03036 ↗\tU00607\t27 years / 3.7 visits\t2027-01-02\tCentral 2\t11:30\nP03215 ↗\tU00643\t67 years / 18.2 visits\t2027-01-02\tSouth\t15:30\nP03222 ↗\tU00644\t21 years / 25.2 visits\t2027-01-02\tWest\t11:30\nP03255 ↗\tU00651\t70 years / 26.1 visits\t2027-01-02\tEast\t21:30\nP03510 ↗\tU00702\t56 years / 12 visits\t2027-01-02\tCentral 1\t19:00\nP03538 ↗\tU00707\t38 years / 16 visits\t2027-01-02\tCentral 2\t15:30\nP03584 ↗\tU00716\t48 years / 34.1 visits\t2027-01-02\tEast\t11:30\nP03616 ↗\tU00723\t44 years / 13.5 visits\t2027-01-02\tWest\t21:30\nP03622 ↗\tU00724\t51 years / 41.8 visits\t2027-01-02\tCentral 2\t19:30\nP03677 ↗\tU00735\t22 years / 5.2 visits\t2027-01-02\tCentral 2\t21:30\nP04095 ↗\tU00819\t27 years / 21.1 visits\t2027-01-02\tWest\t21:30\nP04096 ↗\tU00819\t27 years / 21.1 visits\t2027-01-02\tWest\t20:30\nP04406 ↗\tU00881\t37 years / 8 visits\t2027-01-02\tNorth\t11:30\nP04479 ↗\tU00895\t29 years / 5.5 visits\t2027-01-02\tSouth\t19:30\nP04576 ↗\tU00915\t63 years / 15.4 visits\t2027-01-02\tSouth\t20:30\nP04736 ↗\tU00947\t22 years / 20.6 visits\t2027-01-02\tEast\t11:30\nP04767 ↗\tU00953\t64 years / 7.7 visits\t2027-01-02\tSouth\t11:30\nP05217 ↗\tU01043\t58 years / 20.3 visits\t2027-01-02\tEast\t11:30\nP05344 ↗\tU01068\t21 years / 49.8 visits\t2027-01-02\tSouth\t20:30\nP05778 ↗\tU01155\t47 years / 13.5 visits\t2027-01-02\tWest\t21:30\nP06144 ↗\tU01228\t28 years / 31.7 visits\t2027-01-02\tWest\t19:30\nP06530 ↗\tU01306\t44 years / 11.7 visits\t2027-01-02\tSouth\t11:30\nP06580 ↗\tU01316\t61 years / 25.2 visits\t2027-01-02\tCentral 1\t19:30\nP06699 ↗\tU01339\t63 years / 15.1 visits\t2027-01-02\tCentral 1\t15:30\nP06873 ↗\tU01374\t43 years / 9.5 visits\t2027-01-02\tWest\t20:30\nP07215 ↗\tU01443\t49 years / 22.1 visits\t2027-01-02\tWest\t20:30\nP07296 ↗\tU01459\t55 years / 24.9 visits\t2027-01-02\tNorth\t11:30\nP07619 ↗\tU01523\t26 years / 12 visits\t2027-01-02\tNorth\t15:30\nP07651 ↗\tU01530\t22 years / 14.2 visits\t2027-01-02\tWest\t21:30\n430 people · Showing 1–50 people · 1 / 9 pages\nPrevious people\nNext people",
+    "decemberDetail": {
+      "film": "OWN-12-B",
+      "title": "December · Our Day",
+      "baselineVisits": 234,
+      "selectedDate": "2027-12-02",
+      "datePeople": 27,
+      "dateShowings": 23,
+      "person": "P00094",
+      "profile": "U00018",
+      "historicalWatches": 25,
+      "earlierPathVisits": 0
+    },
+    "timeline": {
+      "films": [
+        "January · Stellar Voyage",
+        "January · Our Day",
+        "February · Stellar Voyage",
+        "February · Our Day",
+        "March · Stellar Voyage",
+        "March · Our Day",
+        "April · Stellar Voyage",
+        "April · Our Day",
+        "May · Stellar Voyage",
+        "May · Our Day",
+        "June · Stellar Voyage",
+        "June · Our Day",
+        "July · Stellar Voyage",
+        "July · Our Day",
+        "August · Stellar Voyage",
+        "August · Our Day",
+        "September · Stellar Voyage",
+        "September · Our Day",
+        "October · Stellar Voyage",
+        "October · Our Day",
+        "November · Stellar Voyage",
+        "November · Our Day",
+        "December · Stellar Voyage",
+        "December · Our Day"
+      ],
+      "months": [
+        "2027.01",
+        "2027.02",
+        "2027.03",
+        "2027.04",
+        "2027.05",
+        "2027.06",
+        "2027.07",
+        "2027.08",
+        "2027.09",
+        "2027.10",
+        "2027.11",
+        "2027.12"
+      ]
+    },
+    "completed": true,
+    "baseline": {
+      "potential": 9576,
+      "realized": 5536,
+      "showings": 7467,
+      "paths": 1
+    }
+  },
+  "public": {
+    "url": "https://omeletjk.github.io/ie437/worked-examples/assignment-01-model-answer/audience/demo.html?v=1.8.1",
+    "csvDownload": {
+      "status": "received",
+      "path": "/Users/jinkyoo/Downloads/Movies (4).csv"
+    },
+    "uploadedFile": "/private/tmp/ie437-annual-upload/Movies.csv",
+    "uploadReceipt": {
+      "status": "set"
+    },
+    "moviesRegistered": 24,
+    "importAlertCount": 0,
+    "sampleAction": "Load annual sample · 24 films",
+    "appSHA256": "254e341600d41f42f6fb5a1a7e44f2dbe1b79079500d6688cd25b8258d25d96e"
+  }
+}

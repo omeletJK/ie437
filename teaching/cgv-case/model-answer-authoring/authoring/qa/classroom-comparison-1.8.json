@@ -1,0 +1,75 @@
+{
+  "version": "1.8",
+  "purpose": "One shared page compares the classroom brief with added data, assumptions, proposal strategies and executable scope of the two cases.",
+  "rows": [
+    "Starting records",
+    "Added data",
+    "Case assumptions",
+    "Proposed strategy",
+    "Executable demo"
+  ],
+  "sources": [
+    {
+      "file": "reference/assignment.md",
+      "sha256": "3e3956e2b04db4aca3d9b60fedb8792c7715aaf0b32ffb8f325674ef9e8969e6"
+    },
+    {
+      "file": "response/problem-definition.md",
+      "sha256": "64653ff289ebb29935158a4c7d8a2c409bc338bf7cff980d631d81d26180bba4"
+    },
+    {
+      "file": "audience/problem-definition.md",
+      "sha256": "755cc4bf4c531809aa90cb4694c3e16e6f24ccf53d71b067ca3890d9fdc22df3"
+    },
+    {
+      "file": "response/CinemaPlanning.json",
+      "sha256": "bc92fdc48f88dd6216a4363df2f4a4466cddb72a04750ad945ea82123092a2dc"
+    },
+    {
+      "file": "response/Screenings.csv",
+      "sha256": "f87dc8fe6bc4bb368ce61384702ca51b34e819cc8afa8f49b1f9f9e85bd06dea"
+    },
+    {
+      "file": "audience/Movies.csv",
+      "sha256": "77fc6ed98a78e2cba95eba60ef481293c992d9c8d27de06d3c845edcbd233bd2"
+    }
+  ],
+  "output": [
+    {
+      "file": "classroom-comparison.html",
+      "bytes": 178650,
+      "sha256": "47eec7415357914babf972c6a9f52055b43b7634b920030f209cdde39092a2bb"
+    },
+    {
+      "file": "classroom-comparison.md",
+      "bytes": 4498,
+      "sha256": "4820691b46a5e56a29036e1cb41c6f31dfe4f96bc273eba6bdf7dc7044cba53b"
+    }
+  ],
+  "checks": {
+    "oneTable": true,
+    "fiveComparisonRows": true,
+    "embeddedCourseFonts": [
+      "IBM Plex Mono",
+      "Inter",
+      "Space Grotesk"
+    ],
+    "externalAssets": false,
+    "relativeNavigation": true,
+    "staticContent": "PASS: five rows preserve the shared comparison; Case B declares the restored 24-film annual catalog.",
+    "browserLayout": {
+      "status": "PASS",
+      "document": {
+        "height": 720,
+        "width": 1280
+      },
+      "footerBottom": 702,
+      "rows": 5,
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      }
+    }
+  },
+  "scope": "No numerical demo or proposal slide modified by this generator."
+}

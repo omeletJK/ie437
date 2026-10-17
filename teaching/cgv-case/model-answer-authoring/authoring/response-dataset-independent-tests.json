@@ -1,0 +1,300 @@
+{
+  "verifiedAt": "2026-10-11T22:24:29.921Z",
+  "method": "Pure importer tests plus independent packing/prediction audit and actual unchanged archived SIM2 evaluation with rendering-only stubs. No browser or file-UI execution.",
+  "module": {
+    "path": "response-dataset.mjs",
+    "sha256": "66b0197b5595d7fe163287f0fe90d5d888b1c1050f4deec19e67288e3714fa25"
+  },
+  "reference": {
+    "archiveSHA256": "66021195ceeb0228cf022b096671e2f2a7959bfe73ff6926024bdd4d084d341b",
+    "score": 5134,
+    "showings": 90
+  },
+  "checks": [
+    {
+      "name": "Original sample maps to exact unchanged-core score and timetable",
+      "status": "pass",
+      "result": {
+        "showings": 90,
+        "score": 5134,
+        "bySite": [
+          891.4408887406552,
+          883.9457360633902,
+          772.3385845511167,
+          984.5410074885712,
+          755.0810519298801,
+          846.3482065051652
+        ],
+        "exactStartFidelity": true,
+        "actualCoreAndIndependentPredictionAgree": true
+      }
+    },
+    {
+      "name": "JSON and CSV template roundtrips reproduce all starts and assumptions",
+      "status": "pass",
+      "result": {
+        "JSON": {
+          "showings": 90,
+          "score": 5134,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ],
+          "exactStartFidelity": true,
+          "actualCoreAndIndependentPredictionAgree": true
+        },
+        "CSV": {
+          "showings": 90,
+          "score": 5134,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ],
+          "exactStartFidelity": true,
+          "actualCoreAndIndependentPredictionAgree": true
+        },
+        "csvRows": 90
+      }
+    },
+    {
+      "name": "Embedded pure factory matches imported module",
+      "status": "pass",
+      "result": {
+        "factoryParity": true
+      }
+    },
+    {
+      "name": "Shuffled site/film/showing order normalizes to the same actual plan",
+      "status": "pass",
+      "result": {
+        "showings": 90,
+        "score": 5134,
+        "bySite": [
+          891.4408887406552,
+          883.9457360633902,
+          772.3385845511167,
+          984.5410074885712,
+          755.0810519298801,
+          846.3482065051652
+        ],
+        "exactStartFidelity": true,
+        "actualCoreAndIndependentPredictionAgree": true
+      }
+    },
+    {
+      "name": "Lowercase canonical IDs normalize consistently with explicit warnings",
+      "status": "pass",
+      "result": {
+        "warnings": 234,
+        "audit": {
+          "showings": 90,
+          "score": 5134,
+          "bySite": [
+            891.4408887406552,
+            883.9457360633902,
+            772.3385845511167,
+            984.5410074885712,
+            755.0810519298801,
+            846.3482065051652
+          ],
+          "exactStartFidelity": true,
+          "actualCoreAndIndependentPredictionAgree": true
+        }
+      }
+    },
+    {
+      "name": "Schema alias is supported while conflicting or unsupported versions reject",
+      "status": "pass",
+      "result": {
+        "aliasAccepted": true,
+        "invalidShapes": 4
+      }
+    },
+    {
+      "name": "Unsupported JSON fields are rejected at all seven schema levels",
+      "status": "pass",
+      "result": {
+        "levels": 7
+      }
+    },
+    {
+      "name": "All declared immutable response coefficients reject incompatible values",
+      "status": "pass",
+      "result": {
+        "coefficients": [
+          "nearbySameFilmMinutes",
+          "nearbySameFilmFactor",
+          "nearbyOtherFilmMinutes",
+          "nearbyOtherFilmFactor",
+          "dailySameFilmFactor",
+          "dayBeforeMinute",
+          "primeFromMinute"
+        ],
+        "fiveMinuteGridRequired": true
+      }
+    },
+    {
+      "name": "Finite numeric values and type/boolean requirements reject malformed data",
+      "status": "pass",
+      "result": {
+        "numericCases": 9
+      }
+    },
+    {
+      "name": "Identity duplicates, missing map values and unknown screen IDs reject",
+      "status": "pass",
+      "result": {
+        "cases": 9
+      }
+    },
+    {
+      "name": "Operating grid, opening and final-film boundary are evaluated precisely",
+      "status": "pass",
+      "result": {
+        "lastFilmEnd": 1478,
+        "closingAtEndAccepted": true,
+        "closingOneMinuteEarlierRejected": true,
+        "lastFilmCleaningOutsideClosingAllowed": true
+      }
+    },
+    {
+      "name": "Time curve must be nonnegative, ordered and cover the operating window",
+      "status": "pass",
+      "result": {
+        "cases": 5
+      }
+    },
+    {
+      "name": "Cleaning exact boundary accepts and the next minute rejects",
+      "status": "pass",
+      "result": {
+        "maxCleaning": 15,
+        "oneMinuteAboveRejected": true
+      }
+    },
+    {
+      "name": "Room eligibility, chain cap, site cap, coverage and screen usage reject",
+      "status": "pass",
+      "result": {
+        "constraints": 6
+      }
+    },
+    {
+      "name": "Uploaded coefficients and changed timetable affect actual original-engine score",
+      "status": "pass",
+      "result": {
+        "baseChanged": 4036,
+        "responseChanged": 9629,
+        "timeChanged": 5118
+      }
+    },
+    {
+      "name": "Valid lower/upper row-count boundaries preserve every screen and exact starts",
+      "status": "pass",
+      "result": {
+        "lower": 18,
+        "upper": 600,
+        "beyondBoundsReject": true
+      }
+    },
+    {
+      "name": "Valid zero response values produce finite zero score without invented demand",
+      "status": "pass",
+      "result": {
+        "showings": 90,
+        "score": 0,
+        "bySite": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "exactStartFidelity": true,
+        "actualCoreAndIndependentPredictionAgree": true
+      }
+    },
+    {
+      "name": "Inputs and normalized package/engine/metadata copies remain independent",
+      "status": "pass",
+      "result": {
+        "inputNotMutated": true,
+        "freshResultStable": true
+      }
+    },
+    {
+      "name": "CSV importer retains the current loaded model and does not mutate defaults",
+      "status": "pass",
+      "result": {
+        "currentAssumptionsUsed": true
+      }
+    },
+    {
+      "name": "CSV BOM, CRLF/LF/CR, reordered headers and blank records parse identically",
+      "status": "pass",
+      "result": {
+        "variants": 5
+      }
+    },
+    {
+      "name": "CSV wrong headers, column counts and quote errors return structured failures",
+      "status": "pass",
+      "result": {
+        "cases": 7
+      }
+    },
+    {
+      "name": "CSV timing syntax, escaped quotes, multiline fields and source row locations are precise",
+      "status": "pass",
+      "result": {
+        "timeErrorRow": 2,
+        "gridErrorRow": 3,
+        "escapedQuoteParsedBeforeIdentityValidation": true,
+        "multilineSourceRow": 2
+      }
+    },
+    {
+      "name": "Text guard rejects wrong type, empty, NUL, oversize bytes and bad JSON",
+      "status": "pass",
+      "result": {
+        "maxBytes": 2097152,
+        "exactByteLimitAccepted": true
+      }
+    },
+    {
+      "name": "Invalid template requests return structured failures rather than files",
+      "status": "pass",
+      "result": {
+        "invalidTemplateText": null
+      }
+    },
+    {
+      "name": "Plain bounded display labels are preserved and do not become identity fields",
+      "status": "pass",
+      "result": {
+        "labelsPreservedAsData": true,
+        "canonicalIdentityRetained": true
+      }
+    }
+  ],
+  "findings": [
+    {
+      "severity": "integration_requirement",
+      "message": "Arbitrary bounded labels, including markup-like text and duplicate visible names, are legal. UI must escape labels and use canonical IDs/site indices for identity and exported plan matching, never visible names alone."
+    }
+  ],
+  "status": "pass",
+  "counts": {
+    "passed": 25,
+    "failed": 0
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "release": "1.6",
+  "checkedAt": "2026-10-12T04:22:16.352095+00:00",
+  "publicFiles": 29,
+  "sourceCourseZipEqual": true,
+  "archiveBytes": 6000978,
+  "archiveSHA256": "c25345f254c12f1bd64ae449efd7e0d09fa43508b0910d1ef9165cbe3c2409c4",
+  "appSHA256": {
+    "response": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+    "audience": "8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f"
+  },
+  "proposalSHA256": {
+    "response": "81186fb0eeb11d32ba7da221f335db20526b660c30734e710d58822890589416",
+    "audience": "18dce0139094c6888200307f7eee8ea2fa40a58c8689c3f5c7314906b6043455"
+  },
+  "independentAudit": "proposal-flow-independent-1.6.json",
+  "sourceBrowser": {
+    "responseHotspotIDs": [
+      "s03",
+      "s21",
+      "s24",
+      "s29",
+      "s32",
+      "s33",
+      "s35",
+      "a2"
+    ],
+    "audienceHotspotIDs": [
+      "s27",
+      "s32",
+      "s33",
+      "s34",
+      "s18b",
+      "a11"
+    ],
+    "representativePanelsFit1280x720": true,
+    "audienceProposalDemoHubRoundTrip": "PASS",
+    "notes": "All103speaker-note records parsed/mapped statically; IABpopupnotobserved."
+  },
+  "localChecks": [
+    "isolated HTML build PASS",
+    "worked-examples PASS",
+    "assignments PASS"
+  ],
+  "deploymentCommit": "7627bba6a369178ff334a87eb3e0da91ecb8514e",
+  "deploymentStatus": "success",
+  "completedAt": "2026-10-12T04:25:44.115346+00:00",
+  "status": "PASS",
+  "workflowRun": 38203470284,
+  "workflowURL": "https://github.com/omeletJK/ie437/actions/runs/38203470284",
+  "hostedChecks": [
+    "Full site build/PDFs PASS",
+    "npm run test:assignments PASS",
+    "npm run test:worked-examples PASS",
+    "actions/deploy-pages PASS"
+  ],
+  "publicChecks": {
+    "hubUpdated": true,
+    "responseSlide03OriginalFlowsVisible": true,
+    "audienceSlide32OperatorFlowVisible": true,
+    "bothProposalHomeLinks": "PASS",
+    "audienceProposalToLiveDemoToHub": "PASS",
+    "directMarkdownDownloads": {
+      "response": {
+        "path": "/Users/jinkyoo/Downloads/problem-definition (4).md",
+        "bytes": 36009,
+        "sha256": "40300e1487880bf841c48d6a4517dd598f8698db29eea5b4558eef032df04d32",
+        "matchesSource": true
+      },
+      "audience": {
+        "path": "/Users/jinkyoo/Downloads/problem-definition (5).md",
+        "bytes": 42692,
+        "sha256": "f06a09ad47411dfa6d8238ac3e247f2f5dde24f0b747ae7b6fb6591a02673013",
+        "matchesSource": true
+      }
+    },
+    "actualZIP": {
+      "path": "/Users/jinkyoo/Downloads/IE437-Assignment-01-Worked-Examples-EN (2).zip",
+      "bytes": 6000978,
+      "sha256": "c25345f254c12f1bd64ae449efd7e0d09fa43508b0910d1ef9165cbe3c2409c4",
+      "all29FilesMatchSource": true
+    },
+    "screenshots": [
+      "authoring/qa/public-response-slide03-1.6.png",
+      "authoring/qa/public-audience-slide32-1.6.png"
+    ],
+    "scope": "Presentation revision confirmed on public site; apps are exact unchanged published1.5 bytes, so default simulation pipelines were not rerun for this content-only release."
+  },
+  "localCourseSync": {
+    "checkedAt": "2026-10-12T04:22:41.771063+00:00",
+    "oldHead": "7c183a964a9dd28c73ba65ede652903f205f9f5e",
+    "newHead": "7627bba6a369178ff334a87eb3e0da91ecb8514e",
+    "trackedAndUntrackedWorktreeFilesUnchanged": true,
+    "filesChecked": 452,
+    "statusAfter": " M deck/widgets/cbas-ladder.js\n M deck/widgets/conservative-coms.js\n M deck/widgets/ensemble-alarm.js\n M deck/widgets/surrogate-exploit.js\n M md/_SCHEMA.md\n M md/_source/source_fidelity_map.json\n M md/_source/teaching_route_map.json\n M md/ch05_surrogate_design_optimization.md\n M md/ch06_generative_design_optimization.md\n M tests/paper-selection.mjs\n?? .claude/\n?? assets/ch05/\n?? assets/ch06/bootgen-loop.png\n?? assets/ch06/cbas-iterations.png\n?? assets/ch06/cvae-svhn.png\n?? assets/ch06/ddom-modes.png\n?? assets/ch06/guidance-scale.png\n?? assets/ch06/mins-thick-three.png\n?? deck/widgets/coms-tabular.js\n?? deck/widgets/cond-bars.js\n?? deck/widgets/fgm-stitch.js\n?? deck/widgets/kl-tilt.js\n?? deck/widgets/ko-discrepancy.js\n?? deck/widgets/lcb-flip.js\n?? deck/widgets/mbo-papers.js\n?? deck/widgets/offline-heater.js\n?? md/_source/ch05_ch06_plan.md\n?? teaching/assignment-01-model-answer/student/advanced/\n"
+  }
+}

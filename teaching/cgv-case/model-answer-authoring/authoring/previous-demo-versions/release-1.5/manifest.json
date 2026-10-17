@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "version": "1.5",
+  "purpose": "IE437 Assignment 1 public worked examples",
+  "disclosure": "All records, outcomes and engine results are synthetic. Case A supports planning JSON/CSV import, operating-rule configuration, aggregate-response ILS optimization and timetable inspection/export; learned response models and BO are not implemented. Case B uses the movie-first M0 individual-consumer simulator. Both demo sites and guides are English.",
+  "files": [
+    {
+      "file": "index.html",
+      "bytes": 497444,
+      "sha256": "817275261e4afbeb2266c4ffe072bb6c0ada8c184fac46e02ef99cce55eb963f"
+    },
+    {
+      "file": "THIRD_PARTY_NOTICES.md",
+      "bytes": 28576,
+      "sha256": "c70aed6a4915cea86969a58c68c9a9fb8a62134dd8e727a1238eedb07f3734cc"
+    },
+    {
+      "file": "reference/assignment.md",
+      "bytes": 17467,
+      "sha256": "3e3956e2b04db4aca3d9b60fedb8792c7715aaf0b32ffb8f325674ef9e8969e6"
+    },
+    {
+      "file": "reference/problem-definition-example.md",
+      "bytes": 10523,
+      "sha256": "31ae8623589141e0d0b7345a459fc78452afd3777e036703d6f274f070a4cd5a"
+    },
+    {
+      "file": "reference/problem-definition-template.md",
+      "bytes": 7159,
+      "sha256": "8b395dbd0067c19e042e595ba8677efae9cf2abb0905e055c8af50bda59a2ee7"
+    },
+    {
+      "file": "reference/problem-classification-reference.md",
+      "bytes": 9093,
+      "sha256": "48d179208dc34a79911cd6db4b29f351c5492e1c0a856a9882b9a442955ac798"
+    },
+    {
+      "file": "response/verification.json",
+      "bytes": 19620,
+      "sha256": "9e863488288015843a51ddc5255cfa520d7cc2785aec9dcb122d68eaf2a9a5f7"
+    },
+    {
+      "file": "README.md",
+      "bytes": 7204,
+      "sha256": "1a4330de59bbb0f7c19fc927c4daf2d599e683ca23ef2ece107ec3e86af97b1a"
+    },
+    {
+      "file": "README.html",
+      "bytes": 500898,
+      "sha256": "9fe73fdd2c40995a3bc23b43ccf8d6dd3614cbbc0ad363ae6f434e96264e7996"
+    },
+    {
+      "file": "verification.md",
+      "bytes": 13414,
+      "sha256": "2ea435f0845f2e678314bee751cbf91b26c7be86fe20b8d32b6b2874aecd2eba"
+    },
+    {
+      "file": "verification.html",
+      "bytes": 508617,
+      "sha256": "f43e137babc96dc7e9a70b13e5a7a214fc863de05ff6f6c95cd6f2adc2125ade"
+    },
+    {
+      "file": "response/problem-definition.md",
+      "bytes": 27950,
+      "sha256": "443f9e16485879e642d7467b8adf36dfb3b93cb323f651a5672f65bad39b263d"
+    },
+    {
+      "file": "response/problem-definition.html",
+      "bytes": 524685,
+      "sha256": "299df306d0610baf8d72f9ef22d1e9016861c172345de2de6ac68934d8f82cfb"
+    },
+    {
+      "file": "response/demo.html",
+      "bytes": 650464,
+      "sha256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17"
+    },
+    {
+      "file": "response/proposal.html",
+      "bytes": 245265,
+      "sha256": "405374641a46c50c10c9c5983b1f112b7844f68a00854b751d5887945137702d"
+    },
+    {
+      "file": "response/extended-proposal.html",
+      "bytes": 245265,
+      "sha256": "405374641a46c50c10c9c5983b1f112b7844f68a00854b751d5887945137702d"
+    },
+    {
+      "file": "response/CinemaPlanning.json",
+      "bytes": 16108,
+      "sha256": "bc92fdc48f88dd6216a4363df2f4a4466cddb72a04750ad945ea82123092a2dc"
+    },
+    {
+      "file": "response/Screenings.csv",
+      "bytes": 2929,
+      "sha256": "f87dc8fe6bc4bb368ce61384702ca51b34e819cc8afa8f49b1f9f9e85bd06dea"
+    },
+    {
+      "file": "audience/problem-definition.md",
+      "bytes": 33564,
+      "sha256": "55483565a3931c612b00970e201af1a1e53f439d1aad2a1973e34bafe227c1b9"
+    },
+    {
+      "file": "audience/problem-definition.html",
+      "bytes": 531892,
+      "sha256": "c1cc091970b4a4822fd1eee474ccb9a7c1fa5969ac249fe29016ea6b58f9125e"
+    },
+    {
+      "file": "audience/demo.html",
+      "bytes": 462607,
+      "sha256": "8a2823a577059361d284542c42aafbd12b2a22022517f8dd335a5909dfabb08f"
+    },
+    {
+      "file": "audience/proposal.html",
+      "bytes": 259488,
+      "sha256": "42be750bfe875bac314759ce0e30fed69c2f7bef88ee34db3bfa7651fb41eecc"
+    },
+    {
+      "file": "audience/extended-proposal.html",
+      "bytes": 259488,
+      "sha256": "42be750bfe875bac314759ce0e30fed69c2f7bef88ee34db3bfa7651fb41eecc"
+    },
+    {
+      "file": "response/demo-guide.md",
+      "bytes": 6807,
+      "sha256": "924bfa63f59a13abe1a4ccb45523cd192bfc849c40e1f54b61d46e48b25ce1dc"
+    },
+    {
+      "file": "response/demo-guide.html",
+      "bytes": 500366,
+      "sha256": "e37cc5b6f3668d83a6369ba67d91c1885971acd8c3677182081e7c39810f1c85"
+    },
+    {
+      "file": "audience/demo-guide.md",
+      "bytes": 5186,
+      "sha256": "04898cefbf11f02a982f8ac6cdbc4fdd91739579ad7dc0f776624b04ae72589a"
+    },
+    {
+      "file": "audience/demo-guide.html",
+      "bytes": 498753,
+      "sha256": "eb60c7f161021a8017328a9bfd5915223147e8582dd21555d25b301d8673e463"
+    },
+    {
+      "file": "audience/Movies.csv",
+      "bytes": 223,
+      "sha256": "6eab47d13ee33afa2e30e738604d93746b17785071f3a2a268f8974f170f9b11"
+    }
+  ]
+}

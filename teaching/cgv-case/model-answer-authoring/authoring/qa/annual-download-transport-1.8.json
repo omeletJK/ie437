@@ -1,0 +1,21 @@
+{
+  "before": {
+    "dataURLMedia": {
+      "status": "failed",
+      "message": "Error: Error: Timed out after 20000ms downloading media.\nlocator.downloadMedia failed for selector internal:role=link[name=\"Download sample CSV\"s]"
+    },
+    "dataURLNative": {
+      "status": "failed",
+      "message": "Error: Timed out after 9988ms waiting for download."
+    },
+    "publishedFile": {
+      "status": "received",
+      "path": "/Users/jinkyoo/Downloads/Movies (2).csv"
+    }
+  },
+  "hypothesis": "Data-URL downloads are not handled by this in-app browser path; the published CSV resource succeeds.",
+  "after": {
+    "status": "received",
+    "path": "/Users/jinkyoo/Downloads/Movies (3).csv"
+  }
+}

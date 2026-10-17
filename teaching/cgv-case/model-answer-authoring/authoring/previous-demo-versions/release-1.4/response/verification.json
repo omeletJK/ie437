@@ -1,0 +1,426 @@
+{
+  "case": "Case A: Response Model Simulator — independent aggregate SIM2",
+  "release": "1.4",
+  "updatedAt": "2026-10-11",
+  "artifact": "demo.html",
+  "implementation": {
+    "evaluator": "Explicit aggregate synthetic expected-attendance rule; no individual synthetic consumers and no real-data fitting.",
+    "objective": "J(x)=round(sum_j min(capacity_j, declared response_j))",
+    "search": "Deterministic Iterated Local Search (ILS); not Bayesian Optimization.",
+    "seed": 20260829,
+    "sites": 6,
+    "films": 6,
+    "screens": 18,
+    "searchIterations": 2600,
+    "operatingWindow": "10:00–24:40",
+    "betweenFilmCleaningMinutes": 15,
+    "closingTest": "Final film runtime must finish by 24:40; cleaning after the final film is not included.",
+    "baseline": "Capacity-based rotations presolved for 2,600 moves with uniform site taste, then evaluated with the same site-specific response rule as displayed candidates.",
+    "experiment": "Exchange film assignments of two actual screening slots from the original reference, with an optional added gap before the first slot. Global film counts are preserved; repacking captures runtime and later-screening changes. Full-plan feasibility and response use the preserved SIM2 engine.",
+    "defaultExchange": {
+      "first": {
+        "id": "3-1-0",
+        "site": "Site D",
+        "screen": 2,
+        "position": 1,
+        "film": "A",
+        "originalStart": "11:05"
+      },
+      "second": {
+        "id": "3-2-4",
+        "site": "Site D",
+        "screen": 3,
+        "position": 5,
+        "film": "F",
+        "originalStart": "20:15"
+      },
+      "delayMinutes": 0
+    },
+    "preview": "inspectSwap returns a copied candidate plus score/delta and per-show factors. Preview does not load the plan or count toward displayed search evaluations.",
+    "apply": "loadSwap applies only a feasible draft and restarts loaded-plan ILS at seed 20260829. Changing a draft pauses search and disables search until the matching valid draft is applied.",
+    "comparison": "Separate original/applied/best records, full-plan/site totals and per-show factor records; selected-site applied/best timetables.",
+    "auxiliaryExperiment": "Collapsed whole-screen closing-time shift test, from the original reference; default target Site D / Screen 1. Applying it replaces the search start.",
+    "feasibilityIndicator": "Dynamic PASS/FAIL from feasible(bestShows.shows), not a hardcoded zero or cumulative rejected-candidate count.",
+    "proposal": "Original-design 44-slide Response proposal retained; broader concepts and prepared illustrations are distinct from this standalone execution.",
+    "exportButton": "Export results",
+    "export": "Snapshot, comparison.original/applied/best full showing records and factors, appliedEdit, current preview, fixture/source settings and bestFeasibleShowings.",
+    "startingModes": "Every draft starts from the original reference. Reset constructs that reference through uniform-response presolve and does not apply the selected draft. Applying a swap or auxiliary plan restarts ILS at seed 20260829 directly."
+  },
+  "sourceProvenance": {
+    "origin": "Original desktop Response proposal, index.html S13/SIM2.",
+    "latestRevision": "285e698",
+    "latestRevisionDate": "2026-08-30",
+    "introducedAtRevision": "1ddfa6a",
+    "promotedToS13AtRevision": "862298a",
+    "introductionDate": "2026-08-29",
+    "originalHTMLSHA256": "70c888ab9547b939ee891b71b0fbd90a04108620f89d8ca9da9c125ebc2dc531",
+    "archivedEnglishExtractionSHA256": "66021195ceeb0228cf022b096671e2f2a7959bfe73ff6926024bdd4d084d341b",
+    "coreFunctionComparison": {
+      "method": "TypeScript syntax-tree parse and print with comments removed, comparing original desktop source with archived English extraction. Scope: this earlier comparison covers those two sources; the final standalone comparison is recorded separately below.",
+      "status": "pass",
+      "functions": [
+        "tw",
+        "rnd",
+        "ri",
+        "clone",
+        "packSite",
+        "packAll",
+        "feasible",
+        "predict",
+        "evalS",
+        "presolve",
+        "ruleBaseline",
+        "move"
+      ],
+      "allIdentical": true
+    },
+    "independence": "Aggregate screening-response rule; no dependency on the audience twin application, generated people or its seat-choice evaluator.",
+    "standaloneCoreFunctionComparison": {
+      "method": "Independent exact-artifact 1.4 Node verifier: 12 numerical core AST functions match preserved source; new interaction/comparison wrapper audited separately.",
+      "status": "pass",
+      "functions": [
+        "tw",
+        "rnd",
+        "ri",
+        "clone",
+        "packSite",
+        "packAll",
+        "feasible",
+        "predict",
+        "evalS",
+        "presolve",
+        "ruleBaseline",
+        "move"
+      ],
+      "allIdentical": true
+    }
+  },
+  "currentBuild": {
+    "demoSHA256": "8acef83cb082b02f747920f65f8a1d3ed473fa597ed7bdc8a02cc22e3a8da5f7",
+    "demoBytes": 547694,
+    "identityStatus": "Final stable 1.4 emission.",
+    "exactStandaloneCoreComparison": "Pass: final artifact preserves 12 numerical core function ASTs.",
+    "staticChecks": "27/27 exact-artifact Node checks pass; JSON/source metadata and local wrapper controls inspected.",
+    "independentHTTPUI": "Pass: current source and staged course default apply/search, 1x/4x completed repeat, selected-site comparison/heatmap, responsive layouts and return navigation. Actual export audited before final CSS-only fix, unchanged JavaScript; earlier fresh 1.4 input/auxiliary flows have their stated scope.",
+    "directOfflineFileExecution": "Not verified",
+    "coursePrefixReturnNavigation": "Pass: course-prefix demo, guide, problem definition and both original-proposal views returned to the hub; course portal → Assignment 1 → Open worked examples also passed.",
+    "courseStaging": "Pass: course site built; worked-examples and assignment checks passed. Root-owned checks are distinct from simulator Node/browser evidence."
+  },
+  "checks": [
+    {
+      "name": "Default worsening exchange and loaded search",
+      "status": "pass",
+      "inputs": {
+        "first": "3-1-0",
+        "second": "3-2-4",
+        "delayMinutes": 0
+      },
+      "observed": {
+        "original": 5134,
+        "applied": 4969,
+        "best": 5302,
+        "manualDelta": -165,
+        "searchGainOverApplied": 333,
+        "searchGainOverOriginal": 168,
+        "calls": 1711,
+        "iterations": 2600,
+        "feasibility": "PASS"
+      },
+      "method": "Exact-artifact Node plus final-SHA independent HTTP reload/apply/finish/repeat. Fresh 1.4 Run/Pause observed iteration 1035 before finishing."
+    },
+    {
+      "name": "Default factor explanation",
+      "status": "pass",
+      "observed": {
+        "film": "A",
+        "timeWeightBefore": 0.504,
+        "timeWeightAfter": 0.95,
+        "nearbySameFilmBefore": 0,
+        "nearbySameFilmAfter": 2,
+        "nearbySameFactorAfter": 0.5184
+      },
+      "method": "Exact-artifact independent Node factor/packing/per-show reconstruction; inspected responseFactors wrapper.",
+      "changedPerShowResponses": 10,
+      "chainFilmCountsPreserved": true
+    },
+    {
+      "name": "Optional positive exchange, gap 5",
+      "status": "pass",
+      "inputs": {
+        "first": "1-1-0",
+        "second": "1-2-1",
+        "delayMinutes": 5
+      },
+      "observed": {
+        "original": 5134,
+        "applied": 5141,
+        "best": 5180,
+        "calls": 1757,
+        "iterations": 2600
+      },
+      "method": "Fresh 1.4 HTTP observation before final capacity-label/export-copy changes; earlier Node observation matched. Final 27-check suite independently audits positive gap-0 response and exchange packing, not this positive gap-5 completed search."
+    },
+    {
+      "name": "Invalid/infeasible exchange and non-mutation",
+      "status": "pass",
+      "criterion": "Same slot/film, invalid gap, room fit, closing and coverage rejects cannot apply; retained best belongs to prior applied plan.",
+      "observed": {
+        "nodeInvalidExchangeCases": 14,
+        "methods": [
+          "inspectSwap",
+          "loadSwap"
+        ],
+        "acceptedPlanMutation": false,
+        "roomFitRejected": true,
+        "httpRoomPriorBest": 5302,
+        "httpBlankPriorBest": 5180,
+        "httpApplySearchDisabled": true
+      },
+      "method": "Exact-artifact Node plus fresh 1.4 HTTP rejection observations before last copy changes."
+    },
+    {
+      "name": "Default exchange additional-gap boundary",
+      "status": "pass",
+      "inputs": {
+        "first": "3-1-0",
+        "second": "3-2-4",
+        "boundaryGapMinutes": 65,
+        "failureGapMinutes": 70
+      },
+      "observed": {
+        "boundaryEnd": "24:38",
+        "closingSlackMinutes": 2,
+        "boundaryFeasible": true,
+        "failureNoScore": true,
+        "failureCannotLoad": true,
+        "planMutation": false
+      },
+      "method": "Exact-artifact independent Node; not a browser walkthrough."
+    },
+    {
+      "name": "Auxiliary boundary/failure/recovery",
+      "status": "pass",
+      "criterion": "Fresh 1.4 checks of unchanged shift engine; historical 1.3 outputs are not inherited as passes.",
+      "observed": {
+        "shiftMinutes": 365,
+        "previewScore": 5099,
+        "finalEnd": "24:36",
+        "slackMinutes": 4,
+        "loadedBest": 5352,
+        "calls": 1750,
+        "iterations": 2600,
+        "failureShift": 370,
+        "failureNoScore": true,
+        "failedLoadMutation": false,
+        "invalidShiftCases": 10
+      },
+      "method": "Exact-artifact Node and fresh 1.4 auxiliary HTTP flows before last copy changes."
+    },
+    {
+      "name": "Run/pause/finish/reset and seeded repeatability",
+      "status": "pass",
+      "criterion": "Same entry path, pair and gap produces matching final results at 1x/4x and on repeat.",
+      "observed": "Current source Reset → apply default → Speed4x → Run completed 4969→5302/1711calls/2600; restored1x. Course-prefix default apply/search repeated same result. Exact-artifact Node same/fresh VM and intervening rejected previews/loads matched.",
+      "method": "Exact-artifact Node, current-source and staged-course independent CUA HTTP."
+    },
+    {
+      "name": "Original/applied/best records and per-show response audit",
+      "status": "pass",
+      "criterion": "Independent recomputation and constraint audit of all records; current preview is separate from applied/retained best.",
+      "observed": "Independent reconstruction of factors, packing, constraints, site/full totals and record copies; default 5134/4969/5302, 90 rows each. Returned object mutations do not change engine or later search.",
+      "method": "Exact-artifact Node; final-SHA HTTP export audit."
+    },
+    {
+      "name": "Selected-site comparison, heatmap and Gantt",
+      "status": "pass",
+      "criterion": "Affected-screen before/after and selected-site applied/best tables match records.",
+      "observed": {
+        "site": "Site B",
+        "appliedAttendanceDisplayed": 883.9,
+        "bestAttendanceDisplayed": 972.5,
+        "gainFromUnroundedValuesDisplayed": 88.5,
+        "siteDHeatmapDrill": "correct",
+        "mobileComparisonGridWidth": 324,
+        "mobileBodyWidth": 390,
+        "noBodyOverflow": true
+      },
+      "method": "Current-source CUA HTTP site comparison/heatmap and final responsive review; numerical records independently audited in Node."
+    },
+    {
+      "name": "Data and method",
+      "status": "pass-scoped",
+      "criterion": "Equation, six films/six sites, six fictional purchases/13 tickets/five accounts; English.",
+      "observed": "Equation, six-film/site fixtures and fictional purchase panel inspected in emitted wrapper; current mobile dialog352 within390 body. This is not a full content visual/accessibility audit."
+    },
+    {
+      "name": "Export results",
+      "status": "pass",
+      "criterion": "Actual 1.4 download contains comparison records/factors, applied edit/preview and source/settings; per-show sum and repeat stability.",
+      "observed": {
+        "filename": "response-simulation-results.json",
+        "downloadSHA256": "939599e9946aace67590e1fd90c22736badc4c63be7050ecad813eaf43f50d82",
+        "originalScore": 5134,
+        "appliedScore": 4969,
+        "bestScore": 5302,
+        "rowsPerRecord": 90,
+        "factorsSeedAppliedEditIncluded": true
+      },
+      "method": "Actual HTTP download before CSS-only responsive fix with unchanged JavaScript, plus exact current artifact Node full-record/recompute/deep-copy tests."
+    },
+    {
+      "name": "Return navigation",
+      "status": "pass",
+      "criterion": "Fresh 1.4 course-prefix All worked examples resolves to ../index.html.",
+      "observed": "Pass: course-prefix demo, guide, problem definition and both original-proposal views returned to the hub; course portal → Assignment 1 → Open worked examples also passed.",
+      "method": "Fresh staged-course CUA HTTP: demo → hub; guide and problem-definition views → hub; both proposal covers → hub; course portal → Assignment1 → Open worked examples → hub."
+    }
+  ],
+  "evidenceBoundary": "Exact-artifact 1.4 Node 27/27 passes establish numerical/state fixture functionality. Current-source/staged-course HTTP default replay,4x comparison,responsive and return navigation passed; earlier fresh 1.4 flows/export retain stated artifact scopes. Course build/assignment checks passed separately. Direct offline opening remains unverified. Historical release-1.3 results are not reused as 1.4 passes. No learned response accuracy, individual audience model, causal effect, real business benefit, BO or global optimum is claimed.",
+  "nodeVerification": {
+    "date": "2026-10-11",
+    "verifiedAt": "2026-10-11T21:52:11.458Z",
+    "status": "pass",
+    "checksPassed": 27,
+    "exactArtifactSHA256": "8acef83cb082b02f747920f65f8a1d3ed473fa597ed7bdc8a02cc22e3a8da5f7",
+    "method": "Independent Node VM execution of final HTML with rendering-only DOM stubs. All core AST, constraints, packing, per-show factors, full scores, comparison records, invalid-load/replay and detached-export tests passed. Not browser or direct-file evidence.",
+    "coreFunctionsIdentical": 12,
+    "invalidExchangeCasesChecked": 14,
+    "invalidShiftInputsChecked": 10,
+    "planMutationOnRejectedLoad": false,
+    "freshAndSameVMReplay": "pass",
+    "interveningPreviewsAndRejectedLoadsPreserveSeededResult": true,
+    "exportDetachedFixtureLogComparison": true,
+    "repeatedFinishAndExportStable": true,
+    "defaultResult": {
+      "original": 5134,
+      "applied": 4969,
+      "best": 5302,
+      "calls": 1711,
+      "iterations": 2600,
+      "showings": 90,
+      "feasible": true,
+      "expectedAttendanceSumOriginal": 5133.6954752787815,
+      "expectedAttendanceSumApplied": 4968.820371149739,
+      "expectedAttendanceSumBest": 5302.326161374253
+    },
+    "positiveGap0": {
+      "original": 5134,
+      "draft": 5148,
+      "changedResponses": 9,
+      "filmCountsPreserved": true
+    },
+    "defaultGapBoundary": {
+      "validGapMinutes": 65,
+      "finalFilmEnd": "24:38",
+      "slackMinutes": 2,
+      "invalidGapMinutes": 70
+    },
+    "auxiliaryBoundary": {
+      "previewScore": 5099,
+      "best": 5352,
+      "calls": 1750,
+      "iterations": 2600,
+      "finalFilmEnd": "24:36",
+      "slackMinutes": 4,
+      "feasible": true
+    }
+  },
+  "httpBrowserVerification": {
+    "date": "2026-10-11",
+    "status": "pass-scoped",
+    "method": "Independent root CUA HTTP review: current-source/staged-course default search/repeat,4x,comparison/heatmap,responsive/navigation. Actual export before final CSS-only fix with unchanged JavaScript; other fresh1.4 flows precede stated capacity-label/export-copy changes.",
+    "exactArtifactSHA256": "8acef83cb082b02f747920f65f8a1d3ed473fa597ed7bdc8a02cc22e3a8da5f7",
+    "defaultSwap": {
+      "original": 5134,
+      "applied": 4969,
+      "best": 5302,
+      "calls": 1711,
+      "iterations": 2600,
+      "feasibility": "PASS",
+      "pauseObservedIteration": 1035,
+      "exactFinalReplay": "pass"
+    },
+    "positiveGap5": {
+      "original": 5134,
+      "applied": 5141,
+      "best": 5180,
+      "calls": 1757,
+      "iterations": 2600,
+      "status": "pass on preceding 1.4 emission"
+    },
+    "invalidAndAuxiliaryChecks": "Fresh 1.4 flows passed; exact-artifact Node independently confirms constraints/non-mutation.",
+    "actualExport": {
+      "status": "pass",
+      "filename": "response-simulation-results.json",
+      "downloadSHA256": "939599e9946aace67590e1fd90c22736badc4c63be7050ecad813eaf43f50d82",
+      "original": 5134,
+      "applied": 4969,
+      "best": 5302,
+      "rowsPerRecord": 90,
+      "factorsSeedAppliedEditIncluded": true,
+      "artifactScope": "Downloaded before final CSS-only responsive change with unchanged JavaScript and values; exact current Node export audits passed."
+    },
+    "responsive": {
+      "status": "pass",
+      "mobileViewportWidth": 390,
+      "mobileBodyWidth": 390,
+      "comparisonGridWidth": 324,
+      "methodDialogWidth": 352,
+      "noBodyOverflow": true,
+      "desktopRestoredAndDefaultRepeated": true
+    },
+    "directOfflineFileExecution": "Not verified",
+    "coursePrefixReturnNavigation": "Pass: course-prefix demo, guide, problem definition and both original-proposal views returned to the hub; course portal → Assignment 1 → Open worked examples also passed.",
+    "artifactScope": "Final-SHA source and staged-course default reload/apply/search/repeat,4x,comparison/heatmap,responsive/navigation passed. Actual export downloaded before CSS-only fix with unchanged JavaScript. Earlier Run/Pause,optional positive-gap,rejected-input/room and auxiliary flows have their stated preceding1.4 scope.",
+    "roomRejection": {
+      "reason": "Film C assigned to a 150-seat screen",
+      "applyDisabled": true,
+      "searchDisabled": true,
+      "retainedPriorBest": 5302
+    },
+    "blankDelay": {
+      "status": "INVALID",
+      "applyDisabled": true,
+      "searchDisabled": true,
+      "retainedPriorBest": 5180
+    },
+    "auxiliaryBoundary": {
+      "shiftMinutes": 365,
+      "previewScore": 5099,
+      "best": 5352
+    },
+    "auxiliaryFailure": {
+      "shiftMinutes": 370,
+      "rejected": true,
+      "validPreviewScore": false,
+      "retainedPriorBest": 5352
+    },
+    "coursePrefixDefaultSearch": {
+      "original": 5134,
+      "applied": 4969,
+      "best": 5302,
+      "calls": 1711,
+      "iterations": 2600,
+      "feasibility": "PASS"
+    },
+    "speed4xSearch": {
+      "status": "pass",
+      "steps": "Reset → apply default → Speed4x → Run; automatic completion; restored1x",
+      "original": 5134,
+      "applied": 4969,
+      "best": 5302,
+      "calls": 1711,
+      "iterations": 2600
+    },
+    "siteComparison": {
+      "status": "pass",
+      "site": "Site B",
+      "appliedDisplayed": 883.9,
+      "bestDisplayed": 972.5,
+      "gainDisplayedFromUnroundedValues": 88.5,
+      "appliedUnrounded": 883.9457360633902,
+      "bestUnrounded": 972.4604396634013,
+      "siteDHeatmapDrill": "correct"
+    }
+  }
+}

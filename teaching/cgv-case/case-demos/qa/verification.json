@@ -1,0 +1,425 @@
+{
+  "timestamp": "2026-10-11T12:41:04.679Z",
+  "summary": {
+    "pass": 63,
+    "fail": 0
+  },
+  "results": [
+    {
+      "deck": "response",
+      "name": "exact canonical and output checksums",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "supporting slide IDs preserved",
+      "pass": true,
+      "detail": 44
+    },
+    {
+      "deck": "response",
+      "name": "note keys and timing preserved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "English-only anonymous source",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "no external resource tags",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "inline scripts compile",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "default demonstration loads",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "all demo selector entries open",
+      "pass": true,
+      "detail": 5
+    },
+    {
+      "deck": "response",
+      "name": "response / cannibalization numerical setting",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "potential-to-realized switch",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "ILS initial state",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "executed deterministic ILS result",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "original ILS reset",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "rolling horizon result",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "classroom reload reset retains current demo",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "supplemental normal fixture",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "supplemental boundary fixture",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "supplemental failure fixture",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "reject invalid screens -1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "reject invalid screens 2.5",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "reject invalid screens (empty)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "reject invalid screens 9007199254740992",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "zero capacity / zero request boundary",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "zero capacity / positive request fails",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "invalid slots rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "invalid required count rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "editing fixture does not advance source demo",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "English presenter console retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "original appendix menu retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "response",
+      "name": "selector toolbar fits above source content",
+      "pass": true,
+      "detail": {
+        "x": 64,
+        "y": 8,
+        "width": 1152,
+        "height": 37
+      }
+    },
+    {
+      "deck": "response",
+      "name": "offline without network requests",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "deck": "response",
+      "name": "no runtime errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "deck": "audience",
+      "name": "exact canonical and output checksums",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "supporting slide IDs preserved",
+      "pass": true,
+      "detail": 59
+    },
+    {
+      "deck": "audience",
+      "name": "note keys and timing preserved",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "English-only anonymous source",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "no external resource tags",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "inline scripts compile",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "default demonstration loads",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "all demo selector entries open",
+      "pass": true,
+      "detail": 6
+    },
+    {
+      "deck": "audience",
+      "name": "28-day four-path result",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "forecast evidence update",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "individual profile",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "same-audience A/B",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "prepared candidate animation",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "classroom reload reset retains current demo",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "supplemental normal fixture",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "supplemental boundary fixture",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "supplemental failure fixture",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "reject invalid screens -1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "reject invalid screens 2.5",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "reject invalid screens (empty)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "reject invalid screens 9007199254740992",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "zero capacity / zero request boundary",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "zero capacity / positive request fails",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "invalid slots rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "invalid required count rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "editing fixture does not advance source demo",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "English presenter console retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "original appendix menu retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "deck": "audience",
+      "name": "selector toolbar fits above source content",
+      "pass": true,
+      "detail": {
+        "x": 64,
+        "y": 8,
+        "width": 1152,
+        "height": 37
+      }
+    },
+    {
+      "deck": "audience",
+      "name": "offline without network requests",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "deck": "audience",
+      "name": "no runtime errors",
+      "pass": true,
+      "detail": []
+    }
+  ],
+  "evidence": {
+    "response": {
+      "file": "response-demo.html",
+      "sourceSHA256": "3b0be297f9499b849c6f42aeb3d4b4a46ab86164fb22ff60a50cb81577891b1d",
+      "outputSHA256": "30bf4501340f77b97f15943bdf48a38a177694e4073eafee271ad15c292ddd38",
+      "networkRequests": [],
+      "runtimeErrors": [],
+      "toolbarBounds": {
+        "x": 64,
+        "y": 8,
+        "width": 1152,
+        "height": 37
+      }
+    },
+    "audience": {
+      "file": "audience-demo.html",
+      "sourceSHA256": "b0bd11493d422d34b0387726c131ef879e4eca85b71d143d91aecffe1e8ec63b",
+      "outputSHA256": "cd990401a19d10ca326208a09c5baca4ffccbbdb05fc8066bcf1db5541f35b94",
+      "networkRequests": [],
+      "runtimeErrors": [],
+      "toolbarBounds": {
+        "x": 64,
+        "y": 8,
+        "width": 1152,
+        "height": 37
+      }
+    }
+  }
+}

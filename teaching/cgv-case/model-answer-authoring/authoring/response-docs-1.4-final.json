@@ -1,0 +1,24 @@
+{
+  "release": "1.4",
+  "scope": "Final Response documents after current-source/course UI, responsive, navigation and build checks. Classroom guide foregrounds the decision experiment; detailed artifact/test scopes remain in verification.json.",
+  "demoSHA256": "8acef83cb082b02f747920f65f8a1d3ed473fa597ed7bdc8a02cc22e3a8da5f7",
+  "demoBytes": 547694,
+  "nodeChecksPassed": 27,
+  "offline": "Unverified",
+  "coursePrefixNavigation": "Pass",
+  "courseStaging": "Pass root-owned build/worked-examples/assignment checks",
+  "files": {
+    "problem-definition.md": {
+      "bytes": 27640,
+      "sha256": "040ad696cba01cc45950df6796f094cc312c417e29b2679d0fba55f0b601cabd"
+    },
+    "demo-guide.md": {
+      "bytes": 6165,
+      "sha256": "bd36f1d5b30e460364978db80a56016aeeaa25a6a996dca6f5238903766b39e2"
+    },
+    "verification.json": {
+      "bytes": 19231,
+      "sha256": "a22516a492548dcef8e08fa07fe11e2c2d1a22247a4dac3281af8f8125725ee8"
+    }
+  }
+}

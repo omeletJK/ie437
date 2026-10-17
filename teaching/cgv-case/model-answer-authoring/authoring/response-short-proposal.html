@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IE437 · Response-Aware Cinema Scheduling</title>
+<style>
+:root{--ink:#142038;--muted:#53637b;--line:#d9e1ec;--purple:#6841cf;--teal:#007f75;--paper:#f8faff;--red:#b33245}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#121827}button,a{font:inherit}a{color:var(--purple)}
+#deck{position:fixed;width:1280px;height:720px;left:50%;top:50%;transform-origin:center center}.slide{position:absolute;inset:0;padding:52px 64px 46px;background:var(--paper);display:none;flex-direction:column;overflow:hidden}.slide.active{display:flex}.eyebrow{font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}h1{margin:0 0 22px;font-size:45px;line-height:1.12;letter-spacing:-1.5px;max-width:1100px}h2{font-size:23px;line-height:1.25;margin:0 0 12px}p{font-size:22px;line-height:1.5;margin:0 0 17px}.lead{font-size:26px;max-width:970px}.accent{color:var(--purple)}.teal{color:var(--teal)}.muted{color:var(--muted)}.small{font-size:16px;line-height:1.5}.tiny{font-size:13px;line-height:1.5}.grow{flex:1}.columns{display:grid;grid-template-columns:1fr 1fr;gap:26px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.card{background:white;border:1px solid var(--line);padding:23px;border-radius:10px}.card p{font-size:20px;line-height:1.48}.card ul{margin:0;padding-left:22px;font-size:19px;line-height:1.65}.tag{display:inline-block;padding:6px 9px;border-radius:5px;font-size:12px;line-height:1;font-weight:750;letter-spacing:.06em;color:var(--teal);background:#e6f5f0;margin-bottom:14px}.tag.assumed{background:#f0eafa;color:var(--purple)}.tag.unknown{background:#fff2dc;color:#8b5a04}.callout{border-left:5px solid var(--purple);padding:15px 20px;background:#f0eafa;font-size:21px;line-height:1.5;margin:20px 0}.callout.red{border-color:var(--red);background:#fbecef}.footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:13px;margin-top:auto;font-size:12px;line-height:1.5;color:var(--muted)}.footer a{font-size:12px}.dark{background:#142038;color:#f8faff}.dark .eyebrow,.dark .muted,.dark .footer{color:#b8c7dd}.dark .footer{border-color:#405069}.dark h1{font-size:63px;max-width:1040px}.dark .callout{background:#22314c;color:#e3e9ff}.dark a{color:#c4b5fd}
+table{width:100%;border-collapse:collapse;font-size:18px;line-height:1.45;background:#fff}th,td{text-align:left;padding:14px;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:#edf2fa}td b{color:var(--purple)}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}pre{font-size:21px;line-height:1.65;background:#142038;color:#e9f4ff;padding:25px;border-radius:8px;margin:0 0 16px;white-space:pre-wrap}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.step{border-top:5px solid var(--purple);background:#fff;padding:20px;border-radius:4px}.step strong{font-size:31px;color:var(--purple);display:block;margin-bottom:13px}.step p{font-size:20px}.numbers{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:12px 0 22px}.number{font-size:78px;line-height:1.1;font-weight:750;letter-spacing:-4px}.bar{height:13px;background:#e0e7f0;border-radius:8px;overflow:hidden;margin-top:16px}.bar i{display:block;height:100%;background:var(--purple)}.statlabel{font-size:15px;color:var(--muted)}
+#controls{position:fixed;right:20px;bottom:15px;z-index:20;display:flex;align-items:center;gap:10px;background:#121827df;padding:8px 12px;border-radius:8px;color:white;font-size:12px}#controls button{border:1px solid #60718a;background:#233149;color:white;border-radius:4px;padding:6px 10px;cursor:pointer}#controls button:focus-visible,#controls a:focus-visible{outline:3px solid #c8bfff;outline-offset:2px}#controls a{color:#c8d4ed}#notes{position:fixed;left:20px;right:20px;bottom:65px;z-index:30;padding:18px 22px;background:#142038f2;color:#fff;border:1px solid #60718a;border-radius:8px;font-size:18px;line-height:1.6}#notes[hidden]{display:none}
+@media print{html,body{background:white;height:auto}#deck{position:static;width:auto;height:auto;transform:none!important}.slide,.slide.active{position:relative;display:flex;width:1280px;height:720px;break-after:page;page-break-after:always}#controls,#notes{display:none!important}@page{size:13.333in 7.5in;margin:0}}
+</style>
+</head>
+<body>
+<main id="deck" aria-label="Proposal presentation">
+<section class="slide dark active" id="p1" data-note="This is a worked decision-support case. The six-field brief does not supply a trained demand model. We demonstrate a real computation under explicit assumptions, then propose the next evidence gate.">
+<div class="eyebrow">IE437 · Assignment 1 · Response model case</div>
+<h1>Choose a schedule.<br>Evaluate its response.<br>Show what remains unknown.</h1>
+<p class="lead">A bounded proposal for the cinema scheduling manager: compare feasible film, screen and time assignments using an explicit response evaluator.</p>
+<div class="callout">Executed demonstration: deterministic ILS.<br>Computed target: synthetic expected attendance.</div>
+<div class="footer"><span>Fictional case · No trained-model or operational-uplift claim</span><span>01 / 10</span></div>
+</section>
+<section class="slide" id="p2" data-note="One purchase is not one identified viewer. These six rows total thirteen purchased tickets across five accounts. The demonstration calculates those summaries, but it does not fit a response function from them.">
+<div class="eyebrow">Start with the observation unit</div>
+<h1>Purchase records support summaries.<br>They do not identify schedule response.</h1>
+<div class="columns grow">
+<div class="card"><span class="tag">Known teaching specification</span><h2>One completed purchase</h2><p>Film · venue · screening date/time · purchasing account · paid-ticket count.</p><p class="small">Six fictional rows in the demo yield <b>13 purchased tickets</b> and <b>five purchasing accounts</b>.</p><p class="small">Screening time is not purchase creation time. Account identity is not attendee identity.</p></div>
+<div class="card"><span class="tag unknown">TBD — request before modeling</span><h2>The missing decision context</h2><ul><li>All screenings, including zero sales</li><li>Screen inventory and operating rules</li><li>Schedule versions and action times</li><li>Agreed outcome and current baseline</li></ul><p class="small" style="margin-top:20px">Without these, retain the synthetic mechanism and defer an operational recommendation.</p></div>
+</div>
+<div class="footer"><span>Fictional records are displayed and summed in Data &amp; method.</span><a href="demo.html#s13">Open the data panel in the demo</a><span>02 / 10</span></div>
+</section>
+<section class="slide" id="p3" data-note="The decision is flat, stateless and open-loop within a one-shot planning boundary. Search iterations are algorithm state. The separate four-week teaching extension does carry operational state and observes new synthetic information, so it is stateful and feedback.">
+<div class="eyebrow">Define the decision before choosing a method</div>
+<h1>D1 selects one complete operating-day plan.</h1>
+<div class="three grow">
+<div class="card"><span class="tag assumed">Declared fixture</span><h2>The controllable action</h2><p>Film assignments, screening order, start offsets and gaps.</p><p class="small">Six sites · 18 screens · six films. Real inventory and planning scope remain TBD.</p></div>
+<div class="card"><span class="tag">C1 — Cost · Formulation</span><h2>Evaluate response</h2><p>An explicit rule calculates synthetic attendance under each schedule.</p><p class="small">A trained response evaluator would be Data-driven. It is future work.</p></div>
+<div class="card"><span class="tag">C2 — Constraint · Formulation</span><h2>Reject infeasible plans</h2><p>Runtime, cleaning, closing time, room fit, coverage and show caps.</p><p class="small">The same functions serve ILS and the normal/boundary/failure cases.</p></div>
+</div>
+<div class="callout">D1: Flat · Stateless · Open-loop. D2's separate rolling extension: Stateful · Feedback.</div>
+<div class="footer"><span>A forecast or processing step is not automatically another decision.</span><span>03 / 10</span></div>
+</section>
+<section class="slide" id="p4" data-note="The score adds expected attendance across screenings; it is not a unique-person count. Capacities cap per-screening response. Film, site, time and substitution coefficients are declared assumptions, not fitted or causal estimates.">
+<div class="eyebrow">Make the calculated target explicit</div>
+<h1>Maximize a synthetic attendance score.</h1>
+<pre>J(schedule) = round(Σ screening_attendance)
+screening_attendance = min(room_capacity, response)
+response = film_base × site_taste × time_factor
+           × room_effect × substitution_factors × 130</pre>
+<div class="columns">
+<div class="card"><h2>What the rule represents</h2><p>Time effects, capacity saturation and interactions among nearby shows.</p></div>
+<div class="card"><h2>What it does not establish</h2><p>Purchased tickets, measured admissions, unique people or causal demand.</p></div>
+</div>
+<div class="footer"><span>All coefficients are assumptions. The definition gives the exact penalties and constraints.</span><a href="problem-definition.md">Read Section 2</a><span>04 / 10</span></div>
+</section>
+<section class="slide" id="p5" data-note="The selected approach makes the relationship between a complete action and its score visible. A simple baseline remains essential. The synthetic audience alternative has a different evaluator and modeling burden. BO is a possible future search design only, not this implementation.">
+<div class="eyebrow">Compare alternatives at the same scope</div>
+<h1>Use response scoring for this mechanism test.</h1>
+<table class="grow"><thead><tr><th>Approach</th><th>Mechanism</th><th>Tradeoff / decision</th></tr></thead><tbody>
+<tr><td><b>Simple plan or rule</b></td><td>Apply confirmed operating rules; retain an approved reference.</td><td>Auditable and cheap. Actual operator policy is TBD; always keep a baseline.</td></tr>
+<tr><td><b>Response + ILS</b></td><td>Evaluate schedule actions and search feasible neighbors.</td><td>Selected to expose the mechanism. Real response identification remains unvalidated.</td></tr>
+<tr><td><b>Synthetic audience</b></td><td>Simulate assumed individuals' choices, then aggregate.</td><td>A separate alternative with latent-population and calibration uncertainty.</td></tr>
+</tbody></table>
+<div class="callout">Evaluator ≠ search. BO would require a posterior, acquisition rule, evaluations and updates. Those are not implemented here.</div>
+<div class="footer"><span>Method names do not replace an input/output contract or evidence.</span><span>05 / 10</span></div>
+</section>
+<section class="slide" id="p6" data-note="The baseline is not a measured current practice. The original code constructs rotations and runs a uniform-site-response presolve with a fixed seed. The search then evaluates site-specific response. A multi-move kick permits exploration after stalling; best-so-far remains feasible.">
+<div class="eyebrow">Executed calculation flow</div>
+<h1>Deterministic Iterated Local Search</h1>
+<div class="steps grow">
+<div class="step"><strong>1</strong><h2>Declare the baseline</h2><p>Capacity-based rotations → uniform-response presolve.</p><p class="small">Seed 20260829; 2,600 presolve moves.</p></div>
+<div class="step"><strong>2</strong><h2>Propose a neighbor</h2><p>Change films, show timing, gaps or allocation.</p><p class="small">Kick after more than 80 stalled iterations.</p></div>
+<div class="step"><strong>3</strong><h2>Validate, then score</h2><p>Reject invalid plans before response evaluation.</p><p class="small">Same C1 and C2 for every comparison.</p></div>
+<div class="step"><strong>4</strong><h2>Retain the best</h2><p>Display the best feasible plan after 2,600 search iterations.</p><p class="small">No global-optimum guarantee.</p></div>
+</div>
+<div class="footer"><span>Reset reproduces the complete fixture and random stream.</span><a href="demo.html#s13">Run the original ILS engine</a><span>06 / 10</span></div>
+</section>
+<section class="slide" id="p7" data-note="These are executed fixture results. A complete reset and repeat produced the same snapshot. The response-call count includes one baseline call and calls for valid proposals, so it differs from the iteration count. This is local improvement according to the assumed evaluator.">
+<div class="eyebrow">Representative result — same fixture, same evaluator</div>
+<h1>The original baseline improves under its rule.</h1>
+<div class="numbers">
+<div class="card"><div class="statlabel">Declared uniform-response baseline</div><div class="number">5,134</div><div class="bar"><i style="width:95.07%;background:#8b99af"></i></div></div>
+<div class="card"><div class="statlabel">Best found with site-specific response</div><div class="number accent">5,265</div><div class="bar"><i style="width:97.5%"></i></div></div>
+</div>
+<div class="three"><div class="card"><h2>2,600 iterations</h2><p class="small">1,739 response evaluations; valid accepted plan.</p></div><div class="card"><h2>90 screenings</h2><p class="small">Inspect site × film counts and each site's timetable.</p></div><div class="card"><h2>Repeatable</h2><p class="small">Full reset and rerun return the same calculation snapshot.</p></div></div>
+<div class="callout">+131 score units under assumed response. No observed ticket-sales improvement or causal effect has been established.</div>
+<div class="footer"><a href="verification.json">Executed verification record</a><a href="demo.html#s13">Open the interactive search</a><span>07 / 10</span></div>
+</section>
+<section class="slide" id="p8" data-note="The case panel shifts the complete original reference schedule and passes it through the original packing, feasibility and prediction functions. Feasibility does not imply improvement: the boundary score is lower. Failure has no score and cannot be loaded as valid.">
+<div class="eyebrow">Boundary and failure — real engine checks</div>
+<h1>Feasible is different from better.</h1>
+<table><thead><tr><th>Case: Site D / Screen 1</th><th>Closing-time check</th><th>Result</th></tr></thead><tbody>
+<tr><td><b>Normal · shift 0</b></td><td>Original plan; end 18:31</td><td>Feasible; score 5,134</td></tr>
+<tr><td><b>Boundary · shift 365 min</b></td><td>End 24:36; closing 24:40; slack 4 min</td><td>Feasible; score 5,099</td></tr>
+<tr><td><b>Failure · shift 370 min</b></td><td>End 24:41 exceeds closing 24:40</td><td>Rejected; no score and loading disabled</td></tr>
+</tbody></table>
+<div class="callout red">Recovery: reduce the shift or choose Normal. A valid case can become the ILS baseline; boundary search gives 5,099 → 5,352 in that distinct starting mode.</div>
+<p class="small">S06/S07 use prepared values. S13 executes ILS. S18 executes a separate synthetic rolling model. Prepared examples do not feed the search.</p>
+<div class="footer"><a href="demo.html#s13">Open Engine cases</a><span>Outcome unit: synthetic expected attendance</span><span>08 / 10</span></div>
+</section>
+<section class="slide" id="p9" data-note="No threshold is invented from the brief. First measure the real baseline and agree the target. Prediction and constraint tests precede a safely bounded prospective trial. A replay using the fitted evaluator itself is not independent evidence of benefit.">
+<div class="eyebrow">Evidence gates for real use</div>
+<h1>Audit first. Validate before a trial.</h1>
+<div class="three grow">
+<div class="card"><span class="tag">Gate 1 · Data + operations</span><h2>Define the problem</h2><p>Confirm outcome unit, record semantics, exposure, schedule versions and operating rules.</p><p class="small">Stop if critical inputs or a valid target cannot be established.</p></div>
+<div class="card"><span class="tag">Gate 2 · Modeling</span><h2>Validate response</h2><p>Use time-separated data, check calibration and supported action contexts, compare with the declared baseline.</p><p class="small">Thresholds: TBD after measuring the baseline.</p></div>
+<div class="card"><span class="tag">Gate 3 · Operator-led trial</span><h2>Measure field effects</h2><p>Check independent feasibility, measured outcomes, disruptions and stability against an agreed protocol.</p><p class="small">Revise/stop for hard-rule violations or failed trial criteria.</p></div>
+</div>
+<div class="callout">Cost, duration and benefit estimates: TBD after data access, integration scope and validation effort are known.</div>
+<div class="footer"><span>The synthetic score alone does not justify adoption.</span><span>09 / 10</span></div>
+</section>
+<section class="slide dark" id="p10" data-note="Request a bounded data and rule audit, named responsibilities and a validation gate. The three actual LLM review decisions are documented with checks: ILS rather than BO, synthetic attendance rather than ticket sales, and boundary tests connected to the actual engine.">
+<div class="eyebrow">A concrete next decision</div>
+<h1>Approve the audit.<br>Agree the validation gate.</h1>
+<p class="lead">Nominate the data and operations owners. Confirm the outcome, planning boundary and baseline before commissioning a learned response model.</p>
+<div class="callout">Three checked revisions: identify ILS precisely; align the outcome unit; connect failure cases to the original engine.</div>
+<p class="small muted">Demonstrated: synthetic calculation, deterministic search and rejection/recovery.<br>Still required: real-data validity, causal/field evidence and operational approval.</p>
+<div class="footer"><a href="problem-definition.md">Full seven-section definition and LLM review</a><a href="extended-proposal.html">Expanded reference</a><span>10 / 10</span></div>
+</section>
+</main>
+<aside id="notes" hidden aria-live="polite"></aside>
+<nav id="controls" aria-label="Presentation controls"><a href="../index.html">Case home</a><button id="prev" type="button" aria-label="Previous slide">←</button><span id="counter">01 / 10</span><button id="next" type="button" aria-label="Next slide">→</button><button id="notesButton" type="button" aria-expanded="false">Notes</button></nav>
+<script>
+(function(){
+'use strict';
+var slides=Array.from(document.querySelectorAll('.slide')),current=0;
+function fit(){document.getElementById('deck').style.transform='translate(-50%,-50%) scale('+Math.min(innerWidth/1280,innerHeight/720)+')'}
+function show(index){current=Math.max(0,Math.min(slides.length-1,index));slides.forEach(function(s,i){s.classList.toggle('active',i===current)});document.getElementById('counter').textContent=String(current+1).padStart(2,'0')+' / '+slides.length;document.getElementById('notes').textContent=slides[current].dataset.note;document.getElementById('prev').disabled=current===0;document.getElementById('next').disabled=current===slides.length-1;history.replaceState(null,'','#p'+(current+1))}
+function fromHash(){var match=location.hash.match(/^#p(\d+)$/);return match?Number(match[1])-1:0}
+document.getElementById('prev').addEventListener('click',function(){show(current-1)});document.getElementById('next').addEventListener('click',function(){show(current+1)});
+function toggleNotes(){var n=document.getElementById('notes');n.hidden=!n.hidden;document.getElementById('notesButton').setAttribute('aria-expanded',String(!n.hidden))}
+document.getElementById('notesButton').addEventListener('click',toggleNotes);
+addEventListener('keydown',function(e){if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(current+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(current-1)}if(e.key==='Home'){e.preventDefault();show(0)}if(e.key==='End'){e.preventDefault();show(slides.length-1)}if(e.key.toLowerCase()==='n')toggleNotes()});
+addEventListener('resize',fit);addEventListener('hashchange',function(){show(fromHash())});fit();show(fromHash());
+})();
+</script>
+</body>
+</html>

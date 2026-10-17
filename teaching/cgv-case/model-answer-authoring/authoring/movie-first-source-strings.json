@@ -1,0 +1,1329 @@
+{
+  "연간 schemaVersion 3이 필요합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "기준일은 예측 시작 이전이어야 합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "2,000 / 10,000 / 25,000만 지원합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "지원하지 않는 실행 설정": [
+    "src/annual/domain/validate.ts"
+  ],
+  "확률/민감도 범위 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "전체 시장 모드의 외부 점유율은 0이어야 합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "빈 ID 또는 중복 ID:": [
+    "src/annual/domain/validate.ts"
+  ],
+  "관객 프로필이 필요합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "좌석 수는 양의 정수입니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "영화 제목/개봉·종영일 확인": [
+    "src/annual/domain/validate.ts"
+  ],
+  "공개시점/상영시간 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "장르/포맷/등급 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "특징": [
+    "src/annual/domain/validate.ts",
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "는 0..1이어야 합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "관심/인지 신호 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "존재하지 않는 영화/극장/스크린": [
+    "src/annual/domain/validate.ts"
+  ],
+  "연간 범위 밖의 회차": [
+    "src/annual/domain/validate.ts"
+  ],
+  "영화 상영 가능 기간 밖의 회차": [
+    "src/annual/domain/validate.ts"
+  ],
+  "09:00~24:30 운영시간 밖의 회차": [
+    "src/annual/domain/validate.ts"
+  ],
+  "스크린/영화 미지원 포맷": [
+    "src/annual/domain/validate.ts"
+  ],
+  "가격/공개시점 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "상영/청소시간 중복:": [
+    "src/annual/domain/validate.ts"
+  ],
+  "나이/연간 빈도/범위 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "외부 관람을 포함하려면 전체 극장 빈도가 필요합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "cadence/가중치 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "미래 실제 관람일 금지": [
+    "src/annual/domain/validate.ts"
+  ],
+  "예산 단위 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "관람 가능 시간 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "관측기간 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "장르 취향 범위 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "특징 취향 범위 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "확정 예약의 회차가 없습니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "확정 예약의 영화/편성은 기준시점에 알려져 있어야 합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "예약 인원/가격/공개시점 오류": [
+    "src/annual/domain/validate.ts"
+  ],
+  "한 사람의 같은 서비스일 확정 예약 두 건: 1회/day 모형과 충돌합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "재관람 금지 모드에서 같은 사람의 같은 영화 확정 예약 두 건": [
+    "src/annual/domain/validate.ts"
+  ],
+  "확정 예약이 좌석을 초과합니다.": [
+    "src/annual/domain/validate.ts"
+  ],
+  "CSV 또는 XLSX 파일을 선택하세요.": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "필수 값 누락:": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "knownAt은 분 단위 시각이어야 합니다.": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "knownAt: 날짜 또는 시간대가 있는 ISO 분 단위 시각을 입력하세요.": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "잘못된 knownAt 시각": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "시트/CSV 이름은 Movies, ReleaseWindows, Showings 중 하나여야 합니다.": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "빈 시트": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "빈/중복 header": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "열 수 초과": [
+    "src/annual/inputs/calendarImport.ts"
+  ],
+  "48h 동결/제한 또는 확정 예약 회차 변경 금지:": [
+    "src/annual/inputs/importDiff.ts"
+  ],
+  "동결/확정 회차의 상영시간 변경 금지:": [
+    "src/annual/inputs/importDiff.ts"
+  ],
+  "기존 확정 예약 원장을 보존해야 합니다.": [
+    "src/annual/inputs/importDiff.ts"
+  ],
+  "일정 업로드로 실제 관측 이력을 변경할 수 없습니다.": [
+    "src/annual/inputs/importDiff.ts"
+  ],
+  "먼저 관객과 영화를 등록하세요.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "먼저 새 모델의 빈도 보정을 완료하세요.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "연간 빈도는0~365 범위입니다.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "Population 등록 후 파일을 적용하세요.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "관객 입력을 먼저 준비하세요.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "잠재수요 예측이 먼저 필요합니다.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "운영 규칙과 확정 회차 확인 중": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "회차 배치 · 극장·일자 단위": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "유효 편성을 찾지 못했습니다:": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "회차의 관객 반응 계산 준비": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "· 경로": [
+    "src/annual/movieFirst/movieFirst.worker.ts",
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "· 지역 10,000명": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "관객 반응 계산 완료 · 타임라인과 관객 구성 집계 중": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "기본 편성 생성이 먼저 필요합니다.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "영화 상세와 상영기간을 먼저 등록하세요.": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "빈도 보정 미완료: unresolved": [
+    "src/annual/movieFirst/movieFirst.worker.ts"
+  ],
+  "기준 환경의 중립 영화": [
+    "src/annual/movieFirst/reference.ts"
+  ],
+  "합성 빈도 보정용": [
+    "src/annual/movieFirst/reference.ts"
+  ],
+  "Population 등록": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관객 설정·생성": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "영화·편성 등록": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "영화 상세와 연간 표": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "목적·제약 설정": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "무엇을·어떤 조건으로": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "시뮬레이션 실행": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "입력 확인 후 시작": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "결과 해석": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관객·극장·시간 분석": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "등록 완료": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "입력 필요": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "적용 전 변경안": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "파일 검증 필요": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "확인 완료": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "확인 필요": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "계산 중": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "재실행 필요": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "중단됨": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "계산 완료": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "실행 전": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "조회 가능": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "실행 후 확인": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "연간 시뮬레이션 작업 흐름": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "현재 단계 작업": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "← 이전 단계": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "실행 중단": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "시뮬레이션 입력 요약": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "입력을 확인하고 시뮬레이션을 시작하세요": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "하단의 시작 버튼으로 실행합니다. 방문 간격과 영화 취향, 경쟁작, 극장·시간·좌석을 함께 계산합니다.": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "계산 프로필 / 지역 관객": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "명": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관람 빈도 평균": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "회/년": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "영화 / 상영 회차": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "편 /": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "회": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "시뮬레이션 기간": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "일": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "시뮬레이션 목적": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "관람 범위": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "우리 극장 + 외부 극장": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "% 가정": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "전체 극장 시장": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "실행 경로": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "개": [
+    "src/components/annual/AnnualWorkflow.tsx",
+    "src/components/annual/MovieFirstApp.tsx",
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "관람 제약": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "하루 최대1회 · 같은 영화 재관람": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "허용": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "금지": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "미래 영화 기다림": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "사용 안 함": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "입력 변경 또는 확인하지 않은 설정이 있습니다. 하단 안내에 따라 확인한 뒤 실행하세요.": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "완료 후 결과 해석": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "연간 영화 스케줄과 시점별 예상 관람 확인": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "영화를 선택해 관객 구성·극장·시간대 분석": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "현재 결과를 기준으로 저장하고 변경 편성을 실행해 A/B 비교": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "한 관객의 방문 날짜와 경쟁작 선택 확률 확인": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "모든 결과는 합성 시뮬레이션입니다. 20경로의 변동도 실제 자료로 보정된 예측구간이 아닙니다.": [
+    "src/components/annual/AnnualWorkflow.tsx"
+  ],
+  "영화": [
+    "src/components/annual/MovieCatalogPage.tsx",
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "새 영화": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "영화 검색": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "제목 또는 영화 ID 검색": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "영화 정보 수정": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "새 영화 등록": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "영화 ID": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "영화 제목": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "개봉일": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "종영일 (이 날 제외)": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "종영일": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "상영시간 (분)": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "상영시간": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "관람 등급": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "감독": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "출연진 ( | 로 구분)": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "시놉시스": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "장르": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "상영 가능한 포맷": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "작품 특징 ·": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "사용자 검토값": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "장르 규칙의 초기값": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "장르로 초기화": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "자동 특징은 장르 규칙으로 계산합니다. 제목·시놉시스·출연진을 이해한 AI 분석값이 아닙니다. 작품을 검토한 뒤 아래 값을 수정할 수 있습니다.": [
+    "src/components/annual/MovieCatalogPage.tsx"
+  ],
+  "편성 독립 잠재 관람": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성 실현 관람": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "개선 후보 실현 관람": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "충격 전 기존 편성": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "충격 후 기존 편성": [
+    "src/components/annual/MovieFirstApp.tsx",
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "충격 후 재편성": [
+    "src/components/annual/MovieFirstApp.tsx",
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "영화 등록": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관람 빈도 보정": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성 독립 수요 예측": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성 생성": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성의 관객 반응 평가": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성 변경안 반복 평가": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성 후보별 관객 반응 평가": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "별도 경로에서 개선 검증": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "확정 과거 보존 · 충격 후 재편성": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성 평가 완료": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "현재 단계": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "초 경과": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "중단했습니다. 입력은 보존했습니다. 다시 시작하면 같은 난수 경로를 처음부터 재계산합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "빈도 보정": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "초 ·": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "프로필": [
+    "src/components/annual/MovieFirstApp.tsx",
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "파일을 선택했습니다. Population 등록 후 적용하세요.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "저장한 movie-first 입력이 없습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "새 모델 전용 저장소에 입력·규칙·재현 경로를 저장했습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "합성 관객 준비": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관객의 관측 취향과 관람 주기를 준비합니다. 지역 좌석 시장은 항상10,000명입니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "다음: 영화 등록 →": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "등록된 관객을 유지하고 영화 상세·연간 상영기간을 입력합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "다음: 목적·제약 설정 →": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화와 개봉·종영일이 필요합니다. 초기 수요 예측에는 회차표가 필요하지 않습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "선택한 파일 적용": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "설정 확인 →": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "합성 운영 규칙을 확인하면 같은 위치에서 실행을 시작합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "시뮬레이션 시작": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 수요 → 기본 편성 → 관객 반응을 순서대로 계산합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "동일 입력으로 다시 실행": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성 개선 시작": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "충격 반영·재편성 시작": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "Worker가 중단되었습니다. 같은 입력으로 기본 결과를 재계산한 뒤 비교를 이어갑니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "같은 관객으로 후보를 탐색하고, 별도20경로에서 기본안과 비교합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본안의 합성 과거를 고정하고 충격 전 / 충격 후 기존안 / 충격 후 재편성을 비교합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 정보 저장": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 중심 작업 단계": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "M0 개발 검증 경로": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "실제 CGV 자료·성과 아님": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "M1 그래프 모델 미적용": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기존 연간 v3 열기 →": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 의향 → 수요 → 편성 → 개선": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "M0 · 검증 중": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 중심 수요와 편성": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "먼저 보고 싶은 영화를 예측하고, 그 수요에 맞춰 상영 시간과 좌석을 배치합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 중심 작업 흐름": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "취향·관람 빈도": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "작품·상영기간": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "목적·운영 규칙": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "수요→할당→개선": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "타임라인·관객 구성": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "시뮬레이션할 관객을 등록하세요": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "계산 프로필 수": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "초기 영화 목록": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "빈 목록 · 직접 등록": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "합성 영화200편": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "연간 빈도 직접 설정": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "연간 관람 횟수": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "직접 설정하지 않으면 관측 이력과 관측 범위를 이용한 빈도 추정값을 사용합니다. 선언한 평균 횟수를 강제 관람 quota로 쓰지 않습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관객 등록 완료": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "프로필 · 평균": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "회/년 · 지역10,000명": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "저장된 새 모델 입력 복원": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "입력 저장": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 상세와 연간 상영기간": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "회차 없이 영화 목록만으로 초기 예측을 시작합니다. 같은 기간에 공개된 영화들은 서로 경쟁합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 상영기간 파일": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "샘플 엑셀 다운로드": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 CSV 다운로드": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "Movies 시트의 영화 상세·개봉일·종영일을 읽습니다. Showings가 있더라도 초기 수요에 사용하지 않습니다. 업로드하면 파일의 영화 목록으로 교체합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "선택 취소": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편 등록": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "목록 닫기": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 상세 입력·수정": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "목적과 운영 제약을 설정하세요": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "목표 지표": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관객 수": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "티켓 매출 (비용 미포함)": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "예측 경로 수": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "1경로 · 탐색용 단일 시뮬레이션": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "20경로 · 변동 평균": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영업 시작 (분,09:00=540)": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영업 종료 (분,24:30=1470)": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "청소 시간 (분)": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "티켓 가격 (DEMO 최소금액 단위)": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성 이후 국소 개선과 별도20경로 검증까지 실행": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "런타임·포맷·좌석·확정 예약·frozen/limited 규칙을 검사합니다. 기본 영업시간과 청소20분은 합성 운영 가정입니다. 법적 의무나 실제 계약 수치를 자동으로 채우지 않습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "금액은 DEMO 단위입니다. 1단위=100최소단위이며 실제 원화 매출이 아닙니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "수요 → 기본 편성 → 반복 개선": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "프로필 ·": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편 ·": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "예측 경로 · 지역10,000명": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 의향과 경쟁을 계산하고, 편성 독립 잠재수요를 만듭니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "운영 규칙을 지키며 기본 편성표를 만들고 관객 반응을 다시 계산합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성을 조금씩 변경하고 같은 관객으로 반복 평가합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "결과를 확인한 뒤 편성 개선을 시작할 수 있습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "입력 준비": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "· 계산 중에도 중단할 수 있습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "수렴·성능 검증 중인 M0입니다. M1 그래프 TPP 결과나 실제 시장 예측 정확도로 해석하지 않습니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성 독립 잠재 관람 / 지역": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성 회차": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "평가 경로": [
+    "src/components/annual/MovieFirstApp.tsx",
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "단위는 관람 건수입니다. 한 관객이 여러 영화를 볼 수 있으므로 연간10,000건을 넘을 수 있습니다. 그래프의 변동은 실자료로 보정된 예측구간이 아닙니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "입력·규칙 저장": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "재현 manifest 다운로드": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "계산 결과 다운로드": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "결과 후속 작업": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편성을 바꾸어 관객 반응 비교": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "결과에서 이어서 할 작업": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "기본 편성에서 더 좋은 후보 찾기": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "반응 변화 후 재편성 비교": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "목적:": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "· 아래 고정 버튼으로 실행합니다. 설정 변경은 목적·제약 단계에서 확인 후 다시 계산하세요.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "충격 적용일": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "반응이 달라지는 영화": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "영화 강도 배율": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "0=관람 강도 제거, 1=변화 없음, 2=강도 두 배. 확률 자체의 배율이 아닙니다. 각 실행은 원래 기본안에서 시작하며 이전 충격을 누적하지 않습니다. 미래의 확정 예약은 강도 변화와 무관하게 보존합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "· 계산을 중단해도 화면의 이전 결과는 유지합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "표시 결과": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "서로 다른 경로의 값은 추천 근거로 직접 빼지 않습니다. 개선 판정은 위 비교 표의 동일 검증 경로를 사용합니다.": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "편집 취소": [
+    "src/components/annual/MovieFirstApp.tsx"
+  ],
+  "관측 추정": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "사전 가정": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "직접 설정": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "(익일)": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "과거 합성 영화": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "제목 미등록": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "외부 극장": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "· 관람 이력": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 상세 닫기": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "닫기 ×": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "세 · 프로필": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "연": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "지역 관객 ID와 입력 프로필 ID는 다릅니다. 여러 합성 관객이 같은 프로필의 관측 이력을 참조할 수 있습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "· 이 관람 이전의 이력을 표시합니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "해당 일자 영화 선택 확률": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "% · 선택 안 함": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "· 확정 예약": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "과거 관측 관람 이력": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "입력된 과거 관람 ·": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "건": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx",
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "예측 기준일": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "까지 알려진 합성 관측 중 관람 완료만 표시합니다. 관심·노출·평가만 있는 영화는 관람으로 세지 않습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "평가 없음": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "별도 만족도 평가": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "알려진 과거 관람 이력이 없습니다. 이력이 없다는 것을 관람하지 않았다는 뜻으로 해석하지 않습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "시뮬레이션 이전 관람 이력": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "이 시뮬레이션에서 앞서 선택한 영화 ·": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "의 예측 기록입니다. 실제 과거 관람이나 다른 시나리오의 결과가 아닙니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "참조 환경의 잠재 관람": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "외부 관람 예측": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "좌석 배정 예측": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "이 경로에서 선택한 영화보다 앞선 관람 기록이 없습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "영화 관객 목록": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "이 영화를": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "선택할": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "볼": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 ·": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "의 개인 목록입니다. 위 그래프는": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "명 지역 시장의 경로 평균이며, 목록은 한 경로라 인원이 다를 수 있습니다. 관객 ID를 누르면 관람 이력을 볼 수 있습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 ID / 프로필 ID 검색": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "예: P00010 또는 U00002": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "선택 영화의 개별 관객": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 ID": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "연령 / 연간 빈도": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관람일": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "참조": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "배정": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "극장": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "시간": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관람 이력 보기": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "세 /": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 목록 페이지": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "명 중": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "명 ·": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "페이지": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "이전 관객": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "다음 관객": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "검색 조건에 맞는 관객이 없습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "선택한 날짜에는 이 경로의 관객이 없습니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "영화 관객 상세": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "· 관객 구성": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "(종영일 제외) ·": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "전체 상영기간 · 지역 예상 관람": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "편성 전 잠재수요의 참조 극장·시간대입니다. 실제 배정된 회차가 아닙니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "을 다시 평가한 시뮬레이션 결과입니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "일자별 예상 관람객": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "경로 평균 · 날짜 막대를 누르면 해당 날짜의 극장과 관객을 확인합니다. 0명인 날짜도 포함합니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "일자별 관람객 그래프 가로 스크롤": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "예상": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 상세 날짜": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "전체 상영기간": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관람": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx",
+    "src/components/annual/MovieFirstTimeline.tsx",
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "전체 기간 보기": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "· 평균": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "건 / 경로": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "의 관객": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "극장별 예상 관람": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "관객 연령 · 경로": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "20대 이하": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "30대": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "40대": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "50대 이상": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "시간대 · 경로": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "오전": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "오후": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "저녁": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "심야": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "극장·날짜·시간별 편성": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "회 · 경로": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "좌석 배정": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "날짜": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "극장 / 스크린": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "포맷": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "최대100회 표시 · 전체 편성은 계산 결과 파일에 포함됩니다.": [
+    "src/components/annual/MovieFirstAudienceDetail.tsx"
+  ],
+  "연간 영화 타임라인": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "경로 평균. 가로로 스크롤해 상영기간과 날짜별 관람을 확인하고 영화를 선택하세요.": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "연간 영화 타임라인 가로 스크롤": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "관객 상세 보기": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "관람 · 상세 보기 →": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "(종영일 제외)": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "잠재": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "실현": [
+    "src/components/annual/MovieFirstTimeline.tsx"
+  ],
+  "후보 − 기존 편성:": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "· paired 95% MC 구간 [": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "개선 편성 추천": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "개선 불확실 ·": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "유지": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "탐색에 쓰지 않은 공통 난수 경로에서 비교했습니다. 이 구간은 시뮬레이션 변동이며, 실제 시장의 예측오차나 인과효과를 보장하지 않습니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "탐색 과정 ·": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "라운드 · 후보 평가": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "라운드": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "제약 위반 제외": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "1차 평가": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "전체 경로 평가": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "채택한 변경": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "개선 없음 · 종료": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "편성 개선 비교": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "탐색한 후보 중 최선": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "같은 관객·초기 상태에서 편성을 바꾸어 비교한 결과입니다. 전역 최적 편성을 의미하지 않습니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "기본안 ·": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "매출 목적값": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "관객 목적값": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "최선 후보 · 목적값": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "별도 검증 경로": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "기본 편성": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "탐색 경로": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "· 검증 경로": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  ". 매출에는 운영 비용이 포함되지 않습니다. 추천 여부와 무관하게 후보 타임라인을 열어볼 수 있습니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "충격 전": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "동적 재편성 비교": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "충격과 재편성 효과를 나누어 비교": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "적용한 충격 ·": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "(영화 강도). 위 입력을 수정해도 이 결과는 다시 실행하기 전까지 바뀌지 않습니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "이전": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "합성 경로의 관람 이력을 확정 과거로 고정했습니다. 실제 관측 자료가 아닙니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "관측된 확정 이력을 고정했습니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "예약·지불금액·동결 회차는 세 상태에서 보존합니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "비교 상태": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "관람 건수": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "티켓 매출": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "기존 편성": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "개선 차이는 ‘충격 후 재편성 − 충격 후 기존 편성’입니다. 충격 자체의 효과와 섞지 않습니다. 비교는 동일 확정 과거에 조건부인 전체 기간 결과입니다.": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "확정 상태 보존 식별값": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "관람 이력": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "· 예약": [
+    "src/components/annual/ScheduleComparison.tsx"
+  ],
+  "편성별 관객 수와 구성 예측": [
+    "src/components/annual/simulationSettings.ts"
+  ],
+  "편성 변경의 영향 비교": [
+    "src/components/annual/simulationSettings.ts"
+  ],
+  "신규": [
+    "src/synthetic/annual/history.ts"
+  ],
+  "일부 영화 관측": [
+    "src/synthetic/annual/history.ts"
+  ],
+  "관측 이력": [
+    "src/synthetic/annual/history.ts"
+  ],
+  "세 ·": [
+    "src/synthetic/annual/history.ts"
+  ],
+  "주말": [
+    "src/synthetic/annual/history.ts"
+  ],
+  "전요일": [
+    "src/synthetic/annual/history.ts"
+  ],
+  "합성 영화": [
+    "src/synthetic/annual/workload.ts"
+  ],
+  "연간 편성 실험용 합성 영화입니다. 장르에 따른 초기 특징을 사용하며 사용자가 상세 정보를 수정할 수 있습니다.": [
+    "src/synthetic/annual/workload.ts"
+  ],
+  "전체 합성 시장 가정. 지역 10,000명과 전국 10,000,000명은 다른 집계 단위입니다.": [
+    "src/synthetic/annual/workload.ts"
+  ]
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "hasOldMetaNotice": false,
+    "heading": "Forecast demand and build each site’s timetable,\nthen connect the two through response",
+    "id": "s03",
+    "visibleText": "03\nPART I — BASELINE OPERATING STRUCTURE\nForecast demand and build each site’s timetable,\nthen connect the two through response\nPREDICTION — OCCUPANCY FORECASTING\nMODEL ② · OCCUPANCY FORECASTING\nP1\nForecast simulation · National market forecast\nNATIONAL\n↓\nP2\nCompany-wide allocation — screen operating plan\nCOMPANY\n↓\nP3\nSite-level allocation · Feedback\nSITE\n↓\nP4\nWeights derived from site performance data\nWEIGHT\nPROGRAMMING — AUTOMATED SCHEDULING\nMODEL ① · AUTOMATED SCHEDULING\nA1\nScheduling criteria — operating and cleaning hours\nSETUP\n↓\nA2\nApply automated scheduling rules\nRULE\n↓\nA3\nRefine rules for site characteristics\nSITE-FIT\n↓\nA4\nProduce site-level screening schedules\nSCHEDULE\nThis proposal builds on that architecture.\nThe two domains connect more effectively through a stronger decision layer.\nOperating structure · Demand forecasts → screen allocation → site timetables",
+    "page": 3
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "Connect film, booking and site data\nto each part of the scheduling decision",
+    "id": "s21",
+    "visibleText": "19\nPART VI — DATA FOR THE DECISION LOOP\nConnect film, booking and site data\nto each part of the scheduling decision\nBASE DEMAND\nESTIMATE POTENTIAL DEMAND\nFilm attributes\nFilm\nViewing intent\nBooking\nAwareness\nBooking\nReviews · Buzz (quantitative · qualitative)\nBooking\nAdvance-booking schedule\nBooking\nRelease date · First screening date\nFilm\nGenre · Director · Cast · Synopsis\nFilm\nRESPONSE\nLEARN AUDIENCE RESPONSE\nShow count\nSite\nScheduled seats\nSite\nScreening date · Booking date\nBooking\nBooking opening timestamp\nBooking\nBooked seats · Tickets\nBooking\nScreening format\nFilm\nAggregated audience segments\nBooking\nSales channel · Film occupancy\nBooking\nCONSTRAINT · PROGRAMMING\nSCHEDULING CONSTRAINTS\nOperating hours\nSite\nCleaning time\nSite\nPremium-screen share cap\nSite\nScreen-quota information\nSite\nPremium-screen space · Technology\nSite\nScreen name · Operating floor\nSite\nDecision inputs · Demand context → schedule and audience response → feasible timetables",
+    "page": 19
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "Build in three stages:\nfeasible timetable → response model → integrated planning",
+    "id": "s24",
+    "visibleText": "22\nPART VI — THREE-STAGE IMPLEMENTATION PLAN\nBuild in three stages:\nfeasible timetable → response model → integrated planning\nIMPLEMENTATION FLOW\n—\nFeasible schedules\n→\nBetter decisions\n+ Show modeling and search track\nPRE-TRACK\nLoad the reference timetable, film and screen data, operating rules and planning objective\nShared inputs for all three stages\nSTAGE 1\nFEASIBLE SCHEDULING · MODEL ①\nOPERATOR TRACK\nCreate a timetable from screen and film inputs\nReview showtimes and operating rules\nMODELING AND SEARCH TRACK\nPack screenings within opening and closing hours\nCheck runtime, turnaround and film requirements\nKeep the reference timetable for comparison\nSTAGE 2\nRESPONSE-AWARE DECISIONS · MODELS ① + ②\nOPERATOR TRACK\nCompare film allocations and expected audiences\nInspect changes for each site and screen\nMODELING AND SEARCH TRACK\nEstimate demand by film, site and time\nScore reference and candidate timetables\nSearch for a better response-aware schedule\nSTAGE 3\nINTEGRATED PLANNING · MODELS ① + ②\nOPERATOR TRACK\nReview, adjust and publish the selected timetable\nUpdate the plan as booking signals arrive\nMODELING AND SEARCH TRACK\nIntegrate Base + Response + Programming\nReturn audience outcomes to the learning loop\nKeep booked screenings fixed during updates\nReoptimize the remaining available screenings\nKeep one shared baseline\nand add capabilities step by step.\nImplementation sequence · Build a feasible timetable → add response-aware search → connect daily operations",
+    "page": 22
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "Connect the recommendation to\nthe cinema’s daily planning workflow",
+    "id": "s29",
+    "visibleText": "24\nPART VII — CONNECTING THE OPERATING WORKFLOW\nConnect the recommendation to\nthe cinema’s daily planning workflow\nSTEP 1 — PLANNING WORKSPACE\nPREPARE THE PLANNING RUN\nOne objective, one reference and one search loop\nLoad film, booking and screen inputs\nSet operating rules and the planning objective\nGenerate a response-aware candidate timetable\n→\nSTEP 2 — OPERATOR REVIEW AND PUBLICATION\nCONNECT THE TIMETABLE\nReview changes · Publish schedule Send the selected schedule to booking systems\nCompare the reference and recommended time slots\nAccept the recommendation or retain operator edits\nPublish showtimes through the existing interfaces\n→\nSTEP 3 — BOOKING FEEDBACK AND UPDATES\nREPEAT THE DECISION LOOP\nUpdate the next planning run\nPreserve booked screenings — change eligible slots\nFeed booking and attendance outcomes to Prediction\nReoptimize available slots when demand changes\nCarry the decision into operation: prepare inputs → review and publish → learn and replan.\nDaily operation · A recommendation becomes a published timetable and the next planning input",
+    "page": 24
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "The value goes beyond\ntime saved on scheduling",
+    "id": "s30",
+    "visibleText": "25\nPART VII — WHAT THE OPERATOR GAINS\nThe value goes beyond\ntime saved on scheduling\nBUSINESS\nAudience coverage\nExpected viewers reached by the available screenings\nOccupancy and revenue\nTrack audience-to-seat ratio and ticket revenue\nPremium-screen utilization\nMatch film demand to screen capacity and format\nOPERATION\nScheduling time\nTime from planning inputs to a publishable timetable\nOperator review effort\nRule exceptions, manual edits and review time\nReplanning speed and stability\nResponse time and number of affected screenings\nINTELLIGENCE ASSET\nAction–Response data asset\nAccumulate decisions and responses\nReusable constraint framework\nDocument operational grammar\nContinuously improving capability\nCompounding value from the learning loop\nOperating metrics · Audience coverage, screen use, planning effort and schedule stability",
+    "page": 25
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "A natural operating sequence:\ninputs → settings → search → timetable",
+    "id": "s31",
+    "visibleText": "26\nPART VII — A DAILY OPERATOR RUN\nA natural operating sequence:\ninputs → settings → search → timetable\n\nThe operator starts from a reference schedule, reviews a recommendation, and carries the selected plan into the next cycle.\n\n01 · Import planning inputs\n\nLoad films, screens, operating rules and the reference timetable into one planning workspace.\n\n02 · Set the planning goal\n\nChoose the audience objective, available operating window and search budget.\n\n03 · Run feasible search\n\nEvaluate candidate film allocations and showtimes while respecting screen and timing constraints.\n\n04 · Inspect the recommendation\n\nCompare expected audiences, screen utilization and changed time slots with the reference.\n\n05 · Review and export\n\nKeep the selected plan, record operator edits and export the timetable for publication.\n\n06 · Learn and replan\n\nReturn booking and attendance outcomes to the models and update eligible future screenings.\n\nOperator workflow · Import → configure → optimize → inspect → publish → update",
+    "page": 26
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "Use Bayesian optimization to choose\nthe next schedule worth evaluating",
+    "id": "s32",
+    "visibleText": "27\nPART VIII — BAYESIAN OPTIMIZATION FOR SCHEDULE SEARCH\nUse Bayesian optimization to choose\nthe next schedule worth evaluating\nResponse estimate\n→\nUncertainty\n→\nNext candidate\n→\nEvaluate\n→\nUpdate\nFeasible schedule space\n\nDefine film, screen and time decisions under operating constraints.\n\nResponse evaluator\n\nScore a candidate schedule with a formula, simulator or learned model.\n\nSurrogate and posterior\n\nLearn schedule-score estimates and uncertainty from evaluated candidates.\n\nAcquisition rule\n\nBalance promising improvements with informative evaluations.\n\nCandidate evaluation\n\nCheck feasibility, call the evaluator and record the resulting score.\n\nUpdate and repeat\n\nAdd the new evaluation; update the posterior until the budget is spent.\n\nMatch the search strategy to the evaluation cost\nCheap response calls: local search · Expensive response calls: consider constrained BO\nBO search loop · Feasible candidate → response evaluation → posterior update → next candidate",
+    "page": 27
+  },
+  {
+    "hasOldMetaNotice": false,
+    "heading": "Compare the reference and recommended plan\nat the level where the operator acts",
+    "id": "s33",
+    "visibleText": "28\nPART VIII — READING THE RECOMMENDATION\nCompare the reference and recommended plan\nat the level where the operator acts\nReference\nStarting timetable\nBefore search\nRecommendation\nBest feasible candidate\nAfter search\nDifference\nAudience and allocation\nWhat changed\nSelected plan\nOperator decision\nTimetable export\nAUDIENCE\nExpected attendance\nResponse score\nRead reference and candidate totals\nInspect each film and site contribution\nIdentify where the audience gain comes from\nALLOCATION\nFilm × site coverage\nAllocation map\nCompare screenings and seats by film\nInspect the film mix at each site\nConnect allocation changes to demand\nTIMETABLE\nScreen and time changes\nBefore and after\nSelect a site and screen\nInspect films, start times and turnaround\nReview moves around peak viewing hours\nFEASIBILITY\nOperating rule checks\nExecutable timetable\nRead opening, closing and cleaning checks\nInspect capacity, coverage and film caps\nResolve any rejected operator edit\nEXECUTION\nSelected schedule\nTimetable output\nAccept the plan or retain the reference\nExport showtimes and the decision record\nUse the selected plan in the next cycle\nThe result is a timetable the operator can\nunderstand, review and put into operation.\nResult review · Audience score → film allocation → screen timetable → selected schedule",
+    "page": 28
+  }
+]

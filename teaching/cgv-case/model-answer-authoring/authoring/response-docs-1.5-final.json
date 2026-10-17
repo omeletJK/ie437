@@ -1,0 +1,35 @@
+{
+  "release": "1.5",
+  "scope": "Final Response documentation freeze after exact-source/staged-course pipeline, actual final exports/reimport and course navigation/build/integration checks.",
+  "demoSHA256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+  "demoBytes": 650464,
+  "engineNodeChecksPassed": 39,
+  "importerChecksPassed": 25,
+  "sourceHTTP": "Pass scoped; earlier configuration observations retain candidate scope.",
+  "coursePrefixStaging": "Pass",
+  "offline": "Unverified",
+  "sampleFiles": {
+    "CinemaPlanning.json": {
+      "bytes": 16108,
+      "sha256": "bc92fdc48f88dd6216a4363df2f4a4466cddb72a04750ad945ea82123092a2dc"
+    },
+    "Screenings.csv": {
+      "bytes": 2929,
+      "sha256": "f87dc8fe6bc4bb368ce61384702ca51b34e819cc8afa8f49b1f9f9e85bd06dea"
+    }
+  },
+  "files": {
+    "problem-definition.md": {
+      "bytes": 27950,
+      "sha256": "443f9e16485879e642d7467b8adf36dfb3b93cb323f651a5672f65bad39b263d"
+    },
+    "demo-guide.md": {
+      "bytes": 6807,
+      "sha256": "924bfa63f59a13abe1a4ccb45523cd192bfc849c40e1f54b61d46e48b25ce1dc"
+    },
+    "verification.json": {
+      "bytes": 19620,
+      "sha256": "9e863488288015843a51ddc5255cfa520d7cc2785aec9dcb122d68eaf2a9a5f7"
+    }
+  }
+}

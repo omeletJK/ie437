@@ -1,0 +1,110 @@
+{
+  "release": "1.7",
+  "commit": "925c3ea244c1e2cebd1fff225c799666cead18a0",
+  "publicFiles": 31,
+  "localPackageEquality": "PASS",
+  "archiveBytes": 6212639,
+  "archiveSHA256": "70b5a6db912d5cf2184151181171707a369c44a16cfaeb0da9c950bfbf0e8906",
+  "comparisonSHA256": "b6f52780241d856c8f227a7e5e56495b308962643b6d3b16bdb55874347d29d4",
+  "proposalASHA256": "2ba44464262b67586d40a9e0f1bab56685a752b0deee70266b965c456a32100a",
+  "deployStatus": "success",
+  "publicChecks": {
+    "comparisonPage": {
+      "rows": 5,
+      "viewport": "1280x720",
+      "body": "1280x720",
+      "footerBottom": 702
+    },
+    "allEightPresentPagesConfirmed": [
+      {
+        "hasOldMetaNotice": false,
+        "heading": "Forecast demand and build each site\u2019s timetable,\nthen connect the two through response",
+        "id": "s03",
+        "visibleText": "03\nPART I \u2014 BASELINE OPERATING STRUCTURE\nForecast demand and build each site\u2019s timetable,\nthen connect the two through response\nPREDICTION \u2014 OCCUPANCY FORECASTING\nMODEL \u2461 \u00b7 OCCUPANCY FORECASTING\nP1\nForecast simulation \u00b7 National market forecast\nNATIONAL\n\u2193\nP2\nCompany-wide allocation \u2014 screen operating plan\nCOMPANY\n\u2193\nP3\nSite-level allocation \u00b7 Feedback\nSITE\n\u2193\nP4\nWeights derived from site performance data\nWEIGHT\nPROGRAMMING \u2014 AUTOMATED SCHEDULING\nMODEL \u2460 \u00b7 AUTOMATED SCHEDULING\nA1\nScheduling criteria \u2014 operating and cleaning hours\nSETUP\n\u2193\nA2\nApply automated scheduling rules\nRULE\n\u2193\nA3\nRefine rules for site characteristics\nSITE-FIT\n\u2193\nA4\nProduce site-level screening schedules\nSCHEDULE\nThis proposal builds on that architecture.\nThe two domains connect more effectively through a stronger decision layer.\nOperating structure \u00b7 Demand forecasts \u2192 screen allocation \u2192 site timetables",
+        "page": 3
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "Connect film, booking and site data\nto each part of the scheduling decision",
+        "id": "s21",
+        "visibleText": "19\nPART VI \u2014 DATA FOR THE DECISION LOOP\nConnect film, booking and site data\nto each part of the scheduling decision\nBASE DEMAND\nESTIMATE POTENTIAL DEMAND\nFilm attributes\nFilm\nViewing intent\nBooking\nAwareness\nBooking\nReviews \u00b7 Buzz (quantitative \u00b7 qualitative)\nBooking\nAdvance-booking schedule\nBooking\nRelease date \u00b7 First screening date\nFilm\nGenre \u00b7 Director \u00b7 Cast \u00b7 Synopsis\nFilm\nRESPONSE\nLEARN AUDIENCE RESPONSE\nShow count\nSite\nScheduled seats\nSite\nScreening date \u00b7 Booking date\nBooking\nBooking opening timestamp\nBooking\nBooked seats \u00b7 Tickets\nBooking\nScreening format\nFilm\nAggregated audience segments\nBooking\nSales channel \u00b7 Film occupancy\nBooking\nCONSTRAINT \u00b7 PROGRAMMING\nSCHEDULING CONSTRAINTS\nOperating hours\nSite\nCleaning time\nSite\nPremium-screen share cap\nSite\nScreen-quota information\nSite\nPremium-screen space \u00b7 Technology\nSite\nScreen name \u00b7 Operating floor\nSite\nDecision inputs \u00b7 Demand context \u2192 schedule and audience response \u2192 feasible timetables",
+        "page": 19
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "Build in three stages:\nfeasible timetable \u2192 response model \u2192 integrated planning",
+        "id": "s24",
+        "visibleText": "22\nPART VI \u2014 THREE-STAGE IMPLEMENTATION PLAN\nBuild in three stages:\nfeasible timetable \u2192 response model \u2192 integrated planning\nIMPLEMENTATION FLOW\n\u2014\nFeasible schedules\n\u2192\nBetter decisions\n+ Show modeling and search track\nPRE-TRACK\nLoad the reference timetable, film and screen data, operating rules and planning objective\nShared inputs for all three stages\nSTAGE 1\nFEASIBLE SCHEDULING \u00b7 MODEL \u2460\nOPERATOR TRACK\nCreate a timetable from screen and film inputs\nReview showtimes and operating rules\nMODELING AND SEARCH TRACK\nPack screenings within opening and closing hours\nCheck runtime, turnaround and film requirements\nKeep the reference timetable for comparison\nSTAGE 2\nRESPONSE-AWARE DECISIONS \u00b7 MODELS \u2460 + \u2461\nOPERATOR TRACK\nCompare film allocations and expected audiences\nInspect changes for each site and screen\nMODELING AND SEARCH TRACK\nEstimate demand by film, site and time\nScore reference and candidate timetables\nSearch for a better response-aware schedule\nSTAGE 3\nINTEGRATED PLANNING \u00b7 MODELS \u2460 + \u2461\nOPERATOR TRACK\nReview, adjust and publish the selected timetable\nUpdate the plan as booking signals arrive\nMODELING AND SEARCH TRACK\nIntegrate Base + Response + Programming\nReturn audience outcomes to the learning loop\nKeep booked screenings fixed during updates\nReoptimize the remaining available screenings\nKeep one shared baseline\nand add capabilities step by step.\nImplementation sequence \u00b7 Build a feasible timetable \u2192 add response-aware search \u2192 connect daily operations",
+        "page": 22
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "Connect the recommendation to\nthe cinema\u2019s daily planning workflow",
+        "id": "s29",
+        "visibleText": "24\nPART VII \u2014 CONNECTING THE OPERATING WORKFLOW\nConnect the recommendation to\nthe cinema\u2019s daily planning workflow\nSTEP 1 \u2014 PLANNING WORKSPACE\nPREPARE THE PLANNING RUN\nOne objective, one reference and one search loop\nLoad film, booking and screen inputs\nSet operating rules and the planning objective\nGenerate a response-aware candidate timetable\n\u2192\nSTEP 2 \u2014 OPERATOR REVIEW AND PUBLICATION\nCONNECT THE TIMETABLE\nReview changes \u00b7 Publish schedule Send the selected schedule to booking systems\nCompare the reference and recommended time slots\nAccept the recommendation or retain operator edits\nPublish showtimes through the existing interfaces\n\u2192\nSTEP 3 \u2014 BOOKING FEEDBACK AND UPDATES\nREPEAT THE DECISION LOOP\nUpdate the next planning run\nPreserve booked screenings \u2014 change eligible slots\nFeed booking and attendance outcomes to Prediction\nReoptimize available slots when demand changes\nCarry the decision into operation: prepare inputs \u2192 review and publish \u2192 learn and replan.\nDaily operation \u00b7 A recommendation becomes a published timetable and the next planning input",
+        "page": 24
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "The value goes beyond\ntime saved on scheduling",
+        "id": "s30",
+        "visibleText": "25\nPART VII \u2014 WHAT THE OPERATOR GAINS\nThe value goes beyond\ntime saved on scheduling\nBUSINESS\nAudience coverage\nExpected viewers reached by the available screenings\nOccupancy and revenue\nTrack audience-to-seat ratio and ticket revenue\nPremium-screen utilization\nMatch film demand to screen capacity and format\nOPERATION\nScheduling time\nTime from planning inputs to a publishable timetable\nOperator review effort\nRule exceptions, manual edits and review time\nReplanning speed and stability\nResponse time and number of affected screenings\nINTELLIGENCE ASSET\nAction\u2013Response data asset\nAccumulate decisions and responses\nReusable constraint framework\nDocument operational grammar\nContinuously improving capability\nCompounding value from the learning loop\nOperating metrics \u00b7 Audience coverage, screen use, planning effort and schedule stability",
+        "page": 25
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "A natural operating sequence:\ninputs \u2192 settings \u2192 search \u2192 timetable",
+        "id": "s31",
+        "visibleText": "26\nPART VII \u2014 A DAILY OPERATOR RUN\nA natural operating sequence:\ninputs \u2192 settings \u2192 search \u2192 timetable\n\nThe operator starts from a reference schedule, reviews a recommendation, and carries the selected plan into the next cycle.\n\n01 \u00b7 Import planning inputs\n\nLoad films, screens, operating rules and the reference timetable into one planning workspace.\n\n02 \u00b7 Set the planning goal\n\nChoose the audience objective, available operating window and search budget.\n\n03 \u00b7 Run feasible search\n\nEvaluate candidate film allocations and showtimes while respecting screen and timing constraints.\n\n04 \u00b7 Inspect the recommendation\n\nCompare expected audiences, screen utilization and changed time slots with the reference.\n\n05 \u00b7 Review and export\n\nKeep the selected plan, record operator edits and export the timetable for publication.\n\n06 \u00b7 Learn and replan\n\nReturn booking and attendance outcomes to the models and update eligible future screenings.\n\nOperator workflow \u00b7 Import \u2192 configure \u2192 optimize \u2192 inspect \u2192 publish \u2192 update",
+        "page": 26
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "Use Bayesian optimization to choose\nthe next schedule worth evaluating",
+        "id": "s32",
+        "visibleText": "27\nPART VIII \u2014 BAYESIAN OPTIMIZATION FOR SCHEDULE SEARCH\nUse Bayesian optimization to choose\nthe next schedule worth evaluating\nResponse estimate\n\u2192\nUncertainty\n\u2192\nNext candidate\n\u2192\nEvaluate\n\u2192\nUpdate\nFeasible schedule space\n\nDefine film, screen and time decisions under operating constraints.\n\nResponse evaluator\n\nScore a candidate schedule with a formula, simulator or learned model.\n\nSurrogate and posterior\n\nLearn schedule-score estimates and uncertainty from evaluated candidates.\n\nAcquisition rule\n\nBalance promising improvements with informative evaluations.\n\nCandidate evaluation\n\nCheck feasibility, call the evaluator and record the resulting score.\n\nUpdate and repeat\n\nAdd the new evaluation; update the posterior until the budget is spent.\n\nMatch the search strategy to the evaluation cost\nCheap response calls: local search \u00b7 Expensive response calls: consider constrained BO\nBO search loop \u00b7 Feasible candidate \u2192 response evaluation \u2192 posterior update \u2192 next candidate",
+        "page": 27
+      },
+      {
+        "hasOldMetaNotice": false,
+        "heading": "Compare the reference and recommended plan\nat the level where the operator acts",
+        "id": "s33",
+        "visibleText": "28\nPART VIII \u2014 READING THE RECOMMENDATION\nCompare the reference and recommended plan\nat the level where the operator acts\nReference\nStarting timetable\nBefore search\nRecommendation\nBest feasible candidate\nAfter search\nDifference\nAudience and allocation\nWhat changed\nSelected plan\nOperator decision\nTimetable export\nAUDIENCE\nExpected attendance\nResponse score\nRead reference and candidate totals\nInspect each film and site contribution\nIdentify where the audience gain comes from\nALLOCATION\nFilm \u00d7 site coverage\nAllocation map\nCompare screenings and seats by film\nInspect the film mix at each site\nConnect allocation changes to demand\nTIMETABLE\nScreen and time changes\nBefore and after\nSelect a site and screen\nInspect films, start times and turnaround\nReview moves around peak viewing hours\nFEASIBILITY\nOperating rule checks\nExecutable timetable\nRead opening, closing and cleaning checks\nInspect capacity, coverage and film caps\nResolve any rejected operator edit\nEXECUTION\nSelected schedule\nTimetable output\nAccept the plan or retain the reference\nExport showtimes and the decision record\nUse the selected plan in the next cycle\nThe result is a timetable the operator can\nunderstand, review and put into operation.\nResult review \u00b7 Audience score \u2192 film allocation \u2192 screen timetable \u2192 selected schedule",
+        "page": 28
+      }
+    ],
+    "comparisonHomeReturn": "PASS",
+    "actualPublicZIP": {
+      "path": "/Users/jinkyoo/Downloads/IE437-Assignment-01-Worked-Examples-EN (3).zip",
+      "sha256": "70b5a6db912d5cf2184151181171707a369c44a16cfaeb0da9c950bfbf0e8906",
+      "exact31SourceFiles": true
+    },
+    "proofImage": "authoring/qa/public-classroom-comparison-1.7.png",
+    "directComparisonMDDownload": {
+      "status": "PASS",
+      "path": "/Users/jinkyoo/Downloads/classroom-comparison.md",
+      "bytes": 4269,
+      "sha256": "a4b8300a60aba478495acd14a9e555f2389bd987d7badeb83300b7624ab53ffe",
+      "matchesSource": true,
+      "method": "Retry with download tab left unchanged completed successfully."
+    }
+  },
+  "scope": "Single separate brief-versus-case comparison; main Response slides focus on operator solution. Both app bytes unchanged.",
+  "status": "PASS",
+  "completedAt": "2026-10-12T04:46:41.633419+00:00",
+  "workflowRun": 38204841303,
+  "hostedChecks": [
+    "Fullsite build/PDFs PASS",
+    "Assignment tests PASS",
+    "Worked-example tests PASS",
+    "Pages deploy PASS"
+  ],
+  "localSync": {
+    "checkedAt": "2026-10-12T04:42:21.465037+00:00",
+    "oldHead": "7627bba6a369178ff334a87eb3e0da91ecb8514e",
+    "newHead": "925c3ea244c1e2cebd1fff225c799666cead18a0",
+    "trackedAndUntrackedWorktreeFilesUnchanged": true,
+    "filesChecked": 454,
+    "statusAfter": " M deck/widgets/cbas-ladder.js\n M deck/widgets/conservative-coms.js\n M deck/widgets/ensemble-alarm.js\n M deck/widgets/surrogate-exploit.js\n M md/_SCHEMA.md\n M md/_source/source_fidelity_map.json\n M md/_source/teaching_route_map.json\n M md/ch05_surrogate_design_optimization.md\n M md/ch06_generative_design_optimization.md\n M tests/paper-selection.mjs\n?? .claude/\n?? assets/ch05/\n?? assets/ch06/bootgen-loop.png\n?? assets/ch06/cbas-iterations.png\n?? assets/ch06/cvae-svhn.png\n?? assets/ch06/ddom-modes.png\n?? assets/ch06/guidance-scale.png\n?? assets/ch06/mins-thick-three.png\n?? deck/widgets/coms-tabular.js\n?? deck/widgets/cond-bars.js\n?? deck/widgets/fgm-stitch.js\n?? deck/widgets/kl-tilt.js\n?? deck/widgets/ko-discrepancy.js\n?? deck/widgets/lcb-flip.js\n?? deck/widgets/mbo-papers.js\n?? deck/widgets/offline-heater.js\n?? md/_source/ch05_ch06_plan.md\n?? teaching/assignment-01-model-answer/student/advanced/\n"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "release": "1.4",
+  "checkedAt": "2026-10-11T21:56:43.398687+00:00",
+  "method": "Independent CUA actions on source HTTP and staged course prefix; actual download file audit. Browser evidence is separate from Node VM checks.",
+  "artifact": {
+    "sha256": "8acef83cb082b02f747920f65f8a1d3ed473fa597ed7bdc8a02cc22e3a8da5f7",
+    "bytes": 547694
+  },
+  "default": {
+    "first": "3-1-0",
+    "second": "3-2-4",
+    "gapMinutes": 0,
+    "original": 5134,
+    "applied": 4969,
+    "best": 5302,
+    "calls": 1711,
+    "iterations": 2600,
+    "valid": true,
+    "sourceFinalReplay": "pass",
+    "coursePrefixReplay": "pass"
+  },
+  "runPause1x": {
+    "pauseObservedIteration": 1035,
+    "best": 5302,
+    "calls": 1711
+  },
+  "speed4x": {
+    "completedAnimation": true,
+    "best": 5302,
+    "calls": 1711,
+    "iterations": 2600,
+    "restoredTo1x": true
+  },
+  "positiveGap5": {
+    "first": "1-1-0",
+    "second": "1-2-1",
+    "original": 5134,
+    "applied": 5141,
+    "best": 5180,
+    "calls": 1757
+  },
+  "rejectedRoom": {
+    "reason": "Film C needs at least 180 seats; selected screen has 150",
+    "applyDisabled": true,
+    "searchDisabled": true,
+    "retainedBest": 5302
+  },
+  "blankDelay": {
+    "status": "invalid",
+    "applyDisabled": true,
+    "retainedBest": 5180
+  },
+  "auxiliary": {
+    "boundaryShift": 365,
+    "preview": 5099,
+    "best": 5352,
+    "lastEnd": "24:36",
+    "slack": 4,
+    "failureShift": 370,
+    "failureRejected": true,
+    "retainedBest": 5352,
+    "collapsedInitially": true
+  },
+  "export": {
+    "file": "response-simulation-results (1).json",
+    "sha256": "939599e9946aace67590e1fd90c22736badc4c63be7050ecad813eaf43f50d82",
+    "original": 5134,
+    "applied": 4969,
+    "best": 5302,
+    "rowsEach": 90,
+    "factorsAndSettingsPresent": true,
+    "scope": "Actual download received on prior build differing only in responsive min-width CSS; final exact-byte serialization and detached-state checks passed in Node."
+  },
+  "responsive": {
+    "viewportWidth": 390,
+    "bodyWidth": 390,
+    "gridWidth": 324,
+    "dialogWidth": 352,
+    "desktopRestored": true
+  },
+  "inspection": {
+    "heatmapSiteDDrill": "pass",
+    "comparisonSiteB": "883.9 \u2192 972.5 (+88.5 from unrounded totals)",
+    "originalDraftAffectedScreensAndRows": "pass",
+    "EnglishMethodDialog": "pass"
+  },
+  "courseNavigation": {
+    "prefix": "/ie437/",
+    "demoToHub": "pass",
+    "responseGuideRoundTrip": "pass",
+    "responseDefinitionRoundTrip": "pass",
+    "bothOriginalProposalCoversToHub": "pass",
+    "audienceInitialAppToHub": "pass",
+    "hubToAssignment1ToHub": "pass"
+  },
+  "siteAndAssignmentTests": "pass",
+  "nodeChecks": 27,
+  "screenshots": [
+    "authoring/qa/response-course-1.4.png",
+    "authoring/qa/response-full-1.4.png"
+  ],
+  "scope": "Default replay and responsive/4x/inspection/course navigation use final artifact. Earlier new exchange/rejection/auxiliary flows preceded final copy/immutable-export/CSS fixes; independent final Node tests re-audit all numerical rules. Direct offline file execution and Case B fresh full annual-workflow replay were not performed. No public deployment or Git commit/push."
+}

@@ -1,0 +1,78 @@
+{
+  "version": "1.7",
+  "purpose": "One shared page compares the classroom brief with added data, assumptions, proposal strategies and executable scope of the two cases.",
+  "rows": [
+    "Starting records",
+    "Added data",
+    "Case assumptions",
+    "Proposed strategy",
+    "Executable demo"
+  ],
+  "sources": [
+    {
+      "file": "reference/assignment.md",
+      "sha256": "3e3956e2b04db4aca3d9b60fedb8792c7715aaf0b32ffb8f325674ef9e8969e6"
+    },
+    {
+      "file": "response/problem-definition.md",
+      "sha256": "64653ff289ebb29935158a4c7d8a2c409bc338bf7cff980d631d81d26180bba4"
+    },
+    {
+      "file": "audience/problem-definition.md",
+      "sha256": "bc5ff029dbeac21d8156aae492ee1a018bc9324439962efcca2cf9253912aaf9"
+    },
+    {
+      "file": "response/CinemaPlanning.json",
+      "sha256": "bc92fdc48f88dd6216a4363df2f4a4466cddb72a04750ad945ea82123092a2dc"
+    },
+    {
+      "file": "response/Screenings.csv",
+      "sha256": "f87dc8fe6bc4bb368ce61384702ca51b34e819cc8afa8f49b1f9f9e85bd06dea"
+    },
+    {
+      "file": "audience/Movies.csv",
+      "sha256": "6eab47d13ee33afa2e30e738604d93746b17785071f3a2a268f8974f170f9b11"
+    }
+  ],
+  "output": [
+    {
+      "file": "classroom-comparison.html",
+      "bytes": 178650,
+      "sha256": "b6f52780241d856c8f227a7e5e56495b308962643b6d3b16bdb55874347d29d4"
+    },
+    {
+      "file": "classroom-comparison.md",
+      "bytes": 4269,
+      "sha256": "a4b8300a60aba478495acd14a9e555f2389bd987d7badeb83300b7624ab53ffe"
+    }
+  ],
+  "checks": {
+    "oneTable": true,
+    "fiveComparisonRows": true,
+    "embeddedCourseFonts": [
+      "IBM Plex Mono",
+      "Inter",
+      "Space Grotesk"
+    ],
+    "externalAssets": false,
+    "relativeNavigation": true,
+    "staticContent": "PASS: one table, five rows, exact six field names, embedded assets, English/privacy and valid relative links",
+    "browserLayout": {
+      "status": "PASS",
+      "sourceUrl": "http://127.0.0.1:4174/ie437-model-answer/student/classroom-comparison.html",
+      "viewport": [
+        1280,
+        720
+      ],
+      "body": [
+        1280,
+        720
+      ],
+      "footerBottom": 702,
+      "visibleComparisonRows": 5,
+      "screenshot": "authoring/qa/classroom-comparison-source-1.7.png",
+      "note": "Actual CUA source-page screenshot and read-only rendered DOM geometry; course/public deployment separately verified by root. No viewport override used."
+    }
+  },
+  "scope": "No numerical demo or proposal slide modified by this generator."
+}

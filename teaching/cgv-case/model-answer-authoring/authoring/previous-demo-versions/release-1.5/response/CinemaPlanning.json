@@ -1,0 +1,909 @@
+{
+  "schemaVersion": "ie437.response-planning.v1",
+  "title": "Classroom cinema · feasible current timetable",
+  "films": [
+    {
+      "id": "A",
+      "name": "Film A",
+      "runtimeMinutes": 128,
+      "base": 1,
+      "dayFactor": 1,
+      "primeFactor": 1.12,
+      "noLarge": false
+    },
+    {
+      "id": "B",
+      "name": "Film B",
+      "runtimeMinutes": 105,
+      "base": 0.55,
+      "dayFactor": 1,
+      "primeFactor": 1,
+      "noLarge": false
+    },
+    {
+      "id": "C",
+      "name": "Film C",
+      "runtimeMinutes": 142,
+      "base": 0.7,
+      "dayFactor": 0.95,
+      "primeFactor": 1.05,
+      "minSeats": 180,
+      "largeRoomFactor": 1.15,
+      "noLarge": false
+    },
+    {
+      "id": "D",
+      "name": "Film D",
+      "runtimeMinutes": 96,
+      "base": 0.42,
+      "dayFactor": 1.35,
+      "primeFactor": 0.7,
+      "noLarge": false
+    },
+    {
+      "id": "E",
+      "name": "Film E",
+      "runtimeMinutes": 118,
+      "base": 0.32,
+      "dayFactor": 1,
+      "primeFactor": 1,
+      "noLarge": true
+    },
+    {
+      "id": "F",
+      "name": "Film F",
+      "runtimeMinutes": 110,
+      "base": 0.4,
+      "dayFactor": 1.1,
+      "primeFactor": 1,
+      "noLarge": true
+    }
+  ],
+  "sites": [
+    {
+      "id": "A",
+      "name": "Site A",
+      "screens": [
+        {
+          "id": "1",
+          "seats": 300
+        },
+        {
+          "id": "2",
+          "seats": 120
+        },
+        {
+          "id": "3",
+          "seats": 180
+        }
+      ],
+      "tastes": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 1,
+        "E": 1,
+        "F": 1
+      }
+    },
+    {
+      "id": "B",
+      "name": "Site B",
+      "screens": [
+        {
+          "id": "1",
+          "seats": 250
+        },
+        {
+          "id": "2",
+          "seats": 150
+        },
+        {
+          "id": "3",
+          "seats": 150
+        }
+      ],
+      "tastes": {
+        "A": 1.15,
+        "B": 0.85,
+        "C": 1,
+        "D": 1.3,
+        "E": 0.7,
+        "F": 0.85
+      }
+    },
+    {
+      "id": "C",
+      "name": "Site C",
+      "screens": [
+        {
+          "id": "1",
+          "seats": 200
+        },
+        {
+          "id": "2",
+          "seats": 120
+        },
+        {
+          "id": "3",
+          "seats": 120
+        }
+      ],
+      "tastes": {
+        "A": 0.85,
+        "B": 1.2,
+        "C": 0.7,
+        "D": 1.45,
+        "E": 1,
+        "F": 0.6
+      }
+    },
+    {
+      "id": "D",
+      "name": "Site D",
+      "screens": [
+        {
+          "id": "1",
+          "seats": 350
+        },
+        {
+          "id": "2",
+          "seats": 180
+        },
+        {
+          "id": "3",
+          "seats": 150
+        }
+      ],
+      "tastes": {
+        "A": 1.3,
+        "B": 0.85,
+        "C": 1.4,
+        "D": 0.7,
+        "E": 0.85,
+        "F": 1.2
+      }
+    },
+    {
+      "id": "E",
+      "name": "Site E",
+      "screens": [
+        {
+          "id": "1",
+          "seats": 280
+        },
+        {
+          "id": "2",
+          "seats": 120
+        },
+        {
+          "id": "3",
+          "seats": 200
+        }
+      ],
+      "tastes": {
+        "A": 1,
+        "B": 1.3,
+        "C": 1.15,
+        "D": 0.85,
+        "E": 1.2,
+        "F": 0.7
+      }
+    },
+    {
+      "id": "F",
+      "name": "Site F",
+      "screens": [
+        {
+          "id": "1",
+          "seats": 220
+        },
+        {
+          "id": "2",
+          "seats": 140
+        },
+        {
+          "id": "3",
+          "seats": 140
+        }
+      ],
+      "tastes": {
+        "A": 0.7,
+        "B": 1,
+        "C": 0.85,
+        "D": 1.15,
+        "E": 1.45,
+        "F": 1.35
+      }
+    }
+  ],
+  "model": {
+    "referenceResponse": 130,
+    "largeScreenThreshold": 250,
+    "timeWeights": [
+      [
+        600,
+        0.45
+      ],
+      [
+        780,
+        0.6
+      ],
+      [
+        960,
+        0.78
+      ],
+      [
+        1140,
+        1
+      ],
+      [
+        1260,
+        0.92
+      ],
+      [
+        1380,
+        0.55
+      ],
+      [
+        1480,
+        0.35
+      ]
+    ],
+    "nearbySameFilmMinutes": 90,
+    "nearbySameFilmFactor": 0.72,
+    "nearbyOtherFilmMinutes": 20,
+    "nearbyOtherFilmFactor": 0.94,
+    "dailySameFilmFactor": 0.93,
+    "dayBeforeMinute": 1020,
+    "primeFromMinute": 1080
+  },
+  "constraints": {
+    "opening": 600,
+    "closing": 1480,
+    "cleaningMinutes": 15,
+    "startGridMinutes": 5,
+    "minimumSites": 2,
+    "maxShowsPerFilmSite": 5,
+    "chainFilmCaps": {
+      "A": 26,
+      "B": 16,
+      "C": 14,
+      "D": 14,
+      "E": 10,
+      "F": 10
+    }
+  },
+  "referenceShowings": [
+    {
+      "id": "SHOW-001",
+      "siteId": "A",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 645
+    },
+    {
+      "id": "SHOW-002",
+      "siteId": "A",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 805
+    },
+    {
+      "id": "SHOW-003",
+      "siteId": "A",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 970
+    },
+    {
+      "id": "SHOW-004",
+      "siteId": "A",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 1130
+    },
+    {
+      "id": "SHOW-005",
+      "siteId": "A",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 1275
+    },
+    {
+      "id": "SHOW-006",
+      "siteId": "A",
+      "screenId": "2",
+      "filmId": "E",
+      "startMinute": 690
+    },
+    {
+      "id": "SHOW-007",
+      "siteId": "A",
+      "screenId": "2",
+      "filmId": "D",
+      "startMinute": 830
+    },
+    {
+      "id": "SHOW-008",
+      "siteId": "A",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 950
+    },
+    {
+      "id": "SHOW-009",
+      "siteId": "A",
+      "screenId": "2",
+      "filmId": "F",
+      "startMinute": 1075
+    },
+    {
+      "id": "SHOW-010",
+      "siteId": "A",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 1200
+    },
+    {
+      "id": "SHOW-011",
+      "siteId": "A",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 1320
+    },
+    {
+      "id": "SHOW-012",
+      "siteId": "A",
+      "screenId": "3",
+      "filmId": "B",
+      "startMinute": 720
+    },
+    {
+      "id": "SHOW-013",
+      "siteId": "A",
+      "screenId": "3",
+      "filmId": "E",
+      "startMinute": 855
+    },
+    {
+      "id": "SHOW-014",
+      "siteId": "A",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 990
+    },
+    {
+      "id": "SHOW-015",
+      "siteId": "A",
+      "screenId": "3",
+      "filmId": "E",
+      "startMinute": 1135
+    },
+    {
+      "id": "SHOW-016",
+      "siteId": "A",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1270
+    },
+    {
+      "id": "SHOW-017",
+      "siteId": "B",
+      "screenId": "1",
+      "filmId": "B",
+      "startMinute": 660
+    },
+    {
+      "id": "SHOW-018",
+      "siteId": "B",
+      "screenId": "1",
+      "filmId": "B",
+      "startMinute": 795
+    },
+    {
+      "id": "SHOW-019",
+      "siteId": "B",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 915
+    },
+    {
+      "id": "SHOW-020",
+      "siteId": "B",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 1105
+    },
+    {
+      "id": "SHOW-021",
+      "siteId": "B",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 680
+    },
+    {
+      "id": "SHOW-022",
+      "siteId": "B",
+      "screenId": "2",
+      "filmId": "D",
+      "startMinute": 835
+    },
+    {
+      "id": "SHOW-023",
+      "siteId": "B",
+      "screenId": "2",
+      "filmId": "D",
+      "startMinute": 950
+    },
+    {
+      "id": "SHOW-024",
+      "siteId": "B",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 1065
+    },
+    {
+      "id": "SHOW-025",
+      "siteId": "B",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 1185
+    },
+    {
+      "id": "SHOW-026",
+      "siteId": "B",
+      "screenId": "3",
+      "filmId": "D",
+      "startMinute": 730
+    },
+    {
+      "id": "SHOW-027",
+      "siteId": "B",
+      "screenId": "3",
+      "filmId": "E",
+      "startMinute": 845
+    },
+    {
+      "id": "SHOW-028",
+      "siteId": "B",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 980
+    },
+    {
+      "id": "SHOW-029",
+      "siteId": "B",
+      "screenId": "3",
+      "filmId": "E",
+      "startMinute": 1125
+    },
+    {
+      "id": "SHOW-030",
+      "siteId": "B",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1275
+    },
+    {
+      "id": "SHOW-031",
+      "siteId": "C",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 630
+    },
+    {
+      "id": "SHOW-032",
+      "siteId": "C",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 790
+    },
+    {
+      "id": "SHOW-033",
+      "siteId": "C",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 950
+    },
+    {
+      "id": "SHOW-034",
+      "siteId": "C",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 1095
+    },
+    {
+      "id": "SHOW-035",
+      "siteId": "C",
+      "screenId": "1",
+      "filmId": "B",
+      "startMinute": 1240
+    },
+    {
+      "id": "SHOW-036",
+      "siteId": "C",
+      "screenId": "1",
+      "filmId": "E",
+      "startMinute": 1360
+    },
+    {
+      "id": "SHOW-037",
+      "siteId": "C",
+      "screenId": "2",
+      "filmId": "E",
+      "startMinute": 650
+    },
+    {
+      "id": "SHOW-038",
+      "siteId": "C",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 785
+    },
+    {
+      "id": "SHOW-039",
+      "siteId": "C",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 930
+    },
+    {
+      "id": "SHOW-040",
+      "siteId": "C",
+      "screenId": "2",
+      "filmId": "D",
+      "startMinute": 1050
+    },
+    {
+      "id": "SHOW-041",
+      "siteId": "C",
+      "screenId": "2",
+      "filmId": "F",
+      "startMinute": 1180
+    },
+    {
+      "id": "SHOW-042",
+      "siteId": "C",
+      "screenId": "3",
+      "filmId": "D",
+      "startMinute": 680
+    },
+    {
+      "id": "SHOW-043",
+      "siteId": "C",
+      "screenId": "3",
+      "filmId": "D",
+      "startMinute": 795
+    },
+    {
+      "id": "SHOW-044",
+      "siteId": "C",
+      "screenId": "3",
+      "filmId": "E",
+      "startMinute": 930
+    },
+    {
+      "id": "SHOW-045",
+      "siteId": "C",
+      "screenId": "3",
+      "filmId": "F",
+      "startMinute": 1075
+    },
+    {
+      "id": "SHOW-046",
+      "siteId": "C",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1200
+    },
+    {
+      "id": "SHOW-047",
+      "siteId": "D",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 620
+    },
+    {
+      "id": "SHOW-048",
+      "siteId": "D",
+      "screenId": "1",
+      "filmId": "B",
+      "startMinute": 780
+    },
+    {
+      "id": "SHOW-049",
+      "siteId": "D",
+      "screenId": "1",
+      "filmId": "D",
+      "startMinute": 900
+    },
+    {
+      "id": "SHOW-050",
+      "siteId": "D",
+      "screenId": "1",
+      "filmId": "D",
+      "startMinute": 1015
+    },
+    {
+      "id": "SHOW-051",
+      "siteId": "D",
+      "screenId": "2",
+      "filmId": "F",
+      "startMinute": 665
+    },
+    {
+      "id": "SHOW-052",
+      "siteId": "D",
+      "screenId": "2",
+      "filmId": "C",
+      "startMinute": 800
+    },
+    {
+      "id": "SHOW-053",
+      "siteId": "D",
+      "screenId": "2",
+      "filmId": "C",
+      "startMinute": 960
+    },
+    {
+      "id": "SHOW-054",
+      "siteId": "D",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 1140
+    },
+    {
+      "id": "SHOW-055",
+      "siteId": "D",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 1285
+    },
+    {
+      "id": "SHOW-056",
+      "siteId": "D",
+      "screenId": "3",
+      "filmId": "D",
+      "startMinute": 685
+    },
+    {
+      "id": "SHOW-057",
+      "siteId": "D",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 800
+    },
+    {
+      "id": "SHOW-058",
+      "siteId": "D",
+      "screenId": "3",
+      "filmId": "F",
+      "startMinute": 945
+    },
+    {
+      "id": "SHOW-059",
+      "siteId": "D",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1070
+    },
+    {
+      "id": "SHOW-060",
+      "siteId": "D",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1215
+    },
+    {
+      "id": "SHOW-061",
+      "siteId": "D",
+      "screenId": "3",
+      "filmId": "B",
+      "startMinute": 1360
+    },
+    {
+      "id": "SHOW-062",
+      "siteId": "E",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 635
+    },
+    {
+      "id": "SHOW-063",
+      "siteId": "E",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 780
+    },
+    {
+      "id": "SHOW-064",
+      "siteId": "E",
+      "screenId": "1",
+      "filmId": "A",
+      "startMinute": 935
+    },
+    {
+      "id": "SHOW-065",
+      "siteId": "E",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 1085
+    },
+    {
+      "id": "SHOW-066",
+      "siteId": "E",
+      "screenId": "2",
+      "filmId": "F",
+      "startMinute": 665
+    },
+    {
+      "id": "SHOW-067",
+      "siteId": "E",
+      "screenId": "2",
+      "filmId": "F",
+      "startMinute": 790
+    },
+    {
+      "id": "SHOW-068",
+      "siteId": "E",
+      "screenId": "2",
+      "filmId": "E",
+      "startMinute": 915
+    },
+    {
+      "id": "SHOW-069",
+      "siteId": "E",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 1060
+    },
+    {
+      "id": "SHOW-070",
+      "siteId": "E",
+      "screenId": "3",
+      "filmId": "D",
+      "startMinute": 705
+    },
+    {
+      "id": "SHOW-071",
+      "siteId": "E",
+      "screenId": "3",
+      "filmId": "B",
+      "startMinute": 820
+    },
+    {
+      "id": "SHOW-072",
+      "siteId": "E",
+      "screenId": "3",
+      "filmId": "D",
+      "startMinute": 940
+    },
+    {
+      "id": "SHOW-073",
+      "siteId": "E",
+      "screenId": "3",
+      "filmId": "B",
+      "startMinute": 1055
+    },
+    {
+      "id": "SHOW-074",
+      "siteId": "E",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1175
+    },
+    {
+      "id": "SHOW-075",
+      "siteId": "F",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 675
+    },
+    {
+      "id": "SHOW-076",
+      "siteId": "F",
+      "screenId": "1",
+      "filmId": "F",
+      "startMinute": 835
+    },
+    {
+      "id": "SHOW-077",
+      "siteId": "F",
+      "screenId": "1",
+      "filmId": "D",
+      "startMinute": 965
+    },
+    {
+      "id": "SHOW-078",
+      "siteId": "F",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 1090
+    },
+    {
+      "id": "SHOW-079",
+      "siteId": "F",
+      "screenId": "1",
+      "filmId": "C",
+      "startMinute": 1250
+    },
+    {
+      "id": "SHOW-080",
+      "siteId": "F",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 645
+    },
+    {
+      "id": "SHOW-081",
+      "siteId": "F",
+      "screenId": "2",
+      "filmId": "D",
+      "startMinute": 765
+    },
+    {
+      "id": "SHOW-082",
+      "siteId": "F",
+      "screenId": "2",
+      "filmId": "A",
+      "startMinute": 880
+    },
+    {
+      "id": "SHOW-083",
+      "siteId": "F",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 1035
+    },
+    {
+      "id": "SHOW-084",
+      "siteId": "F",
+      "screenId": "2",
+      "filmId": "F",
+      "startMinute": 1155
+    },
+    {
+      "id": "SHOW-085",
+      "siteId": "F",
+      "screenId": "2",
+      "filmId": "B",
+      "startMinute": 1280
+    },
+    {
+      "id": "SHOW-086",
+      "siteId": "F",
+      "screenId": "3",
+      "filmId": "F",
+      "startMinute": 730
+    },
+    {
+      "id": "SHOW-087",
+      "siteId": "F",
+      "screenId": "3",
+      "filmId": "E",
+      "startMinute": 855
+    },
+    {
+      "id": "SHOW-088",
+      "siteId": "F",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 990
+    },
+    {
+      "id": "SHOW-089",
+      "siteId": "F",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1135
+    },
+    {
+      "id": "SHOW-090",
+      "siteId": "F",
+      "screenId": "3",
+      "filmId": "A",
+      "startMinute": 1280
+    }
+  ]
+}

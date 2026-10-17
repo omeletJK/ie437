@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-10-11T12:43:35.304Z",
+  "summary": {
+    "pass": 14,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "name": "response portable source and output integrity",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "audience portable source and output integrity",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "launcher English and anonymized",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Open English slides valid anchor",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Open English slides valid anchor",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "all launcher targets exist",
+      "pass": true,
+      "detail": 8
+    },
+    {
+      "name": "desktop launcher fits viewport",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile launcher fits viewport",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "response-slides.html loads active slide",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "audience-slides.html loads active slide",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "response-demo.html loads active slide",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "audience-demo.html loads active slide",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "all pages offline",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "no runtime errors",
+      "pass": true,
+      "detail": []
+    }
+  ]
+}

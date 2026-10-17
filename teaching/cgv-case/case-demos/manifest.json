@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "builtAt": "2026-10-11T12:41:55.911Z",
+  "purpose": "IE437 instructor reference demonstrations; separate from student assignment assets",
+  "disclosure": "All displayed outcomes are illustrative and use synthetic data. They are not measured business effects.",
+  "prerequisites": "Open either HTML in a modern desktop browser. No server, dependency installation, API key or network is required.",
+  "demos": [
+    {
+      "key": "response",
+      "file": "response-demo.html",
+      "title": "IE437 · Response Model and Deterministic ILS Demo",
+      "method": "Response model + deterministic ILS / local search",
+      "defaultHash": "#s13",
+      "sourceFile": "IE437_Response_Model_EN.html",
+      "sourceRelativePath": "response-slides.html",
+      "sourceSHA256": "3b0be297f9499b849c6f42aeb3d4b4a46ab86164fb22ff60a50cb81577891b1d",
+      "outputSHA256": "30bf4501340f77b97f15943bdf48a38a177694e4073eafee271ad15c292ddd38",
+      "supportingDOM": "All source slide IDs, presenter-note keys/timing and embedded calculations are retained.",
+      "modifications": "English-only source comments; no external fonts; generic site/format labels; classroom selector and reload reset; separate supplemental HW1 feasibility fixture.",
+      "supplementalFixture": {
+        "assumption": "Fixed non-overlapping slots; one requested screening per slot",
+        "capacity": "screens × slotsPerScreen",
+        "cases": [
+          {
+            "id": "normal",
+            "screens": 2,
+            "slotsPerScreen": 3,
+            "required": 4,
+            "expected": "feasible"
+          },
+          {
+            "id": "boundary",
+            "screens": 2,
+            "slotsPerScreen": 3,
+            "required": 6,
+            "expected": "feasible, exactly at capacity"
+          },
+          {
+            "id": "failure",
+            "screens": 2,
+            "slotsPerScreen": 3,
+            "required": 7,
+            "expected": "infeasible"
+          }
+        ]
+      },
+      "entries": [
+        {
+          "label": "Response and cannibalization",
+          "executionStatus": "Prepared response values",
+          "hash": "#s06",
+          "link": "response-demo.html#s06"
+        },
+        {
+          "label": "Potential vs realized demand",
+          "executionStatus": "Prepared scenario values",
+          "hash": "#s07",
+          "link": "response-demo.html#s07"
+        },
+        {
+          "label": "ILS schedule search",
+          "executionStatus": "Executed deterministic ILS",
+          "hash": "#s13",
+          "link": "response-demo.html#s13"
+        },
+        {
+          "label": "Booking signals and freeze",
+          "executionStatus": "Prepared booking scenarios",
+          "hash": "#s17",
+          "link": "response-demo.html#s17"
+        },
+        {
+          "label": "Rolling horizon",
+          "executionStatus": "Executed synthetic rolling model",
+          "hash": "#s18",
+          "link": "response-demo.html#s18"
+        }
+      ]
+    },
+    {
+      "key": "audience",
+      "file": "audience-demo.html",
+      "title": "IE437 · Synthetic Audience and Choice Simulation Demo",
+      "method": "Synthetic individuals + choice simulation",
+      "defaultHash": "#s09a",
+      "sourceFile": "IE437_Audience_Digital_Twin_EN.html",
+      "sourceRelativePath": "audience-slides.html",
+      "sourceSHA256": "b0bd11493d422d34b0387726c131ef879e4eca85b71d143d91aecffe1e8ec63b",
+      "outputSHA256": "cd990401a19d10ca326208a09c5baca4ffccbbdb05fc8066bcf1db5541f35b94",
+      "supportingDOM": "All source slide IDs, presenter-note keys/timing and embedded calculations are retained.",
+      "modifications": "English-only source comments; no external fonts; generic site/format labels; classroom selector and reload reset; separate supplemental HW1 feasibility fixture.",
+      "supplementalFixture": {
+        "assumption": "Fixed non-overlapping slots; one requested screening per slot",
+        "capacity": "screens × slotsPerScreen",
+        "cases": [
+          {
+            "id": "normal",
+            "screens": 2,
+            "slotsPerScreen": 3,
+            "required": 4,
+            "expected": "feasible"
+          },
+          {
+            "id": "boundary",
+            "screens": 2,
+            "slotsPerScreen": 3,
+            "required": 6,
+            "expected": "feasible, exactly at capacity"
+          },
+          {
+            "id": "failure",
+            "screens": 2,
+            "slotsPerScreen": 3,
+            "required": 7,
+            "expected": "infeasible"
+          }
+        ]
+      },
+      "entries": [
+        {
+          "label": "Daily viewing paths",
+          "executionStatus": "Executed seeded sampling",
+          "hash": "#s09a",
+          "link": "audience-demo.html#s09a"
+        },
+        {
+          "label": "Forecast evidence update",
+          "executionStatus": "Prepared forecast values",
+          "hash": "#s10",
+          "link": "audience-demo.html#s10"
+        },
+        {
+          "label": "Individual profiles",
+          "executionStatus": "Prepared profile values",
+          "hash": "#s12",
+          "link": "audience-demo.html#s12"
+        },
+        {
+          "label": "Schedule A/B",
+          "executionStatus": "Prepared A/B outcomes",
+          "hash": "#s22",
+          "link": "audience-demo.html#s22"
+        },
+        {
+          "label": "Illustrative search storyboard",
+          "executionStatus": "Prepared candidate storyboard",
+          "hash": "#s23",
+          "link": "audience-demo.html#s23"
+        },
+        {
+          "label": "Rescheduling",
+          "executionStatus": "Prepared rescheduling scenarios",
+          "hash": "#s25",
+          "link": "audience-demo.html#s25"
+        }
+      ]
+    }
+  ]
+}

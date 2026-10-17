@@ -1,0 +1,35 @@
+{
+  "version": "1.8",
+  "sourceCommit": "ff02871fed7da370fd007929880ca44ba48c6155",
+  "zip": {
+    "bytes": 6242436,
+    "sha256": "06adbf0dcd956b8f9409dbfd0080afdf20c57c755d80ef0b3cc16c9ed3bdabb4"
+  },
+  "publicFiles": 31,
+  "checks": {
+    "courseWorkedExamples": "PASS",
+    "courseAssignments": "PASS",
+    "isolatedWorkedExamples": "PASS",
+    "isolatedAssignments": "PASS",
+    "originalM0WorkerUnchanged": true
+  },
+  "deployment": "complete",
+  "initialCommit": "913c4aaf8537b31150ac3af5c65bfa060b1f0317",
+  "downloadPatch": "Public CSV resource replaces data-URL; exact CSV download verified locally; numerical Worker and catalog unchanged.",
+  "checkedAt": "2026-10-12T06:52:17.403899+00:00",
+  "workflow": {
+    "id": 38209282615,
+    "url": "https://github.com/omeletJK/ie437/actions/runs/38209282615",
+    "conclusion": "success",
+    "buildSeconds": 85,
+    "deploySeconds": 11
+  },
+  "publicChecks": {
+    "hub": "PASS: latest24-filmannualdescription and singleapppercase",
+    "CSV": "PASS: native download exact5595B SHA77fc6ed98a78e2cba95eba60ef481293c992d9c8d27de06d3c845edcbd233bd2",
+    "upload": "PASS: downloadedCSV through real filepicker;24registered/noalert",
+    "ZIP": "PASS: all31files exactlymatch manifest/source; no private archive",
+    "localAnnualBaseline": "PASS:9576potential/5536realized/7467showings,12months,24rows;Decemberfilm/date/personinspection",
+    "patchScope": "PASS: downloadhrefonly; exactsame M0Worker/catalog, CaseAappandbothproposalpairsunchanged"
+  }
+}

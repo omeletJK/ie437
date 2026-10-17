@@ -1,0 +1,26 @@
+{
+  "response/demo.html": {
+    "unchanged": true,
+    "sha256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17"
+  },
+  "response/proposal.html": {
+    "unchanged": true,
+    "sha256": "2ba44464262b67586d40a9e0f1bab56685a752b0deee70266b965c456a32100a"
+  },
+  "audience/proposal.html": {
+    "unchanged": true,
+    "sha256": "18dce0139094c6888200307f7eee8ea2fa40a58c8689c3f5c7314906b6043455"
+  },
+  "THIRD_PARTY_NOTICES.md": {
+    "unchanged": true,
+    "sha256": "c70aed6a4915cea86969a58c68c9a9fb8a62134dd8e727a1238eedb07f3734cc"
+  },
+  "currentWorker": {
+    "bytes": 161206,
+    "sha256": "f2baa183497e7461017855716dadf729eaad99ab70484de84f0d9a3716f6e7d5"
+  },
+  "previousWorker": {
+    "bytes": 161206,
+    "sha256": "f2baa183497e7461017855716dadf729eaad99ab70484de84f0d9a3716f6e7d5"
+  }
+}

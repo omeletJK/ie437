@@ -1,0 +1,91 @@
+{
+  "checkedAt": "2026-10-11T19:52:23.053764+00:00",
+  "artifactSHA256": "126b881250e394e725b3995ac10c70cce9f5929ccad1cb75568d498c50faeb37",
+  "method": "CUA visible controls over local HTTP; downloaded JSON read from returned browser download path. No direct offline file execution.",
+  "controls": {
+    "default": {
+      "baseline": 5134,
+      "best": 5265,
+      "iterations": 2600,
+      "calls": 1739,
+      "feasibility": "PASS"
+    },
+    "boundary": {
+      "shift": 365,
+      "previewScore": 5099,
+      "finalEnd": "24:36",
+      "slackMinutes": 4,
+      "searchedBest": 5352,
+      "calls": 1750
+    },
+    "failure": {
+      "shift": 370,
+      "validScore": false,
+      "applicationEnabled": false,
+      "searchEnabled": false,
+      "retainedPriorBest": 5352
+    },
+    "invalidBlank": {
+      "validScore": false,
+      "applicationEnabled": false
+    },
+    "loadedNormal": {
+      "baseline": 5134,
+      "best": 5134,
+      "calls": 1715
+    },
+    "resetReplay": {
+      "best": 5265,
+      "calls": 1739,
+      "iterations": 2600
+    },
+    "speed4Replay": {
+      "best": 5265,
+      "calls": 1739,
+      "iterations": 2600
+    }
+  },
+  "methodDialog": {
+    "films": 6,
+    "sites": 6,
+    "fictionalPurchaseRows": 6,
+    "purchasedTickets": 13,
+    "purchasingAccounts": 5
+  },
+  "download": {
+    "sha256": "1071edecc99b7506790ac6bff07488024209f2d5908896a992af4a88ddd2013a",
+    "snapshot": {
+      "baseline": 5134,
+      "best": 5265,
+      "iterations": 2600,
+      "calls": 1739,
+      "valid": true,
+      "showings": 90,
+      "seed": 20260829,
+      "running": false
+    },
+    "bestFeasibleShowings": 90,
+    "roundedPerShowingExpectedAttendance": 5265
+  },
+  "responsive": {
+    "mobileViewport": 390,
+    "bodyWidth": 390,
+    "dialogWidth": 352,
+    "desktopViewportRestored": 1280
+  },
+  "screenshot": "response-standalone-1.3.png",
+  "coursePrefixNavigation": {
+    "status": "pass",
+    "courseToHub": true,
+    "bothDemosAndGuidesReturn": true,
+    "bothOriginalProposalsReturn": true,
+    "originalProposalSections": [
+      44,
+      59
+    ],
+    "stagedResponseBest": 5265,
+    "stagedResponseCalls": 1739,
+    "stagedResponseIterations": 2600
+  },
+  "directOfflineFileExecution": "not verified"
+}

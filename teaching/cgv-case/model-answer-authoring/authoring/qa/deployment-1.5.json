@@ -1,0 +1,89 @@
+{
+  "request": "Publish both Assignment 1 worked examples to existing IE437 GitHub Pages",
+  "startedAt": "2026-10-12T00:21:02.195649+00:00",
+  "repository": "omeletJK/ie437",
+  "deployCommit": "7c183a964a9dd28c73ba65ede652903f205f9f5e",
+  "workflowRun": 38187603308,
+  "workflowURL": "https://github.com/omeletJK/ie437/actions/runs/38187603308",
+  "siteURL": "https://omeletjk.github.io/ie437/",
+  "publicHub": "https://omeletjk.github.io/ie437/worked-examples/assignment-01-model-answer/index.html",
+  "sourceFilesCommitted": 37,
+  "publicPackageFiles": 29,
+  "scope": "Reviewed examples and course-publisher integration only; unrelated dirty lecture files excluded. Existing verified artifact hashes unchanged.",
+  "freshLocalChecks": [
+    "isolated full HTML build --no-pdf PASS; hosted CI builds PDFs",
+    "worked-examples PASS",
+    "assignments PASS",
+    "authored integration diff whitespace PASS; existing verified document bytes retained"
+  ],
+  "deploymentStatus": "success",
+  "publicBrowserChecks": {
+    "courseAssignment1ToHub": "PASS",
+    "bothHTMLDefinitions": "PASS",
+    "originalProposalSections": {
+      "response": 44,
+      "audience": 59
+    },
+    "bothEnglishGuides": "PASS",
+    "definitionAndProposalHomeLinks": "PASS",
+    "caseAFullDefaultPipeline": {
+      "reference": 4969,
+      "best": 5247,
+      "gain": 278,
+      "iterations": 2600,
+      "responseEvaluations": 1742,
+      "feasibility": "PASS"
+    },
+    "caseBDefaultPipeline": {
+      "status": "PASS",
+      "profiles": 2000,
+      "movies": 2,
+      "forecastPaths": 1,
+      "potentialViewings": 757,
+      "baselineRealizedViewings": 726,
+      "baselineShowings": 241,
+      "reportedFrequencyCalibrationSeconds": 120.5,
+      "scope": "Default complete baseline pipeline checked; improvement/shock repeats not required for this deployment verification."
+    },
+    "bothDirectMarkdownDownloads": {
+      "response": {
+        "path": "/Users/jinkyoo/Downloads/problem-definition (1).md",
+        "bytes": 27950,
+        "sha256": "443f9e16485879e642d7467b8adf36dfb3b93cb323f651a5672f65bad39b263d",
+        "exactReviewedBytes": true
+      },
+      "audience": {
+        "path": "/Users/jinkyoo/Downloads/problem-definition (2).md",
+        "bytes": 33564,
+        "sha256": "55483565a3931c612b00970e201af1a1e53f439d1aad2a1973e34bafe227c1b9",
+        "exactReviewedBytes": true
+      }
+    }
+  },
+  "hostedChecks": [
+    "full build including PDFs PASS",
+    "npm run test:assignments PASS",
+    "npm run test:worked-examples PASS",
+    "actions/deploy-pages PASS"
+  ],
+  "publicZIP": {
+    "path": "/Users/jinkyoo/Downloads/IE437-Assignment-01-Worked-Examples-EN (1).zip",
+    "bytes": 5899665,
+    "sha256": "dab32b3fdbceeef5ecff0e4e185cabf3c5cee86a042e52be968f5606915301a4",
+    "publicEntries": 29,
+    "allBytesMatchReviewedSource": true
+  },
+  "localCourseSync": {
+    "publishedHead": "7c183a964a9dd28c73ba65ede652903f205f9f5e",
+    "all452WorktreeFilesUnchanged": true
+  },
+  "screenshots": [
+    "authoring/qa/public-hub-1.5.png",
+    "authoring/qa/public-response-results-1.5.png",
+    "authoring/qa/public-audience-results-1.5.png"
+  ],
+  "completedAt": "2026-10-12T00:33:01.238880+00:00",
+  "status": "PASS",
+  "completion": "Published on existing GitHub Pages; portal Assignment 1 entry, both direct MD downloads, both HTML definitions, both original proposal decks, both English guides, actual public 29-file ZIP and both completed demo pipelines verified.",
+  "localCourseHead": "7c183a964a9dd28c73ba65ede652903f205f9f5e"
+}

@@ -1,0 +1,123 @@
+{
+  "release": "1.5",
+  "checkedAt": "2026-10-12T00:08:51.685506+00:00",
+  "artifact": {
+    "sha256": "77067435a531c809bc1e89f8a9b0bbf3b48dba09d5a7e2a6144fc283b1474d17",
+    "bytes": 650464
+  },
+  "method": "Independent CUA controls and native file chooser on source and course-prefix HTTP; actual final browser downloads independently audited. Earlier setting/error observations retain the declared candidate scope.",
+  "default": {
+    "reference": 4969,
+    "best": 5247,
+    "gain": 278,
+    "calls": 1742,
+    "iterations": 2600,
+    "inputRows": 90,
+    "bestRows": 89,
+    "feasibility": "PASS",
+    "finalReplay": true,
+    "pauseIteration": 1605
+  },
+  "realJSONUpload": {
+    "file": "CinemaPlanning.json",
+    "rows": 90,
+    "reference": 4969,
+    "usedByEngine": true
+  },
+  "realCSVUpload": {
+    "file": "Screenings.csv",
+    "currentReferenceScale": 104,
+    "reference": 3975,
+    "usedCurrentPlanningContext": true
+  },
+  "changedConfiguration": {
+    "iterations": 100,
+    "seed": 7,
+    "reference": 4969,
+    "best": 5126,
+    "calls": 63,
+    "scaledReferenceResponse": 104,
+    "scaledReference": 3975,
+    "scaledBest": 4101
+  },
+  "changedClosing": {
+    "closing": "23:00",
+    "rejectedReferenceRows": true,
+    "resultsNavigationDisabled": true
+  },
+  "invalidCSV": {
+    "file": "ie437-unknown-film.csv",
+    "row": 2,
+    "field": "referenceShowings[0].filmId",
+    "reason": "Unknown film ID X",
+    "continuationDisabled": true,
+    "previousValidDataRetained": true,
+    "sampleRecoveryPassed": true
+  },
+  "actualJSONExport": {
+    "path": "/Users/jinkyoo/Downloads/response-simulation-results (3).json",
+    "sha256": "248759acff3a39dc05e90f0b42c1ab4de4f8a61b9668804f7daa2fa2f7ad3179",
+    "inputRows": 90,
+    "bestRows": 89,
+    "expectedSum": 5246.789178502658,
+    "roundedBest": 5247,
+    "inputAndFactorsAndRunSettingsIncluded": true
+  },
+  "actualCSVExport": {
+    "path": "/Users/jinkyoo/Downloads/OptimizedTimetable (1).csv",
+    "sha256": "f52df0d3d8b42f88cab80eb76b8d0f95b54d9b65229a58da9725af691972a866",
+    "header": "showing_id,site_id,screen_id,film_id,start_time",
+    "rows": 89,
+    "independentParserAccepts": true,
+    "browserReimportAccepts": true,
+    "browserReimportReference": 5247
+  },
+  "responsive": {
+    "viewport": 390,
+    "bodyWidthAtImport": 390,
+    "bodyWidthAtResults": 390,
+    "methodDialogWidth": 356,
+    "desktopRestored": true
+  },
+  "scopes": {
+    "finalArtifact": "Default full pipeline/replay/Run-Pause-Finish and responsive review on exact final build; final JSON/CSV downloads and native CSV reimport; staged-course pipeline and navigation.",
+    "precedingCandidate": "Live JSON/CSV input, configuration/error tests preceded a custom-screen preview-metadata-only fix. Final numerical suite validates those contracts. Final export/download/reimport checks were subsequently repeated on exact final artifact.",
+    "offline": "Direct file execution unverified.",
+    "caseB": "Preserved app bytes; fresh annual-workflow repeat not performed."
+  },
+  "coursePrefixNavigation": {
+    "status": "PASS",
+    "checked": [
+      "app to hub",
+      "Response guide to hub",
+      "Response original proposal to hub",
+      "Course portal to Assignment 1 to Open worked examples to hub",
+      "refreshed Import workflow copy"
+    ]
+  },
+  "courseStaging": {
+    "status": "PASS",
+    "publicFiles": 29,
+    "checks": [
+      "assembler",
+      "approved installer and course build",
+      "worked-examples tests",
+      "assignments tests"
+    ],
+    "sample": {
+      "reference": 4969,
+      "best": 5247,
+      "gain": 278,
+      "calls": 1742,
+      "iterations": 2600,
+      "inputRows": 90,
+      "bestRows": 89,
+      "feasibility": "PASS",
+      "finalReplay": true,
+      "pauseIteration": 1605
+    }
+  },
+  "nodeChecksPassed": 39,
+  "parserChecksPassed": 25,
+  "screenshot": "authoring/qa/response-operator-course-1.5.png"
+}
