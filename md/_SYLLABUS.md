@@ -50,9 +50,11 @@ grading:
   - name: Midterm examination
     weight: 30
     body: >
-      One written examination, in class, over the first half of the course —
-      optimisation modelling, Bayesian statistics and networks, Bayesian
-      optimisation, and design optimisation from a fixed dataset.
+      A two-week take-home project in the form of Assignment 1, over the first
+      half of the course — optimisation modelling, Bayesian statistics, Bayesian
+      optimisation, and design optimisation from a fixed dataset — applied to one
+      hierarchical decision problem. A problem definition, an interactive
+      demonstration and a proposal, with the methods prescribed.
   - name: Assignments
     weight: 20
     tba: true
