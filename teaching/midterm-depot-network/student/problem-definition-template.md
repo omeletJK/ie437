@@ -5,7 +5,7 @@
 Author / student ID: [entry]  
 Date / version: [entry]  
 Summary: [two or three sentences — the recommended number of DCs, the estimated saving and its uncertainty, and the one simplification that matters most]  
-Files: `problem-definition.md`, `code/`, `demo.html`, `proposal.html`  
+Files: `problem-definition.md`, `code/`, `demo.html` or the local app in `code/`, `proposal.html`  
 LLM tools and use: [tool/model, dates, and tasks supported]
 
 Use the seven sections below. Replace prompts with your answer; adapt table rows to your scope. Cite sources beside the claims they support. Mark assumptions `[ASSUMPTION]`, unresolved facts `TBD`, and inapplicable items `N/A — reason`. Write each explanation once and refer back to it. Stable IDs are needed for decisions and components; a separate ID for every datum, setting, source or test is optional.
@@ -70,7 +70,7 @@ Identify hard constraints versus preferences. Specify how infeasible inputs are 
 
 **The instantiated data.** For each table of the company's specification, how you generated it (distribution, parameters, seed) and which real-world property it reflects. The scale of your instance and what you expect to change at full scale.
 
-**Distances.** Source, version, extract date, vehicle profile; which point pairs were computed and at what resolution; where the cache lives in `code/`; any approximation used and how it was calibrated against road values.
+**Distances.** Which route of Section 2.5 of the brief you took — detour model, routing engine, or a mixture; source, version, extract date, vehicle profile; which point pairs were computed and at what resolution; where the cache lives in `code/`; how any approximation was calibrated against road values and how large its error is on the calibration sample. **Instance.** Whether and how you thinned the chain (Section 2.7 of the brief) and how the capacity bounds were scaled.
 
 **The demand model.** Prior and its strength, calendar effect, likelihood, update, posterior and posterior predictive for planning days. How short-history stores are handled. Where demand enters a cost, and the difference between sampled-day and average-day evaluation, explained whatever its size.
 
@@ -92,7 +92,7 @@ Explain the main uncertainties, how you examined their effect, and when the reco
 | Proxy-only | | | |
 | Selected | | | |
 
-**The solution-algorithm plan.** The lower-level method and its cost per solve and measured accuracy; the search over the number of DCs; how candidates are generated for each number; the budget `B` and its justification; the surrogate and acquisition rule (or the justified alternative) and the parameterisation it works on; how the log is kept. Give the calculation flow from input to output, referring to Section 2. Explain tie-breaking and randomness. Identify actual calculations, precomputed results, illustrative calculations and unimplemented parts. Do not claim optimality beyond what the method establishes.
+**The solution-algorithm plan.** The lower-level method and its cost per solve and measured accuracy; the search over the number of DCs; how candidates are generated for each number; the budget `B` and its justification; the surrogate and acquisition rule (or the justified alternative) and the parameterisation it works on — the knobs or the pool features; the comparison with random selection at the same budget; how the log is kept. Give the calculation flow from input to output, referring to Section 2. Explain tie-breaking and randomness. Identify actual calculations, precomputed results, illustrative calculations and unimplemented parts. Do not claim optimality beyond what the method establishes.
 
 **The fidelity–computation balance.** One row per modelling choice — at least the distance model, the demand model and the number of sampled days, the routing method, the delivery window, the assignment, the candidate set, the number of DCs swept, the search and its budget.
 
@@ -106,7 +106,7 @@ Follow with the argument: where computation was spent and why; which simplificat
 
 ## 5. Demonstration & Evaluation
 
-Explain how to run `code/` (commands, run time, seed, reduced configuration) and how to open `demo.html`, read the map, the sweep, the log and the `G`-versus-`E` comparison, and run the lower level live for one DC. State the browser checked and the offline result. Map the demo's behaviour to the decisions and components of Section 2.
+Explain how to run `code/` (the three commands, their run times, the seed, what the reduced run omits) and how to open `demo.html` or start the local app, read the map, the sweep, the log and the `G`-versus-`E` comparison, and run the lower level live for one DC. State the browser checked and the offline result. Map the demo's behaviour to the decisions and components of Section 2.
 
 Define the comparison conditions shared by every candidate and the baseline. Keep evaluation outcomes separate from information used to make the recommendation.
 
@@ -116,7 +116,7 @@ Define the comparison conditions shared by every candidate and the baseline. Kee
 | Boundary | | | |
 | Failure | | | |
 
-**Prediction quality and decision quality.** How well `G` predicts `E` across the evaluated candidates, and how much the `G`-chosen network loses under `E`; the cause of the gap. **The sweep.** Total cost and its two components against the number of DCs. **The log.** Budget used, rule, and the sequence of evaluated candidates. **Held-out days.** The saving on sampled days the search never saw. Write `Not run` for unexecuted checks. Summarise what the demonstration establishes and what it does not.
+**Prediction quality and decision quality.** How well `G` predicts `E` across the evaluated candidates, and how much the `G`-chosen network loses under `E`; the cause of the gap. **The sweep.** Total cost and its two components against the number of DCs. **The log and the rule's worth.** Budget used, rule, the sequence of evaluated candidates, and the best cost found by your rule against random selection at the same budget. **Held-out days.** The saving on sampled days the search never saw. Write `Not run` for unexecuted checks. Summarise what the demonstration establishes and what it does not.
 
 ## 6. Client Proposal
 
