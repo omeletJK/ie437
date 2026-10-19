@@ -20,9 +20,9 @@ assignments:
     kind: midterm
     number: 1
     title: Distribution-Centre Network Redesign
-    subtitle: Midterm project — a convenience-store chain's hierarchical decision under uncertainty
-    summary: Redesign a nationwide convenience-store chain's distribution-centre network. Define the depot-count, location, assignment and routing hierarchy, generate a reproducible fictional world, keep the generation criterion apart from the evaluation criterion, and search under an evaluation budget with the tools of Lectures 1, 2, 4 and 5. Two-week take-home, individual.
-    version: '1.0'
+    subtitle: Midterm project — formulating and solving a hierarchical decision
+    summary: Redesign a nationwide convenience-store chain's distribution-centre network. Formulate one DC's daily operation as the lower level, connect it to the upper-level decision on how many centres and where, search under an evaluation budget, and justify the balance between modelling the real operation and computing an answer — with the tools of Lectures 1, 2, 4 and 5. Two-week take-home, individual.
+    version: '2.0'
     due: 'Mon, 2 Nov 2026 · 10:00 KST (UTC+9)'
     files:
       - name: assignment.md

@@ -1,11 +1,11 @@
 # Problem Definition: [Proposal Title]
 
-**IE437 Midterm Project · Distribution-Centre Network Redesign — A Hierarchical Decision under Uncertainty**
+**IE437 Midterm Project · Distribution-Centre Network Redesign — Formulating and Solving a Hierarchical Decision**
 
 Author / student ID: [entry]  
 Date / version: [entry]  
-Summary: [two or three sentences — the recommended number of DCs, the estimated saving and its uncertainty, and the one assumption that matters most]  
-Files: `problem-definition.md`, `demo.html`, `proposal.html`, `code/` [if used]  
+Summary: [two or three sentences — the recommended number of DCs, the estimated saving and its uncertainty, and the one simplification that matters most]  
+Files: `problem-definition.md`, `code/`, `demo.html`, `proposal.html`  
 LLM tools and use: [tool/model, dates, and tasks supported]
 
 Use the seven sections below. Replace prompts with your answer; adapt table rows to your scope. Cite sources beside the claims they support. Mark assumptions `[ASSUMPTION]`, unresolved facts `TBD`, and inapplicable items `N/A — reason`. Write each explanation once and refer back to it. Stable IDs are needed for decisions and components; a separate ID for every datum, setting, source or test is optional.
@@ -27,9 +27,9 @@ State the business need and complete this sentence:
 | Data Team | | | |
 | Field Manager | | | |
 
-**Boundary.** What interval and which decisions constitute one problem? One redesign chosen now, or a sequence of closures as leases expire? State exclusions and their consequences. Distinguish the company's known current practice from the baseline you construct.
+**Boundary.** What interval and which decisions constitute one problem? One redesign chosen now, or a sequence of closures as leases expire? State exclusions and their consequences. Distinguish the company's current practice from the baseline you construct.
 
-**Decisions and dependencies.** List each real decision with a stable ID, what is chosen, and who approves it. Write dependencies as `parent → child: what changes` (feasible region, state, parameter, objective, constraint, available action). Write evaluation relations separately as `evaluated_by`. A forecast, a distance rule or a routing estimate is not a decision.
+**Decisions and dependencies.** List each real decision with a stable ID, what is chosen, and who approves it. Write dependencies as `parent → child: what changes` (feasible region, state, parameter, objective, constraint, available action). Write evaluation relations separately as `evaluated_by`. A forecast, a distance lookup or a routing estimate is not a decision.
 
 **Classification.** Derive it from the structure above; repeat decision rows as needed.
 
@@ -43,7 +43,11 @@ Keep execution frequency, triggers and manual/automatic operation separate from 
 
 ## 2. Computable Problem
 
-**Standard form, per level.** For each decision, give variables and their domains, the objective, and the constraints, in the form of Lecture 1. Say which subproblems are convex and which are combinatorial, and what that implies for exact solution.
+**2a · The lower level — one DC's daily operation.** Given, decided, objective, constraints, in standard form. Which features of the real operation are modelled and which are omitted, and why. What one solve returns upward.
+
+**2b · The connection.** What passes down to the lower level and what passes up; how many lower-level solves one upper-level evaluation costs; where demand uncertainty enters; whether the store-to-DC assignment is part of the candidate or re-solved inside the evaluation, and why. Write the `evaluated_by` relation.
+
+**2c · The upper level — how many DCs, and where.** Variables and domains (number, sites, assignment if part of the candidate, fleet policy), objective (fixed plus operating cost from 2b), constraints (capacity bounds, lease schedule), in standard form. Which parts are convex or linear and which are combinatorial, and what that implies for exact solution.
 
 **I/O schema.** Every input table and parameter the system takes, and every output it returns.
 
@@ -52,7 +56,7 @@ Keep execution frequency, triggers and manual/automatic operation separate from 
 | Input | | | | |
 | Output | | | | |
 
-**The two criteria.** Define the generation criterion `G` and the evaluation criterion `E` precisely — formulas, pseudocode or rules. State what each ignores. `E` must include DC fixed cost and an operating cost from the fleet and kilometres implied by routes (or a stated routing estimate) under road distance, over sampled demand days.
+**The two criteria.** Define the generation criterion `G` (cheap, proposes candidates) and the full evaluation `E` (expensive, judges them) precisely. State what `G` ignores.
 
 **Components.** Keep each component's Role and Model separate, using the reference definitions. Say which components the learned demand model supplies parameters to.
 
@@ -60,13 +64,15 @@ Keep execution frequency, triggers and manual/automatic operation separate from 
 |---|---|---|---|---|
 | | | | | |
 
-Identify hard constraints versus preferences. Specify how infeasible inputs are handled (for instance a DC count that cannot satisfy the capacity bounds). Answer only the applicable follow-up questions in the [reference](problem-classification-reference.md#5-follow-up-questions-only-where-applicable).
+Identify hard constraints versus preferences. Specify how infeasible inputs are handled. Answer only the applicable follow-up questions in the [reference](problem-classification-reference.md#5-follow-up-questions-only-where-applicable).
 
 ## 3. Information & Uncertainty
 
-**The generated world.** For each table, what one row represents, how it was generated (distribution, parameters, seed), and which real-world property it reflects. Give the road-distance rule and the barrier. State the scale of the demonstration world and what you expect to change at full scale.
+**The instantiated data.** For each table of the company's specification, how you generated it (distribution, parameters, seed) and which real-world property it reflects. The scale of your instance and what you expect to change at full scale.
 
-**The demand model.** Prior and its strength, likelihood, update, posterior and posterior predictive for a planning day. How stores with a short history are handled. Where demand enters a cost, and the difference between evaluating on sampled days and on the average day.
+**Distances.** Source, version, extract date, vehicle profile; which point pairs were computed and at what resolution; where the cache lives in `code/`; any approximation used and how it was calibrated against road values.
+
+**The demand model.** Prior and its strength, calendar effect, likelihood, update, posterior and posterior predictive for planning days. How short-history stores are handled. Where demand enters a cost, and the difference between sampled-day and average-day evaluation, explained whatever its size.
 
 **Facts, assumptions, unknowns and requests.** Separate information available at decision time from later outcomes.
 
@@ -78,7 +84,7 @@ Explain the main uncertainties, how you examined their effect, and when the reco
 
 ## 4. Alternatives & Selected Approach
 
-Compare at least the baseline, a proxy-only approach (generate and judge with `G`), and your selected approach.
+**Approaches.** Compare at least the baseline, a proxy-only approach (generate and judge with `G`), and your selected approach.
 
 | Approach | Mechanism and required information | Strengths, limitations, and effort | Selection and reason |
 |---|---|---|---|
@@ -86,13 +92,21 @@ Compare at least the baseline, a proxy-only approach (generate and judge with `G
 | Proxy-only | | | |
 | Selected | | | |
 
-**The budgeted search.** The budget `B` and its justification; the parameterisation searched; the surrogate and acquisition rule (or the justified alternative); how the log is kept. Give the calculation flow from input to output, referring to Section 2. Explain tie-breaking and randomness. Identify actual calculations, precomputed results, illustrative calculations and unimplemented parts. Do not claim optimality beyond what the method establishes.
+**The solution-algorithm plan.** The lower-level method and its cost per solve and measured accuracy; the search over the number of DCs; how candidates are generated for each number; the budget `B` and its justification; the surrogate and acquisition rule (or the justified alternative) and the parameterisation it works on; how the log is kept. Give the calculation flow from input to output, referring to Section 2. Explain tie-breaking and randomness. Identify actual calculations, precomputed results, illustrative calculations and unimplemented parts. Do not claim optimality beyond what the method establishes.
 
-**The remedy.** Which Lecture 5 remedy you applied to `G`, and what it changed.
+**The fidelity–computation balance.** One row per modelling choice — at least the distance model, the demand model and the number of sampled days, the routing method, the delivery window, the assignment, the candidate set, the number of DCs swept, the search and its budget.
+
+| Modelling choice | What the real operation does | What you model | What it costs to compute | What the simplification could get wrong | How you checked whether it changes the decision |
+|---|---|---|---|---|---|
+| | | | | | |
+
+Follow with the argument: where computation was spent and why; which simplification you would remove first; and for at least two simplifications the check — a rerun with the simplification relaxed on a smaller instance, or a bound — and whether the recommended number of DCs or the ranking of the top candidates changed.
+
+**The remedy.** Which Lecture 5 remedy you applied to `G`, if the gap warranted one, and what it changed; or why none was needed.
 
 ## 5. Demonstration & Evaluation
 
-Explain how to open `demo.html`, generate or load the world, set the budget and parameters, run, inspect the log and the recommendation, compare with the baseline, and run again. State the browser checked, the offline result, and the seed mechanism. Map the demo's behaviour to the decisions and components of Section 2.
+Explain how to run `code/` (commands, run time, seed, reduced configuration) and how to open `demo.html`, read the map, the sweep, the log and the `G`-versus-`E` comparison, and run the lower level live for one DC. State the browser checked and the offline result. Map the demo's behaviour to the decisions and components of Section 2.
 
 Define the comparison conditions shared by every candidate and the baseline. Keep evaluation outcomes separate from information used to make the recommendation.
 
@@ -101,13 +115,12 @@ Define the comparison conditions shared by every candidate and the baseline. Kee
 | Normal | | | |
 | Boundary | | | |
 | Failure | | | |
-| Exploit (R3) | | | |
 
-**Prediction quality and decision quality.** How well `G` predicts `E` across the evaluated candidates, and how much the `G`-chosen network loses under `E`. **The sweep.** Total cost and its two components against the number of DCs. **The log.** Budget used, rule, and the sequence of evaluated candidates. Write `Not run` for unexecuted checks. Summarise what the demonstration establishes and what it does not.
+**Prediction quality and decision quality.** How well `G` predicts `E` across the evaluated candidates, and how much the `G`-chosen network loses under `E`; the cause of the gap. **The sweep.** Total cost and its two components against the number of DCs. **The log.** Budget used, rule, and the sequence of evaluated candidates. **Held-out days.** The saving on sampled days the search never saw. Write `Not run` for unexecuted checks. Summarise what the demonstration establishes and what it does not.
 
 ## 6. Client Proposal
 
-The recommended number of DCs and their locations; the estimated saving against the baseline with its uncertainty; the assumptions under which it would reverse. The information to obtain first with real data (refer to Section 3), the first real-data check, and the conditions to proceed, revise or stop. End with the concrete decision requested from management. Use this argument in `proposal.html`, keeping its claims consistent with the demonstration.
+The recommended number of DCs and their sites; the estimated saving against the baseline with its uncertainty; the assumptions under which it would reverse. The information to obtain first with the real tables (refer to Section 3), the first real-data check, and the conditions to proceed, revise or stop. End with the concrete decision requested from management. Use this argument in `proposal.html`, keeping its claims consistent with the code and the demonstration.
 
 ## 7. LLM Review & Key Revisions
 
