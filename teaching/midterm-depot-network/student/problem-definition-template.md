@@ -43,7 +43,7 @@ Keep execution frequency, triggers and manual/automatic operation separate from 
 
 ## 2. Computable Problem
 
-**2a · The lower level — one DC's daily operation.** Given, decided, objective, constraints, in standard form. Which features of the real operation are modelled and which are omitted, and why. What one solve returns upward.
+**2a · The lower level — one DC's daily operation.** Given, decided, objective, constraints, in compact standard form. Which features of the real operation are modelled and which are omitted, and why. How the delivery window enters — a hard constraint when routes are built, or penalties checked afterwards. What one solve returns upward.
 
 **2b · The connection.** What passes down to the lower level and what passes up; how many lower-level solves one upper-level evaluation costs; where demand uncertainty enters; whether the store-to-DC assignment is part of the candidate or re-solved inside the evaluation, and why. Write the `evaluated_by` relation.
 
@@ -70,7 +70,7 @@ Identify hard constraints versus preferences. Specify how infeasible inputs are 
 
 **The instantiated data.** For each table of the company's specification, how you generated it (distribution, parameters, seed) and which real-world property it reflects. The scale of your instance and what you expect to change at full scale.
 
-**Distances.** Which route of Section 2.5 of the brief you took — detour model, routing engine, or a mixture; source, version, extract date, vehicle profile; which point pairs were computed and at what resolution; where the cache lives in `code/`; how any approximation was calibrated against road values and how large its error is on the calibration sample. **Instance.** Whether and how you thinned the chain (Section 2.7 of the brief) and how the capacity bounds were scaled.
+**Distances.** Which route of Section 2.5 of the brief you took — detour model, routing engine, or a mixture; source, version, extract date, vehicle profile; which point pairs were computed and at what resolution; where the cache lives in `code/`; how any approximation was calibrated against road values and how large its error is on the calibration sample. **Instance.** Whether and how you thinned the chain (Section 2.7 of the brief): the fraction kept, how the DC fixed cost and capacity bounds were scaled, and how you handled stop density — one stop per sampled store with the distortion recorded, or aggregated stops. How the 12 current DCs and the candidate sites were placed, and why that is plausible.
 
 **The demand model.** Prior and its strength, calendar effect, likelihood, update, posterior and posterior predictive for planning days. How short-history stores are handled. Where demand enters a cost, and the difference between sampled-day and average-day evaluation, explained whatever its size.
 
@@ -92,7 +92,7 @@ Explain the main uncertainties, how you examined their effect, and when the reco
 | Proxy-only | | | |
 | Selected | | | |
 
-**The solution-algorithm plan.** The lower-level method and its cost per solve and measured accuracy; the search over the number of DCs; how candidates are generated for each number; the budget `B` and its justification; the surrogate and acquisition rule (or the justified alternative) and the parameterisation it works on — the knobs or the pool features; the comparison with random selection at the same budget; how the log is kept. Give the calculation flow from input to output, referring to Section 2. Explain tie-breaking and randomness. Identify actual calculations, precomputed results, illustrative calculations and unimplemented parts. Do not claim optimality beyond what the method establishes.
+**The solution-algorithm plan.** The lower-level method and its cost per solve and measured accuracy; the search over the number of DCs; how candidates are generated for each number; the budget `B` and its justification; the surrogate and acquisition rule (or the justified alternative) and the parameterisation it works on — the knobs or the pool features; the comparison with random selection at the same budget; the statement that the reported search is one fresh run of `B` evaluations from the logged seeds; how the log is kept. Give the calculation flow from input to output, referring to Section 2. Explain tie-breaking and randomness. Identify actual calculations, precomputed results, illustrative calculations and unimplemented parts. Do not claim optimality beyond what the method establishes.
 
 **The fidelity–computation balance.** One row per modelling choice — at least the distance model, the demand model and the number of sampled days, the routing method, the delivery window, the assignment, the candidate set, the number of DCs swept, the search and its budget.
 
