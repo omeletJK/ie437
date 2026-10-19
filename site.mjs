@@ -333,6 +333,9 @@ export function writeSite() {
   const news = announcements();
   const syl = syllabus();
   const assignments = publishAssignments(ROOT);
+  // A midterm project gets its own section and tab; ordinary assignments keep theirs.
+  const midterms = assignments.filter(a => a.kind === 'midterm');
+  const homework = assignments.filter(a => a.kind !== 'midterm');
   const examples = publishWorkedExamples(ROOT);
 
   /* the body of _SITE.md is the "about" section: a lede, then one card
@@ -401,8 +404,9 @@ export function writeSite() {
   <nav class="tnav">
     <a href="#course">The course</a>
     <a href="#notices">Notices</a>
+    ${midterms.length ? '<a class="keep" href="#midterm">Midterm</a>' : ''}
     ${syl ? '<a href="#syllabus">Syllabus</a>' : ''}
-    ${assignments.length ? '<a class="keep" href="#assignments">Assignments</a>' : ''}
+    ${homework.length ? '<a class="keep" href="#assignments">Assignments</a>' : ''}
     <a class="keep" href="#materials">Materials</a>
   </nav>
 </div></header>
@@ -419,7 +423,7 @@ export function writeSite() {
     fm.chips.map((c, i) => `<span class="chip${i === 0 ? ' on' : ''}">${esc(c)}</span>`).join('')}</div>` : ''}
   <div class="cta rise" style="--d:5">
     <a class="btn solid" href="#materials">Lecture materials &rarr;</a>
-    ${assignments.length ? '<a class="btn ghost" href="#assignments">Assignments</a>' : '<a class="btn ghost" href="#notices">Notices</a>'}
+    ${midterms.length ? '<a class="btn ghost" href="#midterm">Midterm</a>' : homework.length ? '<a class="btn ghost" href="#assignments">Assignments</a>' : '<a class="btn ghost" href="#notices">Notices</a>'}
   </div>
   </div>
   <div class="cubefig rise" style="--d:3">
@@ -454,14 +458,24 @@ export function writeSite() {
     : `<div class="empty">No notices yet. Add one to <code>md/_ANNOUNCEMENTS.md</code> and rebuild.</div>`}
 </div></section>
 
-${assignments.length ? `
-<section class="band sunk" id="assignments"><div class="wrap">
+${midterms.length ? `
+<section class="band sunk" id="midterm"><div class="wrap">
+  <div class="shead"><div>
+    <div class="snum">${sn()} &middot; Midterm</div>
+    <h2>The midterm project</h2>
+  </div></div>
+  ${midterms.map(m => m.intro ? `<div class="sintro midterm-intro">${mdBlock(m.intro)}</div>` : '').join('')}
+  <ol class="assignment-list">${midterms.map(a => assignmentRow(a, [])).join('\n')}</ol>
+</div></section>` : ''}
+
+${homework.length ? `
+<section class="band" id="assignments"><div class="wrap">
   <div class="shead"><div>
     <div class="snum">${sn()} &middot; Assignments</div>
     <h2>Put the ideas to work</h2>
   </div></div>
   <p class="sintro">Download the complete assignment package, or choose an individual document. Start with the assignment brief for requirements and grading.</p>
-  <ol class="assignment-list">${assignments.map(a => assignmentRow(a, examples)).join('\n')}</ol>
+  <ol class="assignment-list">${homework.map(a => assignmentRow(a, examples)).join('\n')}</ol>
 </div></section>` : ''}
 
 ${syl ? `

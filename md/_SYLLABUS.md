@@ -54,7 +54,8 @@ grading:
       half of the course — optimisation modelling, Bayesian statistics, Bayesian
       optimisation, and design optimisation from a fixed dataset — applied to one
       hierarchical decision problem. A problem definition, an interactive
-      demonstration and a proposal, with the methods prescribed.
+      demonstration and a proposal, with the methods prescribed. The brief and
+      the dates are in the [Midterm section](#midterm).
   - name: Assignments
     weight: 20
     tba: true

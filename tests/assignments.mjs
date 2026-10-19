@@ -25,6 +25,14 @@ for (const name of actualNames) {
   assert.deepEqual(execFileSync('unzip', ['-p', actualZip, name]), fs.readFileSync(path.join(root, 'teaching/assignment-01-movie-programming/student', name)));
 }
 assert.doesNotMatch(section, /instructor|grading-guide|preparation-notes|\/Users\//);
+// The midterm project has its own section and tab, and is not listed under Assignments.
+const midterm = landing.match(/<section[^>]+id="midterm"[\s\S]*?<\/section>/);
+assert.ok(midterm, 'The midterm project needs its own section');
+assert.match(midterm[0], /IE437-Midterm-Project\.zip/, 'The midterm section must offer the midterm ZIP');
+assert.match(midterm[0], /midterm-intro/, 'The midterm section prints the catalogue intro');
+assert.doesNotMatch(section, /IE437-Midterm-Project\.zip/, 'The midterm is not an ordinary assignment');
+assert.match(landing, /<nav class="tnav">[\s\S]*?href="#midterm"/, 'The midterm needs a tab');
+assert.doesNotMatch(midterm[0], /instructor|grading-guide|preparation-notes|\/Users\//);
 
 const { publishAssignments } = await import('../assignments.mjs');
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ie437-assignments-'));

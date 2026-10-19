@@ -76,6 +76,7 @@ export function publishAssignments(root) {
     const version = requiredText(entry.version, 'version');
     const subtitle = entry.subtitle == null ? '' : requiredText(entry.subtitle, 'subtitle');
     const due = entry.due == null ? 'To be announced' : requiredText(entry.due, 'due');
+    const intro = entry.intro == null ? '' : requiredText(entry.intro, 'intro');
     if (!Array.isArray(entry.files) || !entry.files.length || entry.files.length > 100) throw new Error('Assignment files must be a nonempty list (at most 100)');
     let source = root;
     for (const part of ['teaching', id, 'student']) {
@@ -97,7 +98,7 @@ export function publishAssignments(root) {
       return { name, label, url: prefix + name, data: fs.readFileSync(filename) };
     });
     const archiveName = kind === 'midterm' ? 'IE437-Midterm-Project.zip' : `IE437-Assignment-${String(number).padStart(2, '0')}.zip`;
-    return { id, kind, label, number, title, subtitle, summary, version, due, modifiedAt, files,
+    return { id, kind, label, number, title, subtitle, summary, version, due, intro, modifiedAt, files,
       archive: { name: archiveName, url: prefix + archiveName, data: zipFiles(files) } };
   });
   const output = path.join(root, 'html/assignments');

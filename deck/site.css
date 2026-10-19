@@ -116,6 +116,8 @@ section.band.sunk{background:var(--raised)}
 h2{font:600 clamp(1.5rem,3vw,2rem)/1.2 var(--disp);letter-spacing:-.02em;margin-top:12px}
 .sintro{margin-top:12px;max-width:66ch;color:var(--ink2);font-size:16.5px;line-height:1.72}
 .sintro strong{color:var(--ink);font-weight:600}
+.midterm-intro p+p{margin-top:12px}
+.midterm-intro{margin-bottom:6px}
 
 /* ---------- about: three cards + the map ---------- */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
