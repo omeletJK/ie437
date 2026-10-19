@@ -302,12 +302,12 @@ function assignmentRow(a, examples = []) {
   return `<li class="assignment"><article aria-labelledby="${esc(a.id)}-title">
     <div class="assignment-head">
       <div>
-        <div class="assignment-number">Assignment ${String(a.number).padStart(2, '0')}</div>
+        <div class="assignment-number">${esc(a.label)}</div>
         <h3 id="${esc(a.id)}-title">${esc(a.title)}</h3>
         ${a.subtitle ? `<p class="assignment-subtitle">${esc(a.subtitle)}</p>` : ''}
       </div>
       <a class="btn solid assignment-zip" href="${esc(a.archive.url)}" download="${esc(a.archive.name)}"
-        aria-label="Download Assignment ${a.number} ZIP">${DL_ICON} Download ZIP</a>
+        aria-label="Download ${esc(a.label)} ZIP">${DL_ICON} Download ZIP</a>
     </div>
     <p class="assignment-summary">${esc(a.summary)}</p>
     <dl class="assignment-meta">
@@ -315,10 +315,10 @@ function assignmentRow(a, examples = []) {
       <div><dt>Due</dt><dd>${esc(a.due)}</dd></div>
       <div><dt>Package</dt><dd>${a.files.length} Markdown files</dd></div>
     </dl>
-    <ul class="assignment-files" aria-label="Assignment ${a.number} documents">
+    <ul class="assignment-files" aria-label="${esc(a.label)} documents">
       ${a.files.map(f => `<li><a href="${esc(f.url)}" download="${esc(f.name)}"><span>${esc(f.label)}</span><span class="assignment-format">MD ${DL_ICON}</span></a></li>`).join('')}
     </ul>
-    ${examples.filter(e => e.assignment === a.number).map(e => `<div class="assignment-examples">
+    ${examples.filter(e => a.kind === 'assignment' && e.assignment === a.number).map(e => `<div class="assignment-examples">
       <h4>Worked examples · MD + interactive demo + proposal</h4>
       <p>${esc(e.summary)}</p>
       <div class="assignment-example-actions"><a class="btn solid" href="${esc(e.startURL)}">Open worked examples</a><a class="btn ghost" href="${esc(e.archive.url)}" download="${esc(e.archive.name)}">${DL_ICON} Download examples ZIP</a></div>

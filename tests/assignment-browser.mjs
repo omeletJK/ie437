@@ -59,6 +59,9 @@ try {
       for (const link of await links.all()) {
         const expected = await link.getAttribute('download');
         const href = await link.getAttribute('href');
+        // Headless Chrome throttles a burst of downloads from one page; eleven links fired
+        // back to back lose the last one. A short pause is what a person would take anyway.
+        await page.waitForTimeout(500);
         const event = page.waitForEvent('download');
         await link.click();
         const download = await event;

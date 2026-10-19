@@ -61,6 +61,17 @@ try {
   assert.equal(publishAssignments(temp).length, 2, 'The catalog must publish multiple assignments');
   assert.equal(execFileSync('unzip', ['-p', path.join(output, 'task-two/IE437-Assignment-02.zip'), 'brief.md'], { encoding: 'utf8' }), '# Second assignment');
   assert.equal(fs.readFileSync(path.join(output, 'task-one/brief.md'), 'utf8'), '# Public brief\nChanged source, café and 한글.\n', 'Assignments with the same document name must remain independent');
+  const midSource = path.join(temp, 'teaching/task-mid/student');
+  fs.mkdirSync(midSource, { recursive: true });
+  fs.writeFileSync(path.join(midSource, 'brief.md'), '# Midterm brief');
+  const midterm = config('task-mid').split('assignments:\n')[1].split('---')[0].replace('number: 1', 'kind: midterm\n    number: 1');
+  fs.writeFileSync(catalog, config().replace(/---\n$/, midterm + '---\n'));
+  const kinds = publishAssignments(temp);
+  assert.equal(kinds.length, 2, 'A midterm entry may share number 1 with Assignment 1');
+  assert.deepEqual(kinds.map(a => [a.kind, a.label, a.archive.name]), [['assignment', 'Assignment 01', 'IE437-Assignment-01.zip'], ['midterm', 'Midterm Project', 'IE437-Midterm-Project.zip']]);
+  assert.equal(execFileSync('unzip', ['-p', path.join(output, 'task-mid/IE437-Midterm-Project.zip'), 'brief.md'], { encoding: 'utf8' }), '# Midterm brief');
+  fs.writeFileSync(catalog, config().replace(/---\n$/, midterm.replace('kind: midterm', 'kind: final') + '---\n'));
+  assert.throws(() => publishAssignments(temp), /kind/i, 'Unknown kinds must fail the build');
   fs.writeFileSync(catalog, config());
   publishAssignments(temp);
   assert.ok(!fs.existsSync(path.join(output, 'task-two')), 'A removed assignment must not leave files behind');

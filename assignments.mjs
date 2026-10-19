@@ -59,14 +59,18 @@ export function publishAssignments(root) {
     if (!Array.isArray(entries)) throw new Error('_ASSIGNMENTS.md: assignments must be a list');
   }
   const ids = new Set(), numbers = new Set();
+  const KINDS = { assignment: n => `Assignment ${String(n).padStart(2, '0')}`, midterm: () => 'Midterm Project' };
   // Read and validate the entire catalog before replacing any existing public output.
   const prepared = entries.map(entry => {
     const id = requiredText(entry?.id, 'id');
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) || ids.has(id)) throw new Error('Invalid or duplicate assignment id: ' + id);
     ids.add(id);
+    const kind = entry.kind == null ? 'assignment' : requiredText(entry.kind, 'kind');
+    if (!KINDS[kind]) throw new Error('Unknown assignment kind: ' + kind);
     const number = entry.number;
-    if (!Number.isSafeInteger(number) || number < 1 || numbers.has(number)) throw new Error('Invalid or duplicate assignment number');
-    numbers.add(number);
+    if (!Number.isSafeInteger(number) || number < 1 || numbers.has(kind + ':' + number)) throw new Error('Invalid or duplicate assignment number');
+    numbers.add(kind + ':' + number);
+    const label = KINDS[kind](number);
     const title = requiredText(entry.title, 'title');
     const summary = requiredText(entry.summary, 'summary');
     const version = requiredText(entry.version, 'version');
@@ -92,8 +96,8 @@ export function publishAssignments(root) {
       modifiedAt = Math.max(modifiedAt, stat.mtimeMs);
       return { name, label, url: prefix + name, data: fs.readFileSync(filename) };
     });
-    const archiveName = `IE437-Assignment-${String(number).padStart(2, '0')}.zip`;
-    return { id, number, title, subtitle, summary, version, due, modifiedAt, files,
+    const archiveName = kind === 'midterm' ? 'IE437-Midterm-Project.zip' : `IE437-Assignment-${String(number).padStart(2, '0')}.zip`;
+    return { id, kind, label, number, title, subtitle, summary, version, due, modifiedAt, files,
       archive: { name: archiveName, url: prefix + archiveName, data: zipFiles(files) } };
   });
   const output = path.join(root, 'html/assignments');
