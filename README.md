@@ -33,6 +33,26 @@ html/        generated — THE FOLDER YOU PUBLISH
   pdf/           one PDF per chapter, linked from the launcher
 ```
 
+## Setting up on a new machine
+
+```bash
+git clone https://github.com/omeletJK/ie437.git ~/Teachings/ie437
+cd ~/Teachings/ie437
+git config user.email 214766328+omeletJK@users.noreply.github.com   # GitHub rejects pushes that expose the private address (GH007)
+npm install --workspaces=false
+node build.mjs --all --no-pdf && node site.mjs
+open html/index.html
+```
+
+PDF export needs a Chromium: `npx playwright install chromium` once, or an installed Google Chrome
+launched with `channel: 'chrome'` (see [docs/agent-notes/qa-visual-pass.md](docs/agent-notes/qa-visual-pass.md)).
+CI exports the PDFs itself on every deploy, so local PDFs are optional. The original lecture PDFs,
+the instructor notes and all grading material are kept outside the repository on purpose; nothing
+on the site needs them.
+
+Working here with an AI agent: it reads [CLAUDE.md](CLAUDE.md) first, then the authoring decisions
+in [docs/agent-notes/](docs/agent-notes/README.md).
+
 ## Use
 
 ```bash
