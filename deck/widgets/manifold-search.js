@@ -11,14 +11,17 @@
    The surrogate f_hat(x) is a ridge fit on quadratic features of x (data
    RMSE 0.065). A latent surrogate f_hat(t) is a ridge fit on ReLU knots in t.
 
-   mode "g1"  walked by the deck's ->:
-     0  the valid curve, the data, and the latent coordinate t
-     1  ascent on f_hat(x) from the best design: off the curve within two
-        steps; at the corner f_hat promises 4.97
-     The decoder is the known curve itself — a teaching device, exact by
+   mode "g1"  one picture, the plane, read as a map: the valid designs are
+     a road, and the code t is the milepost along it. Walked by ->:
+     0  the road, its mileposts, the measured designs
+     1  search the plane: ascent on f_hat(x) from the best measured design
+        leaves the road within two steps; at the corner f_hat promises 4.97
+     2  search the code: move only along the road, to argmax f_hat(t),
+        t = 2.80 — a design by construction
+     3  how good is it? truth 0.39 (f_hat 1.88); the true best, 2.40 at
+        t = 1.8, lies beyond the measured stretch (t up to 1.05)
+     The road is the known curve itself — a teaching device, exact by
      construction; a learned decoder is only approximately valid.
-     2  search the code t instead: argmax f_hat(t) = t 2.80 — valid, but
-        worth 0.39 (f_hat 1.88); the true best is 2.40 at t = 1.8
    mode "g4"  drag s, the guidance strength. The sampler stands in for a
         diffusion sampler: annealed Langevin dynamics on a kernel density of
         the data (bandwidth 0.10; its noise-conditional score is exact),
@@ -114,14 +117,14 @@ IE437.widget('manifold-search', function (host, opts) {
   host.innerHTML =
     '<div class="wbar"><span class="wt">' + (G1 ? 'Search the plane, or search the code' : 'Guide the sampler with the surrogate') + '</span>' +
     '<span class="wspacer"></span>' +
-    (G1 ? '<span class="wlabel">valid designs</span><span class="wnum">a thin curve in the plane</span>'
+    (G1 ? '<span class="wlabel">valid designs</span><span class="wnum">a road through the plane</span>'
         : '<span class="wlabel">guidance strength</span><span class="wnum" data-s></span><span data-sl></span>') + '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:18px;align-items:center;justify-content:center">' +
-    '<div data-c></div><div style="width:' + (G1 ? 250 : 270) + 'px;display:flex;flex-direction:column;gap:10px">' +
+    '<div data-c></div><div style="width:' + (G1 ? 330 : 270) + 'px;display:flex;flex-direction:column;gap:10px">' +
     (G1 ? '' : '<div data-num style="font:400 13px/1.75 var(--sans);color:var(--ink2)"></div>') +
     '<div data-note style="font:400 ' + (G1 ? '13.5px/1.6' : '12.5px/1.55') + ' var(--sans);color:var(--ink' + (G1 ? '2' : '3') +
     ');' + (G1 ? '' : 'border-top:1px solid rgba(22,24,29,.1);padding-top:9px') + '"></div></div></div>';
-  var CW = G1 ? 760 : 470, CH = 300, SC = 70, OX = 24, OY = 10;            /* 70 px per unit */
+  var CW = G1 ? 500 : 470, CH = G1 ? 342 : 300, SC = G1 ? 78 : 70, OX = G1 ? 16 : 24, OY = 8;  /* px per unit */
   var sv = IE437.svg(CW, CH); host.querySelector('[data-c]').appendChild(sv);
   var PX = function (v) { return OX + (v + 3) * SC; }, PY = function (v) { return OY + (2 - v) * SC; };
   function curvePath(t0, t1, n) {
@@ -153,48 +156,60 @@ IE437.widget('manifold-search', function (host, opts) {
     E('path', { d: 'M' + (x - r) + ' ' + (y - r) + 'L' + (x + r) + ' ' + (y + r) + 'M' + (x + r) + ' ' + (y - r) + 'L' + (x - r) + ' ' + (y + r),
       stroke: col, 'stroke-width': 2.2 }, sv);
   }
-  /* the latent axis, to the right of the plane (G1 only) */
-  var LX0 = 470, LX1 = 750, LY0 = 268, LY1 = 30;
-  var TX = function (t) { return LX0 + (t - T0) / (T1 - T0) * (LX1 - LX0); }, VY = function (v) { return LY0 - v / 2.6 * (LY0 - LY1); };
-  function latent() {
-    E('line', { x1: LX0, x2: LX1, y1: LY0, y2: LY0, stroke: INK, 'stroke-opacity': .3 }, sv);
-    E('line', { x1: LX0, x2: LX0, y1: LY1, y2: LY0, stroke: INK, 'stroke-opacity': .3 }, sv);
-    E('rect', { x: TX(-2.5), y: LY1, width: TX(DMAX) - TX(-2.5), height: LY0 - LY1, fill: SLATE, 'fill-opacity': .08 }, sv);
-    E('text', { x: (TX(-2.5) + TX(DMAX)) / 2, y: LY1 + 11, 'text-anchor': 'middle', 'font-size': 9, 'font-family': MONO, fill: INK, 'fill-opacity': .45, text: 'measured codes' }, sv);
-    [0, 1, 2].forEach(function (v) { E('text', { x: LX0 - 5, y: VY(v) + 3, 'text-anchor': 'end', 'font-size': 9, fill: INK, 'fill-opacity': .45, 'font-family': MONO, text: v }, sv); });
-    var tp = []; TG.forEach(function (t, k) { if (k % 7 === 0) tp.push(TX(t).toFixed(1) + ' ' + VY(g(t)).toFixed(1)); });
-    E('path', { d: 'M' + tp.join('L'), fill: 'none', stroke: INK, 'stroke-width': 2, 'stroke-opacity': .34 }, sv);
-    E('text', { x: TX(1.8), y: VY(g(1.8)) - 7, 'text-anchor': 'middle', 'font-size': 9.5, fill: INK, 'fill-opacity': .55, text: 'true value' }, sv);
-    D.forEach(function (d) { E('circle', { cx: TX(d.t), cy: VY(d.y), r: 2.5, fill: INK }, sv); });
-    E('text', { x: (LX0 + LX1) / 2, y: CH - 1, 'text-anchor': 'middle', 'font-size': 9.5, 'font-style': 'italic', fill: INK, 'fill-opacity': .45, text: 'latent code t (position along the curve)' }, sv);
-  }
-
   function f2(v) { return (v < 0 ? '−' : '') + Math.abs(v).toFixed(2); }
+  function roadPath(t0, t1) { return curvePath(t0, t1, Math.max(8, Math.round(60 * (t1 - t0)))); }
+  function arrowHead(x0, y0, x1, y1, col) {
+    var a = Math.atan2(y1 - y0, x1 - x0), L = 9;
+    E('path', { d: 'M' + x1 + ' ' + y1 + 'L' + (x1 - L * Math.cos(a - 0.45)) + ' ' + (y1 - L * Math.sin(a - 0.45)) +
+      'L' + (x1 - L * Math.cos(a + 0.45)) + ' ' + (y1 - L * Math.sin(a + 0.45)) + 'Z', fill: col }, sv);
+  }
   function drawG1() {
-    plane(st >= 1);
-    latent();
-    if (st >= 1) {
-      E('path', { d: 'M' + XP.map(function (x) { return PX(x[0]).toFixed(1) + ' ' + PY(x[1]).toFixed(1); }).join('L'), fill: 'none', stroke: RED, 'stroke-width': 2.4 }, sv);
+    E('rect', { x: PX(-3), y: PY(2), width: 6 * SC, height: 4 * SC, fill: '#fff', stroke: INK, 'stroke-opacity': .2 }, sv);
+    E('text', { x: PX(2.9), y: PY(1.8), 'text-anchor': 'end', 'font-size': 10, fill: INK, 'fill-opacity': .45, text: 'off the road: not a design' }, sv);
+    /* the road, and the stretch the data measured */
+    E('path', { d: roadPath(T0, T1), fill: 'none', stroke: GREEN, 'stroke-width': 2 * HW * SC + 4, 'stroke-opacity': .25, 'stroke-linecap': 'round' }, sv);
+    if (st >= 3) E('path', { d: roadPath(-2.5, DMAX), fill: 'none', stroke: SLATE, 'stroke-width': 2 * HW * SC + 4, 'stroke-opacity': .28, 'stroke-linecap': 'butt' }, sv);
+    E('path', { d: roadPath(T0, T1), fill: 'none', stroke: GREEN, 'stroke-width': 1.2, 'stroke-opacity': .7, 'stroke-dasharray': '6 5' }, sv);
+    E('text', { x: PX(-2.9), y: PY(0.62), 'font-size': 11, fill: GREEN, 'font-weight': 700, text: 'the road: the only valid designs' }, sv);
+    /* mileposts: the code t */
+    [-2, -1, 0, 1, 2].forEach(function (t) {
+      var p = c(t), nx = -AMP * FRQ * Math.cos(FRQ * t), ny = 1, L = Math.hypot(nx, ny), h = 0.2;
+      var a = [PX(p[0] - h * nx / L), PY(p[1] - h * ny / L)], b = [PX(p[0] + h * nx / L), PY(p[1] + h * ny / L)];
+      E('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: INK, 'stroke-width': 1.4, 'stroke-opacity': .55 }, sv);
+      E('text', { x: b[0], y: b[1] - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-family': MONO, fill: INK, 'fill-opacity': .6, text: 't=' + t }, sv);
+    });
+    D.forEach(function (d) { E('circle', { cx: PX(d.x[0]), cy: PY(d.x[1]), r: 2.7, fill: INK }, sv); });
+    var s0 = D[bi].x;
+    E('circle', { cx: PX(s0[0]), cy: PY(s0[1]), r: 5, fill: 'none', stroke: INK, 'stroke-width': 1.6 }, sv);
+    if (st === 1 || st === 2) E('text', { x: PX(s0[0]) - 2, y: PY(s0[1]) + 22, 'text-anchor': 'middle', 'font-size': 10, fill: INK, 'fill-opacity': .7, text: 'start: best measured' }, sv);
+    if (st === 1) {
+      var pts = XP.map(function (x) { return [PX(x[0]), PY(x[1])]; });
+      E('path', { d: 'M' + pts.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join('L'), fill: 'none', stroke: RED, 'stroke-width': 2.6 }, sv);
       var xe = XP[XP.length - 1];
-      cross(PX(xe[0]) + 6, PY(xe[1]) - 6, RED, 6);
-      E('text', { x: PX(xe[0]) + 18, y: PY(xe[1]) - 22, 'font-size': 10.5, fill: RED, 'font-weight': 700, text: 'f̂ promises ' + f2(fhx(xe)) + ' — not a design' }, sv);
+      cross(PX(xe[0]) + 7, PY(xe[1]) - 7, RED, 7);
+      E('text', { x: PX(-2.9), y: PY(-1.42), 'font-size': 11, fill: RED, 'font-weight': 700, text: 'not a design' }, sv);
+      E('text', { x: PX(-2.9), y: PY(-1.62), 'font-size': 10.5, fill: RED, text: 'surrogate promises ' + f2(fhx(xe)) }, sv);
     }
     if (st >= 2) {
-      var tp = []; TG.forEach(function (t, k) { if (k % 7 === 0) tp.push(TX(t).toFixed(1) + ' ' + VY(fht(t)).toFixed(1)); });
-      E('path', { d: 'M' + tp.join('L'), fill: 'none', stroke: BLUE, 'stroke-width': 2, 'stroke-dasharray': '5 3' }, sv);
-      E('text', { x: TX(-0.4), y: VY(fht(-0.4)) + 16, 'text-anchor': 'middle', 'font-size': 10, fill: BLUE, 'font-weight': 700, text: 'f̂(t)' }, sv);
-      E('line', { x1: TX(TB), x2: TX(TB), y1: VY(TV), y2: VY(g(TB)), stroke: BLUE, 'stroke-opacity': .5, 'stroke-dasharray': '2 3' }, sv);
-      E('circle', { cx: TX(TB), cy: VY(TV), r: 6, fill: BLUE }, sv);
-      E('circle', { cx: TX(TB), cy: VY(g(TB)), r: 5, fill: '#fff', stroke: INK, 'stroke-width': 2 }, sv);
-      var pb = c(TB);
-      E('circle', { cx: PX(pb[0]), cy: PY(pb[1]), r: 7, fill: 'none', stroke: BLUE, 'stroke-width': 2.4 }, sv);
-      E('text', { x: PX(pb[0]) - 10, y: PY(pb[1]) + 20, 'text-anchor': 'end', 'font-size': 10.5, fill: BLUE, 'font-weight': 700, text: 'decoded: valid, worth ' + f2(g(TB)) }, sv);
+      E('path', { d: roadPath(D[bi].t, TB), fill: 'none', stroke: BLUE, 'stroke-width': 3.2 }, sv);
+      var pa = c(TB - 0.12), pb = c(TB);
+      arrowHead(PX(pa[0]), PY(pa[1]), PX(pb[0]), PY(pb[1]), BLUE);
+      E('circle', { cx: PX(pb[0]), cy: PY(pb[1]), r: 8, fill: 'none', stroke: BLUE, 'stroke-width': 2.4 }, sv);
+      E('text', { x: PX(2.9), y: PY(-0.55), 'text-anchor': 'end', 'font-size': 11, fill: BLUE, 'font-weight': 700, text: st >= 3 ? 'picked: true value ' + f2(g(TB)) : 'picked: a valid design' }, sv);
     }
+    if (st >= 3) {
+      var sb = c(1.8);
+      E('path', { d: 'M' + PX(sb[0]) + ' ' + (PY(sb[1]) - 9) + 'l2.6 6 6.5 0 -5.2 4 2.6 6.5 -6.5 -4 -6.5 4 2.6 -6.5 -5.2 -4 6.5 0z', fill: AMBER, stroke: '#fff' }, sv);
+      E('line', { x1: PX(sb[0]), y1: PY(sb[1]) - 10, x2: PX(sb[0]), y2: PY(1.5) + 4, stroke: AMBER, 'stroke-width': 1.2 }, sv);
+      E('text', { x: PX(sb[0]), y: PY(1.5), 'text-anchor': 'middle', 'font-size': 11, fill: AMBER, 'font-weight': 700, text: 'true best ' + f2(g(1.8)) + ' — never measured' }, sv);
+      E('text', { x: PX(-1.15), y: PY(-1.35), 'text-anchor': 'middle', 'font-size': 10.5, fill: SLATE, 'font-weight': 700, text: 'measured stretch: the predictor knows only this' }, sv);
+    }
+    E('text', { x: PX(0), y: CH - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-style': 'italic', fill: INK, 'fill-opacity': .45, text: 'a design x = (x₁, x₂);  its code t = how far along the road' }, sv);
     host.querySelector('[data-note]').innerHTML = [
-      'The valid designs form a <b>thin curve</b>; most of the plane is not a design. A decoder gives each valid design one coordinate, its position along the curve — the <b>latent code</b> <i>t</i> (right). Here the decoder is the curve itself, exact by construction.',
-      'Climb the surrogate in <i>x</i>: within two steps the path leaves the curve, and the surrogate promises <b>' + f2(fhx(XP[XP.length - 1])) + '</b> at a point that is not a design. Lecture 5’s exploitation, plus invalidity.',
-      'Search the code instead: with this exact decoder every candidate lands on the curve, so the choice is <b>valid</b>. But <i>f̂(t)</i> still extrapolates past the measured codes and picks the far end, worth <b>' + f2(g(TB)) +
-        '</b>. <span class="hl">Valid is not reliable</span> — the latent predictor needs Lecture 5’s tools.'
+      'A design is two numbers, but only points on the <b style="color:' + GREEN + '">road</b> are real designs. The decoder gives each road point one number — <b>how far along the road</b>, like a milepost. That number is the code <i>t</i>.',
+      '<b>Search the plane.</b> From the best measured design, climb the surrogate. Within two steps the path <span class="hl">leaves the road</span>: the answer is not a design, though the surrogate promises <b>' + f2(fhx(XP[XP.length - 1])) + '</b>.',
+      '<b>Search the code.</b> Move only along the road, by changing <i>t</i>. Every candidate is a design — <span class="hl">valid by construction</span>. The search runs to the end of the road.',
+      '<b>But is it good?</b> True value ' + f2(g(TB)) + '. The best design (★ ' + f2(g(1.8)) + ') lies <b>past the measured stretch</b>, where the predictor only guesses. <span class="hl">Valid is not reliable</span> — Lecture 5’s tools are still needed.'
     ][st];
   }
   function drawG4() {
@@ -219,9 +234,9 @@ IE437.widget('manifold-search', function (host, opts) {
   }
   function draw() { while (sv.firstChild) sv.removeChild(sv.firstChild); (G1 ? drawG1 : drawG4)(); }
   if (G1) {
-    var show = function (k) { st = Math.max(0, Math.min(2, k)); draw(); };
+    var show = function (k) { st = Math.max(0, Math.min(3, k)); draw(); };
     show(0);
-    return { steps: 2, step: show, reset: function () { show(0); }, finish: function () { show(2); } };
+    return { steps: 3, step: show, reset: function () { show(0); }, finish: function () { show(3); } };
   }
   var dial = IE437.slider(host.querySelector('[data-sl]'), {
     bare: true, min: 0, max: 4, step: 0.5, value: sg,

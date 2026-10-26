@@ -635,11 +635,11 @@ Lecture 4 used it for its dimension reduction: a 196-dimensional latent space fo
 
 ### Search the plane, or search the code
 ::: widget manifold-search {"mode":"g1"}
-One 2-D design problem whose valid designs form a thin curve. Press → twice: climb the surrogate in the plane, then search the code. The decoder here is the curve itself, known exactly — a teaching device; a learned decoder is only approximately valid.
+Press → three times: search the plane, search along the road, then ask how good the answer is.
 :::
 
 ::: note
-Numbers behind the picture: ascent on the quadratic surrogate $\hat f(x)$ (data RMSE $0.065$) leaves the curve within two steps and reaches the corner, where $\hat f$ promises $4.97$. The latent surrogate $\hat f(t)$ picks $t=2.8$: $\hat f=1.88$, truth $0.39$; the true best is $2.40$ at $t=1.8$, beyond the last measured code ($t\approx1.05$). Lecture 5's $B$, now on a valid design.
+The road is the curve itself, known exactly — a teaching device; a learned decoder is only approximately valid, and its code need not be a distance. Numbers behind the picture: ascent on the quadratic surrogate $\hat f(x)$ (data RMSE $0.065$) leaves the curve within two steps and reaches the corner, where $\hat f$ promises $4.97$. The latent surrogate $\hat f(t)$ picks $t=2.8$: $\hat f=1.88$, truth $0.39$; the true best is $2.40$ at $t=1.8$, beyond the last measured code ($t\approx1.05$). Lecture 5's $B$, now on a valid design.
 :::
 
 ### What latent search buys, and what it costs
