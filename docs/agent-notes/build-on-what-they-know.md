@@ -15,11 +15,12 @@ models and the ELBO "very easily and systematically", and the rewrite had droppe
 Their instruction: "복원해라. 기억해라. 학부생 수업이다. Bayesian 통계를 배웠고, 최적화 기본을 배웠다. 이 기본 컨셉을
 빌드해서 복잡한 생성형 모델의 기본 core와 방법론에 대해 핵심을 파악해야 한다."
 
-Restored the same day as Act 2, "generative models, built from Bayes and optimisation". It went from 6 slides to 17, and the deck from 78 to 89. Each step names the lecture it reuses:
+Restored the same day as Act 2, "generative models, built from Bayes and optimisation". It went from 6 slides to 18, and the deck from 78 to 90. Each step names the lecture it reuses:
 - **what a generative model learns** — the p. 6 picture;
 - **KL**;
 - **minimising the KL is maximum likelihood** — the Lecture 2 coin set beside a network;
 - **hidden factors** — the p. 8 faces and the graph;
+- **why the posterior** — the decoder is regression from codes to designs, but the codes are hidden (Lecture 3): training must first ask which codes made each design. Added after the professor noted that the jump from hidden factors to the posterior was unmotivated;
 - **Bayes' rule again** — the evidence is the integral we cannot do. A picture of prior draws, most of which explain nothing: about 1 in 4 with one factor, about 1 in 800 000 with ten. Lecture 2 solved this integral by conjugacy, Lecture 3 by a sum; here neither works.
 - **Jensen** — a concave function's chord, set against Lecture 1's convex tangent;
 - **ELBO view 1** — from the evidence, by Jensen;

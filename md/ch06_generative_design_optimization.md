@@ -240,8 +240,35 @@ Lecture 3's move: ==a hidden variable makes a complicated distribution simple to
 Source alignment: Part 1 p. 8 (its sixth axis is left out of the redraw; draw A carries the source's values). The factors are learned, so they need not be interpretable: the labels are the source's illustration. The solid arrow is the generative story; the dashed arrow back is inference — Bayes' rule, next slide.
 :::
 
+### Why the posterior — training must know which code made each design
+The decoder learns a map from codes to designs. How would we train it?
+
+::: cols
+::: col If each design came with its code
+Pairs $(z_i, x_i)$: fit $p_\theta(x\mid z)$ by maximum likelihood — ==ordinary regression==, Lecture 2.
+:::
+::: col.accent Only the designs are observed
+The code is a **hidden variable**, Lecture 3. For each design we must first ask: ==which codes could have made it?== That answer is the posterior $p_\theta(z\mid x)$.
+:::
+:::
+
+::: flow
+- **A design $x_i$** | observed
+- !**Which code made it?** | the posterior $p_\theta(z\mid x_i)$
+- **Train the decoder** | rebuild $x_i$ from those codes
+:::
+
+::: keypoint
+Generating needs only the prior and the decoder.
+Training needs, for each design, ==the codes that could have made it== — the posterior.
+:::
+
+::: note
+The same need, in the language of the last slide: $\log p_\theta(x)$ averages $p_\theta(x\mid z)$ over every code, but only codes that explain $x$ contribute — the next widget counts how few they are. Lecture 3 filled in hidden variables the same way: infer them from what was observed, then learn. After training, the same posterior (approximated by the encoder) gives each design its coordinates, which G1 searches.
+:::
+
 ### Bayes' rule again — the evidence is an integral we cannot do
-Lecture 2's Bayes' rule, with the code $z$ as the unknown:
+So we need the posterior. Lecture 2's Bayes' rule gives it, with the code $z$ as the unknown:
 
 $$\underbrace{p_\theta(z\mid x)}_{\text{posterior: which code made }x} \;=\; \frac{p_\theta(x\mid z)\,p(z)}{\underbrace{\textstyle\int p_\theta(x\mid z')\,p(z')\,dz'}_{\text{evidence }p_\theta(x)\text{: what training needs}}}$$
 

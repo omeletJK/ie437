@@ -105,7 +105,7 @@ Plan after a second agent's review (same day; its factual claims were checked ag
 
 - 2026-10-26: the professor reversed "VAE/diffusion compressed" for Act 2 — it dropped the source's
   generative-model basics and both ELBO derivations. Act 2 is restored as a build-up from Lectures 1–3
-  (17 slides, deck 89; Session 1 now ends near slide 45). See
+  (18 slides, deck 90; Session 1 now ends near slide 46). See
   [build-on-what-they-know](build-on-what-they-know.md). Appendix positions shifted by 10, and both
   maps were refreshed by heading lookup.
 
