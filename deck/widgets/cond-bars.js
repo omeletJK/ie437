@@ -229,8 +229,10 @@ IE437.widget('cond-bars', function (host, opts) {
         'Same success model. But the generator now proposes the right heater <b>four times as often</b>: ' +
         '5 left, 20 right.',
         'Keep the rooms that succeed: <b>4</b> of the five left, <b>4</b> of the twenty right.',
-        'Four and four — half and half.<br>Right: proposed four times as often.<br>' +
-        'Left: succeeds four times as often.<br>==What you get is set by the prior and the success model together.=='
+        'Four and four — half and half.<br>' +
+        'Success favours the left heater 4×.<br>' +
+        'Proposals favour the right heater 4×.<br>' +
+        '==Conditioning reweights the proposals — it does not pick the best design.=='
       ],
       rare: [
         'A harder request: 22 °C in five minutes. The left heater manages it <b>5 times in 10</b>; the right one, ' +

@@ -732,7 +732,7 @@ Of the rooms that reach 22 °C, which heater is more common now?
 :::
 
 ::: note
-Numbers behind the picture: prior $(0.2,0.8)$, the same success model. Of 25 proposals, $5\times0.8=4$ left and $20\times0.2=4$ right are kept, so the conditional is $(0.5,0.5)$ — Bayes: $(0.2\times0.8,\;0.8\times0.2)=(0.16,0.16)$.
+Numbers behind the picture: prior $(0.2,0.8)$, the same success model. Of 25 proposals, $5\times0.8=4$ left and $20\times0.2=4$ right are kept, so the conditional is $(0.5,0.5)$ — Bayes: $(0.2\times0.8,\;0.8\times0.2)=(0.16,0.16)$. What to say: the same success model gave 4 : 1 on the previous slide and 4 : 4 here — only the generator changed. Conditioning reweights what the generator proposes; a design it rarely proposes stays rare. That is why CbAS refits the generator to the kept designs and repeats, on the next slide.
 :::
 
 ### CbAS — fit a generator to the conditional
@@ -744,26 +744,33 @@ Numbers behind the picture: prior $(0.2,0.8)$, the same success model. Of 25 pro
 - Why it matters | It showed refits chase a model's errors, and made the prior the brake. A standard baseline since.
 :::
 
-The target cannot be sampled directly — so fit a second generator $q(x\mid\phi)$ to it, averaging over the target:
-
-$$p\big(x\mid S,\theta^{(0)}\big) = \frac{P(S\mid x)\,p\big(x\mid\theta^{(0)}\big)}{P\big(S\mid\theta^{(0)}\big)},\qquad \phi^* = \argmin_\phi\ D_{\mathrm{KL}}\big(p(x\mid S,\theta^{(0)})\,\|\,q(x\mid\phi)\big)$$
-
-::: reveal
-**Derivation.** Expand the KL and drop what does not depend on $\phi$:
-
-$$D_{\mathrm{KL}} = -\E_{p(x\mid S,\theta^{(0)})}\big[\log q(x\mid\phi)\big]-H_0 = -\frac{1}{P(S\mid\theta^{(0)})}\,\E_{p(x\mid\theta^{(0)})}\big[P(S\mid x)\log q(x\mid\phi)\big]-H_0$$
-
-$$\Longrightarrow\qquad \phi^*=\hl{\argmax_\phi\ \E_{p(x\mid\theta^{(0)})}\big[P(S\mid x)\,\log q(x\mid\phi)\big]}$$
+::: cols c3
+::: col 1 · Propose
+Draw designs $x_i$ from the trained generator — the prior.
+:::
+::: col 2 · Weight
+Weight each by its chance of success, $P(S\mid x_i)$.
+:::
+::: col.accent 3 · Refit
+Fit a new generator $q(x\mid\phi)$ to the weighted designs.
+:::
 :::
 
-::: reveal
+**The objective** — Lecture 2's log-likelihood, weighted:
+
+$$\phi^* \;=\; \argmax_\phi\ \sum_{i=1}^N\ \underbrace{P(S\mid x_i)}_{\text{weight: will it succeed?}}\ \underbrace{\log q(x_i\mid\phi)}_{\text{log-likelihood}},\qquad x_i\sim\underbrace{p(x\mid\theta^{(0)})}_{\text{the prior}}$$
+
 ::: keypoint
-==Weighted maximum likelihood==: draw designs from the generator, weight each by how likely it is predicted to succeed, refit. Any generative model can be trained this way, and $q$ need not be of the prior's form.
-:::
+Each refit is ==maximum likelihood with weights== — any generative model can be trained this way.
+The new generator proposes the previous slide's $p(x\mid S)$ directly: nothing is thrown away.
 :::
 
 ::: note
-The prior is the trained generator $p(x\mid\theta^{(0)})$; the KL is averaged over the target — the KL slide's "cover the data" direction. $H_0=-\E_{p(x\mid S,\theta^{(0)})}[\log p(x\mid S,\theta^{(0)})]$ is constant in $\phi$. The paper builds on the same group's DbAS (Brookes & Listgarten, 2018) — CbAS without the prior. Design-Bench (Lecture 5) runs CbAS as a baseline on every task. Source alignment: Part 2 pp. 9–11.
+In the heater example: 25 proposals, weights 0.8 (left) and 0.2 (right), so the weighted counts are 4 and 4 — the refit generator proposes left and right half and half, the 4 : 4 of the previous slide.
+
+Why this objective (derivation, if asked). The target is $p(x\mid S)=P(S\mid x)\,p(x\mid\theta^{(0)})/P(S\mid\theta^{(0)})$. Fit $q$ to it with the KL averaged over the target — the KL slide's "cover the data" direction: $D_{\mathrm{KL}}\big(p(\cdot\mid S)\,\|\,q\big)=\text{const}-\E_{p(x\mid S)}[\log q(x\mid\phi)]$, where the constant is $-$the target's entropy and has no $\phi$ in it. Substitute the target: $\E_{p(x\mid S)}[\log q(x\mid\phi)]=\frac{1}{P(S\mid\theta^{(0)})}\,\E_{p(x\mid\theta^{(0)})}\big[P(S\mid x)\log q(x\mid\phi)\big]$. The factor $1/P(S\mid\theta^{(0)})$ does not depend on $\phi$ either, so minimising the KL is maximising $\E_{p(x\mid\theta^{(0)})}[P(S\mid x)\log q(x\mid\phi)]$; replace that average by $N$ draws from the prior and you have the objective on the slide. $q$ need not be of the prior's form.
+
+The paper builds on the same group's DbAS (Brookes & Listgarten, 2018) — CbAS without the prior. Design-Bench (Lecture 5) runs CbAS as a baseline on every task. Source alignment: Part 2 pp. 9–11.
 :::
 
 ### Why one shot fails — Lecture 3's rare cause, again
