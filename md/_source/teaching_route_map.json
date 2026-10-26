@@ -332,9 +332,9 @@
     "ch06_generative_design_optimization": {
       "previous_slides": 78,
       "previous_core_slides": 62,
-      "slides": 91,
-      "core_slides": 75,
-      "appendix_start": 76,
+      "slides": 92,
+      "core_slides": 76,
+      "appendix_start": 77,
       "first_topic_slide": 5,
       "widgets": [
         "forward-inverse",
@@ -363,8 +363,8 @@
         "kl-tilt",
         "manifold-search"
       ],
-      "worked_slide": 37,
-      "transfer_slide": 38,
+      "worked_slide": 38,
+      "transfer_slide": 39,
       "changed_slides": [
         2,
         3,
