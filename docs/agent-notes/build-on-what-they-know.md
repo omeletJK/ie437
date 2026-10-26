@@ -61,7 +61,7 @@ papers and cuts the foundations inverts the course's priorities.
 Related: [ch05-ch06-streams](ch05-ch06-streams.md), [simplify-confusing-slides](simplify-confusing-slides.md) (which is about a
 confusing slide, not about cutting foundations), [label-every-formula-block](label-every-formula-block.md).
 
-**Follow-up, same day.** The professor found that Jensen's inequality, placed straight after "Bayes' rule again", broke the flow. The deck had just said why the posterior is needed (the encoder approximates it). The next thing the students need is what training learns and what it optimises. A slide was added between the two: "What training optimises — θ is the goal, φ the helper". It covers:
+**Follow-up, same day.** The professor found that Jensen's inequality, placed straight after "Bayes' rule again", broke the flow. The deck had just said why the posterior is needed (the encoder approximates it). The next thing the students need is what training learns and what it optimises. A slide was added between the two, revised the same day to "What training is for — θ generates designs, φ reads them". It leads with the practical goals: θ decodes a prior code into a new design, and φ gives a design its code. Each goal becomes a target: max_θ Σ log p_θ(x_i), and min_φ KL(q_φ‖p_θ(z|x)). The ELBO is not named until view 1 defines it (the professor: present the goal first, then the ELBO as the objective that serves it). The first version. It covers:
 - the purpose: θ, the decoder, fitted by maximum likelihood;
 - the helper: φ, the encoder, the posterior approximated;
 - the exact objective: max over θ and φ of Σ ELBO, with ELBO = log p_θ(x) − KL(q_φ‖p_θ(z|x));

@@ -558,27 +558,17 @@ The source's "key differences with the VAE" (Part 1 p. 18): the latent has the d
 - Why it matters | It matched GANs' image quality and started the diffusion era — in images, proteins and molecules.
 :::
 
-Train the ladder's decoder: the ELBO with $T$ codes collapses to one squared error on the added noise (Backup 3).
-
-::: cols
-::: col Train — corrupt once, predict the noise
-$$x_t=\sqrt{\bar\alpha_t}\,x_0+\sqrt{1-\bar\alpha_t}\,\epsilon,\qquad L_{\mathrm{simple}}=\E\,\big\|\epsilon-\epsilon_\theta(x_t,t)\big\|^2$$
-
-Draw a clean design, corrupt it by a known amount, and ==predict the noise that was added== — a supervised problem at every noise level.
-:::
-::: col.accent Generate — start from noise, denoise
-$$x_{t-1}=\frac{1}{\sqrt{\alpha_t}}\Big(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\,\epsilon_\theta(x_t,t)\Big)+\sigma_t z$$
-
-Start from $x_T\sim\mathcal N(0,I)$, not from a training design; each step is ==a small denoising step==.
-:::
+::: widget gen-pictures {"mode":"diffuse"}
+Press → for training, then again for generating.
 :::
 
 ::: keypoint
-Denoising steps are steps of the algorithm, not physical time — and each one is a place where the sampler could be **steered**: Session 2 shows two ways.
+Training: corrupt a design by a known amount, and ask the network ==what noise was added==.
+Generating: start from pure noise, and ==remove a little noise at a time==.
 :::
 
 ::: note
-$\alpha_t=1-\beta_t$, $\bar\alpha_t=\prod_{j\le t}\alpha_j$, $z\sim\mathcal N(0,I)$ at stochastic steps and none at the last. The full variational derivation and its weights are Backups 2b and 3; a one-number training step is in Backup 3. Source alignment: Part 1 pp. 15–22, 47–63.
+The three tags, in the source's words (Part 1 p. 18, "key differences with the VAE"): the latent has the dimension of the data; the encoder is a predefined linear-Gaussian model with no parameters; $p(x_T)=\mathcal N(0,I)$. The formulas behind the picture. The recipe jumps to any step in one go: $x_t=\sqrt{\bar\alpha_t}\,x_0+\sqrt{1-\bar\alpha_t}\,\epsilon$. Training minimises $L_{\mathrm{simple}}=\E\,\|\epsilon-\epsilon_\theta(x_t,t)\|^2$ — the ELBO with $T$ codes, simplified (Backups 2b and 3). Each generating step is $x_{t-1}=\frac{1}{\sqrt{\alpha_t}}\big(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\big)+\sigma_t z$, with $\alpha_t=1-\beta_t$, $\bar\alpha_t=\prod_{j\le t}\alpha_j$. Denoising steps are steps of the algorithm, not physical time — and each one is a place where the sampler can be steered: Session 2 shows two ways. Source alignment: Part 1 pp. 15–22, 47–63; the picture redraws the forward/reverse chain of Ho, Jain & Abbeel (2020), Fig. 2.
 :::
 
 ### Check — turning the KL weight
