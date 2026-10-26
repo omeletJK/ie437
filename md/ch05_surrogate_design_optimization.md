@@ -36,7 +36,8 @@ questions:
 :::
 
 ::: keypoint
-The goal is unchanged — a good real design. What is gone is the chance to check one before it is returned.
+The goal is unchanged — a good real design.
+What is gone is the chance to check one before it is returned.
 :::
 
 ### Learning route — two sessions, one question
@@ -48,7 +49,9 @@ The goal is unchanged — a good real design. What is gone is the chance to chec
 | **2 · Other grounds for trust** | Uncertainty: estimate what the surrogate does not know and decide with it → system knowledge: give it structure or physics → compare the three |
 
 ::: keypoint
-Throughout, keep two things apart: **how well a model predicts**, and **how good a decision it makes** when an optimiser is pointed at it.
+Throughout, keep two things apart.
+How well a model **predicts**.
+How good a **decision** it makes when an optimiser is pointed at it.
 :::
 
 ### Lecture 4's loop, with one line deleted
@@ -138,7 +141,8 @@ Fit a neural network $f_\theta$ to $\mathcal D$ — this is the ==surrogate==, o
 
 ::: reveal
 ::: keypoint
-Step 1 can pass every supervised-learning check. What goes wrong is the interaction: Step 2 searches exactly where Step 1 was ==never checked==.
+Step 1 can pass every supervised-learning check.
+What goes wrong is the interaction: Step 2 searches exactly where Step 1 was ==never checked==.
 :::
 :::
 
@@ -148,6 +152,12 @@ Source alignment: Part 1 p. 20.
 
 ### What the benchmark asks for, and how it is scored
 {sub: the six Design-Bench tasks as used by NEMO, COMs and RoMA (2021)}
+
+::: paper
+- Why it is here | How offline-MBO methods are compared: a fixed dataset, and an oracle that scores the result.
+- What it is | A benchmark from Levine's group at Berkeley (Trabucco, Geng, Kumar & Levine), released in 2021, at ICML 2022.
+- Why it matters | The common yardstick of the field: COMs, NEMO, RoMA and Lecture 6's methods all report on these tasks.
+:::
 
 ::: table center
 | task | dimension | type | dataset size |
@@ -161,11 +171,11 @@ Source alignment: Part 1 p. 20.
 :::
 
 ::: small
-**Three things to keep apart.** The *offline data* $\mathcal D$ is all a method may use. The *candidates* — 128 designs in the papers of this lecture — are what it returns. The *oracle* scores them afterwards, for the benchmark only, and is never fed back: the physics simulator for the robot tasks, a model fitted to a larger held-out dataset for tasks such as Superconductor. The usual score, the best of the 128, is a benchmark number; deploying one design would still need a way to pick it without the oracle. HopperController has 3,200 designs in 5,126 dimensions: ==almost every direction the ascent can take was never checked against anything==.
+**Keep apart:** the *offline data* $\mathcal D$, the 128 *candidates* a method returns, and the *oracle* that scores them and is ==never fed back==.
 :::
 
 ::: note
-Source alignment: Part 2 p. 23 (task table). These are the 2021 versions of the tasks, the ones the COMs, NEMO and RoMA results use. The final benchmark (Trabucco, Geng, Kumar & Levine, ICML 2022, Table 1) revised them: Superconductor is 86-dimensional there, and GFP and MoleculeActivity were moved to its appendix as tasks not kept in the final suite.
+HopperController has 3,200 designs in 5,126 dimensions: almost every direction the ascent can take was never checked against anything. The oracle is the physics simulator for the robot tasks and a model fitted to a larger held-out dataset for tasks such as Superconductor. The usual score, the best of the 128, is a benchmark number; deploying one design would still need a way to pick it without the oracle. Source alignment: Part 2 p. 23 (task table). These are the 2021 versions of the tasks, the ones the COMs, NEMO and RoMA results use. The final benchmark (Trabucco, Geng, Kumar & Levine, ICML 2022, Table 1) revised them: Superconductor is 86-dimensional there, and GFP and MoleculeActivity were moved to its appendix as tasks not kept in the final suite.
 :::
 
 ::: note
@@ -223,7 +233,8 @@ A perturbation of size $0.007$, chosen by following a gradient, turns 57.7 % "pa
 Gradient ascent on $\hat f_\theta$ is the same computation aimed at a regression model: it moves the input in whatever direction raises the model's output fastest. In a high-dimensional space with little data, many of those directions lead to errors.
 
 ::: keypoint
-The optimiser does not look for errors. It looks for high predictions — and where there is no data, ==high predictions are often errors==.
+The optimiser does not look for errors.
+It looks for high predictions — and where there is no data, ==high predictions are often errors==.
 :::
 
 ::: note
@@ -248,7 +259,8 @@ How much the surrogate **over-rates** the design it picked. The optimiser's expl
 
 ::: reveal
 ::: keypoint
-Validation error is an average over the data. The decision depends on the error at two particular points — ==and the optimiser chooses one of them==.
+Validation error is an average over the data.
+The decision depends on the error at two particular points — ==and the optimiser chooses one of them==.
 :::
 :::
 
@@ -353,7 +365,8 @@ FGM {p}(AISTATS 2024) · Kennedy & O'Hagan — *Session 2*
 
 ::: reveal
 ::: keypoint
-All three try to shrink $B$; each brings its own assumptions and can cost something elsewhere — too much conservatism inflates $A$, as Session 1 will show. They are not rivals: an uncertainty penalty is itself conservative, and a structured model can be trained conservatively.
+All three try to shrink $B$, and each brings its own assumptions — too much conservatism inflates $A$, as Session 1 will show.
+They are not rivals: an uncertainty penalty is itself conservative, and a structured model can be trained conservatively.
 :::
 :::
 
@@ -372,6 +385,12 @@ Press → for Session 2's papers; click any paper for what it does, why we read 
 {sub: Conservative Objective Models · Trabucco, Kumar, Geng & Levine, ICML 2021}
 
 ::: qstrip
+:::
+
+::: paper
+- Why it is here | Session 1's deep dive: the first stream, ==conservatism== — do not over-rate what the optimiser will chase.
+- What it is | A Berkeley paper from Levine's group, carrying the conservatism of offline RL (Lecture 12's CQL) over to a design surrogate.
+- Why it matters | The standard conservative baseline on Design-Bench; PRIME and LCOMs reuse its loss.
 :::
 
 We want a model that ==does not over-rate the designs an optimiser would chase== — a small $B$. The obstacle is knowing which designs those are, and the answer is to generate them by running the attack we fear.
@@ -493,7 +512,8 @@ return x̂ = x_T
 
 ::: reveal
 ::: keypoint
-Training flattens the surrogate on a distribution of challenging designs near the data. The final search is deliberately slow and short, so that ==within its budget it does not get far from where conservatism was learned==.
+Training flattens the surrogate on a distribution of challenging designs near the data.
+The final search is deliberately slow and short, so that ==within its budget it does not get far from where conservatism was learned==.
 :::
 :::
 
@@ -544,7 +564,8 @@ Average return of the design after each ascent step, as the source deck shows it
 **COMs** climbs slowly and stays high over the 450 steps — as in the toy, where a flattened surrogate and a slow search keep the design near the data for that budget.
 
 ::: keypoint
-The penalty does not make the search smarter. It makes later steps ==stop being rewarded for leaving the data==.
+The penalty does not make the search smarter.
+It makes later steps ==stop being rewarded for leaving the data==.
 :::
 :::
 :::
@@ -568,15 +589,16 @@ The 2 × 2 of model and search, 450 steps from the best design in $D$: plain fit
 :::
 
 ### What conservatism promises, and what it does not
-{sub: a lower bound on average over the attacker's designs — not design by design}
 
 ::: widget coms-tabular
-Three designs, one value each; grey is how often the data sees it, red how often the attacker does. Press → to apply $\hat f=y-\alpha(\mu/d-1)$, and again for what follows.
+Grey: how often the data sees each design; red: how often the attacker does. Press → to apply $\hat f=y-\alpha(\mu/d-1)$.
 :::
 
 ::: reveal
 ::: keypoint
-Averaged over the attacker's designs the surrogate ==sits below the truth== — the paper's Proposition 1; averaged over the data it is unbiased. Design by design it can sit above, and it can pull the best design down: the cost $A$.
+Averaged over the attacker's designs, the surrogate ==sits below the truth==.
+Averaged over the data, it is unbiased.
+Design by design it can sit above, and it can pull the best design down: the cost $A$.
 :::
 :::
 
@@ -637,7 +659,9 @@ A policy exploits $Q$ at ==actions outside the data==.
 
 ::: reveal
 ::: keypoint
-Fit the data · push down what the optimiser would chase · hold up what the data contains. The problem and the shape of the objective are shared; the targets, the optimiser and the guarantees are not.
+Fit the data · push down what the optimiser would chase · hold up what the data contains.
+The problem and the shape of the objective are shared.
+The targets, the optimiser and the guarantees are not.
 :::
 :::
 
@@ -659,16 +683,20 @@ Conservatism ==trades $B$ for $A$==. Too little and the optimiser exploits the e
 ### PRIME — a conservative surrogate for hardware design
 {sub: Kumar, Yazdanbakhsh, Hashemi, Swersky & Levine · ICLR 2022}
 
+::: paper
+- Why it is here | Conservatism leaving the benchmark: COMs' idea, used to design real hardware.
+- What it is | A Google Research–Berkeley paper on designing hardware accelerators from a log of past simulations.
+- Why it matters | Using only the log, it matched simulator-driven search on two tasks and beat it on two (figure).
+:::
+
 $$\theta^*=\argmin_\theta\;\E_{\mathcal D}\big[(f_\theta(x)-y)^2\big]-\alpha\,\E_{x^-\sim\mathrm{Opt}(f_\theta)}\big[f_\theta(x^-)\big]-\beta\,\E_{x'\sim\mathcal D_{\text{infeasible}}}\big[f_\theta(x')\big]$$
 
 ::: cols wide-r
 ::: col
 Here $f$ is a **latency**, which is minimised — so conservative means pushing the predicted latency *up* at the designs the optimiser finds, and at designs the log records as **infeasible**. Training over many target applications lets one model serve unseen ones.
-
-The search uses only a log of past simulations; the baseline calls the simulator as it searches.
 :::
 ::: col
-::: figure prime-latency | 520
+::: figure prime-latency | 450
 Latency of the best accelerator found (lower is better). {p}(Kumar et al., 2022)
 :::
 :::
@@ -681,6 +709,12 @@ Source alignment: Part 2 pp. 54–55. The source writes PRIME's loss without COM
 ### RoMA — make the surrogate smooth where the optimiser stands
 {sub: Yu, Ahn, Song & Shin · NeurIPS 2021}
 {math: compact}
+
+::: paper
+- Why it is here | A second way to stop over-estimates: change the surrogate's ==shape==, not its level — the comparison for COMs.
+- What it is | A KAIST paper (Shin's group): train the network to be smooth, then adapt it locally at each candidate.
+- Why it matters | Same year and benchmark as COMs, so the two ideas — lower the level, remove the slope — can be set side by side.
+:::
 
 ::: cols wide-l
 ::: col
@@ -707,7 +741,9 @@ Flat at the candidate (the gradient term) without moving its prediction there (t
 :::
 
 ::: keypoint
-Adjacent to COMs rather than the same idea: COMs lowers the scores the optimiser would reach; RoMA removes the slopes that would carry it there.
+Adjacent to COMs rather than the same idea.
+COMs ==lowers the scores== the optimiser would reach.
+RoMA ==removes the slopes== that would carry it there.
 :::
 
 ::: note
@@ -729,7 +765,9 @@ $B$, the optimiser's exploit — on the designs the training attacker visits, wi
 :::
 
 ::: keypoint
-COMs controls the optimiser's optimism. Session 2 asks two questions it cannot answer: can we tell **which predictions are actually uncertain**, and can **knowledge of the system** make the model trustworthy to begin with?
+COMs controls the optimiser's optimism. Session 2 asks two questions it cannot answer.
+Can we tell **which predictions are actually uncertain**?
+Can **knowledge of the system** make the model trustworthy to begin with?
 :::
 
 ## Act 3 — uncertainty: decide with what the model does not know
@@ -753,7 +791,9 @@ It lowered the scores the optimiser would reach — $B$ shrank — on the design
 :::
 
 ::: keypoint
-Two answers today. **Uncertainty:** estimate what the surrogate does not know, and decide with it. **System knowledge:** give the surrogate grounds to extrapolate that the data alone cannot.
+Two answers today.
+**Uncertainty:** estimate what the surrogate does not know, and decide with it.
+**System knowledge:** give the surrogate grounds to extrapolate that the data alone cannot.
 :::
 
 ### The papers of Session 2
@@ -776,7 +816,8 @@ $$\hat x=\argmax_x\;\mu(x)-\kappa\,\sigma(x)$$
 :::
 
 ::: keypoint
-The same two numbers, $\mu$ and $\sigma$. What changed is whether the loop closes — whether uncertainty can still be **reduced** by looking.
+The same two numbers, $\mu$ and $\sigma$.
+What changed is whether the loop closes — whether uncertainty can still be **reduced** by looking.
 :::
 
 ### One model, two signs
@@ -786,6 +827,12 @@ A model of the same fifteen points whose mean extrapolates optimistically — li
 
 ### Where $\sigma$ comes from for a neural surrogate — Deep Ensembles
 {sub: Lakshminarayanan, Pritzel & Blundell · NeurIPS 2017}
+
+::: paper
+- Why it is here | The uncertainty stream needs $\sigma$ from a neural network; this is the simplest way to get one.
+- What it is | A DeepMind paper: train several networks from different starts and read their disagreement.
+- Why it matters | The standard baseline for predictive uncertainty in deep learning — the most robust method in the shift study two slides on.
+:::
 
 A GP gives $\sigma$ in closed form. A neural network does not. The simplest widely used answer: train several networks and read their disagreement.
 
@@ -812,14 +859,21 @@ Ten members, each fitted to a resample of the same fifteen points. Their spread 
 ### NEMO — uncertainty as how easily the model could be talked into any answer
 {sub: Fu & Levine · ICLR 2021}
 
-::: figure nemo-cnml | 640
-**Left:** we want $p(y\mid x)$ at a design far from the data. **Middle:** pretend each possible label $y$ was observed there, and refit. **Right:** normalise across all those refits. {p}(Fu & Levine, 2021, Fig. 1)
+::: paper
+- Why it is here | An uncertainty built for offline MBO: how far could one extra point move the model?
+- What it is | A Berkeley paper (Levine's group): an NML estimate of uncertainty, updated while it optimises.
+- Why it matters | Read for the idea: it brings NML into offline MBO, at the cost of keeping $K$ models.
+:::
+
+::: figure nemo-cnml | 460
+Want $p(y\mid x)$ far from the data · pretend each label was observed there and refit · normalise. {p}(Fu & Levine, 2021)
 :::
 
 $$p_{\text{NML}}(y\mid x)=\frac{\overbrace{p\big(y\mid x;\hat\theta_{\mathcal D\cup(x,y)}\big)}^{\text{pretend this label was measured here and refit — how likely is it now?}}}{\underbrace{\textstyle\int p\big(y'\mid x;\hat\theta_{\mathcal D\cup(x,y')}\big)\,dy'}_{\text{the same score for every label — so they sum to one}}}$$
 
 ::: keypoint
-==How easily could one extra point drag the model to any answer?== Far from the data, easily: every label passes its own test, the scores come out equal, and the distribution is flat — *I don't know*. Inside the data, the neighbours hold the model: only labels near the trend pass, and it is narrow.
+Far from the data, ==one extra point can drag the model to any answer==: the distribution is flat — *I don't know*.
+Inside the data, the neighbours hold the model: only labels near the trend pass, and it is narrow.
 :::
 
 ::: note
@@ -854,6 +908,12 @@ Source alignment: Part 2 p. 21.
 
 ### How far can an uncertainty estimate be trusted?
 {sub: Ovadia et al., "Can you trust your model's uncertainty?" · NeurIPS 2019}
+
+::: paper
+- Why it is here | A check on the bet of the last slides: does an uncertainty estimate stay reliable away from the data?
+- What it is | A large Google study, not an MBO paper: many uncertainty methods tested as the data shift.
+- Why it matters | The standard reference for that question: calibration degrades under shift, and ensembles degrade least.
+:::
 
 ::: cols
 ::: col What they found
@@ -910,18 +970,26 @@ Agreement is evidence only where the members could have disagreed. Off the data,
 :::
 
 ::: keypoint
-Each step down adds information the dataset does not contain — and each is an assumption. Right knowledge makes extrapolation trustworthy; ==wrong knowledge biases every prediction==.
+Each step down adds information the dataset does not contain — and each is an assumption.
+Right knowledge makes extrapolation trustworthy.
+==Wrong knowledge biases every prediction.==
 :::
 
 ### Structure — count what it takes to see the space
 {sub: functional graphical models · Grudzien Kuba, Uehara, Abbeel & Levine, AISTATS 2024}
 
+::: paper
+- Why it is here | Knowledge as ==structure==: if the function splits into parts, the data need cover each part, not the whole space.
+- What it is | A Berkeley paper (Abbeel's and Levine's groups) on offline optimisation with functional graphical models.
+- Why it matters | A regret bound that depends on how well each part is covered — a theoretical yes to slide 7's question.
+:::
+
 ::: widget fgm-stitch {"mode":"graph"}
-Cut each variable into ten cells. To see every cell of the whole space takes $10^4$ designs; if the function splits into parts, it is enough to see every cell of each part — press →. A count of coverage, not the paper's theorem.
+Ten cells per variable: seeing the whole space takes $10^4$ designs; if the function splits into parts, seeing each part is enough — press →.
 :::
 
 ::: note
-The paper's result is a regret bound for offline optimisation that depends on how well the data cover each clique's marginal, rather than the joint; it also gives an algorithm that infers the structure from data, over the inputs or over a latent representation. The 10,000-versus-210 count is the intuition, not the bound.
+The paper's result is a regret bound for offline optimisation that depends on how well the data cover each clique's marginal, rather than the joint; it also gives an algorithm that infers the structure from data, over the inputs or over a latent representation. The 10,000-versus-210 count is a count of coverage — the intuition, not the paper's theorem or bound.
 :::
 
 ### Structure — a design better than any in the data
@@ -936,20 +1004,32 @@ FGM's question is exactly slide 7's: can offline optimisation beat the best desi
 ### A simulator — Kennedy & O'Hagan
 {sub: Bayesian calibration of computer models · JRSS-B 2001}
 
+::: paper
+- Why it is here | Knowledge as a ==simulator==: data correct the physics.
+- What it is | Statistics: calibrate a simulator; a GP learns its error.
+- Why it matters | The standard framework for calibrating simulators.
+:::
+
 ::: widget ko-discrepancy
 The same fifteen points and the same hidden function as Session 1. Press → twice.
 :::
 
 ::: keypoint
-The prediction relaxes to the simulator, not to a straight line, because the GP's error term returns to its zero prior mean away from the data. That is an assumption, not a guarantee: ==where the simulator is wrong and there is no data, so is the model==.
+Away from the data the model falls back on the simulator — ==wrong where the simulator is wrong==.
 :::
 
 ::: note
-Kennedy & O'Hagan is a calibration paper — it fits the simulator's parameters $\theta$ and the discrepancy jointly; it is not itself an MBO algorithm. Here $\theta$ is fixed and only the discrepancy is learned. Lecture 4's GP plays the role of $\delta(x)$.
+Why it relaxes to the simulator, not to a straight line: the GP's error term returns to its zero prior mean away from the data. Kennedy & O'Hagan is a calibration paper — it fits the simulator's parameters $\theta$ and the discrepancy jointly; it is not itself an MBO algorithm. Here $\theta$ is fixed and only the discrepancy is learned. Lecture 4's GP plays the role of $\delta(x)$.
 :::
 
 ### The equations — physics-informed surrogates
 {sub: hPINN · Lu, Pestourie, Yao, Wang, Verdugo & Johnson · SIAM J. Sci. Comput. 2021}
+
+::: paper
+- Why it is here | Knowledge as ==equations==: the strongest assumption — the governing physics is known.
+- What it is | An MIT paper (Johnson's group): physics-informed networks with hard constraints, for inverse design in optics and fluids.
+- Why it matters | It carried PINNs {p}(Raissi et al., 2019) from solving equations to designing with them.
+:::
 
 ::: flow | | 
 - **Design** | the shape or material layout being optimised
@@ -1024,7 +1104,9 @@ Is the design possible at all — a molecule, a foldable protein? — ==Lecture 
 :::
 
 ::: keypoint
-OOD and invalid are different problems: a design outside the data can be valid and excellent, and one next to the data can break a constraint. This lecture gave predictions grounds for trust, each under a stated assumption; it did not make the search space valid or give a batch of different good candidates. Lecture 6 learns ==the distribution of plausible designs== and lets a performance model in at four places — and every tool of this lecture can still be used there.
+==OOD and invalid are different problems.==
+A design outside the data can be valid and excellent; one next to the data can break a constraint.
+This lecture gave predictions grounds for trust. Lecture 6 learns ==the distribution of plausible designs==, and every tool of this lecture can still be used there.
 :::
 
 ### Where we are — a forward model, then a search
@@ -1216,6 +1298,12 @@ Naive gradient ascent is not useless — it has the lowest aggregate score among
 
 ### LCOMs — a conservative surrogate searched in a learned space
 {sub: Latent Conservative Objective Models · Qi et al., ICLR 2023 workshop on ML for materials}
+
+::: paper
+- Why it is here | COMs inside a generator's latent space — the bridge to Lecture 6.
+- What it is | A workshop paper on crystal design: a CD-VAE encoder plus a COMs-style surrogate of lattice energy.
+- Why it matters | Read for the idea, not as an established result: a generator supplies the coordinates, a conservative surrogate searches.
+:::
 
 Chemical space is not a vector space, so a **CD-VAE encoder** $\phi(x,c)$ maps a crystal into one, and a conservative surrogate of the lattice energy is optimised ==inside that latent space==, then decoded:
 

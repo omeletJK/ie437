@@ -43,19 +43,21 @@ Lecture 6 **proposes** designs: a generator says where to look.
 :::
 
 ### Learning route — two sessions, four places to intervene
-**Bring:** the surrogate, the decision bound and how an optimiser exploits it (Lecture 5); Bayes' rule, the evidence and maximum likelihood (Lecture 2); hidden variables, sampling and weighting (Lecture 3); convexity and gradient-based optimisation (Lecture 1).
-
-| Session | What it does |
-|---|---|
-| **1 · Generate, then search or refit** | What surrogates leave → two models, two jobs → generative models built from Bayes and optimisation: maximum likelihood, hidden factors, the ELBO derived two ways, the VAE, diffusion → G1: search in learned coordinates → G2: refit the generating distribution, with CbAS worked through |
-| **2 · Ask, and steer** | G3: condition on the performance you want — CVAE, MINs, DDOM → a KL-regularised view of candidate distributions → G4: steer the sampling process → the four side by side, with Lecture 5's tools in each |
+::: flow
+- **Build a generator** | Session 1 · from Bayes and optimisation
+- **G1 · coordinates** | Session 1 · search its codes
+- **G2 · distribution** | Session 1 · refit it
+- **G3 · condition** | Session 2 · ask it for a score
+- **G4 · sampler** | Session 2 · steer its sampling
+:::
 
 ::: keypoint
-Keep three questions apart throughout — Lecture 5 closed on them.
-Performance: **is it good?**
-Validity: **is it possible?**
-Reliability: **can the prediction be trusted?**
-Each method buys one and can spend another.
+First build a generator.
+Then let the performance signal in — ==at four places==.
+:::
+
+::: note
+Bring: the surrogate, the decision bound and how an optimiser exploits it (Lecture 5); Bayes' rule, the evidence and maximum likelihood (Lecture 2); hidden variables, sampling and weighting (Lecture 3); convexity and gradient-based optimisation (Lecture 1). Session 1: what surrogates leave → two models, two jobs → the ELBO two ways, the VAE, diffusion → G1 → G2 with CbAS worked through. Session 2: G3 (CVAE, MINs, DDOM) → the KL-regularised view → G4 → the four side by side. Keep Lecture 5's three questions apart throughout — performance (is it good?), validity (is it possible?), reliability (can the prediction be trusted?); each method buys one and can spend another. The closing slide returns to them.
 :::
 
 ## Act 1 — what surrogates still leave
@@ -184,16 +186,16 @@ Source alignment: Part 1 p. 6. The source lists six families that do this — VA
 $$D_{\mathrm{KL}}(a\,\|\,b)=\E_{x\sim a}\Big[\log\frac{a(x)}{b(x)}\Big]\;\ge 0,\qquad =0 \text{ only when } a=b.$$
 
 ::: widget kl-direction
-Press → twice: average with the data's eyes, then with the model's.
+Here $a$ is the data and $b$ the model. Press → to spread the model over both modes.
 :::
 
 ::: keypoint
-Fitting a model averages over the data — ==cover the data==.
-Keeping a search near the generator averages over the search — ==stay where the generator lives==.
+The KL from the data to a model charges ==wherever the data lives and the model does not==.
+Fitting a model removes that charge: the model must cover the data.
 :::
 
 ::: note
-Not met before in this course. It is finite only if $b>0$ wherever $a>0$ — the widget's last step. Fitting: $D_{\mathrm{KL}}(p_{\text{data}}\|p_\theta)$ (next slide) and CbAS's fit. Staying near: $D_{\mathrm{KL}}(q\|p_{\text{gen}})$, the tilt of Session 2. The VAE's code term, $D_{\mathrm{KL}}(q_\phi(z\mid x)\|p(z))$, is the second direction applied to codes. KL is not a distance: it is not symmetric and has no triangle inequality.
+Not met before in this course. Only this direction is needed now: $D_{\mathrm{KL}}(p_{\text{data}}\|p_\theta)$, the next slide's maximum likelihood, and later CbAS's fit. The red area is the integrand $p\log(p/q)$; the bar is its integral (6.43 nats on one mode, under 0.01 on both). KL is not symmetric: averaged over the model instead, it would charge only where the model goes and the data does not — that direction appears once, in Session 2's tilt, and is explained there. The VAE's code term $D_{\mathrm{KL}}(q_\phi(z\mid x)\|p(z))$ is that second direction applied to codes; on the VAE slides it only needs to be a nonnegative penalty.
 :::
 
 ### Fitting the model — minimising the KL is Lecture 2's maximum likelihood
@@ -1072,7 +1074,9 @@ Asking past the data is extrapolation in $y$. MINs bounds it with a forward mode
 :::
 
 ### A KL-regularised view of candidate distributions
-The best average estimate $\hat f$ that stays close to the generator $p$ — the KL averaged over the search:
+The best average estimate $\hat f$ that stays close to the generator $p$.
+
+This KL is turned around — averaged over the search $q$, not the data: it charges $q$ wherever $q$ goes and $p$ does not, so ==$q$ must stay where the generator lives==.
 
 $$q^\star=\argmax_{q\,\ll\,p}\ \E_q\big[\hat f(x)\big]-\frac1\beta\,D_{\mathrm{KL}}(q\,\|\,p)\qquad\Longrightarrow\qquad \hl{q^\star(x)=\frac{p(x)\,e^{\beta\hat f(x)}}{Z_\beta}}\quad (\beta>0,\ Z_\beta<\infty)$$
 

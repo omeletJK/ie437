@@ -19,3 +19,12 @@ Merging two headings into one shifts every later slide: renumber `slide_at_revie
 `teaching_route_map.json` (do not JSON round-trip that file — its tail is ASCII-escaped and a
 round-trip rewrites 190 lines). Related: [examples-as-pictures](examples-as-pictures.md),
 [one-figure-format-per-story](one-figure-format-per-story.md).
+
+**A widget shows one change and one readout (2026-10-26).** The Ch 6 KL slide stepped through both
+directions, KL(p‖q) = 6.43 and KL(q‖p) = 0.69. The professor asked whether both directions and the
+numbers were needed, and said it was unclear what kept changing and what it explained. Nothing in
+Act 2 used the second direction or either number. The widget now changes one thing, the model, from
+one mode to both. It reads one thing: the red area p·log(p/q) and a bar for its total, with no
+number. The second direction is introduced on the tilt slide, the one place it is used. Before
+building a stepped widget, name the one quantity that changes and the one reading the student
+should take away. Show a concept only on the slide where an argument needs it.

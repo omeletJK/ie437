@@ -30,6 +30,7 @@ Ch 6 has 17 cards. They cover VAE, DDPM, Gómez-Bombarelli, CbAS, GFlowNet, Boot
 - On a full slide, move detail to the presenter note and keep the figure. Fold a slide's intro sentence into the card's first cell, or into the note.
 - State the significance honestly. A workshop paper is "read for the idea". The lab's own papers get their reported result, not praise.
 - Check every factual claim (award, benchmark result, affiliation) before it goes on a slide. Run `node tests/course-review.mjs chNN`.
-- Ch 5 and the RL chapters (8–12) introduce papers too and have no cards yet.
+- Ch 5 got its 11 cards on 2026-10-26 (Design-Bench, COMs, PRIME, RoMA, Deep Ensembles, NEMO, Ovadia, FGM, Kennedy & O'Hagan, hPINN, LCOMs). PRIME's card first said it beat simulator-driven search outright; its own figure shows two ties and two wins — say what the figure shows.
+- The RL chapters (8–12) introduce papers too and have no cards yet.
 
 Related: [papers-serve-the-flow](papers-serve-the-flow.md), [build-on-what-they-know](build-on-what-they-know.md), [ch05-ch06-streams](ch05-ch06-streams.md).
