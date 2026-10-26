@@ -195,7 +195,7 @@ Fitting a model removes that charge: the model must cover the data.
 :::
 
 ::: note
-Not met before in this course. Only this direction is needed now: $D_{\mathrm{KL}}(p_{\text{data}}\|p_\theta)$, the next slide's maximum likelihood, and later CbAS's fit. The red area is the integrand $p\log(p/q)$; the bar is its integral (6.43 nats on one mode, under 0.01 on both). KL is not symmetric: averaged over the model instead, it would charge only where the model goes and the data does not — that direction appears once, in Session 2's tilt, and is explained there. The VAE's code term $D_{\mathrm{KL}}(q_\phi(z\mid x)\|p(z))$ is that second direction applied to codes; on the VAE slides it only needs to be a nonnegative penalty.
+Not met before in this course. Only this direction is needed now: $D_{\mathrm{KL}}(p_{\text{data}}\|p_\theta)$, the next slide's maximum likelihood, and later CbAS's fit. The bar is the integral of $p\log(p/q)$, large only where $p$ lives and $q$ does not (6.43 nats on one mode, under 0.01 on both). KL is not symmetric: averaged over the model instead, it would charge only where the model goes and the data does not — that direction appears once, in Session 2's tilt, and is explained there. The VAE's code term $D_{\mathrm{KL}}(q_\phi(z\mid x)\|p(z))$ is that second direction applied to codes; on the VAE slides it only needs to be a nonnegative penalty.
 :::
 
 ### Fitting the model — minimising the KL is Lecture 2's maximum likelihood

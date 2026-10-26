@@ -1,15 +1,16 @@
 /* ============================================================
    widget: kl-direction                             (Chapter 6, Act 2)
    What the KL from the data to a model charges for, and what fitting
-   does to it. One thing changes — the model — and one thing is read —
-   the red area.
+   does to it. Only two curves are drawn, the data and the model; one
+   thing changes — the model — and one thing is read — the bar.
         KL(p || q) = E_p[ log p(x) / q(x) ]
    p: the data, two modes, 0.5 N(-1.6, 0.55^2) + 0.5 N(1.6, 0.55^2)
    Walked by the deck's ->:
      0  q sits on one mode, N(1.6, 0.6^2). The integrand p log(p/q) is
-        large where p lives and q does not: the missed mode (6.43 nats)
+        large where p lives and q does not: the missed mode (6.43 nats),
+        marked by a label only — the integrand itself is not drawn
      1  q spreads over both modes, 0.5 N(-1.6, 0.6^2) + 0.5 N(1.6, 0.6^2):
-        the red area is gone (under 0.01 nats)
+        the bar empties (under 0.01 nats)
    The bar is the integral, scaled to step 0. The second direction,
    KL(q || p), is introduced where it is used: the tilt of Session 2.
    Verified on a 4001-point grid over [-6, 6].
@@ -46,17 +47,15 @@ IE437.widget('kl-direction', function (host, opts) {
     var q = Q[st];
     while (sv.firstChild) sv.removeChild(sv.firstChild);
     E('line', { x1: L, x2: CW - Rm, y1: PY(0), y2: PY(0), stroke: INK, 'stroke-opacity': .3 }, sv);
-    /* the integrand p log(p/q), scaled to share the axis */
-    E('path', { d: path(function (x) { return Math.max(0, p(x) * Math.log(p(x) / q(x))) / 9; }, true), fill: RED, 'fill-opacity': .22, stroke: RED, 'stroke-width': 1.4 }, sv);
-    E('path', { d: path(p, true), fill: SLATE, 'fill-opacity': .18, stroke: SLATE, 'stroke-width': 1.6 }, sv);
+    E('path', { d: path(p), fill: 'none', stroke: SLATE, 'stroke-width': 2.4 }, sv);
     E('path', { d: path(q), fill: 'none', stroke: BLUE, 'stroke-width': 2.4 }, sv);
-    E('text', { x: PX(1.6), y: PY(0.1), 'text-anchor': 'middle', 'font-size': 10.5, 'font-weight': 700, fill: SLATE, text: 'p — the data' }, sv);
+    E('text', { x: PX(-2.45), y: PY(0.16), 'text-anchor': 'end', 'font-size': 10.5, 'font-weight': 700, fill: SLATE, text: 'p — the data' }, sv);
     E('text', { x: PX(2.55), y: PY(q(2.2)) - 4, 'font-size': 10.5, 'font-weight': 700, fill: BLUE, text: 'q — the model' }, sv);
-    if (st === 0) E('text', { x: PX(-1.6), y: PY(Math.min(YM, p(-1.6) * Math.log(p(-1.6) / q(-1.6)) / 9)) - 8, 'text-anchor': 'middle', 'font-size': 10.5, 'font-weight': 700, fill: RED, text: 'data here, model absent: charged' }, sv);
+    if (st === 0) E('text', { x: PX(-1.6), y: PY(p(-1.6)) - 10, 'text-anchor': 'middle', 'font-size': 10.5, 'font-weight': 700, fill: RED, text: 'the model misses this mode' }, sv);
     E('text', { x: CW / 2, y: CH - 8, 'text-anchor': 'middle', 'font-size': 9.5, 'font-style': 'italic', fill: INK, 'fill-opacity': .45, text: 'design x' }, sv);
     var w = Math.max(1.5, 100 * K[st] / K[0]);
     host.querySelector('[data-bar]').innerHTML =
-      '<div style="margin-bottom:6px"><b style="color:' + RED + '">KL(data ‖ model)</b> — the red area, added up</div>' +
+      '<div style="margin-bottom:6px"><b style="color:' + RED + '">KL(data ‖ model)</b> — how much of the data the model misses</div>' +
       '<div style="height:12px;background:rgba(22,24,29,.06);border-radius:2px"><div style="height:12px;width:' + w.toFixed(1) +
       '%;background:' + RED + ';opacity:.75;border-radius:2px;transition:width .4s"></div></div>';
     host.querySelector('[data-note]').innerHTML = [

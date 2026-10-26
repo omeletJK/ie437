@@ -24,7 +24,9 @@ round-trip rewrites 190 lines). Related: [examples-as-pictures](examples-as-pict
 directions, KL(p‖q) = 6.43 and KL(q‖p) = 0.69. The professor asked whether both directions and the
 numbers were needed, and said it was unclear what kept changing and what it explained. Nothing in
 Act 2 used the second direction or either number. The widget now changes one thing, the model, from
-one mode to both. It reads one thing: the red area p·log(p/q) and a bar for its total, with no
-number. The second direction is introduced on the tilt slide, the one place it is used. Before
+one mode to both. It reads one thing: a bar for KL(data‖model), with no number. A first version also
+shaded the integrand p·log(p/q) in red. The professor found that cluttered. A figure draws only
+the distributions being compared, as plain lines. A short label marks the point ("the model
+misses this mode"). The second direction is introduced on the tilt slide, the one place it is used. Before
 building a stepped widget, name the one quantity that changes and the one reading the student
 should take away. Show a concept only on the slide where an argument needs it.
