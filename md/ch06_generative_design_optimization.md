@@ -285,9 +285,39 @@ The way out: pick a simple $q_\phi(z\mid x)$ and ==tune it to be as close to the
 Why the integral is hard here. Lecture 2's coin evidence $\int p(D\mid\theta)\,p(\theta)\,d\theta$ had a closed form, because a Beta prior and a Binomial likelihood fit together (conjugacy). Lecture 3's evidence was a sum over every assignment of the hidden variables — exponential in how many there are. Here $z$ is continuous and $p_\theta(x\mid z)$ is a network: no conjugacy, and no grid fine enough. Drawing codes from the prior is Lecture 3's likelihood weighting with a rare cause: in the toy, about 1 draw in 4 explains $x$ (likelihood above 10% of its peak, $|z|\in(0.96,1.75)$, prior mass 0.256); if ten factors each had to land that well, about 1 in 800 000. "Variational" means choosing the best member of a family of distributions — here Gaussians whose mean and spread a network computes from $x$. Two derivations follow and reach the same objective: one starts from the evidence, the other from the posterior. Source alignment: Part 1 pp. 8–9.
 :::
 
+### What training optimises — $\theta$ is the goal, $\phi$ the helper
+{math: compact}
+
+::: cols
+::: col The goal — $\theta$, the decoder $p_\theta(x\mid z)$
+The generator we want. Fit it by Lecture 2's maximum likelihood, $\max_\theta\sum_i\log p_\theta(x_i)$ — ==blocked by the integral==.
+:::
+::: col.accent The helper — $\phi$, the encoder $q_\phi(z\mid x)$
+==The posterior, approximated by a network==: for each design, the codes that could have made it. Training needs it; G1 later uses it as coordinates.
+:::
+:::
+
+**The objective** — one number per design, summed over the data, maximised over both:
+
+$$\max_{\theta,\phi}\ \sum_{i=1}^N \mathrm{ELBO}(\theta,\phi;x_i),\qquad \mathrm{ELBO}(\theta,\phi;x)\;=\;\underbrace{\log p_\theta(x)}_{\text{what }\theta\text{ should raise}}\;-\;\underbrace{D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p_\theta(z\mid x)\big)}_{\text{the encoder's error, }\ge 0}$$
+
+::: small
+Neither term can be computed alone; their difference can. The next slides derive it twice and reach its computable form.
+:::
+
+::: keypoint
+Over $\phi$, raising the ELBO shrinks the encoder's error.
+Over $\theta$, it raises the likelihood.
+==Both at once==: every step in $\theta$ moves the posterior that $\phi$ must follow.
+:::
+
+::: note
+This answers "what do we learn, and what do we optimise". The purpose is $\theta$: a decoder that turns prior codes into plausible designs. $\phi$ is needed only because the true posterior $p_\theta(z\mid x)$ cannot be computed; the encoder is that posterior, approximated. The ELBO is a lower bound on $\log p_\theta(x)$ because the KL is never negative, with equality exactly when $q_\phi$ is the posterior. Why not train $\theta$ alone? With a poor $q$ the bound is loose, and raising it over $\theta$ also pushes the model's posterior toward $q$ rather than only raising the likelihood. So $q$ must keep up. One could alternate — fit $\phi$ with $\theta$ fixed, then $\theta$ with $\phi$ fixed, as EM does when the posterior is exact. The VAE instead takes one gradient step on both per batch, with one encoder shared by every design. The computable form, derived on the next slides: $\mathrm{ELBO}=\E_{q_\phi}[\log p_\theta(x\mid z)]-D_{\mathrm{KL}}(q_\phi(z\mid x)\,\|\,p(z))$.
+:::
+
 ### Jensen's inequality — the log of an average is at least the average of the logs
 ::: widget elbo-views {"mode":"jensen"}
-Press → for the chord.
+To show the ELBO is a floor under $\log p_\theta(x)$, view 1 needs one fact about the log. Press → for the chord.
 :::
 
 $$\underbrace{\log \E[w]}_{\text{log of the average}} \;\ge\; \underbrace{\E[\log w]}_{\text{average of the logs}} \qquad \text{for any positive random } w\text{, because the log is concave}$$

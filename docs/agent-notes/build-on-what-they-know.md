@@ -60,3 +60,11 @@ papers and cuts the foundations inverts the course's priorities.
 
 Related: [ch05-ch06-streams](ch05-ch06-streams.md), [simplify-confusing-slides](simplify-confusing-slides.md) (which is about a
 confusing slide, not about cutting foundations), [label-every-formula-block](label-every-formula-block.md).
+
+**Follow-up, same day.** The professor found that Jensen's inequality, placed straight after "Bayes' rule again", broke the flow. The deck had just said why the posterior is needed (the encoder approximates it). The next thing the students need is what training learns and what it optimises. A slide was added between the two: "What training optimises — θ is the goal, φ the helper". It covers:
+- the purpose: θ, the decoder, fitted by maximum likelihood;
+- the helper: φ, the encoder, the posterior approximated;
+- the exact objective: max over θ and φ of Σ ELBO, with ELBO = log p_θ(x) − KL(q_φ‖p_θ(z|x));
+- why both are trained at once.
+
+Jensen now follows it, as the tool view 1 needs. Ch 6 has 91 slides; both maps were refreshed by heading lookup. **How to apply:** before a derivation, say what is being learned and what objective is being optimised; a tool lemma comes after that, not before.
