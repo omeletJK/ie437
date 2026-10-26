@@ -105,9 +105,17 @@ IE437.widget('gen-pictures', function (host, opts) {
   var SHAPE2 = [
     '0111110', '0100010', '0100010', '0111110', '0000010', '0000010', '0111110'
   ];
+  /* a 12 x 12 design: a ring with a spoke */
+  var RING = (function () {
+    var rows = [], r, q;
+    for (r = 0; r < 12; r++) { var row = ''; for (q = 0; q < 12; q++) {
+      var d = Math.hypot(r - 5.5, q - 5.5); row += (d > 2.6 && d < 5.1) || (q >= 5 && q <= 6 && r >= 6 && r <= 9) ? '1' : '0'; }
+      rows.push(row); }
+    return rows;
+  })();
   function thumb(s, x, y, size, opt) {
     opt = opt || {};
-    var g = E('g', {}, s), n = 7, c = size / n, rng = IE437.rng(opt.seed || 3), sh = opt.shape || SHAPE;
+    var g = E('g', {}, s), sh0 = opt.shape || SHAPE, n = sh0.length, c = size / n, rng = IE437.rng(opt.seed || 3), sh = opt.shape || SHAPE;
     E('rect', { x: x - 1, y: y - 1, width: size + 2, height: size + 2, fill: '#fff', stroke: INK, 'stroke-opacity': .35 }, g);
     for (var r = 0; r < n; r++) for (var q = 0; q < n; q++) {
       var v = sh[r][q] === '1' ? 1 : 0;
@@ -427,11 +435,66 @@ IE437.widget('gen-pictures', function (host, opts) {
     });
   }
 
+  /* ---------- pp. 15–22: diffusion, at a high level ---------- */
+  var difSvg, dst = 0;
+  function drawDiffuse() {
+    var s = difSvg;
+    while (s.childNodes.length > 1) s.removeChild(s.lastChild);
+    var TAGS = ['① a VAE with T small steps', '② every code x_t is the size of the design', '③ the encoder is a fixed noise recipe — nothing to learn'];
+    var tx0 = 20;
+    TAGS.forEach(function (t, k) {
+      var w = [196, 298, 372][k];
+      E('rect', { x: tx0, y: 8, width: w, height: 28, rx: 14, fill: k === 2 ? '#EEF2F7' : PANEL, stroke: INK, 'stroke-opacity': .25 }, s);
+      tx(s, tx0 + w / 2, 27, t, { 'text-anchor': 'middle', 'font-size': 12.5, 'font-weight': 700 });
+      tx0 += w + 14;
+    });
+    var NS = [0, 0.3, 0.5, 0.7, null, 1], NM = ['x_0', 'x_1', 'x_2', 'x_3', '', 'x_T'], SZ = 62, Y = 84;
+    var XS = NS.map(function (_, j) { return 60 + j * 150; });
+    NS.forEach(function (nz, j) {
+      if (nz === null) { tx(s, XS[j] + SZ / 2, Y + SZ / 2 + 6, '…', { 'text-anchor': 'middle', 'font-size': 24 }); return; }
+      thumb(s, XS[j], Y, SZ, { shape: RING, noise: nz, seed: 40 + j });
+      tx(s, XS[j] + SZ / 2, Y + SZ + 18, NM[j], { 'text-anchor': 'middle', 'font-size': 13, 'font-style': 'italic' });
+    });
+    tx(s, XS[0] + SZ / 2, Y - 10, dst >= 2 ? 'a new design' : 'a design', { 'text-anchor': 'middle', 'font-size': 11, fill: SLATE });
+    tx(s, XS[5] + SZ / 2, Y - 10, 'pure noise', { 'text-anchor': 'middle', 'font-size': 11, fill: SLATE });
+    for (var j = 0; j + 1 < XS.length; j++) {
+      var a = XS[j] + SZ + 6, b = XS[j + 1] - 6;
+      curve(s, 'M' + a + ' ' + (Y + SZ - 6) + 'Q' + ((a + b) / 2) + ' ' + (Y + SZ + 14) + ' ' + b + ' ' + (Y + SZ - 6), SLATE, { 'stroke-width': 1.5 });
+      if (dst >= 2) curve(s, 'M' + b + ' ' + (Y + 6) + 'Q' + ((a + b) / 2) + ' ' + (Y - 14) + ' ' + a + ' ' + (Y + 6), AMBER, { 'stroke-width': 2.2 });
+    }
+    tx(s, (XS[0] + XS[5] + SZ) / 2, Y + SZ + 36, 'forward: add a little Gaussian noise each step — a fixed recipe', { 'text-anchor': 'middle', 'font-size': 12, fill: SLATE });
+    if (dst >= 2) tx(s, (XS[0] + XS[5] + SZ) / 2, Y - 26, 'generate: start from pure noise, and the learned network removes a little noise, T times', { 'text-anchor': 'middle', 'font-size': 12, fill: AMBER, 'font-weight': 700 });
+    if (dst >= 1) {
+      /* training: one jump to a random step, then guess the noise */
+      var y2 = Y + SZ + 50;
+      box(s, 40, y2 - 4, 900, 66, '#FFF8EE', AMBER);
+      thumb(s, 56, y2 + 6, 46, { shape: RING, noise: 0, seed: 40 });
+      arrow(s, 108, y2 + 29, 168, y2 + 29, INK);
+      tx(s, 138, y2 + 20, 'recipe', { 'text-anchor': 'middle', 'font-size': 10.5, fill: SLATE });
+      thumb(s, 174, y2 + 6, 46, { shape: RING, noise: 0.5, seed: 42 });
+      tx(s, 197, y2 + 64, 'x_t', { 'text-anchor': 'middle', 'font-size': 11, 'font-style': 'italic' });
+      arrow(s, 226, y2 + 29, 262, y2 + 29, INK);
+      trap(s, 266, y2 + 2, 92, 54, false, '#FDF0DC', AMBER);
+      tx(s, 312, y2 + 34, 'denoiser', { 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700 });
+      arrow(s, 360, y2 + 29, 396, y2 + 29, INK);
+      tx(s, 470, y2 + 24, 'its guess of the noise', { 'text-anchor': 'middle', 'font-size': 12 });
+      tx(s, 470, y2 + 42, 'vs. the noise really added', { 'text-anchor': 'middle', 'font-size': 12 });
+      tx(s, 560, y2 + 24, 'training = make this squared error small,', { 'font-size': 12.5, 'font-weight': 700, fill: AMBER });
+      tx(s, 560, y2 + 42, 'at every noise level — a supervised problem', { 'font-size': 12.5, 'font-weight': 700, fill: AMBER });
+    }
+  }
+
   if (MODE === 'goal') drawGoal();
   else if (MODE === 'latent') drawLatent();
   else if (MODE === 'arch') drawArch();
   else if (MODE === 'reparam') drawReparam();
   else if (MODE === 'terms') drawTerms(opts.k || 1);
+  else if (MODE === 'diffuse') {
+    difSvg = svg(960, 262);
+    var dshow = function (k) { dst = Math.max(0, Math.min(2, k)); drawDiffuse(); };
+    dshow(0);
+    return { steps: 2, step: dshow, reset: function () { dshow(0); }, finish: function () { dshow(2); } };
+  }
   else if (MODE === 'ladder') {
     ladderSvg = svg(980, 270);
     var show = function (k) { st = Math.max(0, Math.min(2, k)); drawLadder(); };
