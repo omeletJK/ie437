@@ -103,5 +103,11 @@ Plan after a second agent's review (same day; its factual claims were checked ag
   outside μ, whose end is 5.84). Say: flattened surrogate + short, slow search. COMs widgets now plot only
   against the design axis (no search-step axes) — the professor found mixed axes confusing.
 
+- 2026-10-26: the professor reversed "VAE/diffusion compressed" for Act 2 — it dropped the source's
+  generative-model basics and both ELBO derivations. Act 2 is restored as a build-up from Lectures 1–3
+  (17 slides, deck 89; Session 1 now ends near slide 45). See
+  [build-on-what-they-know](build-on-what-they-know.md). Appendix positions shifted by 10, and both
+  maps were refreshed by heading lookup.
+
 **How to apply:** each stream gets idea → mechanism → papers → what it cannot do. See
 [papers-serve-the-flow](papers-serve-the-flow.md) and [ch04-frontier-lab-papers](ch04-frontier-lab-papers.md).

@@ -155,11 +155,28 @@ code{font:500 .92em/1.5 var(--mono);background:rgba(22,24,29,.06);
 .blk.red{border-color:rgba(214,69,69,.42)}
 .blk.red > .bt{color:var(--red);border-bottom-color:rgba(214,69,69,.22)}
 
+/* the paper card — why a paper is here, what it is, why it matters — set as one
+   recessed band of three cells under the title; inside a column it stacks */
+.pcard{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--panel);flex:none}
+.pcard .pc{padding:10px 16px 11px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.pcard .pc:first-child{border-left:0}
+.pcard .pl{font:600 10.5px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.pcard .pt{font:400 15px/1.5 var(--sans);font-size:calc(15px * var(--ts));color:var(--ink2)}
+.pcard .pt strong{color:var(--ink)}
+.col .pcard{grid-auto-flow:row}
+.col .pcard .pc{border-left:0;border-top:1px solid var(--line);padding:8px 14px 9px}
+.col .pcard .pc:first-child{border-top:0}
+.dark .pcard{background:var(--wpanel)}
+.dark .pcard .pc{border-color:var(--wline)}
+.dark .pcard .pl{color:var(--wink3)} .dark .pcard .pt{color:var(--wink2)}
+
 /* the closing line of a slide — when it is the last block, it pins to the
    bottom of the canvas, which is what stops short slides floating mid-air */
 .thesis{border-top:1px solid var(--line);padding-top:16px;
   font:500 19px/1.55 var(--sans);letter-spacing:-.2px;color:var(--ink);font-size:calc(19px * var(--ts));}
 .thesis strong{font-weight:700}
+.thesis .tl{display:block}
+.thesis .tl+.tl{margin-top:calc(6px * var(--ts))}
 .dark .thesis{border-color:var(--wline);color:var(--wink)}
 .thesis.serif{font-family:var(--serif);font-size:calc(21px * var(--ts));font-weight:400}
 

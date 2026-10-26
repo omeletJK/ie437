@@ -2777,7 +2777,7 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup — the inverse map, as the source motivates it",
-              "slide_at_review": 74,
+              "slide_at_review": 85,
               "placement_at_review": "appendix"
             },
             {
@@ -2788,8 +2788,8 @@
             },
             {
               "deck": "ch06_generative_design_optimization",
-              "heading": "The goal — a distribution concentrated on plausible designs",
-              "slide_at_review": 12,
+              "heading": "What a generative model learns",
+              "slide_at_review": 11,
               "placement_at_review": "main"
             }
           ],
@@ -2801,40 +2801,100 @@
             14
           ],
           "topic": "VI·VAE·conditional VAE",
-          "treatment": "유지·보충",
+          "treatment": "복원·보충",
           "targets": [
             {
               "deck": "ch06_generative_design_optimization",
-              "heading": "VAE — encode, decode, and an objective with two terms",
+              "heading": "Fitting the model — minimising the KL is Lecture 2's maximum likelihood",
               "slide_at_review": 13,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
-              "heading": "Turning the dial",
+              "heading": "Hidden factors — the latent-variable model",
               "slide_at_review": 14,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
+              "heading": "Bayes' rule again — the evidence is an integral we cannot do",
+              "slide_at_review": 15,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Jensen's inequality — the log of an average is at least the average of the logs",
+              "slide_at_review": 16,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "ELBO, view 1 — bound the evidence from below",
+              "slide_at_review": 17,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "ELBO, view 2 — measure how far $q$ is from the true posterior",
+              "slide_at_review": 18,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "The gap, drawn — move $q$, and the evidence stays put",
+              "slide_at_review": 19,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Two views, one objective",
+              "slide_at_review": 20,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "VAE — encode, decode, and an objective with two terms",
+              "slide_at_review": 21,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Reparameterisation — a sample you can differentiate",
+              "slide_at_review": 22,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Reading the two terms — move, shrink, pull back",
+              "slide_at_review": 23,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
+              "heading": "Turning the dial",
+              "slide_at_review": 24,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
               "heading": "Condition the encoder and the decoder — the inverse map is built",
-              "slide_at_review": 38,
+              "slide_at_review": 49,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup — one VAE calculation",
-              "slide_at_review": 68,
+              "slide_at_review": 79,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
-              "heading": "Backup 1 — the ELBO, derived, and the reparameterisation trick",
-              "slide_at_review": 67,
+              "heading": "Backup 1 — why a KL weight of 1 fills the prior exactly",
+              "slide_at_review": 78,
               "placement_at_review": "appendix"
             }
           ],
-          "note": "scalar KL 계산 추가. encoder는 학습 이후에도 encoding에 사용 가능."
+          "note": "2026-10-26 복원: 학부 수준으로 Lecture 1–3에서 쌓아 올림. p.7 KL=MLE, p.8 잠재변수(그림 재작성), p.9 ELBO evidence 관점(Jensen, 본문 유도), p.10 optimisation 관점(posterior KL, 두 봉우리 posterior 위젯), p.9 박스(두 관점 요약), p.11–12 VAE 구조와 reparameterisation(그림 재작성), p.13 3패널. scalar KL 계산은 부록."
         },
         {
           "pages": [
@@ -2846,26 +2906,32 @@
           "targets": [
             {
               "deck": "ch06_generative_design_optimization",
+              "heading": "From the VAE to diffusion — stack the codes, fix the encoder",
+              "slide_at_review": 25,
+              "placement_at_review": "main"
+            },
+            {
+              "deck": "ch06_generative_design_optimization",
               "heading": "Diffusion — learn the noise, then remove it step by step",
-              "slide_at_review": 15,
+              "slide_at_review": 26,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 2 — the four families of generative models",
-              "slide_at_review": 69,
+              "slide_at_review": 80,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 2b — diffusion as a hierarchical VAE",
-              "slide_at_review": 70,
+              "slide_at_review": 81,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 3 — the DDPM objective collapses to one squared error",
-              "slide_at_review": 71,
+              "slide_at_review": 82,
               "placement_at_review": "appendix"
             }
           ],
@@ -2882,7 +2948,7 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
-              "slide_at_review": 72,
+              "slide_at_review": 83,
               "placement_at_review": "appendix"
             }
           ],
@@ -2899,7 +2965,7 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
-              "slide_at_review": 72,
+              "slide_at_review": 83,
               "placement_at_review": "appendix"
             }
           ],
@@ -2916,19 +2982,19 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "G4 — use performance information to steer the sampler",
-              "slide_at_review": 50,
+              "slide_at_review": 61,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup — guidance, with and without a classifier",
-              "slide_at_review": 73,
+              "slide_at_review": 84,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Classifier-free guidance — push a conditional model toward its condition",
-              "slide_at_review": 42,
+              "slide_at_review": 53,
               "placement_at_review": "main"
             }
           ],
@@ -2945,13 +3011,13 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 2 — the four families of generative models",
-              "slide_at_review": 69,
+              "slide_at_review": 80,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
-              "slide_at_review": 72,
+              "slide_at_review": 83,
               "placement_at_review": "appendix"
             }
           ],
@@ -2968,19 +3034,19 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 2b — diffusion as a hierarchical VAE",
-              "slide_at_review": 70,
+              "slide_at_review": 81,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 3 — the DDPM objective collapses to one squared error",
-              "slide_at_review": 71,
+              "slide_at_review": 82,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 4 — score matching, Langevin dynamics, and the SDE that unifies them",
-              "slide_at_review": 72,
+              "slide_at_review": 83,
               "placement_at_review": "appendix"
             }
           ],
@@ -3027,43 +3093,43 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "G2 — condition the generator on success",
-              "slide_at_review": 23,
+              "slide_at_review": 34,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "CbAS — fit a generator to the conditional",
-              "slide_at_review": 26,
+              "slide_at_review": 37,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Why one shot fails — Lecture 3's rare cause, again",
-              "slide_at_review": 27,
+              "slide_at_review": 38,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Why the importance ratio belongs in the weight",
-              "slide_at_review": 28,
+              "slide_at_review": 39,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "One shot, then the ladder",
-              "slide_at_review": 29,
+              "slide_at_review": 40,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "What CbAS does on a real design problem",
-              "slide_at_review": 30,
+              "slide_at_review": 41,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 5 — MINs and CbAS, in full",
-              "slide_at_review": 75,
+              "slide_at_review": 86,
               "placement_at_review": "appendix"
             }
           ],
@@ -3080,7 +3146,7 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup — the inverse map, as the source motivates it",
-              "slide_at_review": 74,
+              "slide_at_review": 85,
               "placement_at_review": "appendix"
             },
             {
@@ -3092,31 +3158,31 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "G3 — ask the inverse map for a score",
-              "slide_at_review": 39,
+              "slide_at_review": 50,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "An inverse map returns designs; the forward map's arg-max did not",
-              "slide_at_review": 40,
+              "slide_at_review": 51,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "How far past the data can you ask?",
-              "slide_at_review": 41,
+              "slide_at_review": 52,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "What MINs does on real design problems",
-              "slide_at_review": 76,
+              "slide_at_review": 87,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Backup 5 — MINs and CbAS, in full",
-              "slide_at_review": 75,
+              "slide_at_review": 86,
               "placement_at_review": "appendix"
             }
           ],
@@ -3133,13 +3199,13 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "DDOM — a diffusion model as the inverse map",
-              "slide_at_review": 43,
+              "slide_at_review": 54,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "DDOM and BootGen — the reported numbers",
-              "slide_at_review": 77,
+              "slide_at_review": 88,
               "placement_at_review": "appendix"
             }
           ],
@@ -3156,19 +3222,19 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Two more ways to move the distribution — GFlowNet and BootGen",
-              "slide_at_review": 31,
+              "slide_at_review": 42,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "DDOM and BootGen — the reported numbers",
-              "slide_at_review": 77,
+              "slide_at_review": 88,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "BootGen — generated labels do not become new measurements",
-              "slide_at_review": 78,
+              "slide_at_review": 89,
               "placement_at_review": "appendix"
             }
           ],
@@ -3185,13 +3251,13 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Reading guide — Session 1 papers: generative models and G1",
-              "slide_at_review": 64,
+              "slide_at_review": 75,
               "placement_at_review": "appendix"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "Reading guide, continued — Session 2 papers: condition and sampler",
-              "slide_at_review": 66,
+              "slide_at_review": 77,
               "placement_at_review": "appendix"
             }
           ],

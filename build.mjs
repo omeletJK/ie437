@@ -137,8 +137,12 @@ function renderNode(n, ctx) {
     case 'small':
       return '<p class="small">' + mdInline(rawText(n)) + '</p>';
 
-    case 'keypoint':
-      return '<div class="thesis ' + cls + '">' + mdInline(rawText(n).replace(/\n+/g, ' ')) + '</div>';
+    case 'keypoint': {
+      /* one source line, one line on the slide: contrasted ideas each get a line of their own */
+      const lines = rawText(n).split(/\n+/).map(s => s.trim()).filter(Boolean);
+      const body = lines.length > 1 ? lines.map(s => '<span class="tl">' + mdInline(s) + '</span>').join('') : mdInline(lines.join(''));
+      return '<div class="thesis ' + cls + '">' + body + '</div>';
+    }
 
     case 'block': {
       let title = n.arg, note = '';
@@ -147,6 +151,18 @@ function renderNode(n, ctx) {
       return '<div class="blk ' + cls + '">' +
         (title ? '<div class="bt">' + mdInline(title) + note + '</div>' : '') +
         '<div class="bb">' + inner() + '</div></div>';
+    }
+
+    /* the paper card, on the slide that introduces a paper: one `- Label | text` line per cell —
+       why the lecture reads it, what kind of paper it is, why it matters */
+    case 'paper': {
+      const rows = rawText(n).split('\n').map(l => l.replace(/^\s*[-*]\s+/, '').trim()).filter(Boolean);
+      return '<div class="pcard ' + cls + '">' + rows.map(r => {
+        const i = r.indexOf('|');
+        const lbl = i < 0 ? '' : r.slice(0, i).trim(), txt = i < 0 ? r : r.slice(i + 1).trim();
+        return '<div class="pc">' + (lbl ? '<span class="pl">' + mdInline(lbl) + '</span>' : '') +
+          '<span class="pt">' + mdInline(txt) + '</span></div>';
+      }).join('') + '</div>';
     }
 
     case 'cols':

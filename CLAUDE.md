@@ -31,7 +31,7 @@ docs/agent-notes/         the authoring decisions and the professor's slide feed
 ## Read next, in this order
 
 1. `README.md` — how the build works, posting a notice, assignment materials, publishing.
-2. `docs/agent-notes/README.md` — the index of decisions. The seven *feedback* notes say how the
+2. `docs/agent-notes/README.md` — the index of decisions. The ten *feedback* notes say how the
    professor wants slides to teach; they override your own taste.
 3. `md/_SCHEMA.md`, then `md/_AGENT_BRIEF.md` and `md/_CHAIN.md` when you work on a chapter.
 
@@ -50,9 +50,10 @@ docs/agent-notes/         the authoring decisions and the professor's slide feed
   throwing assertion, so restructuring the widget-registry section of `deck.js` breaks the landing
   page build loudly — that is intended.
 - Slides: English, British spelling, prose over bullet fragments, no exclamation marks. A slide is
-  a picture plus one key sentence; algebra goes to an appendix slide and numbers to the presenter
-  note. Label every formula block with what it is and where it is used. Related slides share one
-  figure format. Cite a paper only when it carries a step of the argument. All of this is spelled
+  a picture plus one key sentence; contrasted ideas go on separate lines; algebra goes to an
+  appendix slide and numbers to the presenter note. Label every formula block with what it is and where it is used. Related slides share one
+  figure format. Cite a paper only when it carries a step of the argument, and give the slide that
+  introduces it a `::: paper` card: why it is here, what it is, why it matters. All of this is spelled
   out with its history in `docs/agent-notes/`.
 - `.gitignore` trap: a trailing comment on a pattern line becomes part of the pattern and silently
   ignores nothing. Comments go on their own line.

@@ -103,8 +103,13 @@ Blocks open with `::: name [argument]` and close with a bare `:::`. They nest.
 ::: note              presenter note; never rendered on the slide
 ::: lede              the intro line under the title
 ::: small             de-emphasised paragraph (the \footnotesize asides)
-::: keypoint          the one-line thesis; pins to the bottom rule when it ends the slide
+::: keypoint          the thesis; pins to the bottom rule when it ends the slide. Each source line
+                      is its own line on the slide: contrasted ideas go on separate lines
 ::: block Title | note     a beamer block; `.accent` and `.red` variants
+::: paper             the paper card, on the slide that introduces a paper: one `- Label | text` line
+                      per cell — `Why it is here`, `What it is`, `Why it matters`. A band of three cells
+                      under the title; inside a `::: col` the cells stack. Keep each cell to two lines
+                      (about 95 characters) and put the title, authors and venue in the slide's `sub:`
 ::: cols c2           column layout: c2 | c3 | wide-l | wide-r
 :::   ::: col Heading     one column; `.accent` colours the heading
 ::: center            centre the contents
@@ -297,7 +302,7 @@ Currently available:
 | Ch 3 | `factor-count` · `explaining-away` · `inference-cost` · `influence-diagram` |
 | Ch 4 | `gp-posterior` · `acquisition-zoo` · `acq-optimisers` (inner argmax: surface / grad / direct / cma) · `ucb-heater` (one UCB choice, stepped) · `bo-run` · `constrained-ei` (EI × PF vs plain EI, stepped) · `mobo-hypervolume` (Pareto front / HV & HVI / PHVI / EHVI / HVPI, stepped) · `bo-frontier` (three walls: stream map and lab thread / kernel choice / dimension / inducing points) · `explore-regret` |
 | Ch 5 | `two-failures` · `surrogate-exploit` (run / bound) · `offline-heater` (thread / try, stepped) · `conservative-coms` (term ×3 — the loss built one term at a time / dial — trust-region search at every α / optimiser — the 2 × 2 of model and search, stepped) · `lookahead-brake` (what Algorithm 2 climbs: says − 0.9 × promises, on a sketch; stepped) · `coms-tabular` (stepped) · `mbo-papers` (the chapter's paper map, clickable; `start: 1` opens on Session 2; `set` picks the chapter) · `lcb-flip` (UCB vs LCB on one GP) · `ensemble-alarm` (the κ rule on a bootstrapped ensemble) · `nml-explain` (the NML formula step by step: pretend and refit, score, normalise, decide; query-x slider) · `fgm-stitch` (graph / stitch) · `ko-discrepancy` (simulator + GP discrepancy) |
-| Ch 6 | `forward-inverse` · `kl-direction` (the two KL directions, stepped) · `latent-beta` · `mbo-papers` (`set: "ch06"` — generators and G1–G4; solid = builds on, dashed = compared; grey tags = not strictly offline) · `manifold-search` (g1: search the plane or the code, stepped / g4: guided sampling on a thin valid set, `s` slider) · `cond-bars` (heater / try / ratio, stepped; abc kept) · `cbas-ladder` (prior → one shot → ladder, stepped) · `condition-shift` · `kl-tilt` (q ∝ p·e^{β·estimate}; β slider, → switches the estimate to μ − 2σ) |
+| Ch 6 | `forward-inverse` · `gen-pictures` (source figures redrawn: goal / latent / arch / reparam / terms `k` 1–3 / ladder, stepped) · `kl-direction` (the two KL directions, stepped) · `elbo-views` (jensen, stepped / prior: draws from the prior against p(x|z), stepped / gap: q against a two-peaked posterior, sliders) · `latent-beta` · `mbo-papers` (`set: "ch06"` — generators and G1–G4; solid = builds on, dashed = compared; grey tags = not strictly offline) · `manifold-search` (g1: search the plane or the code, stepped / g4: guided sampling on a thin valid set, `s` slider) · `cond-bars` (heater / try / ratio, stepped; abc kept) · `cbas-ladder` (prior → one shot → ladder, stepped) · `condition-shift` · `kl-tilt` (q ∝ p·e^{β·estimate}; β slider, → switches the estimate to μ − 2σ) |
 | Ch 7 | `value-propagation` · `dp-schedules` · `discount-dial` · `contraction-rate` |
 | Ch 8 | `mc-vs-td` · `gpi-explore` · `cliff-walk` · `deadly-triad` |
 | Ch 9 | `control-grid` · `dt-to-hjb` · `lqr-riccati` · `pontryagin` |

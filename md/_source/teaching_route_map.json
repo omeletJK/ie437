@@ -330,18 +330,30 @@
       ]
     },
     "ch06_generative_design_optimization": {
-      "previous_slides": 67,
-      "previous_core_slides": 54,
-      "slides": 78,
-      "core_slides": 62,
-      "appendix_start": 63,
+      "previous_slides": 78,
+      "previous_core_slides": 62,
+      "slides": 89,
+      "core_slides": 73,
+      "appendix_start": 74,
       "first_topic_slide": 5,
       "widgets": [
         "forward-inverse",
+        "gen-pictures",
         "kl-direction",
+        "gen-pictures",
+        "elbo-views",
+        "elbo-views",
+        "elbo-views",
+        "gen-pictures",
+        "gen-pictures",
+        "gen-pictures",
+        "gen-pictures",
+        "gen-pictures",
         "latent-beta",
+        "gen-pictures",
         "mbo-papers",
         "manifold-search",
+        "cond-bars",
         "cond-bars",
         "cond-bars",
         "cond-bars",
@@ -351,8 +363,8 @@
         "kl-tilt",
         "manifold-search"
       ],
-      "worked_slide": 24,
-      "transfer_slide": 25,
+      "worked_slide": 35,
+      "transfer_slide": 36,
       "changed_slides": [
         2,
         3,
@@ -417,10 +429,10 @@
         62
       ],
       "moved_to_appendix": [
-        68,
-        69,
-        72,
-        74
+        79,
+        80,
+        83,
+        85
       ]
     },
     "ch07_mdp_dp": {
@@ -743,8 +755,8 @@
         "reason": "Merged repeated orientation into the named teaching slide; original source topics remain traceable."
       },
       "Act 3 \u2014 the VAE": {
-        "target": "Act 2 \u2014 generative models, compressed",
-        "reason": "2026-10-11 rewrite: VAE and diffusion compressed into one act; Acts 3\u20134 are now the four intervention points G1\u2013G4."
+        "target": "Act 2 \u2014 generative models, built from Bayes and optimisation",
+        "reason": "2026-10-11 rewrite put VAE and diffusion in one act; 2026-10-26 restored its build-up from Lectures 1\u20133 (maximum likelihood, hidden factors, the ELBO derived two ways). Acts 3\u20134 are the four intervention points G1\u2013G4."
       }
     },
     "ch07_mdp_dp": {

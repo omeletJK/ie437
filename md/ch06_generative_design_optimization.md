@@ -31,25 +31,31 @@ questions:
 ::: table center
 |   | Lecture 4 · *Observe* | Lecture 5 · *Trust* | **Lecture 6 · *Generate*** |
 |---|---|---|---|
-| the question | which experiment to run next | on what evidence to judge a design no one has measured | ==which designs to propose, and how to steer that toward good ones== |
-| the model | a GP of $f$ | a performance model $\hat f$, trusted with care | ==a generator of plausible designs==, plus a performance model |
-| the decision | query the acquisition's arg-max | return the surrogate's arg-max, carefully | search, refit, condition or steer the generator |
+| the question | which experiment to run next | how to judge an unmeasured design | ==which designs to propose== |
+| the model | a GP of $f$ | a performance model $\hat f$ | ==a generator of plausible designs==, plus $\hat f$ |
+| the decision | query the acquisition's arg-max | return the surrogate's arg-max, carefully | search, refit, condition or steer |
 :::
 
 ::: keypoint
-Lecture 5 gave the performance model grounds for trust. This lecture adds a model of **where to look**. ==A generator structures the search; it does not create evidence about performance== — that still comes from the data, and from Lecture 5's tools.
+Lecture 5 **judges** a design: a performance model, trusted with care.
+Lecture 6 **proposes** designs: a generator says where to look.
+==Proposing is not judging== — evidence about performance still comes from the data.
 :::
 
 ### Learning route — two sessions, four places to intervene
-**Bring:** the surrogate, the decision bound and how an optimiser exploits it (Lecture 5); Bayes' rule and likelihood (Lecture 2); sampling and weighting (Lecture 3).
+**Bring:** the surrogate, the decision bound and how an optimiser exploits it (Lecture 5); Bayes' rule, the evidence and maximum likelihood (Lecture 2); hidden variables, sampling and weighting (Lecture 3); convexity and gradient-based optimisation (Lecture 1).
 
 | Session | What it does |
 |---|---|
-| **1 · Generate, then search or refit** | What surrogates leave → two models, two jobs → KL, VAE and diffusion as tools → G1: search in learned coordinates → G2: refit the generating distribution, with CbAS worked through |
+| **1 · Generate, then search or refit** | What surrogates leave → two models, two jobs → generative models built from Bayes and optimisation: maximum likelihood, hidden factors, the ELBO derived two ways, the VAE, diffusion → G1: search in learned coordinates → G2: refit the generating distribution, with CbAS worked through |
 | **2 · Ask, and steer** | G3: condition on the performance you want — CVAE, MINs, DDOM → a KL-regularised view of candidate distributions → G4: steer the sampling process → the four side by side, with Lecture 5's tools in each |
 
 ::: keypoint
-Keep three questions apart throughout — Lecture 5 closed on them: **is it good** (performance), **is it possible** (validity), **can the prediction be trusted** (reliability). Each method buys one and can spend another.
+Keep three questions apart throughout — Lecture 5 closed on them.
+Performance: **is it good?**
+Validity: **is it possible?**
+Reliability: **can the prediction be trusted?**
+Each method buys one and can spend another.
 :::
 
 ## Act 1 — what surrogates still leave
@@ -146,17 +152,35 @@ A generator is not an optimiser: ==every generative optimiser needs a performanc
 Many different designs can score the same $y$. A model trained to regress $x$ from $y$ under a squared loss returns the **average** of those designs — very often not a valid design at all. That is why the answer has to be a generative model that samples, rather than a regressor that predicts.
 :::
 
-## Act 2 — generative models, compressed
+## Act 2 — generative models, built from Bayes and optimisation
 {short: ACT 2, num: Session 1 · Act 2}
 
-**Q2.** Before steering a generator toward good designs, you need one that produces designs at all — and a way to say how close two distributions are.
+**Q2.** Before steering a generator toward good designs, you need one that produces designs at all. Everything in this act is built from tools you already have: Bayes' rule and maximum likelihood (Lecture 2), hidden variables (Lecture 3), and optimisation (Lecture 1).
 
-### Comparing two distributions — the KL divergence
+### What a generative model learns
 {q: 2}
 
 ::: qstrip
 :::
 
+::: block The goal
+Train $p_\theta(x)$ to match the data distribution $p_{\text{data}}(x)$, given only samples $\{x_i\}_{i=1}^N\sim p_{\text{data}}$.
+:::
+
+::: widget gen-pictures {"mode":"goal"}
+Simple noise goes in; a network turns it into a design. Training pulls the model's distribution (green) onto the data's (blue) — ==where the data lives, and in what shape==.
+:::
+
+::: keypoint
+Once trained, a draw from $p_\theta$ is a new design that resembles the data — no optimiser is needed to produce it.
+To train it we need two things: a number for how far apart two distributions are, and a way to make it small.
+:::
+
+::: note
+Source alignment: Part 1 p. 6. The source lists six families that do this — VAEs, autoregressive models, normalising flows, energy-based models, GANs and diffusion; Backup 2 compares four. This act builds the VAE from Lectures 1–3, then diffusion from the VAE. "Resembles the data" is not "valid": the next slides return to that.
+:::
+
+### Comparing two distributions — the KL divergence
 $$D_{\mathrm{KL}}(a\,\|\,b)=\E_{x\sim a}\Big[\log\frac{a(x)}{b(x)}\Big]\;\ge 0,\qquad =0 \text{ only when } a=b.$$
 
 ::: widget kl-direction
@@ -164,50 +188,263 @@ Press → twice: average with the data's eyes, then with the model's.
 :::
 
 ::: keypoint
-This lecture uses both directions: fitting a model averages over the data — ==cover the data==; keeping a search near the generator averages over the search — ==stay where the generator lives==.
+Fitting a model averages over the data — ==cover the data==.
+Keeping a search near the generator averages over the search — ==stay where the generator lives==.
 :::
 
 ::: note
 Not met before in this course. It is finite only if $b>0$ wherever $a>0$ — the widget's last step. Fitting: $D_{\mathrm{KL}}(p_{\text{data}}\|p_\theta)$ (next slide) and CbAS's fit. Staying near: $D_{\mathrm{KL}}(q\|p_{\text{gen}})$, the tilt of Session 2. The VAE's code term, $D_{\mathrm{KL}}(q_\phi(z\mid x)\|p(z))$, is the second direction applied to codes. KL is not a distance: it is not symmetric and has no triangle inequality.
 :::
 
-### The goal — a distribution concentrated on plausible designs
-::: block The goal
-Train $p_\theta(x)$ to match the data distribution $p_{\text{data}}(x)$, given only samples $\{x_i\}_{i=1}^N\sim p_{\text{data}}$.
+### Fitting the model — minimising the KL is Lecture 2's maximum likelihood
+Write out the KL from the data to the model, and split the log of the ratio into two logs:
+
+$$D_{\mathrm{KL}}\big(p_{\text{data}}\,\|\,p_\theta\big) \;=\; \underbrace{\E_{p_{\text{data}}}\big[\log p_{\text{data}}(x)\big]}_{\text{no }\theta\text{ in it}} \;-\; \underbrace{\E_{p_{\text{data}}}\big[\log p_\theta(x)\big]}_{\approx\ \frac1N\sum_i\log p_\theta(x_i)}
+\qquad\Longrightarrow\qquad
+\argmin_\theta D_{\mathrm{KL}} \;=\; \hl{\argmax_\theta \sum_{i=1}^N\log p_\theta(x_i)}$$
+
+::: cols
+::: col Lecture 2 — a coin
+$\theta$ is one number, the chance of heads, and $\log p(D\mid\theta)=S\log\theta+(N-S)\log(1-\theta)$ is a formula: set its derivative to zero and $\hat\theta=S/N$.
+:::
+::: col.accent This lecture — a design
+$\theta$ is the weights of a network that *makes* designs. How probable is a given design under it? ==There is no formula== — the next two slides say why, and what to do instead.
+:::
 :::
 
-$$\argmin_{\theta}\ D_{\mathrm{KL}}\big(p_{\text{data}}\,\|\,p_\theta\big) \;=\; \hl{\argmax_{\theta}\ \E_{p_{\text{data}}}[\log p_\theta(x)]}$$
-
-The first term of the KL does not depend on $\theta$: fitting a generative model **is** maximum likelihood — Lecture 2's principle, for a model whose likelihood has no closed form.
-
 ::: keypoint
-What is learned is ==where plausible designs concentrate== — not a feasibility certificate. A learned density puts low, not zero, probability away from the data, and like Lecture 5's surrogate it is unconstrained where there is no data (Backup 4). Known constraints still need a check, or a decoder that enforces them.
+Training a generative model is maximum likelihood.
+The only new problem is ==computing $\log p_\theta(x_i)$==.
 :::
 
 ::: note
-Source alignment: Part 1 pp. 6–10 (generative models, the KL-to-likelihood step, the latent-variable model). Four families do this — VAEs, GANs, flows, diffusion (Backup 2); design methods mostly build on two.
+The sample average replaces the expectation over $p_{\text{data}}$ — Lecture 3's Monte Carlo. What is learned is where plausible designs concentrate — not a feasibility certificate: a learned density puts low, not zero, probability away from the data, and like Lecture 5's surrogate it is unconstrained where there is no data (Backup 4). Known constraints still need a check, or a decoder that enforces them. Source alignment: Part 1 p. 7.
+:::
+
+### Hidden factors — the latent-variable model
+A design has many coordinates, but its variation comes from a few factors $z$. Draw those, then make the design:
+
+$$p_\theta(x) \;=\; \int \underbrace{p_\theta(x\mid z)}_{\text{decoder: a network}}\;\underbrace{p(z)}_{\mathcal N(0,\,I)}\,dz$$
+
+::: widget gen-pictures {"mode":"latent"}
+One draw of all the factors, decoded, is one face; amber and blue are two draws. For a design, the factors would be a few shape parameters.
+:::
+
+::: keypoint
+Lecture 3's move: ==a hidden variable makes a complicated distribution simple to write== — a plain prior and a network.
+:::
+
+::: note
+Source alignment: Part 1 p. 8 (its sixth axis is left out of the redraw; draw A carries the source's values). The factors are learned, so they need not be interpretable: the labels are the source's illustration. The solid arrow is the generative story; the dashed arrow back is inference — Bayes' rule, next slide.
+:::
+
+### Bayes' rule again — the evidence is an integral we cannot do
+Lecture 2's Bayes' rule, with the code $z$ as the unknown:
+
+$$\underbrace{p_\theta(z\mid x)}_{\text{posterior: which code made }x} \;=\; \frac{p_\theta(x\mid z)\,p(z)}{\underbrace{\textstyle\int p_\theta(x\mid z')\,p(z')\,dz'}_{\text{evidence }p_\theta(x)\text{: what training needs}}}$$
+
+::: widget elbo-views {"mode":"prior"}
+Press → twice. A one-number code and a toy decoder, so every curve is exact.
+:::
+
+::: keypoint
+One integral blocks both needs: the evidence for training, the posterior for encoding.
+The way out: pick a simple $q_\phi(z\mid x)$ and ==tune it to be as close to the posterior as it can be== — inference turned into optimisation.
+:::
+
+::: note
+Why the integral is hard here. Lecture 2's coin evidence $\int p(D\mid\theta)\,p(\theta)\,d\theta$ had a closed form, because a Beta prior and a Binomial likelihood fit together (conjugacy). Lecture 3's evidence was a sum over every assignment of the hidden variables — exponential in how many there are. Here $z$ is continuous and $p_\theta(x\mid z)$ is a network: no conjugacy, and no grid fine enough. Drawing codes from the prior is Lecture 3's likelihood weighting with a rare cause: in the toy, about 1 draw in 4 explains $x$ (likelihood above 10% of its peak, $|z|\in(0.96,1.75)$, prior mass 0.256); if ten factors each had to land that well, about 1 in 800 000. "Variational" means choosing the best member of a family of distributions — here Gaussians whose mean and spread a network computes from $x$. Two derivations follow and reach the same objective: one starts from the evidence, the other from the posterior. Source alignment: Part 1 pp. 8–9.
+:::
+
+### Jensen's inequality — the log of an average is at least the average of the logs
+::: widget elbo-views {"mode":"jensen"}
+Press → for the chord.
+:::
+
+$$\underbrace{\log \E[w]}_{\text{log of the average}} \;\ge\; \underbrace{\E[\log w]}_{\text{average of the logs}} \qquad \text{for any positive random } w\text{, because the log is concave}$$
+
+::: keypoint
+Lecture 1 read a bound off a convex function's tangent; a concave function's chord gives this one.
+It turns ==the log of an integral, which we cannot compute,== into ==an average of logs, which we can estimate by sampling==.
+:::
+
+::: note
+New in this course: view 1 needs it. Equality holds only when $w$ is constant. Two points with weight $\tfrac12$ each are the picture exactly; an expectation is the same chord argument with many points. Numbers: $w_1=0.3$, $w_2=2.5$, $\log 1.4=0.336\ge\tfrac12(\log0.3+\log2.5)=-0.144$.
+:::
+
+### ELBO, view 1 — bound the evidence from below
+{math: compact}
+
+**Multiply and divide by $q_\phi(z\mid x)$** — the integral becomes an average over $q$:
+
+$$\underbrace{\log p_\theta(x)}_{\text{the evidence}} \;=\; \underbrace{\log \int p_\theta(x,z)\,dz}_{\text{an integral we cannot do}} \;=\; \underbrace{\log \E_{z\sim q_\phi}\Big[\frac{p_\theta(x,z)}{q_\phi(z\mid x)}\Big]}_{\text{the same, as an average over }q}$$
+
+::: reveal
+**Jensen**, with $w=p_\theta(x,z)/q_\phi(z\mid x)$ — move the log inside the average:
+
+$$\ge\; \E_{z\sim q_\phi}\Big[\log\frac{p_\theta(x,z)}{q_\phi(z\mid x)}\Big] \;=:\; \hl{\mathrm{ELBO}(\theta,\phi;x)}$$
+:::
+
+::: reveal
+**Split $p_\theta(x,z)=p_\theta(x\mid z)\,p(z)$** — two terms, each estimated by drawing $z$ from $q$:
+
+$$\mathrm{ELBO} \;=\; \underbrace{\E_{q_\phi}\big[\log p_\theta(x\mid z)\big]}_{\text{reconstruct }x\text{ from its code}} \;-\; \underbrace{D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p(z)\big)}_{\text{keep codes near the prior}}$$
+:::
+
+::: reveal
+::: keypoint
+We cannot compute $\log p_\theta(x)$, but we can compute — and raise — ==a floor under it==: the **E**vidence **L**ower **BO**und.
+Raising the floor over $\theta$ raises the likelihood it guarantees: Lecture 2's maximum likelihood, done through a bound.
+:::
+:::
+
+::: note
+Source alignment: Part 1 p. 9, "Variational Inference (Evidence Perspective)", line for line. The KL term in the last line has a closed form for Gaussians; the reconstruction term is estimated with one draw of $z$ per design.
+:::
+
+### ELBO, view 2 — measure how far $q$ is from the true posterior
+{math: compact}
+
+**How far is $q$ from the posterior?** Encoding needs them equal, so measure the difference with the KL:
+
+$$D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p_\theta(z\mid x)\big) \;=\; \E_{q_\phi}\Big[\log\frac{q_\phi(z\mid x)}{p_\theta(z\mid x)}\Big]$$
+
+::: reveal
+**Bayes' rule**, $p_\theta(z\mid x)=p_\theta(x,z)\,/\,p_\theta(x)$ — the evidence moves to the top:
+
+$$=\; \E_{q_\phi}\Big[\log\frac{q_\phi(z\mid x)\;\hl{p_\theta(x)}}{p_\theta(x,z)}\Big]$$
+:::
+
+::: reveal
+**Split the log** of a product into a sum of two logs:
+
+$$=\; \underbrace{\E_{q_\phi}\Big[\log\frac{q_\phi(z\mid x)}{p_\theta(x,z)}\Big]}_{-\,\mathrm{ELBO}\text{: view 1's quantity, sign flipped}} \;+\; \underbrace{\E_{q_\phi}\big[\log p_\theta(x)\big]}_{=\ \log p_\theta(x)\text{: no }z\text{ inside}}$$
+:::
+
+::: reveal
+::: keypoint
+Rearranged: $\log p_\theta(x)=\mathrm{ELBO}+D_{\mathrm{KL}}\big(q_\phi\,\|\,p_\theta(z\mid x)\big)$.
+The KL is never negative, so the ELBO is a floor again — and the gap is ==exactly how far $q$ is from the true posterior==.
+:::
+:::
+
+::: note
+Source alignment: Part 1 p. 10, "Variational Inference (Optimization Perspective)". The second underbrace: the average of a constant is the constant. The first: view 1 defined the ELBO as $\E_q[\log p_\theta(x,z)/q_\phi(z\mid x)]$, and flipping the fraction flips the sign of the log.
+:::
+
+### The gap, drawn — move $q$, and the evidence stays put
+$$\log p_\theta(x) \;=\; \underbrace{\mathrm{ELBO}(\theta,\phi;x)}_{\text{blue bar}} \;+\; \underbrace{D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p_\theta(z\mid x)\big)}_{\text{amber gap}}$$
+
+::: widget elbo-views {"mode":"gap","try":"Drag mean and spread","tryAt":"bar"}
+The same design and the same two-peaked posterior as two slides ago. Move $q$: the evidence line stays put, and ==whatever the ELBO gains, the gap loses==. Press → for the best single Gaussian.
+:::
+
+::: keypoint
+Raising the ELBO over $q$ is the same as ==moving $q$ onto the posterior==.
+One Gaussian cannot cover two peaks, so the best one sits on a single peak and a gap remains.
+:::
+
+::: note
+Source alignment: Part 1 p. 10's picture of a two-peaked posterior with one Gaussian laid over it. Toy model: $z\sim\mathcal N(0,1)$, $x\mid z\sim\mathcal N(z^2,0.5^2)$, observed $x=2$ — Act 1's "one $y$, many $x$", now with codes. $\log p(x)=-2.17$. With $q$ equal to the prior: ELBO $-6.23$, KL $4.06$. The best Gaussian ($m=1.33$, $s=0.19$): ELBO $-2.88$, KL $0.71$ — close to $\log 2$, because one bump covers one of two equal peaks. That is the KL slide's "stay where $p$ lives" direction: $q$ picks a peak rather than straddling both.
+:::
+
+### Two views, one objective
+$$\log p_\theta(x) \;=\; \underbrace{\mathrm{ELBO}(\theta,\phi;x)}_{\text{computable}} \;+\; \underbrace{D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p_\theta(z\mid x)\big)}_{\text{gap}\;\ge\;0}$$
+
+::: table center
+| | View 1 — from the evidence | View 2 — from the posterior |
+|---|---|---|
+| starts from | $\log p_\theta(x)$: what training needs | $D_{\mathrm{KL}}(q_\phi\,\|\,p_\theta(z\mid x))$: what encoding needs |
+| one step | Jensen's inequality | Bayes' rule |
+| it shows | the ELBO is a floor under the evidence | the gap is exactly the encoder's error |
+| maximise the ELBO over | $\theta$ — raise the floor under the likelihood: ==learning== | $\phi$ — move $q$ onto the posterior: ==inference== |
+:::
+
+::: keypoint
+One objective, maximised over both $\theta$ and $\phi$, learns the model and infers the codes at once.
+==That objective is the VAE.==
+:::
+
+::: note
+The source's box (Part 1 p. 9): maximising the evidence = maximising the ELBO with respect to $q$ = minimising $D_{\mathrm{KL}}(q(Z\mid X)\,\|\,p(Z\mid X))$ with respect to $q$. Read the identity left to right for view 1, right to left for view 2. Lecture 2 found posteriors by conjugacy and Lecture 3 by enumeration and sampling; here, for the first time, a posterior is found by optimisation — which is what "variational inference" means.
 :::
 
 ### VAE — encode, decode, and an objective with two terms
-Assert that designs come from a few simple hidden factors: $p(x)=\int p_\theta(x\mid z)\,p(z)\,dz$, $z\sim\mathcal N(0,I)$. A decoder $p_\theta(x\mid z)$ produces the design; an encoder $q_\phi(z\mid x)$ approximates the posterior $p_\theta(z\mid x)$ — Lecture 3's hidden-state inference, done by a network.
+{sub: “Auto-Encoding Variational Bayes” · Kingma & Welling · ICLR 2014, math: compact}
 
-$$\mathcal{L}(x) = \underbrace{\E_{q_\phi(z\mid x)}\big[\log p_\theta(x\mid z)\big]}_{\text{\hl{reconstruct the design}}} \;-\; \underbrace{D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p(z)\big)}_{\text{\hl{keep codes near the prior}}}$$
-
-::: cols
-::: col Generating
-Draw $z\sim\mathcal{N}(0,I)$, decode. No data, no optimiser. The reparameterisation $z=\mu_\phi+\sigma_\phi\odot\epsilon$ lets gradients through the sample.
+::: paper
+- Why it is here | Act 2's ELBO with $q_\phi$ and $p_\theta$ made two networks — view 1's last line, below.
+- What it is | The VAE paper: one encoder infers every code; reparameterisation (next slide) makes it trainable.
+- Why it matters | It joined deep learning to probabilistic inference — ICLR's first Test of Time award, 2024.
 :::
-::: col.accent Which prior?
-$p(z)$ is a prior over **codes**, not Lecture 2's prior over parameters: the network's weights are point estimates, and drawing $z$ does not express uncertainty about them.
+
+$$\mathcal{L}(\theta,\phi;x) = \underbrace{\E_{q_\phi(z\mid x)}\big[\log p_\theta(x\mid z)\big]}_{\text{\hl{reconstruct the design}}} \;-\; \underbrace{D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p(z)\big)}_{\text{\hl{keep codes near the prior}}}$$
+
+::: widget gen-pictures {"mode":"arch"}
+:::
+
+::: keypoint
+The KL term makes the latent space ==samplable== — a **coordinate system for designs**, which G1 will search.
+:::
+
+::: note
+The formula is view 1's last line, maximised over both networks at once. The figure: the encoder gives a mean and a spread, the code is drawn as $\mu+\sigma\odot\epsilon$, and the decoder rebuilds the design. Each term attaches to one part. To generate, only the decoder is needed. The paper (arXiv December 2013) opened deep generative modelling; Rezende, Mohamed & Wierstra (ICML 2014) reached the same model independently. ICLR's 2024 Test of Time committee credited it with joining deep learning to scalable probabilistic inference. Codes from the prior decode to plausible designs because the KL term keeps the codes near the prior. $p(z)$ is a prior over **codes**, not Lecture 2's prior over parameters: the network's weights are point estimates, and drawing $z$ does not express uncertainty about them. The standard ELBO has weight 1 on the KL; the $\beta$-VAE two slides on changes that weight and is a different objective. A one-coordinate ELBO calculation is in the appendix. Source alignment: Part 1 p. 11.
+:::
+
+### Reparameterisation — a sample you can differentiate
+::: widget gen-pictures {"mode":"reparam"}
+Left: the encoder's output feeds a random draw, and the gradient has nowhere to go. Right: the same draw written as a formula, with the noise as an input.
+:::
+
+For one design $x$ with a one-number code, both terms are plain formulas in $\mu$ and $\sigma$ — a loss for Lecture 1's gradient methods:
+
+$$\mathcal L(x) \;\approx\; \underbrace{-\,\big\|x-\hat x_\theta(\mu+\sigma\epsilon)\big\|^2}_{\text{reconstruction: a squared error}} \;-\; \underbrace{\tfrac12\big(\mu^2+\sigma^2-1-\log\sigma^2\big)}_{\text{KL from }\mathcal N(\mu,\sigma^2)\text{ to }\mathcal N(0,1)}$$
+
+::: keypoint
+==The randomness moves into an input $\epsilon$==, so the gradient reaches the encoder — and the whole VAE trains like any other network.
+:::
+
+::: note
+Here $\mu=\mu_\phi(x)$, $\sigma=\sigma_\phi(x)$, and one draw $\epsilon\sim\mathcal N(0,1)$ per design per step; $\hat x_\theta(z)$ is the decoder's output. "$\approx$": the squared error is $\log p_\theta(x\mid z)$ for a Gaussian decoder with its noise scale and constants dropped. With a code of several numbers the KL is summed over them, and training averages $\mathcal L$ over the designs. The source writes the same objective as $\log p_\theta(x_i\mid\mu_\phi(x)+\epsilon\sigma_\phi(x))-D_{\mathrm{KL}}[\mathcal N(\mu_\phi(x_i),\sigma_\phi(x_i))\,\|\,\mathcal N(0,I)]$. "A linear map of a Gaussian is Gaussian" — the probability appendix's Property 2 — is why $\mu+\sigma\epsilon$ has the right distribution. Source alignment: Part 1 p. 12.
+:::
+
+### Reading the two terms — move, shrink, pull back
+{math: compact}
+
+::: cols c3
+::: col (i) reconstruction alone
+$$\max\ \E_{q}\big[\log p_\theta(x\mid z)\big]$$
+
+::: widget gen-pictures {"mode":"terms","k":1}
+Each design's code moves to wherever the decoder recognises it best — ==away from the prior==.
+:::
+:::
+::: col (ii) … and it cheats
+::: reveal
+$$\max\ \E_{q}\big[\log p_\theta(x\mid z)\big],\quad \sigma\to 0$$
+
+::: widget gen-pictures {"mode":"terms","k":2}
+Shrink the spread to nothing and reconstruction is perfect — but ==a draw from the prior lands between the codes==, where the decoder never trained.
+:::
+:::
+:::
+::: col.accent (iii) + the KL term
+::: reveal
+$$\max\ \E_{q}\big[\log p_\theta(x\mid z)\big]\;\hl{-\;D_{\mathrm{KL}}\big(q\,\|\,p(z)\big)}$$
+
+::: widget gen-pictures {"mode":"terms","k":3}
+The KL pulls each code toward zero and keeps it wide: the codes ==overlap and fill the prior==.
+:::
+:::
 :::
 :::
 
 ::: keypoint
-The KL term makes the latent space ==samplable==: codes from the prior decode to plausible designs. The latent space is a **coordinate system for designs** — G1 will search in it.
+The VAE arranges the data on a ==compact, smooth latent space that we can sample from==.
 :::
 
 ::: note
-The standard ELBO has weight 1 on the KL; the $\beta$-VAE of the next slide changes that weight and is a different objective. The bound and the reparameterisation are derived in Backup 1; a one-coordinate ELBO calculation is in the appendix. Source alignment: Part 1 pp. 11–13.
+Source alignment: Part 1 p. 13, the three-panel figure: penalising the reconstruction loss makes each distribution describe its input; without regularisation the network can cheat by learning narrow distributions; penalising the KL divergence acts as a regularising force — zero mean, enough variance for a smooth latent space. Panel (ii) has the same objective as (i): it is what (i) does when nothing stops it. The next slide turns the KL weight continuously.
 :::
 
 ### Turning the dial
@@ -219,10 +456,30 @@ An exactly solvable VAE with a weight $\beta$ on the KL term. Each dot is a desi
 Spread plus blur sum to exactly $1.000$ at $\beta=1$, $1.565$ at $\beta=0.05$ and $0.930$ at $\beta=20$ (Backup 1 has the formula).
 :::
 
-### Diffusion — learn the noise, then remove it step by step
-{sub: Ho, Jain & Abbeel · NeurIPS 2020}
+### From the VAE to diffusion — stack the codes, fix the encoder
+::: widget gen-pictures {"mode":"ladder"}
+Press → twice: one code, then two stacked codes, then $T$ codes — each the size of the design, made by an encoder that only adds noise.
+:::
 
-A VAE stacked $T$ times, with the encoder **fixed** to a Gaussian noising process and the latent the size of the data — so training needs no inference network.
+::: keypoint
+Diffusion is a VAE with ==$T$ codes and a fixed encoder==, trained with the same ELBO.
+Only the decoder — the denoiser — is learned.
+:::
+
+::: note
+The source's "key differences with the VAE" (Part 1 p. 18): the latent has the dimension of the data; the encoder is a predefined linear-Gaussian noising step, with nothing to train; $p(x_T)=\mathcal N(0,I)$. With $T$ codes the ELBO is $\E_q[\log p_\theta(x_{0:T})/q(x_{1:T}\mid x_0)]$ — the encoder's parameters $\phi$ have disappeared. Backup 2b expands it into one KL per step; Backup 3 shows it collapses to one squared error on the noise — the next slide. Source alignment: Part 1 pp. 15–18.
+:::
+
+### Diffusion — learn the noise, then remove it step by step
+{sub: “Denoising Diffusion Probabilistic Models” · Ho, Jain & Abbeel · NeurIPS 2020}
+
+::: paper
+- Why it is here | The generator behind DDOM, GTG, RGD and our lab's layouts. Its denoising steps are where G4 steers.
+- What it is | A Berkeley paper: the diffusion models of 2015, trained by one squared error on the noise.
+- Why it matters | It matched GANs' image quality and started the diffusion era — in images, proteins and molecules.
+:::
+
+Train the ladder's decoder: the ELBO with $T$ codes collapses to one squared error on the added noise (Backup 3).
 
 ::: cols
 ::: col Train — corrupt once, predict the noise
@@ -286,15 +543,23 @@ Press → for Session 2's papers; click any paper for what it does, why we read 
 :::
 
 ### G1 — search in learned coordinates
-{sub: Gómez-Bombarelli et al. · ACS Central Science 2018}
+{sub: “Automatic Chemical Design Using a Data-Driven Continuous Representation of Molecules” · Gómez-Bombarelli et al. · ACS Central Science 2018}
+
+::: paper
+- Why it is here | G1's founding example. Lecture 4 met it for the dimension; here it is about validity.
+- What it is | A chemistry paper (Aspuru-Guzik group, Harvard): a VAE on molecules, a predictor on its codes.
+- Why it matters | It started latent-space molecular design; its invalid decodes set the agenda for JT-VAE.
+:::
 
 ::: cols wide-r
 ::: col
-Lecture 4 met this paper as BO in a learned space. A VAE turns molecules (SMILES strings) into continuous codes, with a property predictor trained on the codes; search the codes — by gradient steps or Bayesian optimisation — and decode the best.
+A VAE turns molecules (SMILES strings) into continuous codes, with a property predictor trained on the codes; search the codes — by gradient steps or Bayesian optimisation — and decode the best.
 
 ::: reveal
 ::: keypoint
-The search becomes low-dimensional and continuous, and every point it visits decodes to *something*. ==Whether that something is valid, and whether the predictor is right about it, are two separate bets.==
+The search becomes low-dimensional and continuous, and every point it visits decodes to *something*.
+==Whether that something is valid is one bet.==
+==Whether the predictor is right about it is a separate one.==
 :::
 :::
 :::
@@ -332,14 +597,20 @@ Codes the decoder handles badly decode to **invalid** designs; the latent predic
 :::
 
 ::: table center
-| the fix | how | paper |
-|---|---|---|
-| validity by construction | generate a tree of chemically valid substructures, then assemble — every output is a valid molecule (valid chemistry, not yet synthesisable or good) | JT-VAE {p}(Jin, Barzilay & Jaakkola, ICML 2018) |
-| reliability, from Lecture 5 | train the predictor on codes with COMs' penalty | LCOMs {p}(Qi et al., 2023 workshop) |
+| the fix | paper | how | why it matters |
+|---|---|---|---|
+| validity by construction | JT-VAE {p}(Jin, Barzilay & Jaakkola, ICML 2018) | build a tree of chemically valid fragments, then assemble them | every output is a valid molecule — validity became a property of the decoder |
+| reliability, from Lecture 5 | LCOMs {p}(Qi et al., ICLR 2023 workshop) | train the predictor on codes with COMs' penalty | the two lectures joined in one method — a workshop paper, read for the idea |
 :::
 
 ::: keypoint
-==Validity and reliability are repaired separately==: a better decoder for one, Lecture 5's tools for the other.
+==Validity and reliability are repaired separately.==
+A better decoder repairs validity.
+Lecture 5's tools repair reliability.
+:::
+
+::: note
+JT-VAE is a standard baseline for molecular graph generation (MIT, Barzilay and Jaakkola). "Valid" means valid chemistry: not yet synthesisable, and not yet good. LCOMs comes from the group behind COMs and applies it to crystal structures.
 :::
 
 ### G2 — condition the generator on success
@@ -357,47 +628,54 @@ Offline, $P(S\mid x)$ is a **prediction** — e.g. $P(\hat y\ge\gamma\mid x)$ fr
 :::
 
 ::: keypoint
-Lecture 3 conditioned a fixed model on observed evidence. Here the "evidence" is a requested outcome, judged by a model — ==the target is only as good as the success model==.
+Lecture 3 conditioned a fixed model on observed evidence.
+Here the "evidence" is a requested outcome, judged by a model — ==the target is only as good as the success model==.
 :::
 
-### Temperature thread — condition a distribution over heater designs
+### Temperature thread — condition on success: propose, then keep what succeeds
 {sub: shared teaching example · predict before revealing}
 
 ::: widget cond-bars {"mode":"heater"}
-Lecture 0's heater as a discrete design: which of two heaters to switch on, instead of how much command to apply. Exactly one may be on.
+Lecture 0's room, now a design choice: switch on the left heater or the right one, never both. Success means the room reaches 22 °C. The right heater sits under a window, so it rarely succeeds.
 :::
 
-**Predict:** After conditioning on success, which design becomes more likely — and is the average of the two a valid design?
+**Predict:** Of the rooms that reach 22 °C, what share has the left heater on?
 
 ::: reveal
-The left heater: conditioning multiplies the prior by the success probability. And no — the average turns both heaters half on. Press → to see both.
+Four in five. Conditioning on success is Lecture 3's rejection sampling: propose from the generator, throw away what fails, count what is left. Press → to see it.
 :::
 
 ::: note
-Numbers behind the picture: prior $(0.5,0.5)$, $P(S\mid L)=0.8$, $P(S\mid R)=0.2$; products $(0.4,0.1)$, so $P(L\mid S)=0.8$, $P(R\mid S)=0.2$. The average $(0.5,0.5)$ activates both heaters and breaks the design rule.
+Numbers behind the picture: prior $(0.5,0.5)$, $P(S\mid L)=0.8$, $P(S\mid R)=0.2$. Of ten proposals, $5\times0.8=4$ left and $5\times0.2=1$ right are kept (expected counts, drawn exactly), so $P(L\mid S)=4/5=0.8$ — the previous slide's Bayes rule, $0.5\times0.8/(0.5\times0.8+0.5\times0.2)$. Every kept room is a real design. If a student asks about averaging: the average of the two designs is both heaters half on, which the rule forbids — Act 1's point.
 :::
 
-### Try it — the generator now prefers the right heater
+### Try it — the generator now proposes the right heater four times as often
 {sub: work independently · reveal only after deciding}
 
 ::: widget cond-bars {"mode":"try"}
-The same success model; the generator now proposes the right heater four times as often.
+Most rooms in the data use the right heater, so the generator now proposes it four times as often. The success model is unchanged.
 :::
 
-Which design is more likely after conditioning on success?
+Of the rooms that reach 22 °C, which heater is more common now?
 
 ::: reveal
-**Check your answer.** Neither — the two pulls cancel, half and half. What you sample is set by the prior and the success model **together**, and every draw is still L or R, never their average. Press → to see it.
+**Check your answer.** Neither — four kept rooms each. The prior and the success model decide **together**. Press → to see it.
 :::
 
 ::: note
-Numbers behind the picture: prior $(0.2,0.8)$; products $(0.2\times0.8,\;0.8\times0.2)=(0.16,0.16)$, so the conditional is $(0.5,0.5)$.
+Numbers behind the picture: prior $(0.2,0.8)$, the same success model. Of 25 proposals, $5\times0.8=4$ left and $20\times0.2=4$ right are kept, so the conditional is $(0.5,0.5)$ — Bayes: $(0.2\times0.8,\;0.8\times0.2)=(0.16,0.16)$.
 :::
 
 ### CbAS — fit a generator to the conditional
-{sub: Conditioning by Adaptive Sampling · Brookes, Park & Listgarten · ICML 2019}
+{sub: “Conditioning by Adaptive Sampling for Robust Design” · Brookes, Park & Listgarten · ICML 2019}
 
-The target, with the trained generator $p(x\mid\theta^{(0)})$ as the prior, cannot be sampled directly — so fit a second generator $q(x\mid\phi)$ to it, averaging over the target (cover it):
+::: paper
+- Why it is here | G2's rule: the previous slide's Bayes' rule, with the generator as the prior.
+- What it is | A protein-design paper (Listgarten group, Berkeley) that fits a generator to that conditional.
+- Why it matters | It showed refits chase a model's errors, and made the prior the brake. A standard baseline since.
+:::
+
+The target cannot be sampled directly — so fit a second generator $q(x\mid\phi)$ to it, averaging over the target:
 
 $$p\big(x\mid S,\theta^{(0)}\big) = \frac{P(S\mid x)\,p\big(x\mid\theta^{(0)}\big)}{P\big(S\mid\theta^{(0)}\big)},\qquad \phi^* = \argmin_\phi\ D_{\mathrm{KL}}\big(p(x\mid S,\theta^{(0)})\,\|\,q(x\mid\phi)\big)$$
 
@@ -416,34 +694,22 @@ $$\Longrightarrow\qquad \phi^*=\hl{\argmax_\phi\ \E_{p(x\mid\theta^{(0)})}\big[P
 :::
 
 ::: note
-$H_0=-\E_{p(x\mid S,\theta^{(0)})}[\log p(x\mid S,\theta^{(0)})]$ is constant in $\phi$. Source alignment: Part 2 pp. 9–11.
+The prior is the trained generator $p(x\mid\theta^{(0)})$; the KL is averaged over the target — the KL slide's "cover the data" direction. $H_0=-\E_{p(x\mid S,\theta^{(0)})}[\log p(x\mid S,\theta^{(0)})]$ is constant in $\phi$. The paper builds on the same group's DbAS (Brookes & Listgarten, 2018) — CbAS without the prior. Design-Bench (Lecture 5) runs CbAS as a baseline on every task. Source alignment: Part 2 pp. 9–11.
 :::
 
 ### Why one shot fails — Lecture 3's rare cause, again
-Draw from the prior and weight by $P(S\mid x)$: success is ==exceedingly rare==, so almost every weight is near zero — Lecture 3's likelihood weighting with a rare cause, where almost no draw lands where the evidence points.
+::: widget cond-bars {"mode":"rare"}
+A harder request: 22 °C in five minutes. Only the left heater can do it — and the generator, trained on rooms that mostly use the right heater, rarely proposes it.
+:::
+
+**Predict:** Of 100 proposed rooms, how many are kept?
 
 ::: reveal
-::: cols
-::: col Sample from last round's model
-Use the previous fit as the proposal, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and correct with the importance ratio:
-
-$$w_i=\frac{p(x_i\mid\theta^{(0)})}{q(x_i\mid\phi^{(t-1)})}\;P\big(S^{(t)}\mid x_i\big)$$
-:::
-::: col.accent Raise the bar gradually
-- **(A)** each relaxed condition $S^{(t)}$ is met often enough under the current proposal;
-- **(B)** $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target.
-:::
-:::
-:::
-
-::: reveal
-::: keypoint
-==A hard conditional query, replaced by a sequence of easy ones.== Unlike Lecture 3, the model is not fixed: the proposal and the condition both move.
-:::
+One. ==When success is rare, almost every proposal is thrown away== — Lecture 3's rare cause. Press → to see it.
 :::
 
 ::: note
-The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
+Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta^{(0)})}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the slide after): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
 :::
 
 ### Why the importance ratio belongs in the weight
@@ -461,7 +727,7 @@ Press → to ask for the target in one shot, then to climb. Here $q$ is a Gaussi
 :::
 
 ::: note
-Target $2.65$: one shot keeps $70$ effective draws of $4{,}000$; the ladder's worst round keeps $27\%$; the final design is worth $2.647$ against the dataset's best $2.523$ (true optimum $2.657$). Lecture 5's objective, with 200 designs.
+The widget's title is the slide's point. Say the contrast with Lecture 3 aloud: there the model was fixed; here the proposal and the condition both move. Target $2.65$: one shot keeps $70$ effective draws of $4{,}000$; the ladder's worst round keeps $27\%$; the final design is worth $2.647$ against the dataset's best $2.523$ (true optimum $2.657$). Lecture 5's objective, with 200 designs.
 :::
 
 ### What CbAS does on a real design problem
@@ -493,14 +759,18 @@ The paper's caption: high dashed and low solid values mark methods "led astray i
 ### Two more ways to move the distribution — GFlowNet and BootGen
 ::: cols
 ::: col GFlowNet {p}(Bengio, Jain, Korablyov, Precup & Bengio · NeurIPS 2021)
-Build a design step by step — an atom, a fragment, a residue — and train the steps so that a finished design is drawn ==in proportion to its reward==, $P(x)\propto R(x)$: a flow-consistency loss, not a refit to weighted samples.
-
-It needs **reward calls**: online if they query the real objective; offline, a proxy — Lecture 5's surrogate. Our lab's Genetic-guided GFlowNets {p}(NeurIPS 2024) adds a genetic search under a small budget of real oracle calls — online.
+::: paper
+- Why it is here | A second way to move the distribution: draw designs ==in proportion to reward==, $P(x)\propto R(x)$, instead of refitting to weighted samples.
+- What it is | A Mila paper: build a design step by step — an atom, a fragment, a residue — and train the steps by flow consistency. It needs **reward calls**; offline, a proxy answers them.
+- Why it matters | It opened a research line on diverse candidates for discovery. Our lab's Genetic-guided GFlowNets {p}(NeurIPS 2024) tops the PMO molecular benchmark — with real oracle calls, so online.
+:::
 :::
 ::: col.accent BootGen {p}(Kim, Berto, Ahn & Park · NeurIPS 2023 · our lab)
-Train $p_\theta(x\mid y)$ with weights by **rank** of $y$; sample at a high $y^\dagger$, let a proxy label the samples, add the top $K$, retrain; pool several such generators.
-
-**G2** — it refits the training distribution toward its own best samples, as CbAS does — and **G3** — it is conditioned on $y$. The added samples are ==proxy-labelled synthetic samples — no new performance measurements==.
+::: paper
+- Why it is here | Our lab's method for biological sequences, at **two** places: G2 — it refits toward its own best samples, like CbAS — and G3 — it is conditioned on $y$.
+- What it is | Train $p_\theta(x\mid y)$ with weights by **rank** of $y$; sample at a high $y^\dagger$, let a proxy label the samples, add the top $K$, retrain; pool several generators.
+- Why it matters | The best average score on six sequence tasks, with the most diverse candidates (appendix). The added samples are ==proxy-labelled, not new measurements==.
+:::
 :::
 :::
 
@@ -509,7 +779,7 @@ Both shift probability toward good designs, by objectives different from CbAS's 
 :::
 
 ::: note
-Source alignment: Part 2 pp. 35–41 (BootGen). Rank weights $w\propto(k|D|+\operatorname{rank}(y,D))^{-1}$; the loop figure, Algorithm 1 and the results table are on the appendix slides.
+GFlowNet's reward calls are online if they query the real objective; offline they go to a proxy — Lecture 5's surrogate. Genetic-guided GFlowNets distils a genetic search into a GFlowNet under the PMO benchmark's budget of 10,000 oracle calls: a summed score of 16.213 across 23 tasks, ahead of every method in the paper's comparison. Source alignment: Part 2 pp. 35–41 (BootGen). Rank weights $w\propto(k|D|+\operatorname{rank}(y,D))^{-1}$; the loop figure, Algorithm 1 and the results table are on the appendix slides.
 :::
 
 ### What moving the distribution buys, and what it costs
@@ -554,7 +824,10 @@ Invalidity is observed directly: the decoder left the valid set — a problem of
 :::
 
 ::: keypoint
-Session 2 moves the signal closer to the generator: ==ask for the performance directly== (G3), or ==use it to steer the sampling process== (G4) — and a KL-regularised view connects several of them.
+Session 2 moves the signal closer to the generator.
+G3 ==asks for the performance directly==.
+G4 ==uses the signal to steer the sampling process==.
+A KL-regularised view connects several of them.
 :::
 
 ## Act 4 — condition and sampler
@@ -580,7 +853,12 @@ Session 2 moves the signal closer to the generator: ==ask for the performance di
 :::
 
 ::: keypoint
-The diversity of $p_\theta(x)$ is not uncertainty about performance, and ==a requested $y$ is not a measured $y$==. Today: the **condition** (G3), the **sampler** (G4), and a KL-regularised view of both.
+The diversity of $p_\theta(x)$ is not uncertainty about performance.
+==A requested $y$ is not a measured $y$.==
+:::
+
+::: note
+Today: the **condition** (G3), the **sampler** (G4), and a KL-regularised view of both.
 :::
 
 ### The papers of Session 2
@@ -590,6 +868,12 @@ The two right-hand columns are today's. Click a paper for what it does, why we r
 
 ### Condition the encoder and the decoder — the inverse map is built
 {sub: the conditional VAE — G3 in its simplest form}
+
+::: paper
+- Why it is here | Act 1 asked for a stochastic inverse $x=f^{-1}(y,z)$; a VAE that takes $y$ as input is one.
+- What it is | Kingma et al. (NeurIPS 2014) gave a VAE a class label; Sohn, Lee & Yan (NeurIPS 2015) named it the CVAE.
+- Why it matters | The template for this act: MINs, BootGen and DDOM all feed $y$ to the generator this way.
+:::
 
 $$\max_{\theta,\phi}\ \E_{q_\phi(z\mid x,\hl{y})}\big[\log p_\theta(x\mid z,\hl{y})\big] \;-\; D_{\mathrm{KL}}\big(q_\phi(z\mid x,\hl{y})\,\|\,p_\theta(z\mid \hl{y})\big)$$
 
@@ -611,7 +895,13 @@ Samples from a CVAE trained on SVHN: row = requested digit. {p}(source deck, Par
 :::
 
 ### G3 — ask the inverse map for a score
-{sub: Model Inversion Networks · Kumar & Levine · NeurIPS 2020}
+{sub: “Model Inversion Networks for Model-Based Optimization” · Kumar & Levine · NeurIPS 2020}
+
+::: paper
+- Why it is here | Act 1's stochastic inverse as an offline-MBO method: learn $x=f^{-1}(y,z)$, ask for a high $y$.
+- What it is | A Berkeley paper from Levine's group, who also wrote Lecture 5's COMs and Design-Bench.
+- Why it matters | It showed the forward arg-max is often no design at all (next slide); Design-Bench's inverse baseline.
+:::
 
 ::: cols
 ::: col Training — *which $y$ to learn on?*
@@ -657,7 +947,9 @@ The same two hundred designs and oracle, driven by the bar $\gamma$ alone. Raise
 :::
 
 ::: keypoint
-A requested score beyond the data is ==extrapolation moved from $x$ to $y$==. An exact conditional puts no mass where the prior has none; learned generators have tails, so over-asking still produces poor or invalid designs.
+A requested score beyond the data is ==extrapolation moved from $x$ to $y$==.
+An exact conditional puts no mass where the prior has none.
+Learned generators have tails, so over-asking still produces poor or invalid designs.
 :::
 
 ::: note
@@ -665,7 +957,13 @@ Mean true value of the samples: $2.13$ at $\gamma=2.00$, $2.550$ at $2.65$ (best
 :::
 
 ### Classifier-free guidance — push a conditional model toward its condition
-{sub: Ho & Salimans · NeurIPS 2021 workshop}
+{sub: “Classifier-Free Diffusion Guidance” · Ho & Salimans · NeurIPS 2021 workshop}
+
+::: paper
+- Why it is here | The sampler of DDOM and GTG, and the line between G3 and G4: no separate performance model.
+- What it is | A short Google paper: one diffusion model, trained with and without the condition.
+- Why it matters | It is how text-to-image models follow a prompt — GLIDE, DALL·E 2, Imagen, Stable Diffusion.
+:::
 
 Train **one** diffusion model with the condition and without it — drop $y$ at random — and combine its two noise predictions at sampling:
 
@@ -685,7 +983,13 @@ The derivation is the appendix slide "Backup — guidance, with and without a cl
 :::
 
 ### DDOM — a diffusion model as the inverse map
-{sub: Krishnamoorthy, Mashkaria & Grover · ICML 2023}
+{sub: “Diffusion Models for Black-Box Optimization” · Krishnamoorthy, Mashkaria & Grover · ICML 2023}
+
+::: paper
+- Why it is here | A diffusion model keeps every mode of Act 1's one-to-many inverse, where one answer would average them.
+- What it is | A UCLA paper that brought diffusion models to offline MBO — with no forward surrogate at all.
+- Why it matters | It matched the best forward methods on Design-Bench; GTG and RGD measure themselves against it.
+:::
 
 ::: flow
 - **Reweight** | MINs' weights: favour high scores with enough support
@@ -706,7 +1010,13 @@ Source alignment: Part 2 pp. 30–34. Benchmark numbers (rank 2.8 against COMs' 
 :::
 
 ### GTG — ask for an improvement, not a point
-{sub: Yun, Yun, Lee & Park · NeurIPS 2024 · our lab}
+{sub: “Guided Trajectory Generation with Diffusion Models for Offline Model-based Optimization” · Yun, Yun, Lee & Park · NeurIPS 2024 · our lab}
+
+::: paper
+- Why it is here | Our lab's G3 method, with a richer condition: a path of **improvement**, not a point.
+- What it is | An offline-MBO paper: a diffusion model of trajectories toward higher scores, built from the data.
+- Why it matters | It beat strong baselines on Design-Bench and its practical variants, with a proxy that only **filters**.
+:::
 
 ::: flow
 - **Build** | synthetic trajectories through the data toward higher scores, with a locality bias
@@ -728,7 +1038,13 @@ From the paper: the model is trained on $\log p_\theta(\tau\mid y(\tau))$ with $
 :::
 
 ### Wind-farm layouts — condition, measure, repeat
-{sub: Shin, Yun, Yun, Woo, Lim & Park · KDD 2025 · our lab}
+{sub: “Wind Farm Layout Optimization with Diffusion Models” · Shin, Yun, Yun, Woo, Lim & Park · KDD 2025 · our lab}
+
+::: paper
+- Why it is here | G3 so far was scored on benchmarks; here it places turbines on a real site.
+- What it is | An applied paper from our lab: a conditional diffusion model of layouts, repaired and evaluated each round.
+- Why it matters | More annual energy than state-of-the-art layout methods across wind scenarios — beyond the benchmarks.
+:::
 
 ::: flow | | | loop: add the measured layouts
 - **Train** | a conditional diffusion model of layouts, with a graph-network denoiser
@@ -738,7 +1054,8 @@ From the paper: the model is trained on $\log p_\theta(\tau\mid y(\tau))$ with $
 :::
 
 ::: keypoint
-G3 on a real design problem — with ==Lecture 4's loop closed==: every round is measured and added to the data. Not strictly offline: the condition asks, the evaluation answers.
+G3 on a real design problem — with ==Lecture 4's loop closed==: every round is measured and added to the data.
+Not strictly offline: the condition asks, the evaluation answers.
 :::
 
 ### What asking for a score buys, and what it costs
@@ -784,7 +1101,7 @@ For this optimisation problem the exponential tilt is ==the exact optimum==. Nex
 |---|---|
 | CbAS (G2) | its target is exactly $q^\star$ with $\hat f=\log P(S\mid x)$ and $\beta=1$ — fitted with the other KL direction |
 | guidance (G3, G4) | each noise level's score is that of a tilted $p_t$; the full run need not sample the final tilted distribution, even with exact scores |
-| DiBO {p}(ICML 2025, our lab) | $p\cdot e^{\beta\,\mathrm{UCB}}$, sampled by a fine-tuned diffusion model — online, Lecture 4 |
+| DiBO {p}(ICML 2025, our lab) | the tilt **is** the method: high-dimensional BO that samples $p\cdot e^{\beta\,\mathrm{UCB}}$ with a fine-tuned diffusion model — online, Lecture 4 |
 | MINs, GFlowNet, BootGen | **not this problem**: a constrained query over $(y,z)$; a reward-proportional sampler with no generator prior; rank weights and bootstrapping |
 :::
 
@@ -806,9 +1123,15 @@ By the surrogate: average true value $1.52$ at $\beta=0$ (the data's average), $
 :::
 
 ### G4 — use performance information to steer the sampler
-{sub: classifier guidance · Dhariwal & Nichol · NeurIPS 2021}
+{sub: classifier guidance · “Diffusion Models Beat GANs on Image Synthesis” · Dhariwal & Nichol · NeurIPS 2021}
 
-**Classifier guidance** — Bayes' rule for density scores (gradients of log-densities, not performance scores), with a classifier $p_\phi$ trained on noisy inputs and its term scaled by $s$:
+::: paper
+- Why it is here | G4's mechanism: a **separate** model steers each denoising step — in design, Lecture 5's surrogate.
+- What it is | An OpenAI paper: a better diffusion network, steered by a classifier trained on noisy images.
+- Why it matters | Diffusion beat GANs on ImageNet for the first time; guidance became the standard steering dial.
+:::
+
+**Classifier guidance** — Bayes' rule for density scores, with a classifier $p_\phi$ trained on noisy inputs:
 
 $$\nabla_{x_t}\log p_t(x_t\mid y)=\nabla_{x_t}\log p_t(x_t)+\nabla_{x_t}\log p_\phi(y\mid x_t)$$
 
@@ -818,11 +1141,9 @@ $$\nabla_{x_t}\log p_t(x_t\mid y)=\nabla_{x_t}\log p_t(x_t)+\nabla_{x_t}\log p_\
 
 $$\nabla\log q_t=\underbrace{\nabla\log p_t}_{\text{the generator's pull}}+\;s\,\underbrace{\nabla\hat f_t}_{\text{the surrogate's push}}$$
 
-A score at each noise level — not a guarantee that the whole denoising run samples the final tilted distribution.
-
 ::: reveal
 ::: keypoint
-This **direct** form is ==gradient ascent on the surrogate, interleaved with denoising== — Lecture 5's optimiser inside the sampler. RGD, later, is G4's other form: the proxy sets only the guidance strength.
+This **direct** form is ==gradient ascent on the surrogate, interleaved with denoising== — Lecture 5's optimiser inside the sampler.
 :::
 :::
 :::
@@ -834,7 +1155,7 @@ Classifier guidance on one class, scale 1 (left) and 10 (right). {p}(Dhariwal & 
 :::
 
 ::: note
-Source alignment: Part 1 pp. 38–39 (controllable generation; the paper's Figure 3, FID 33.0 at scale 1 and 12.0 at scale 10). The surrogate $\hat f_t$ must be trained on noisy designs $x_t$. Defining $q_t$ directly avoids treating $e^{\hat f}$ as a normalised $p(y\mid x)$. Even with exact scores, the guided run need not sample the final tilted distribution (Bradley & Nakkiran, 2024). G4 in general: performance information modifies the sampling process — by a gradient on the sample (classifier or energy guidance) or by setting the guidance strength (RGD).
+"Density scores" are gradients of log-densities, not performance scores; the classifier's term is scaled by $s$. $\nabla\log q_t$ is a score at each noise level — not a guarantee that the whole denoising run samples the final tilted distribution. Source alignment: Part 1 pp. 38–39 (controllable generation; the paper's Figure 3, FID 33.0 at scale 1 and 12.0 at scale 10). The surrogate $\hat f_t$ must be trained on noisy designs $x_t$. Defining $q_t$ directly avoids treating $e^{\hat f}$ as a normalised $p(y\mid x)$. Even with exact scores, the guided run need not sample the final tilted distribution (Bradley & Nakkiran, 2024). G4 in general: performance information modifies the sampling process — by a gradient on the sample (classifier or energy guidance) or by setting the guidance strength (RGD).
 :::
 
 ### Too much guidance leaves the valid set
@@ -847,7 +1168,13 @@ Numbers behind the picture (150 samples; averages over the **valid** samples onl
 :::
 
 ### RGD — give the proxy one knob
-{sub: Robust Guided Diffusion · Chen, Beckham, Liu, Liu & Pal · TMLR 2024}
+{sub: “Robust Guided Diffusion for Offline Black-Box Optimization” · Chen, Beckham, Liu, Liu & Pal · TMLR 2024}
+
+::: paper
+- Why it is here | G4's second mechanism: performance information sets the guidance **strength**, not the sample.
+- What it is | An offline-MBO paper: proxy-free diffusion of the DDOM kind, with a proxy given one knob.
+- Why it matters | State-of-the-art results on Design-Bench tasks: limiting an unreliable model can pay off.
+:::
 
 ::: cols
 ::: col Proxy-enhanced sampling
@@ -859,7 +1186,9 @@ Refine the proxy toward the diffusion model's own $p(y\mid x)$, so that the prox
 :::
 
 ::: keypoint
-G4's second mechanism. Lecture 5 says the proxy is unreliable off the data; RGD ==shrinks what it controls== — one scalar per step instead of every coordinate of $x$ — and corrects it with the generator. That reduces the exposure; it does not make the proxy right.
+G4's second mechanism. Lecture 5 says the proxy is unreliable off the data.
+RGD ==shrinks what it controls== — one scalar per step instead of every coordinate of $x$ — and corrects it with the generator.
+That reduces the exposure; it does not make the proxy right.
 :::
 
 ::: note
@@ -869,10 +1198,18 @@ The strength update is the paper's Eq. 8: $\omega$ is optimised by gradient asce
 ### Discrete designs — guided discrete diffusion
 ::: cols
 ::: col NOS / LaMBO-2 {p}(Gruver et al., NeurIPS 2023)
-Protein sequences have no gradient in $x$, so NOS guides the denoiser's **continuous hidden states**. LaMBO-2 uses it inside a Bayesian-optimisation procedure with laboratory rounds — an application, not offline MBO.
+::: paper
+- Why it is here | G4 where a design has no gradient: protein sequences are discrete, so NOS guides the denoiser's **continuous hidden states**.
+- What it is | A paper from NYU and Genentech's Prescient Design: guided discrete diffusion, run inside LaMBO-2 — a Bayesian-optimisation loop with laboratory rounds.
+- Why it matters | Guided generation tested in the wet lab: antibody designs were expressed and measured for binding. An application, not offline MBO.
+:::
 :::
 ::: col.accent Road-network layouts {p}(Yun et al., WSDM 2026 · our lab)
-A city's road layout is a discrete structure; a **guided discrete diffusion** model generates layouts for a given traffic pattern.
+::: paper
+- Why it is here | G4 on a graph, in our lab's own design problem: a city's road layout is a discrete structure.
+- What it is | A **guided discrete diffusion** model that generates urban road-network layouts for a given traffic pattern.
+- Why it matters | It carries guidance from vectors and sequences to city-scale networks — the same intervention point, on a new kind of design.
+:::
 :::
 :::
 
@@ -922,7 +1259,8 @@ Four places for a performance signal to get in — and Lecture 5's tools in each
 :::
 
 ::: keypoint
-Not rivals: BootGen is G2 and G3, RGD is G3 with a G4 knob, and ==the KL view== connects several of them — a lens, not their common objective.
+Not rivals: a method can combine intervention points — BootGen is G2 and G3, RGD is G3 with a G4 knob.
+==The KL view== connects several of them — a lens, not their common objective.
 :::
 
 ### Performance, validity, reliability — the two lectures together
@@ -941,13 +1279,21 @@ Can the prediction be trusted? — ==Lecture 5==: conservatism, uncertainty, kno
 :::
 
 ::: keypoint
-==Generate to stay plausible, score with care, measure to settle==: a generator proposes, a conservative or uncertainty-aware model ranks, and only an evaluation decides. Two settings: BootGen selects with a proxy and is evaluated afterwards; the wind-farm loop adds evaluations to the data while it optimises.
+==Generate to stay plausible, score with care, measure to settle==: a generator proposes, a conservative or uncertainty-aware model ranks, and only an evaluation decides.
+BootGen selects with a proxy and is evaluated afterwards.
+The wind-farm loop adds evaluations to the data while it optimises.
 :::
 
 ### Diffusion Policy — generate a sequence of actions
-{sub: Chi et al. · RSS 2023 · from design generation to robot behaviour}
+{sub: “Diffusion Policy: Visuomotor Policy Learning via Action Diffusion” · Chi et al. · RSS 2023}
 
-Replace a static design with an **action sequence**, conditioned on the robot's recent observations; train on demonstrations with the diffusion noise-prediction loss. Execute a few actions, observe again, generate anew.
+::: paper
+- Why it is here | The bridge to the rest of the course: the same diffusion model, generating **actions**, not a design.
+- What it is | A robotics paper (Columbia, Toyota Research Institute, MIT), trained on demonstrations.
+- Why it matters | 46.9% better on average than the prior state of the art on twelve tasks; now a standard policy class.
+:::
+
+Replace a static design with an **action sequence**, conditioned on recent observations. Execute a few, observe again, generate anew.
 
 ::: figure diffusion-policy-loop | 900
 The observation-conditioned generate-and-execute loop. Denoising steps happen inside one decision; they are not physical time steps.
@@ -955,6 +1301,10 @@ The observation-conditioned generate-and-execute loop. Denoising steps happen in
 
 ::: keypoint
 A sequence keeps different demonstrated ways around an obstacle as different **modes**. This is **imitation**, not reward-based RL: the objective is the demonstrator's actions. Executing a little and re-planning anticipates **feedback and MPC** (Lectures 9–11). [Paper](https://arxiv.org/abs/2303.04137)
+:::
+
+::: note
+Chi, Feng, Du, Xu, Cousineau, Burchfiel & Song. Trained with the diffusion noise-prediction loss on demonstrations. The 46.9% is the paper's average improvement over the prior state of the art across 12 tasks from four benchmarks.
 :::
 
 ### Where we are — a performance model and a generator
@@ -1036,21 +1386,21 @@ Complete derivations and reported numbers, kept out of the narrative.
 The lab's papers were checked against the KAIST SILAB list and the proceedings pages (2026-10-11); descriptions follow their abstracts.
 :::
 
-### Backup 1 — the ELBO, derived, and the reparameterisation trick
+### Backup 1 — why a KL weight of 1 fills the prior exactly
 {fill: top}
 
-We want $\log p_\theta(x)$, which integrates over $z$. Introduce $q_\phi(z\mid x)$:
+The *Turning the dial* widget, as a formula. The ELBO itself is derived twice in Act 2 (views 1 and 2); this slide only explains the dial.
 
-$$\log p_\theta(x) = \underbrace{\E_{q_\phi}\Big[\log\tfrac{p_\theta(x,z)}{q_\phi(z\mid x)}\Big]}_{\text{ELBO } \mathcal{L}_{\theta,\phi}(x)} + \underbrace{\mathrm{KL}\big(q_\phi(z\mid x)\,\|\,p_\theta(z\mid x)\big)}_{\ \ge\ 0}$$
+With a linear-Gaussian decoder $p_\theta(x\mid z)=\mathcal N(Wz+b,\sigma^2 I)$, the encoder that maximises the ELBO with weight $\beta$ on the KL is
 
-The KL is non-negative, so the ELBO is a lower bound — ==not generally the exact evidence==; it is tight only when $q_\phi$ equals the true posterior. Expanding $p_\theta(x,z)=p_\theta(x\mid z)p(z)$ gives the working form
+$$\mu = (W^\top W + \beta\sigma^2 I)^{-1}W^\top(x-b),\qquad \Sigma = \beta\sigma^2(W^\top W+\beta\sigma^2 I)^{-1}$$
 
-$$\mathcal{L}_{\theta,\phi}(x) = \E_{q_\phi(z\mid x)}[\log p_\theta(x\mid z)] - \mathrm{KL}(q_\phi(z\mid x)\,\|\,p(z)) \qquad\blacksquare$$
+Along an eigendirection of $W^\top W$ with eigenvalue $w$, the codes' total variance — spread of the means plus each code's blur — is
 
-**Reparameterisation.** Write $z = \mu_\phi(x) + \sigma_\phi(x)\odot\epsilon$ with $\epsilon\sim\mathcal{N}(0,I)$: the randomness moves off the parameters and the gradient flows.
+$$\mathrm{Var}(\mu)+\Sigma = \frac{w^2+\sigma^2 w+\beta\sigma^2 w+\beta^2\sigma^4}{(w+\beta\sigma^2)^2},\qquad \text{whose difference from } 1 \text{ is } \frac{\sigma^2 w(1-\beta)}{(w+\beta\sigma^2)^2}$$
 
-::: small
-**Why the KL term is the samplability term.** With a linear-Gaussian decoder the $\beta$-optimal encoder is $\mu = (W^\top W + \beta\sigma^2 I)^{-1}W^\top(x-b)$ and $\Sigma = \beta\sigma^2(W^\top W+\beta\sigma^2 I)^{-1}$. Along an eigendirection of $W^\top W$ with eigenvalue $w$ the aggregate posterior variance is $\mathrm{Var}(\mu)+\Sigma = \big(w^2+\sigma^2 w+\beta\sigma^2 w+\beta^2\sigma^4\big)/(w+\beta\sigma^2)^2$, whose difference from $1$ is $\sigma^2 w(1-\beta)/(w+\beta\sigma^2)^2$ — zero at $\beta=1$. The *Turning the dial* widget is that formula, plotted.
+::: keypoint
+Zero at $\beta=1$: the standard ELBO makes the codes fill the prior exactly, so prior draws land where codes are.
 :::
 
 ### Backup — one VAE calculation
@@ -1061,7 +1411,8 @@ $$\mathrm{KL}(q\|p)=\tfrac12\left(\mu^2+\sigma^2-1-\log\sigma^2\right)=\tfrac12(
 With an expected reconstruction log-likelihood of $-2$, the ELBO is $-2-0.818=\mathbf{-2.818}$. One reparameterised draw with $\epsilon=-1$: $z=1+0.5(-1)=0.5$.
 
 ::: keypoint
-Reconstruction rewards explaining the input; KL charges for moving the code distribution away from the prior.
+Reconstruction rewards explaining the input.
+KL charges for moving the code distribution away from the prior.
 :::
 
 ### Backup 2 — the four families of generative models
