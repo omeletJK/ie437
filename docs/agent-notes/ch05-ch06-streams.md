@@ -108,6 +108,12 @@ Plan after a second agent's review (same day; its factual claims were checked ag
   (18 slides, deck 90; Session 1 now ends near slide 46). See
   [build-on-what-they-know](build-on-what-they-know.md). Appendix positions shifted by 10, and both
   maps were refreshed by heading lookup.
+- 2026-10-26: the professor asked for the decisive forward/inverse difference early in Ch 6, and
+  which Ch 5 limitation inverse design might overcome. Added Act 1 "Forward or inverse — who does
+  the searching" (`manifold-search` mode `fi`, on G1's road): forward searches a model, so the
+  optimiser hunts its errors; inverse samples one, so there is no arg-max to exploit, until a
+  performance model steers again. The note lists what it could repair (attacker, near → like,
+  validity, a batch, a small space) and what it cannot (reach past the data).
 
 **How to apply:** each stream gets idea → mechanism → papers → what it cannot do. See
 [papers-serve-the-flow](papers-serve-the-flow.md) and [ch04-frontier-lab-papers](ch04-frontier-lab-papers.md).

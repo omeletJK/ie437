@@ -22,6 +22,17 @@
         t = 1.8, lies beyond the measured stretch (t up to 1.05)
      The road is the known curve itself — a teaching device, exact by
      construction; a learned decoder is only approximately valid.
+   mode "fi"  Act 1, before any generator is built: forward against inverse
+     design on the same road, walked by ->:
+     0  the road and the measured designs
+     1  forward — search a model: the same ascent on f_hat(x) as g1; it
+        leaves the road and f_hat promises 4.97 at the corner (-3, -2)
+     2  inverse — sample a model: the g4 sampler with s = 0 (where designs
+        live), kept where f_hat >= 1.1. Verified in node (seed 5, sampler
+        seed 9): 26 of 150 kept, all valid, predicted 1.23 / true 1.26,
+        t in [-2.01, -1.10]; the data's best is 1.38
+     3  the price: the samples stay on the measured stretch; the true best,
+        2.40 at t = 1.8, needs a performance signal to reach
    mode "g4"  drag s, the guidance strength. The sampler stands in for a
         diffusion sampler: annealed Langevin dynamics on a kernel density of
         the data (bandwidth 0.10; its noise-conditional score is exact),
@@ -38,7 +49,7 @@
 IE437.widget('manifold-search', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', GREEN = '#16A34A', RED = '#D64545', AMBER = '#B45309', SLATE = '#64748B';
   var MONO = 'IBM Plex Mono, monospace';
-  var MODE = opts.mode === 'g4' ? 'g4' : 'g1';
+  var MODE = opts.mode === 'g4' || opts.mode === 'fi' ? opts.mode : 'g1';
   var AMP = 0.9, FRQ = 1.15, T0 = -2.8, T1 = 2.8, HW = 0.12, N = 36;
   function c(t) { return [t, AMP * Math.sin(FRQ * t)]; }
   function bump(t, m, s) { return Math.exp(-(t - m) * (t - m) / (2 * s * s)); }
@@ -113,9 +124,10 @@ IE437.widget('manifold-search', function (host, opts) {
   }
 
   var st = 0, sg = typeof opts.s === 'number' ? opts.s : 1, S0 = sg;
-  var G1 = MODE === 'g1';
+  var FI = MODE === 'fi', G1 = MODE === 'g1' || FI;              /* fi shares g1's layout */
   host.innerHTML =
-    '<div class="wbar"><span class="wt">' + (G1 ? 'Search the plane, or search the code' : 'Guide the sampler with the surrogate') + '</span>' +
+    '<div class="wbar"><span class="wt">' + (FI ? 'Search a model, or sample one' : G1 ? 'Search the plane, or search the code' :
+      'Guide the sampler with the surrogate') + '</span>' +
     '<span class="wspacer"></span>' +
     (G1 ? '<span class="wlabel">valid designs</span><span class="wnum">a road through the plane</span>'
         : '<span class="wlabel">guidance strength</span><span class="wnum" data-s></span><span data-sl></span>') + '</div>' +
@@ -124,7 +136,7 @@ IE437.widget('manifold-search', function (host, opts) {
     (G1 ? '' : '<div data-num style="font:400 13px/1.75 var(--sans);color:var(--ink2)"></div>') +
     '<div data-note style="font:400 ' + (G1 ? '13.5px/1.6' : '12.5px/1.55') + ' var(--sans);color:var(--ink' + (G1 ? '2' : '3') +
     ');' + (G1 ? '' : 'border-top:1px solid rgba(22,24,29,.1);padding-top:9px') + '"></div></div></div>';
-  var CW = G1 ? 500 : 470, CH = G1 ? 342 : 300, SC = G1 ? 78 : 70, OX = G1 ? 16 : 24, OY = 8;  /* px per unit */
+  var CW = FI ? 440 : G1 ? 500 : 470, CH = FI ? 300 : G1 ? 342 : 300, SC = FI ? 68 : G1 ? 78 : 70, OX = G1 ? 16 : 24, OY = 8;  /* px per unit */
   var sv = IE437.svg(CW, CH); host.querySelector('[data-c]').appendChild(sv);
   var PX = function (v) { return OX + (v + 3) * SC; }, PY = function (v) { return OY + (2 - v) * SC; };
   function curvePath(t0, t1, n) {
@@ -232,7 +244,56 @@ IE437.widget('manifold-search', function (host, opts) {
       ? 'A little guidance moves samples along the curve toward higher predictions; on the valid samples, prediction and truth rise together.'
       : 'More guidance stops paying: the valid samples are worth no more, and more samples leave the valid set — the surrogate’s gradient off the curve, where it has no data, pulls them out. <span class="hl">Here the failure is validity</span>, not over-prediction on the valid designs.';
   }
-  function draw() { while (sv.firstChild) sv.removeChild(sv.firstChild); (G1 ? drawG1 : drawG4)(); }
+  /* forward against inverse: climb f_hat(x), or sample where designs live and keep what is predicted good */
+  var FTH = 1.1;
+  function drawFI() {
+    E('rect', { x: PX(-3), y: PY(2), width: 6 * SC, height: 4 * SC, fill: '#fff', stroke: INK, 'stroke-opacity': .2 }, sv);
+    E('text', { x: PX(2.9), y: PY(1.8), 'text-anchor': 'end', 'font-size': 10, fill: INK, 'fill-opacity': .45, text: 'off the road: not a design' }, sv);
+    E('path', { d: roadPath(T0, T1), fill: 'none', stroke: GREEN, 'stroke-width': 2 * HW * SC + 4, 'stroke-opacity': .25, 'stroke-linecap': 'round' }, sv);
+    if (st >= 3) E('path', { d: roadPath(-2.5, DMAX), fill: 'none', stroke: SLATE, 'stroke-width': 2 * HW * SC + 4, 'stroke-opacity': .28, 'stroke-linecap': 'butt' }, sv);
+    E('path', { d: roadPath(T0, T1), fill: 'none', stroke: GREEN, 'stroke-width': 1.2, 'stroke-opacity': .7, 'stroke-dasharray': '6 5' }, sv);
+    E('text', { x: PX(-2.9), y: PY(0.45), 'font-size': 11, fill: GREEN, 'font-weight': 700, text: 'the road: the only valid designs' }, sv);
+    var S = st >= 2 ? sample(0) : [], K = S.filter(function (q) { return fhx(q.x) >= FTH; });
+    if (st >= 2) S.forEach(function (q) {
+      if (fhx(q.x) < FTH) E('circle', { cx: PX(q.x[0]), cy: PY(q.x[1]), r: 2.2, fill: 'none', stroke: SLATE, 'stroke-opacity': .45 }, sv);
+    });
+    D.forEach(function (d) { E('circle', { cx: PX(d.x[0]), cy: PY(d.x[1]), r: 2.7, fill: INK }, sv); });
+    var s0 = D[bi].x;
+    E('circle', { cx: PX(s0[0]), cy: PY(s0[1]), r: 5, fill: 'none', stroke: INK, 'stroke-width': 1.6 }, sv);
+    if (st >= 1) {
+      var pts = XP.map(function (x) { return [PX(x[0]), PY(x[1])]; }), xe = XP[XP.length - 1], op = st >= 2 ? .3 : 1;
+      E('path', { d: 'M' + pts.map(function (q) { return q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join('L'), fill: 'none',
+        stroke: RED, 'stroke-width': 2.6, 'stroke-opacity': op }, sv);
+      cross(PX(xe[0]) + 7, PY(xe[1]) - 7, RED, 7);
+      E('text', { x: PX(-1.3), y: PY(-1.62), 'font-size': 11, fill: RED, 'font-weight': 700, 'fill-opacity': op,
+        text: 'forward: not a design, surrogate promises ' + f2(fhx(xe)) }, sv);
+    }
+    if (st >= 2) {
+      K.forEach(function (q) {
+        if (q.ok) E('circle', { cx: PX(q.x[0]), cy: PY(q.x[1]), r: 3.6, fill: BLUE, 'fill-opacity': .85, stroke: '#fff', 'stroke-width': .7 }, sv);
+        else cross(PX(q.x[0]), PY(q.x[1]), RED, 3);
+      });
+      E('text', { x: PX(-2.9), y: PY(1.55), 'font-size': 11, fill: BLUE, 'font-weight': 700, text: 'inverse: ' + K.length + ' kept samples, ' +
+        (K.every(function (q) { return q.ok; }) ? 'all designs' : K.filter(function (q) { return q.ok; }).length + ' designs') }, sv);
+    }
+    if (st >= 3) {
+      var sb = c(1.8);
+      E('path', { d: 'M' + PX(sb[0]) + ' ' + (PY(sb[1]) - 9) + 'l2.6 6 6.5 0 -5.2 4 2.6 6.5 -6.5 -4 -6.5 4 2.6 -6.5 -5.2 -4 6.5 0z', fill: AMBER, stroke: '#fff' }, sv);
+      E('text', { x: PX(sb[0]), y: PY(sb[1]) - 14, 'text-anchor': 'middle', 'font-size': 11, fill: AMBER, 'font-weight': 700, text: 'true best ' + f2(g(1.8)) }, sv);
+      E('text', { x: PX(0.45), y: PY(-0.2), 'font-size': 10.5, fill: SLATE, 'font-weight': 700, text: '↖ measured up to here' }, sv);
+    }
+    E('text', { x: PX(0), y: CH - 4, 'text-anchor': 'middle', 'font-size': 10, 'font-style': 'italic', fill: INK, 'fill-opacity': .45, text: 'a design x = (x₁, x₂)' }, sv);
+    var kv = K.filter(function (q) { return q.ok; }), mp = 0, mt = 0;
+    kv.forEach(function (q) { mp += fhx(q.x); mt += g(q.t); });
+    if (kv.length) { mp /= kv.length; mt /= kv.length; }
+    host.querySelector('[data-note]').innerHTML = [
+      'A design is two numbers, but only points on the <b style="color:' + GREEN + '">road</b> are real designs. The measured designs (●) cover part of it. Two ways to use them.',
+      '<b>Forward — search a model.</b> Fit f̂(x), then climb it from the best measured design. The climb <span class="hl">hunts the surrogate’s error</span>: it leaves the road, and f̂ promises <b>' + f2(fhx(XP[XP.length - 1])) + '</b> for a point that is not a design. Lecture 5’s failure.',
+      '<b>Inverse — sample a model.</b> Learn where designs live, ask for a good score, and draw. ' + K.length + ' of ' + S.length + ' samples are predicted ≥ ' + FTH.toFixed(1) + ': predicted <b>' + f2(mp) + '</b>, truly <b>' + f2(mt) + '</b>. <span class="hl">No arg-max, no attacker.</span>',
+      '<b>The price.</b> The samples stay on the measured stretch. The true best (★ ' + f2(g(1.8)) + ') lies past it. To get there the generator needs a performance signal — <span class="hl">and there Lecture 5’s failure can return</span>.'
+    ][st];
+  }
+  function draw() { while (sv.firstChild) sv.removeChild(sv.firstChild); (FI ? drawFI : G1 ? drawG1 : drawG4)(); }
   if (G1) {
     var show = function (k) { st = Math.max(0, Math.min(3, k)); draw(); };
     show(0);

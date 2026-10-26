@@ -332,11 +332,12 @@
     "ch06_generative_design_optimization": {
       "previous_slides": 78,
       "previous_core_slides": 62,
-      "slides": 92,
-      "core_slides": 76,
-      "appendix_start": 77,
+      "slides": 93,
+      "core_slides": 77,
+      "appendix_start": 78,
       "first_topic_slide": 5,
       "widgets": [
+        "manifold-search",
         "forward-inverse",
         "gen-pictures",
         "kl-direction",
@@ -364,8 +365,8 @@
         "kl-tilt",
         "manifold-search"
       ],
-      "worked_slide": 38,
-      "transfer_slide": 39,
+      "worked_slide": 39,
+      "transfer_slide": 40,
       "changed_slides": [
         2,
         3,
@@ -427,13 +428,14 @@
         59,
         60,
         61,
-        62
+        62,
+        63
       ],
       "moved_to_appendix": [
-        80,
         81,
-        84,
-        86
+        82,
+        85,
+        87
       ]
     },
     "ch07_mdp_dp": {

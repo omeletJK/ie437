@@ -723,20 +723,9 @@ The jagged surrogate's tallest spike is a ==wrong solution==; the smooth one pea
 :::
 :::
 ::: col
-Its assumption: over-estimates come from a network that is **not smooth**, with spurious spikes between and beyond the data. So it changes the surrogate's *shape* near each candidate, not its *level*.
-:::
-:::
+Its assumption: over-estimates come from a network that is **not smooth** — spurious spikes between and beyond the data.
 
-::: cols
-::: col Stage 1 — train it smooth
-$$L(\theta)=\max_{\tilde\theta\in B(\theta)}\ \E_{(x,y)\sim D,\ \hl{\delta\sim\mathcal N(0,\sigma)}}\Big[\big(f(\hl{x+\delta};\tilde\theta)-y\big)^2\Big]$$
-
-Noise on the inputs and the worst weights nearby: the fit must hold on a neighbourhood of each point, not at the point alone.
-:::
-::: col.accent Stage 2 — re-smooth at each step
-$$\theta_t=\argmin_{\tilde\theta\in B(\theta)}\ \hl{\big\lVert\nabla_x f(x^{(t)};\tilde\theta)\big\rVert_2}+\alpha\big[f(x^{(t)};\tilde\theta)-f(x^{(t)};\theta_{t-1})\big]^2$$
-
-Flat at the candidate (the gradient term) without moving its prediction there (the second). Then one ascent step on $f(\cdot;\theta_t)$.
+So it changes the surrogate's *shape*, not its *level*, in two stages: ==train it smooth== on the data, then ==re-smooth it at each candidate== before every ascent step.
 :::
 :::
 
@@ -747,7 +736,7 @@ RoMA ==removes the slopes== that would carry it there.
 :::
 
 ::: note
-Source alignment: Part 2 pp. 41–49. The picture is the paper's Figure 2; the objectives are the source's pp. 47 and 49, with $B(\theta)=\{\tilde\theta:\lVert\theta_l-\tilde\theta_l\rVert_F\le\epsilon\lVert\theta_l\rVert_F\ \forall l\}$ (Stage 1 is the double-perturbation loss of Adversarial Weight Perturbation, NeurIPS 2020; the inner maximisation runs by projected gradient ascent). Stage 1 smooths only where the data is, which is why Stage 2 re-adapts at every candidate — the paper's pipeline figure is on the appendix slide "Backup — RoMA's two stages".
+Source alignment: Part 2 pp. 41–49. The picture is the paper's Figure 2; the objectives are the source's pp. 47 and 49, with $B(\theta)=\{\tilde\theta:\lVert\theta_l-\tilde\theta_l\rVert_F\le\epsilon\lVert\theta_l\rVert_F\ \forall l\}$ (Stage 1 is the double-perturbation loss of Adversarial Weight Perturbation, NeurIPS 2020; the inner maximisation runs by projected gradient ascent). Stage 1 smooths only where the data is, which is why Stage 2 re-adapts at every candidate. Both objectives, with the paper's pipeline figure, are on the appendix slide "Backup — RoMA's two stages".
 :::
 
 ### Session 1 — what conservatism fixed, and what it left

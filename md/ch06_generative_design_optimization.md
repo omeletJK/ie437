@@ -109,6 +109,21 @@ The source's answer: ==model what plausible designs look like, and steer that mo
 Source alignment: Part 1 p. 4 — the main problem, conservatism limiting expressivity, and three promises of sampling (no optimisation, diverse designs, constraints satisfied implicitly). The first and third are softened here: several methods below still optimise, and a learned prior encourages validity without guaranteeing it.
 :::
 
+### Forward or inverse — who does the searching
+::: widget manifold-search {"mode":"fi"}
+Press → three times: Lecture 5's way, then this lecture's.
+:::
+
+::: keypoint
+Forward design **searches** a model: the optimiser hunts its errors.
+Inverse design **samples** a model: candidates stay where designs live.
+==No arg-max, no attacker== — until a performance model steers again.
+:::
+
+::: note
+What inverse design could repair from Lecture 5. The attacker: there is no arg-max over $x$ for errors to win. Conservatism's cost: it keeps a design **near** the data; a generator keeps it **like** the data — a structure a decoder can extend along the road (G1), where distance alone forbids it. Validity: learned, not checked design by design. One answer: a batch instead. A huge space: a code, or a single requested $y$. What it cannot do on its own: go past the data — here the true best lies beyond the measured stretch. G2–G4 bring a performance signal back to get there, and with it Lecture 5's failure (Act 3's table, last column). Numbers: the ascent ends at the corner $(-3,-2)$ with $\hat f=4.97$, not a design. The samples come from a kernel density of the data (G4's sampler with $s=0$): 26 of 150 are predicted $\ge 1.1$, all valid, predicted $1.23$, true $1.26$; the data's best is $1.38$, the true best $2.40$ at $t=1.8$.
+:::
+
 ### One $y$, many $x$ — the average answer can be invalid
 ::: widget forward-inverse {"seed":7}
 Run the forward map backwards — from the $y$ you need to the $x$ that delivers it — and it is not a function: ==a curve in two pieces==. The red mark is the midpoint of that set — what a least-squares inverse returns — stranded in the valley between the branches.
@@ -288,18 +303,20 @@ Why the integral is hard here. Lecture 2's coin evidence $\int p(D\mid\theta)\,p
 ### What training is for — $\theta$ generates designs, $\phi$ reads them
 {math: compact}
 
+Once trained, each network does one job — so train each for its job:
+
 ::: cols
 ::: col $\theta$ — the decoder $p_\theta(x\mid z)$ generates
-**After training:** draw a code $z\sim\mathcal N(0,I)$ and decode it — ==a new design that resembles the data==.
+**Job:** draw a code $z\sim\mathcal N(0,I)$ and decode it — ==a new design that resembles the data==.
 
-**So train it to** make the data probable — Lecture 2's maximum likelihood:
+**Train it for that:** make the data probable — Lecture 2's maximum likelihood:
 
 $$\max_\theta\ \sum_{i=1}^N\log p_\theta(x_i)$$
 :::
 ::: col.accent $\phi$ — the encoder $q_\phi(z\mid x)$ reads a design
-**After training:** give it a design and get its code — ==the coordinates G1 searches==.
+**Job:** give it a design and get its code — ==the coordinates G1 searches==. During training it tells $\theta$ which codes made each design.
 
-**So train it to** match the true posterior, the codes that could have made each design:
+**Train it for that:** match the true posterior:
 
 $$\min_\phi\ D_{\mathrm{KL}}\big(q_\phi(z\mid x_i)\,\|\,p_\theta(z\mid x_i)\big)$$
 :::
