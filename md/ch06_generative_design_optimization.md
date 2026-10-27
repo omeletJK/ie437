@@ -804,19 +804,17 @@ Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0
 :::
 
 ### Why the importance ratio belongs in the weight
-One CbAS round, start to end: draw designs from $q$, weight them, refit $q$ on them.
-
 ::: widget cond-bars {"mode":"ratio"}
-Press → three times. Each square is one draw.
+Press → three times. Each square is one draw from $q$.
 :::
 
 ::: keypoint
-The weight is how much a draw counts when $q$ is refit.
-With $p/q$ in it, the refit learns ==the target mix==, not last round’s lean.
+The weight $w(x)$ is how much one draw of $x$ counts when $q$ is refit.
+With $p(x)/q(x)$ in it, the new $q$ is ==the target $p(x\mid S)$==, not last round’s lean.
 :::
 
 ::: note
-Where $q$ comes from: CbAS refits a generator every round (the CbAS slide's step 3); Fix 1 says to draw the next round's designs from that refit, $q=q(x\mid\phi^{(t-1)})$, because it already proposes successful designs more often than the prior $p=p(x\mid\theta)$ does. The target never changes: $p\times P(S)$, plausible under the prior and likely to succeed. Numbers, per 100 draws: $p=(60,30,10)$, $q=(20,30,50)$, success $(0.1,0.5,0.8)$. Kept from $p$: $(6,15,8)$, the target. Kept from $q$: $(2,15,40)$. Ratios $p/q=(3,1,1/5)$, so the corrected counts are $(6,15,8)$. In the weight form, $w=\frac{p}{q}P(S\mid x)=(0.30,0.50,0.16)$ per draw, and $q\times w$ is the target. Without the ratio the refit would put $40/57=70\%$ of its mass on C, against the target's $8/29=28\%$, and the drift compounds: refit to its own successes each round, $q$'s share of C goes $50\% \to 70\% \to 81\% \to 87\%$, collapsing onto the design the success model likes most, plausible or not (Lecture 5). With the ratio every round fits the same target, C at $28\%$. If asked why not draw from $p$ alone: here 29 of 100 draws are kept, but with the harder request of the previous slide only 1 in 100. A design $q$ never draws cannot be counted at all, however large its ratio — the proposal must cover the target.
+Definitions, all over the three designs. $p(x)=p(x\mid\theta)$: the prior generator's probability of proposing $x$, $(0.6,0.3,0.1)$, trained once and frozen. $q(x)=q(x\mid\phi^{(t-1)})$: last round's search model's probability of proposing $x$, $(0.2,0.3,0.5)$ — Fix 1 draws from it because success is more common there. $P(S\mid x)$: the probability that $x$ succeeds, $(0.1,0.5,0.8)$. Target $p(x\mid S)\propto p(x)P(S\mid x)$, $(21\%,52\%,28\%)$. Of 100 draws from $q$, about $100\,q(x)$ are $x$: $(20,30,50)$. The refit is weighted maximum likelihood, $\max_\phi\sum_i w(x_i)\log q(x_i\mid\phi)$; for a generator over three designs its solution is exactly $q_{\text{new}}(x)=W(x)/\sum_{x'}W(x')$, with $W(x)=$ (number of draws of $x$) $\times\,w(x)$. With $w=P(S\mid x)$: $W=(2,15,40)$, $q_{\text{new}}=(4\%,26\%,70\%)$. With $w=\frac{p}{q}P(S\mid x)=(0.30,0.50,0.16)$: $W=(6,15,8)$, $q_{\text{new}}=(21\%,52\%,28\%)$ — because $100\,q(x)\cdot\frac{p(x)}{q(x)}P(S\mid x)=100\,p(x)P(S\mid x)$: the $q$ cancels. Without the ratio the drift compounds: refit to its own successes each round, $q$'s probability of C goes $0.50\to0.70\to0.81\to0.87$, collapsing onto the design the success model likes most, plausible or not (Lecture 5). A design $q$ never draws gets no weight at all, however large its ratio — the proposal must cover the target.
 :::
 
 ### One shot, then the ladder
