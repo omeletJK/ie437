@@ -1159,18 +1159,17 @@ Source alignment: Part 2 pp. 25–28; the full table, including faces and contro
 :::
 
 ### How far past the data can you ask?
-::: widget condition-shift {"seed":11}
-The same two hundred designs and oracle, driven by the bar $\gamma$ alone. Raise it and the samples move toward the good region, then ==thin out and decay==. The red marker is Lecture 5's answer on the identical problem.
+::: widget condition-shift {"seed":11,"try":"Drag γ","tryAt":"bar"}
+Ask for a score $\gamma$: the generator proposes, keeps the designs whose learned score reaches $\gamma$, and we check their true score. Press → three times to ask for more.
 :::
 
 ::: keypoint
-A requested score beyond the data is ==extrapolation moved from $x$ to $y$==.
-An exact conditional puts no mass where the prior has none.
-Learned generators have tails, so over-asking still produces poor or invalid designs.
+A little past the data's best, ==the kept designs truly improve==.
+Far past it, the request is ==extrapolation moved from $x$ to $y$==: few pass, and they pass on a guess.
 :::
 
 ::: note
-Mean true value of the samples: $2.13$ at $\gamma=2.00$, $2.550$ at $2.65$ (best, above the dataset's $2.523$), then $2.537$, $2.427$, $2.163$ at $2.80$, $3.00$, $3.80$ — while the effective sample count falls from $3{,}750$ to $1.5$. Gradient ascent on the same oracle returns a design it rates $4.18$ and the world rates $-0.14$.
+What the widget does, step by step. The data and the true score are Lecture 5's. A score model fitted to the 200 measured designs stands for what a conditional generator learns about which designs go with which scores; past the measured region it is a guess (it keeps rising, the truth turns down). The generator proposes 10,000 designs; a design is kept if its learned score reaches the request $\gamma$ — Lecture 3's "keep what passes, count what is left", as on the heater slides. The four stops, with the best measured design worth 2.52: $\gamma=2.00$ — 984 kept, promised 2.22, true 2.27: no gain. $\gamma=2.50$ — 88 kept, promised 2.65, true 2.61: truly better than the data. $\gamma=2.80$ — 12 kept, promised 2.92, true 2.42: the promise is broken. $\gamma=3.20$ — none of 10,000 kept: the exact conditional is empty, because the generator puts almost no mass where the request could be met. A learned generator's tail is not exactly empty, so a real one asked for 3.2 still returns designs — far past the data, chosen on a guess. Lecture 5's route on the same problem, gradient ascent on the learned score, runs to $x=10$, promised 4.18, true $-0.14$.
 :::
 
 ### Classifier-free guidance — push a conditional model toward its condition
