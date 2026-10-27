@@ -314,10 +314,10 @@ IE437.widget('cond-bars', function (host, opts) {
       ratio: [
         'All three rows are ==probabilities over the three designs==. The goal of the round: a new q that proposes the target p(x | S).<br>' +
         'Draw 100 designs from q, last round’s search model: about 20 A, 30 B, 50 C.',
-        'Weight each draw by success alone, w(x) = P(S | x).<br>' +
-        'The refit then proposes C <b style="color:#D64545">70%</b> of the time, not 28%: ==q’s own lean, copied==.',
-        'q proposes C with probability 0.5, the prior only 0.1: C is drawn five times too often, so each C draw counts p/q = 1/5.<br>' +
-        'With w(x) = p(x)/q(x) × P(S | x), the new q is ==exactly the target==.',
+        'Try the CbAS slide’s weight, w(x) = P(S | x). It was right there because the draws came <b>from the prior</b>: C turned up about 10 times in 100.<br>' +
+        'Here the draws come from q: C turns up 50 times. The refit proposes C <b style="color:#D64545">70%</b> of the time, not 28%: ==q’s own lean, copied==.',
+        'Correct the count, not the success: q drew C with probability 0.5, the prior would have with 0.1 — five times too often — so each C draw counts p(C)/q(C) = 0.1/0.5 = 1/5.<br>' +
+        'Total weight of x = 100 q(x) × p(x)/q(x) × P(S | x) = 100 p(x) P(S | x): q cancels, and the new q is ==exactly the target==.',
         'Then repeat: draw from the new q, and raise the success bar — the next slide.'
       ]
     })[MODE][st].replace(/==(.+?)==/g, '<span class="hl">$1</span>');

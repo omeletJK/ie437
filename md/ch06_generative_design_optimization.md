@@ -770,12 +770,12 @@ Proposes plausible designs **that succeed** — CbAS's **output**.
 
 **One refit** — Lecture 2's log-likelihood, weighted:
 
-$$\phi^* \;=\; \argmax_\phi\ \sum_{i=1}^N\ \underbrace{P(S\mid x_i)}_{\text{2 · weight: will it succeed?}}\ \underbrace{\log q(x_i\mid\phi)}_{\text{3 · refit }q},\qquad \underbrace{x_i\sim p(x\mid\theta)}_{\text{1 · propose from the prior}}$$
+$$\phi^* \;=\; \argmax_\phi\ \sum_{i=1}^N\ \underbrace{P(S\mid x_i)}_{\text{2 · weight: will it succeed?}}\ \underbrace{\log q(x_i\mid\phi)}_{\text{3 · refit }q},\qquad \underbrace{x_i\sim p(x\mid\theta)}_{\text{1 · propose — here from the prior}}$$
 
 ::: keypoint
 Each refit is ==maximum likelihood with weights==: $q$ learns to propose $p(x\mid S)$ directly.
 $\theta$ stays fixed.
-$\phi$ is refit round after round — the ladder, three slides on.
+$\phi$ is refit round after round — later rounds draw from $q$, and the weight gains $p/q$ (two slides on).
 :::
 
 ::: note
@@ -800,7 +800,7 @@ One. ==When success is rare, almost every proposal is thrown away== — Lecture 
 :::
 
 ::: note
-Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta)}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the slide after): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
+Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta)}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the ladder, three slides on): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
 :::
 
 ### Why the importance ratio belongs in the weight
@@ -809,12 +809,33 @@ Press → three times. Each square is one draw from $q$.
 :::
 
 ::: keypoint
-The weight $w(x)$ is how much one draw of $x$ counts when $q$ is refit.
-With $p(x)/q(x)$ in it, the new $q$ is ==the target $p(x\mid S)$==, not last round’s lean.
+Weighted by success alone, the refit copies $q$'s lean: C at 70%, not the target's 28%.
+Weighted by $\frac{p(x)}{q(x)}\,P(S\mid x)$, the refit ==is the target== — why, on the next slide.
 :::
 
 ::: note
 Definitions, all over the three designs. $p(x)=p(x\mid\theta)$: the prior generator's probability of proposing $x$, $(0.6,0.3,0.1)$, trained once and frozen. $q(x)=q(x\mid\phi^{(t-1)})$: last round's search model's probability of proposing $x$, $(0.2,0.3,0.5)$ — Fix 1 draws from it because success is more common there. $P(S\mid x)$: the probability that $x$ succeeds, $(0.1,0.5,0.8)$. Target $p(x\mid S)\propto p(x)P(S\mid x)$, $(21\%,52\%,28\%)$. Of 100 draws from $q$, about $100\,q(x)$ are $x$: $(20,30,50)$. The refit is weighted maximum likelihood, $\max_\phi\sum_i w(x_i)\log q(x_i\mid\phi)$; for a generator over three designs its solution is exactly $q_{\text{new}}(x)=W(x)/\sum_{x'}W(x')$, with $W(x)=$ (number of draws of $x$) $\times\,w(x)$. With $w=P(S\mid x)$: $W=(2,15,40)$, $q_{\text{new}}=(4\%,26\%,70\%)$. With $w=\frac{p}{q}P(S\mid x)=(0.30,0.50,0.16)$: $W=(6,15,8)$, $q_{\text{new}}=(21\%,52\%,28\%)$ — because $100\,q(x)\cdot\frac{p(x)}{q(x)}P(S\mid x)=100\,p(x)P(S\mid x)$: the $q$ cancels. Without the ratio the drift compounds: refit to its own successes each round, $q$'s probability of C goes $0.50\to0.70\to0.81\to0.87$, collapsing onto the design the success model likes most, plausible or not (Lecture 5). A design $q$ never draws gets no weight at all, however large its ratio — the proposal must cover the target.
+:::
+
+### Why divide by $q$ — Lecture 3's rule
+{math: compact}
+
+Lecture 3's weighted vote rested on one rule: **how often a sample is drawn, times its weight, gives the quantity we want**. Here the quantity is the target, $p(x)\,P(S\mid x)$.
+
+$$\begin{aligned}
+\text{drawn from the prior, } w=P(S\mid x):&\quad \underbrace{p(x)}_{\text{how often drawn}}\times P(S\mid x) &&= p(x)\,P(S\mid x) &&\text{the target — the CbAS slide}\\
+\text{drawn from }q,\ w=P(S\mid x):&\quad \underbrace{q(x)}_{\text{how often drawn}}\times P(S\mid x) &&= q(x)\,P(S\mid x) &&q\text{'s lean, copied — C at 70\%}\\
+\text{drawn from }q,\ w=\tfrac{p(x)}{q(x)}P(S\mid x):&\quad \underbrace{q(x)}_{\text{how often drawn}}\times \hl{\frac{p(x)}{q(x)}}\,P(S\mid x) &&= p(x)\,P(S\mid x) &&\text{the target again}
+\end{aligned}$$
+
+::: keypoint
+The rule never changed: the weight is always ==the target ÷ how often $x$ was drawn==.
+Drawn from the prior, $p/q=1$ and the weight is $P(S\mid x)$.
+Drawn from $q$, the ratio $p/q$ cancels $q$'s lean.
+:::
+
+::: note
+In the widget's numbers: C is proposed by $q$ with probability $0.5$ and by the prior with $0.1$, so in 100 draws from $q$ it turns up 50 times where the prior would give it 10 — five times too often; each C draw therefore counts $p/q=1/5$, and $50\times\frac15\times0.8=10\times0.8=8$, exactly what 100 prior draws would have contributed. In general this is importance sampling: $\E_{p}[g(x)]=\E_{q}\big[\tfrac{p(x)}{q(x)}\,g(x)\big]$ for any $q$ that is positive wherever $p\,g$ is — draw from the convenient distribution, reweight to the one you mean. Lecture 3's likelihood weighting is the case where the proposal is the prior with the evidence clamped. Why CbAS draws from $q$ at all: success is more common there (Fix 1); the ratio is the price of that convenience. A design $q$ never draws gets no weight, however large its ratio — $q$ must cover the target.
 :::
 
 ### One shot, then the ladder
