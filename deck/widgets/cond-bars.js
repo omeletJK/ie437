@@ -29,15 +29,16 @@
    mode "abc"     prior (0.6, 0.3, 0.1), success (0.1, 0.5, 0.8)
                   -> products (0.06, 0.15, 0.08) -> (0.207, 0.517, 0.276).
                     0  prior   1  success   2  the conditional: B, not C
-   mode "ratio"   CbAS's importance weight, as a count of 100 draws.
-                  p = the prior generator (trained once on the data, fixed):
-                  (0.6, 0.3, 0.1). q = the proposal, last round's refit,
-                  already leaning to success: (0.2, 0.3, 0.5). Success
-                  P(S|x) = (0.1, 0.5, 0.8).
-                    0  draw 100 from p, keep what succeeds: 6, 15, 8 — the target
-                    1  draw 100 from q instead: 20, 30, 50
-                    2  keep what succeeds: 2, 15, 40 — C over-counted 5x
-                    3  count each kept draw p/q times: x3, x1, x1/5 -> 6, 15, 8
+   mode "ratio"   one round of CbAS: propose, weight, refit. p (the prior
+                  generator, fixed) = (0.6, 0.3, 0.1); success P(S|x) =
+                  (0.1, 0.5, 0.8); target mix p x P(S) -> (21%, 52%, 28%).
+                  Last round's generator q = (0.2, 0.3, 0.5), 100 draws.
+                    0  the goal (target mix, dashed) and 100 draws from q
+                    1  weight = success only (0.1, 0.5, 0.8): totals 2, 15, 40
+                       -> the refit proposes 4%, 26%, 70%: q's lean, amplified
+                    2  weight = p/q x success (0.30, 0.50, 0.16): totals
+                       6, 15, 8 -> 21%, 52%, 28%: the target mix
+                    3  the refit becomes next round's q
    ============================================================ */
 IE437.widget('cond-bars', function (host, opts) {
   var E = IE437.el;
@@ -63,7 +64,7 @@ IE437.widget('cond-bars', function (host, opts) {
     'try': 'Propose 25 rooms, keep the ones that reach 22 °C',
     rare: 'Propose 100 rooms, keep the ones that reach 22 °C in five minutes',
     abc: 'Three designs: how common, how promising, what is left',
-    ratio: 'Draw from last round’s model, then correct the count'
+    ratio: 'One round of CbAS: propose, weight, refit'
   }[MODE];
 
   host.innerHTML =
@@ -72,10 +73,10 @@ IE437.widget('cond-bars', function (host, opts) {
     (MODE === 'ratio' ? 'weight = p / q × success' : 'after ∝ prior × success') + '</span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center;justify-content:center">' +
     '<div data-c></div>' +
-    '<div data-note style="width:' + (MODE === 'ratio' ? 250 : 290) + 'px;font:400 14px/1.6 var(--sans);color:var(--ink2)"></div></div>';
+    '<div data-note style="width:' + (MODE === 'ratio' ? 270 : 290) + 'px;font:400 14px/1.6 var(--sans);color:var(--ink2)"></div></div>';
 
   var SMALL = MODE === 'rare';                                   /* 100 rooms: smaller, 17 to a line */
-  var W = MODE === 'ratio' ? 790 : 660, H = SMALL ? 296 : HEAT ? 266 : MODE === 'ratio' ? 300 : 300, PT = 40, PB = 236;   /* plot top and base */
+  var W = MODE === 'ratio' ? 740 : 660, H = SMALL ? 296 : HEAT ? 266 : MODE === 'ratio' ? 316 : 300, PT = 40, PB = 236;   /* plot top and base */
   var PW = 178, GAP = 63;                                        /* panel width and gap */
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);
@@ -194,42 +195,54 @@ IE437.widget('cond-bars', function (host, opts) {
         stroke: k < kept ? col : SLATE, 'stroke-width': .8, 'stroke-opacity': k < kept ? 1 : .55 }, sv);
     }
   }
-  function card(x, y, w, col, title, l1, l2, on) {
-    E('rect', { x: x, y: y, width: w, height: 58, rx: 6, fill: '#fff', stroke: col, 'stroke-width': on ? 1.6 : 1, 'stroke-opacity': on ? .9 : .35 }, sv);
-    txt(x + 10, y + 18, title, { 'font-size': 13, 'font-weight': 700, fill: col, 'fill-opacity': on ? 1 : .45 });
-    txt(x + 10, y + 35, l1, { 'font-size': 11.5, 'font-weight': 700, 'fill-opacity': on ? .85 : .35 });
-    txt(x + 10, y + 50, l2, { 'font-size': 11, 'fill-opacity': on ? .6 : .3 });
-  }
   function drawRatio() {
-    var ROW = [110, 170, 230], P100 = prior.map(function (v) { return Math.round(100 * v); }),
-        Q100 = q.map(function (v) { return Math.round(100 * v); }),
-        KP = P100.map(function (n, i) { return Math.round(n * succ[i]); }),
-        KQ = Q100.map(function (n, i) { return Math.round(n * succ[i]); }),
-        RAT = prior.map(function (v, i) { return v / q[i]; }),
-        RTXT = P100.map(function (n, i) { return '× ' + n + '/' + Q100[i]; }),
-        sum = function (a) { return a.reduce(function (x, y) { return x + y; }, 0); };
-    var LX = 26, RX = 372;
-    /* two generators, two jobs */
-    card(0, 2, 330, GREEN, 'p — the prior generator', 'job: say what a realistic design is', 'trained once on the data; never moves', true);
-    card(RX - 26, 2, 404, INK, 'q — last round’s refit', 'job: look where success is common', 'refit every round, so it leans toward success', st >= 1);
-    txt(LX, 86, '100 drawn from p · filled = succeeds', { 'font-size': 10, 'font-family': MONO, 'fill-opacity': .5 });
-    if (st >= 1) txt(RX, 86, '100 drawn from q' + (st >= 2 ? ' · filled = succeeds' : ''), { 'font-size': 10, 'font-family': MONO, 'fill-opacity': .5 });
-    if (st >= 3) txt(RX + 240, 86, 'count each p/q times', { 'font-size': 10, 'font-family': MONO, fill: GREEN });
-    E('line', { x1: RX - 34, x2: RX - 34, y1: 70, y2: 300, stroke: INK, 'stroke-opacity': .12 }, sv);
+    var ROW = [100, 158, 216], Q100 = q.map(function (v) { return Math.round(100 * v); }),
+        sum = function (a) { return a.reduce(function (x, y) { return x + y; }, 0); },
+        tgt = post, naiveW = succ, ratioW = wt,
+        W1 = st >= 2 ? ratioW : naiveW,
+        TOT = Q100.map(function (n, i) { return n * W1[i]; }), SH = TOT.map(function (v) { return v / sum(TOT); }),
+        col = st >= 2 ? GREEN : RED, C1 = 0, C2 = 236, C3 = 486, BW = 170;
+    /* the goal */
+    txt(C1, 15, 'Goal of one round: refit q so that it proposes the target mix', { 'font-size': 13, 'font-weight': 700 });
+    txt(C1, 33, 'target = realistic by p (A 60%, B 30%, C 10%) × success (0.1, 0.5, 0.8)  →  A 21%, B 52%, C 28%',
+      { 'font-size': 11, 'fill-opacity': .65 });
+    /* column heads */
+    txt(C1, 64, '1 · Propose', { 'font-size': 12.5, 'font-weight': 700 });
+    txt(C1, 78, '100 draws from q, last round’s search model', { 'font-size': 10.5, 'fill-opacity': .6 });
+    txt(C2, 64, '2 · Weight', { 'font-size': 12.5, 'font-weight': 700, 'fill-opacity': st >= 1 ? 1 : .3 });
+    txt(C2, 78, 'how much each draw counts in training', { 'font-size': 10.5, 'fill-opacity': st >= 1 ? .6 : .25 });
+    txt(C3, 64, '3 · Refit', { 'font-size': 12.5, 'font-weight': 700, 'fill-opacity': st >= 1 ? 1 : .3 });
+    txt(C3, 78, 'what the refit q proposes', { 'font-size': 10.5, 'fill-opacity': st >= 1 ? .6 : .25 });
     names.forEach(function (nm, i) {
       var y = ROW[i];
-      txt(0, y + 9, nm, { 'font-size': 15, 'font-weight': 700 });
-      tiles(LX, y, P100[i], KP[i], GREEN);
-      txt(LX + 168, y + 12, KP[i] + ' of ' + P100[i], { 'font-size': 12.5, 'font-weight': 700, fill: GREEN, 'font-family': MONO });
-      txt(RX - 26, y + 9, nm, { 'font-size': 15, 'font-weight': 700, 'fill-opacity': st >= 1 ? 1 : .3 });
-      if (st >= 1) tiles(RX, y, Q100[i], st >= 2 ? KQ[i] : 0, st >= 3 ? AMBER : RED);
-      if (st === 1) txt(RX + 168, y + 12, 'drew ' + Q100[i], { 'font-size': 12.5, 'font-weight': 700, fill: SLATE, 'font-family': MONO });
-      if (st >= 2) txt(RX + 168, y + 12, KQ[i] + ' of ' + Q100[i], { 'font-size': 12.5, 'font-weight': 700, fill: st >= 3 ? AMBER : RED, 'font-family': MONO });
-      if (st >= 3) txt(RX + 240, y + 12, RTXT[i] + ' = ' + Math.round(KQ[i] * RAT[i]), { 'font-size': 12.5, 'font-weight': 700, fill: GREEN, 'font-family': MONO });
+      /* 1 · propose */
+      txt(C1, y + 10, nm, { 'font-size': 15, 'font-weight': 700 });
+      tiles(C1 + 20, y, Q100[i], 0, SLATE);
+      txt(C1 + 186, y + 11, String(Q100[i]), { 'font-size': 12.5, 'font-weight': 700, fill: SLATE, 'font-family': MONO });
+      /* 2 · weight */
+      if (st >= 1) {
+        txt(C2, y + 11, '× ' + two(W1[i]) + ' each', { 'font-size': 12.5, 'font-weight': 700, fill: col, 'font-family': MONO });
+        txt(C2 + 132, y + 11, '= ' + (Math.round(TOT[i] * 10) / 10), { 'font-size': 12.5, 'font-weight': 700, fill: col, 'font-family': MONO });
+        txt(C2, y + 27, st >= 2 ? 'p/q ' + ['3', '1', '1/5'][i] + ' × success ' + succ[i] : 'success ' + succ[i] + ' only',
+          { 'font-size': 10, 'fill-opacity': .55, 'font-family': MONO });
+      }
+      /* 3 · refit: share bars, the target dashed */
+      E('rect', { x: C3, y: y - 1, width: BW * tgt[i], height: 16, fill: 'none', stroke: INK, 'stroke-opacity': .5, 'stroke-dasharray': '4 3' }, sv);
+      if (st >= 1) {
+        E('rect', { x: C3, y: y + 2, width: BW * SH[i], height: 10, fill: col, 'fill-opacity': .8 }, sv);
+        txt(C3 + Math.max(BW * SH[i], BW * tgt[i]) + 8, y + 11, Math.round(100 * SH[i]) + '%', { 'font-size': 12.5, 'font-weight': 700, fill: col, 'font-family': MONO });
+      } else txt(C3 + BW * tgt[i] + 8, y + 11, Math.round(100 * tgt[i]) + '%', { 'font-size': 12, fill: INK, 'fill-opacity': .55, 'font-family': MONO });
     });
-    txt(LX, 286, '= the target · but only ' + sum(KP) + ' of 100 kept', { 'font-size': 12, 'font-weight': 700, fill: GREEN });
-    if (st === 2) txt(RX, 286, sum(KQ) + ' of 100 kept — but C is 40, not 8', { 'font-size': 12, 'font-weight': 700, fill: RED });
-    if (st >= 3) txt(RX + 240, 286, '= the target again', { 'font-size': 12, 'font-weight': 700, fill: GREEN });
+    E('rect', { x: C3, y: 252, width: 14, height: 9, fill: 'none', stroke: INK, 'stroke-opacity': .5, 'stroke-dasharray': '3 3' }, sv);
+    txt(C3 + 20, 260, 'the target mix', { 'font-size': 10.5, 'fill-opacity': .6 });
+    if (st === 1) txt(C3, 282, 'C 70%, not 28%: q’s lean, copied', { 'font-size': 12, 'font-weight': 700, fill: RED });
+    if (st >= 2) txt(C3, 282, '= the target mix', { 'font-size': 12, 'font-weight': 700, fill: GREEN });
+    if (st >= 1) txt(C2, 260, 'total per design = how much it is learned', { 'font-size': 10.5, 'fill-opacity': .6 });
+    if (st >= 3) {
+      E('path', { d: 'M' + (C3 + 90) + ' 290 C ' + (C3 + 90) + ' 304, 40 304, 40 ' + (ROW[2] + 34), fill: 'none', stroke: GREEN, 'stroke-width': 1.6, 'stroke-dasharray': '5 4' }, sv);
+      E('path', { d: 'M34 ' + (ROW[2] + 42) + 'L40 ' + (ROW[2] + 32) + 'L46 ' + (ROW[2] + 42), fill: 'none', stroke: GREEN, 'stroke-width': 1.6 }, sv);
+      txt(C1 + 54, 313, 'next round: draw from this refit q', { 'font-size': 11, 'font-weight': 700, fill: GREEN });
+    }
   }
   function draw() {
     while (sv.firstChild) sv.removeChild(sv.firstChild);
@@ -278,14 +291,13 @@ IE437.widget('cond-bars', function (host, opts) {
         'After conditioning, <b>B</b> — plausible <i>and</i> promising — holds the most mass. ==The best success probability does not win on its own.== This is the distribution CbAS approximates when the designs cannot be listed.'
       ],
       ratio: [
-        'Two generators, two jobs.<br>' +
-        'From <b style="color:#16A34A">p</b>, success keeps 6, 15, 8 — ==the target==.<br>' +
-        'But only 29 of 100 draws are kept; with a harder request, 1 in 100 (last slide).',
-        'So draw from <b>q</b>, last round’s refit. It has moved toward success: it draws C <b>five times</b> as often as p.',
-        'Twice as many kept: 57. But they follow ==q’s taste, not p’s==: C is 40, where the target has 8.<br>' +
-        'Fit this, and next round q leans further to C.',
-        'Count each kept draw ==p / q times== — like a poll that over-sampled one city: each answer there counts less.<br>' +
-        'Back to 6, 15, 8, with q’s efficiency.'
+        'The goal of a round: refit q so that it proposes the ==target mix== (dashed) — realistic by the prior p, likely to succeed.<br>' +
+        'Draw 100 designs from <b>q</b>, last round’s search model: success is common there, but q already leans to C.',
+        'Refit q on these draws, each counting by its <b>weight</b>.<br>' +
+        'Weight by success alone, and the refit proposes C <b style="color:#D64545">70%</b> of the time: ==q’s lean, copied== — and amplified next round.',
+        'q drew C five times as often as p would, and A three times less.<br>' +
+        'So multiply each weight by <b>p/q</b>: the refit proposes ==exactly the target mix==.',
+        'Then repeat: draw from the refit q, and raise the success bar — the next slide.'
       ]
     })[MODE][st].replace(/==(.+?)==/g, '<span class="hl">$1</span>');
   }

@@ -761,31 +761,31 @@ Numbers behind the picture: prior $(0.2,0.8)$, the same success model. Of 25 pro
 - Why it matters | It showed refits chase a model's errors, and made the prior the brake. A standard baseline since.
 :::
 
-::: cols c3
-::: col 1 · Propose
-Draw designs $x_i$ from the trained generator — the prior.
+::: cols
+::: col The prior $p(x\mid\theta)$ — trained once, then frozen
+Fitted to the data, as in Act 2. It says which designs are **plausible**, and $\theta$ never changes: it is the brake.
 :::
-::: col 2 · Weight
-Weight each by its chance of success, $P(S\mid x_i)$.
-:::
-::: col.accent 3 · Refit
-Fit a new generator $q(x\mid\phi)$ to the weighted designs.
+::: col.accent The search model $q(x\mid\phi)$ — refit every round
+It learns to propose designs that are plausible **and** succeed. It is CbAS's **output**: the final candidates are drawn from it.
 :::
 :::
 
-**The objective** — Lecture 2's log-likelihood, weighted:
+**One refit** — Lecture 2's log-likelihood, weighted:
 
-$$\phi^* \;=\; \argmax_\phi\ \sum_{i=1}^N\ \underbrace{P(S\mid x_i)}_{\text{weight: will it succeed?}}\ \underbrace{\log q(x_i\mid\phi)}_{\text{log-likelihood}},\qquad x_i\sim\underbrace{p(x\mid\theta^{(0)})}_{\text{the prior}}$$
+$$\phi^* \;=\; \argmax_\phi\ \sum_{i=1}^N\ \underbrace{P(S\mid x_i)}_{\text{2 · weight: will it succeed?}}\ \underbrace{\log q(x_i\mid\phi)}_{\text{3 · refit }q},\qquad \underbrace{x_i\sim p(x\mid\theta)}_{\text{1 · propose from the prior}}$$
 
 ::: keypoint
-Each refit is ==maximum likelihood with weights== — any generative model can be trained this way.
-The new generator proposes the previous slide's $p(x\mid S)$ directly: nothing is thrown away.
+Each refit is ==maximum likelihood with weights==: $q$ learns to propose $p(x\mid S)$ directly.
+$\theta$ stays fixed.
+$\phi$ is refit round after round — the ladder, three slides on.
 :::
 
 ::: note
+The roles, in one line each. The prior $p(x\mid\theta)$ is the generator Act 2 trained on the data; CbAS never updates it, and it is what keeps the search plausible. The search model $q(x\mid\phi)$ is a second generator; CbAS starts it as a copy of the prior and refits it every round, $\phi^{(1)},\phi^{(2)},\dots$; the designs CbAS returns are drawn from the last one. The paper writes the prior's parameters as $\theta^{(0)}$ — "fitted at round 0, before the search starts" — and initialises $\phi^{(0)}=\theta^{(0)}$. The deck drops the superscript because $\theta$ is never updated. On this slide there is only one refit, with proposals from the prior; the ladder repeats it, proposing from the latest $q$.
+
 In the heater example: 25 proposals, weights 0.8 (left) and 0.2 (right), so the weighted counts are 4 and 4 — the refit generator proposes left and right half and half, the 4 : 4 of the previous slide.
 
-Why this objective (derivation, if asked). The target is $p(x\mid S)=P(S\mid x)\,p(x\mid\theta^{(0)})/P(S\mid\theta^{(0)})$. Fit $q$ to it with the KL averaged over the target — the KL slide's "cover the data" direction: $D_{\mathrm{KL}}\big(p(\cdot\mid S)\,\|\,q\big)=\text{const}-\E_{p(x\mid S)}[\log q(x\mid\phi)]$, where the constant is $-$the target's entropy and has no $\phi$ in it. Substitute the target: $\E_{p(x\mid S)}[\log q(x\mid\phi)]=\frac{1}{P(S\mid\theta^{(0)})}\,\E_{p(x\mid\theta^{(0)})}\big[P(S\mid x)\log q(x\mid\phi)\big]$. The factor $1/P(S\mid\theta^{(0)})$ does not depend on $\phi$ either, so minimising the KL is maximising $\E_{p(x\mid\theta^{(0)})}[P(S\mid x)\log q(x\mid\phi)]$; replace that average by $N$ draws from the prior and you have the objective on the slide. $q$ need not be of the prior's form.
+Why this objective (derivation, if asked). The target is $p(x\mid S)=P(S\mid x)\,p(x\mid\theta)/P(S\mid\theta)$. Fit $q$ to it with the KL averaged over the target — the KL slide's "cover the data" direction: $D_{\mathrm{KL}}\big(p(\cdot\mid S)\,\|\,q\big)=\text{const}-\E_{p(x\mid S)}[\log q(x\mid\phi)]$, where the constant is $-$the target's entropy and has no $\phi$ in it. Substitute the target: $\E_{p(x\mid S)}[\log q(x\mid\phi)]=\frac{1}{P(S\mid\theta)}\,\E_{p(x\mid\theta)}\big[P(S\mid x)\log q(x\mid\phi)\big]$. The factor $1/P(S\mid\theta)$ does not depend on $\phi$ either, so minimising the KL is maximising $\E_{p(x\mid\theta)}[P(S\mid x)\log q(x\mid\phi)]$; replace that average by $N$ draws from the prior and you have the objective on the slide. $q$ need not be of the prior's form.
 
 The paper builds on the same group's DbAS (Brookes & Listgarten, 2018) — CbAS without the prior. Design-Bench (Lecture 5) runs CbAS as a baseline on every task. Source alignment: Part 2 pp. 9–11.
 :::
@@ -802,23 +802,23 @@ One. ==When success is rare, almost every proposal is thrown away== — Lecture 
 :::
 
 ::: note
-Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta^{(0)})}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the slide after): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
+Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta)}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the slide after): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
 :::
 
 ### Why the importance ratio belongs in the weight
-Two generators, two jobs. $p$ says what is **realistic**. $q$ looks where **success is common**.
+One CbAS round, start to end: draw designs from $q$, weight them, refit $q$ on them.
 
 ::: widget cond-bars {"mode":"ratio"}
-Press → three times. Each square is one draw; filled squares succeed.
+Press → three times. Each square is one draw.
 :::
 
 ::: keypoint
-$q$ makes the search ==efficient==: more of its draws succeed.
-$p/q$ keeps it ==honest==: each draw counts as if $p$ had drawn it — like weighting a poll that over-sampled one city.
+The weight is how much a draw counts when $q$ is refit.
+With $p/q$ in it, the refit learns ==the target mix==, not last round’s lean.
 :::
 
 ::: note
-Where $q$ comes from: CbAS refits a generator every round (the CbAS slide's step 3); Fix 1 says to draw the next round's designs from that refit, $q=q(x\mid\phi^{(t-1)})$, because it already proposes successful designs more often than the prior $p=p(x\mid\theta^{(0)})$ does. The target never changes: $p\times P(S)$, plausible under the prior and likely to succeed. Numbers, per 100 draws: $p=(60,30,10)$, $q=(20,30,50)$, success $(0.1,0.5,0.8)$. Kept from $p$: $(6,15,8)$, the target. Kept from $q$: $(2,15,40)$. Ratios $p/q=(3,1,1/5)$, so the corrected counts are $(6,15,8)$. In the weight form, $w=\frac{p}{q}P(S\mid x)=(0.30,0.50,0.16)$ per draw, and $q\times w$ is the target. Without the ratio the refit would put $40/57=70\%$ of its mass on C, against the target's $8/29=28\%$, and the drift compounds: refit to its own successes each round, $q$'s share of C goes $50\% \to 70\% \to 81\% \to 87\%$, collapsing onto the design the success model likes most, plausible or not (Lecture 5). With the ratio every round fits the same target, C at $28\%$. If asked why not draw from $p$ alone: here 29 of 100 draws are kept, but with the harder request of the previous slide only 1 in 100. A design $q$ never draws cannot be counted at all, however large its ratio — the proposal must cover the target.
+Where $q$ comes from: CbAS refits a generator every round (the CbAS slide's step 3); Fix 1 says to draw the next round's designs from that refit, $q=q(x\mid\phi^{(t-1)})$, because it already proposes successful designs more often than the prior $p=p(x\mid\theta)$ does. The target never changes: $p\times P(S)$, plausible under the prior and likely to succeed. Numbers, per 100 draws: $p=(60,30,10)$, $q=(20,30,50)$, success $(0.1,0.5,0.8)$. Kept from $p$: $(6,15,8)$, the target. Kept from $q$: $(2,15,40)$. Ratios $p/q=(3,1,1/5)$, so the corrected counts are $(6,15,8)$. In the weight form, $w=\frac{p}{q}P(S\mid x)=(0.30,0.50,0.16)$ per draw, and $q\times w$ is the target. Without the ratio the refit would put $40/57=70\%$ of its mass on C, against the target's $8/29=28\%$, and the drift compounds: refit to its own successes each round, $q$'s share of C goes $50\% \to 70\% \to 81\% \to 87\%$, collapsing onto the design the success model likes most, plausible or not (Lecture 5). With the ratio every round fits the same target, C at $28\%$. If asked why not draw from $p$ alone: here 29 of 100 draws are kept, but with the harder request of the previous slide only 1 in 100. A design $q$ never draws cannot be counted at all, however large its ratio — the proposal must cover the target.
 :::
 
 ### One shot, then the ladder
@@ -1622,13 +1622,13 @@ The weight comes from a bias–variance bound with three terms: *variance from t
 :::
 ::: col.accent CbAS — the adaptive ladder
 ```
-θ⁰ ← fit the prior p(x|θ⁰) to D
-q ← p(·|θ⁰)
+θ ← fit the prior p(x|θ) to D, once
+q ← p(·|θ)
 repeat:
   x₁..x_M ~ q                     ← propose
   γ ← min(target, Q-th pct of
           f̂(x₁..x_M))             ← relax
-  wᵢ ← p(xᵢ|θ⁰)/q(xᵢ) · P(y≥γ|xᵢ)
+  wᵢ ← p(xᵢ|θ)/q(xᵢ) · P(y≥γ|xᵢ)
   q ← weighted MLE on {xᵢ, wᵢ}    ← refit
 ```
 
