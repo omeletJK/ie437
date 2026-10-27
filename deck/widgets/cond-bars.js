@@ -63,7 +63,7 @@ IE437.widget('cond-bars', function (host, opts) {
     heater: 'Propose ten rooms, keep the ones that reach 22 °C',
     'try': 'Propose 25 rooms, keep the ones that reach 22 °C',
     rare: 'Propose 100 rooms, keep the ones that reach 22 °C in five minutes',
-    abc: 'Three designs: how common, how promising, what is left',
+    abc: 'The target: realistic by the prior, and likely to succeed',
     ratio: 'One round of CbAS: propose, weight, refit'
   }[MODE];
 
@@ -76,7 +76,7 @@ IE437.widget('cond-bars', function (host, opts) {
     '<div data-note style="width:' + (MODE === 'ratio' ? 270 : 290) + 'px;font:400 14px/1.6 var(--sans);color:var(--ink2)"></div></div>';
 
   var SMALL = MODE === 'rare';                                   /* 100 rooms: smaller, 17 to a line */
-  var W = MODE === 'ratio' ? 740 : 660, H = SMALL ? 296 : HEAT ? 266 : MODE === 'ratio' ? 316 : 300, PT = 40, PB = 236;   /* plot top and base */
+  var W = MODE === 'ratio' ? 740 : 660, H = SMALL ? 296 : HEAT ? 266 : MODE === 'ratio' ? 316 : MODE === 'abc' ? 238 : 300, PT = 40, PB = MODE === 'abc' ? 206 : 236;   /* plot top and base */
   var PW = 178, GAP = 63;                                        /* panel width and gap */
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);
@@ -204,7 +204,7 @@ IE437.widget('cond-bars', function (host, opts) {
         col = st >= 2 ? GREEN : RED, C1 = 0, C2 = 236, C3 = 486, BW = 170;
     /* the goal */
     txt(C1, 15, 'Goal of one round: refit q so that it proposes the target mix', { 'font-size': 13, 'font-weight': 700 });
-    txt(C1, 33, 'target = realistic by p (A 60%, B 30%, C 10%) × success (0.1, 0.5, 0.8)  →  A 21%, B 52%, C 28%',
+    txt(C1, 33, 'the target is the G2 slide’s p(x | S) — realistic by the prior × likely to succeed: A 21%, B 52%, C 28%',
       { 'font-size': 11, 'fill-opacity': .65 });
     /* column heads */
     txt(C1, 64, '1 · Propose', { 'font-size': 12.5, 'font-weight': 700 });
@@ -249,15 +249,15 @@ IE437.widget('cond-bars', function (host, opts) {
     if (HEAT) drawCount();
     else if (MODE === 'ratio') drawRatio();
     else {
-      panel(0, 'how common', 'prior p(x)', prior, 1, SLATE, two);
+      panel(0, 'how common in the data', 'the prior p(x)', prior, 1, SLATE, two);
       op(0, '×');
       if (st >= 1) panel(1, 'how likely to succeed', 'P(S | x)', succ, 1, AMBER, two,
         st >= 2 ? { hi: ['', '', 'most promising'], hiCol: AMBER } : null);
       else empty(1, 'how likely to succeed');
       op(1, '→');
-      if (st >= 2) panel(2, 'after conditioning', 'p(x | S)', post, 1, BLUE, pct,
+      if (st >= 2) panel(2, 'the target', 'p(x | S) ∝ prior × success', post, 1, BLUE, pct,
         { hi: ['', 'most mass', ''], hiCol: BLUE });
-      else empty(2, 'after conditioning');
+      else empty(2, 'the target');
     }
     host.querySelector('[data-note]').innerHTML = ({
       heater: [
@@ -286,10 +286,12 @@ IE437.widget('cond-bars', function (host, opts) {
         '<b>Fix 2</b> · raise the bar step by step, not all at once.'
       ],
       abc: [
-        'The generator’s prior: A is the common design, C the rare one.',
-        'The success model prefers the rare design, C.',
-        'After conditioning, <b>B</b> — plausible <i>and</i> promising — holds the most mass. ==The best success probability does not win on its own.== This is the distribution CbAS approximates when the designs cannot be listed.'
-      ],
+        'The <b>prior</b> p(x): the generator trained on the data. It says what real designs look like — A is common, C rare.<br>' +
+        '==On its own it only reproduces the data.==',
+        'The <b>success model</b> P(S | x): Lecture 5’s surrogate, as a probability. It likes C best.<br>' +
+        'But C is the design the data rarely contains — ==where the success model is least checked==.',
+        'Multiply and normalise — Bayes’ rule. <b>B</b> wins: realistic <i>and</i> promising.<br>' +
+        'Success alone would put 57% on C; the prior alone, 60% on A. ==The target needs both.=='      ],
       ratio: [
         'The goal of a round: refit q so that it proposes the ==target mix== (dashed) — realistic by the prior p, likely to succeed.<br>' +
         'Draw 100 designs from <b>q</b>, last round’s search model: success is common there, but q already leans to C.',

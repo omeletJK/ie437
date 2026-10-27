@@ -700,22 +700,20 @@ JT-VAE is a standard baseline for molecular graph generation (MIT, Barzilay and 
 :::
 
 ### G2 — condition the generator on success
-Move the distribution, not a point. With the **generator as the prior** and a **success model** as the likelihood — $S$: "meets the requested performance" — Bayes' rule gives the designs we want:
+Bayes' rule, with the **generator as the prior** and a **success model** as the likelihood ($S$: meets the requested performance):
 
 $$p(x\mid S)=\frac{P(S\mid x)\,p(x)}{\sum_{x'}P(S\mid x')\,p(x')}$$
 
-::: cols
-::: col The prior keeps it plausible
-Designs the generator finds implausible keep little mass, however promising the success model says they are.
-:::
-::: col.accent The success model is Lecture 5's
-Offline, $P(S\mid x)$ is a **prediction** — e.g. $P(\hat y\ge\gamma\mid x)$ from a surrogate. Its errors are inside the target; a pessimistic one ($\mu-\kappa\sigma$) gives a pessimistic target.
-:::
+::: widget cond-bars {"mode":"abc"}
+Three designs, A, B and C. Press → twice.
 :::
 
 ::: keypoint
-Lecture 3 conditioned a fixed model on observed evidence.
-Here the "evidence" is a requested outcome, judged by a model — ==the target is only as good as the success model==.
+==The target needs both==: realistic by the prior, and likely to succeed.
+:::
+
+::: note
+Move the distribution, not a point. The prior alone reproduces the data; the success model alone chases its own favourite. The roles. The prior keeps it plausible: designs the generator finds implausible keep little mass, however promising the success model says they are. The success model is Lecture 5's: offline, $P(S\mid x)$ is a prediction — e.g. $P(\hat y\ge\gamma\mid x)$ from a surrogate — so its errors are inside the target, and a pessimistic one ($\mu-\kappa\sigma$) gives a pessimistic target. Lecture 3 conditioned a fixed model on observed evidence; here the "evidence" is a requested outcome, judged by a model — the target is only as good as the success model. Numbers: prior $(0.6,0.3,0.1)$, success $(0.1,0.5,0.8)$; prior alone puts 60% on A; success alone, normalised, $(7\%,36\%,57\%)$; the product $(0.06,0.15,0.08)$ normalises to $(21\%,52\%,28\%)$. The cost: the target cannot leave the prior's support — "What moving the distribution buys" returns to it. The same three designs return in CbAS's importance-ratio slide.
 :::
 
 ### Temperature thread — condition on success: propose, then keep what succeeds
