@@ -332,9 +332,9 @@
     "ch06_generative_design_optimization": {
       "previous_slides": 78,
       "previous_core_slides": 62,
-      "slides": 95,
-      "core_slides": 79,
-      "appendix_start": 80,
+      "slides": 97,
+      "core_slides": 81,
+      "appendix_start": 82,
       "first_topic_slide": 5,
       "widgets": [
         "manifold-search",
@@ -362,6 +362,9 @@
         "cond-bars",
         "cbas-ladder",
         "mbo-papers",
+        "mins-explain",
+        "mins-explain",
+        "mins-explain",
         "condition-shift",
         "kl-tilt",
         "manifold-search"
@@ -433,10 +436,10 @@
         63
       ],
       "moved_to_appendix": [
-        81,
-        82,
-        85,
-        87
+        83,
+        84,
+        87,
+        89
       ]
     },
     "ch07_mdp_dp": {

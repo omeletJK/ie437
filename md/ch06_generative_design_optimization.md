@@ -1065,29 +1065,48 @@ Samples from a CVAE trained on SVHN: row = requested digit. {p}(source deck, Par
 - Why it matters | It showed the forward arg-max is often no design at all (next slide); Design-Bench's inverse baseline.
 :::
 
-::: cols
-::: col Training — *which $y$ to learn on?*
-Accuracy at high $y$ matters most, but the best few points alone are too noisy. So reweight:
-
-$$w_i=\frac{p(y_i)}{p_D(y_i)},\qquad p(y)\propto \frac{N_y}{N_y+K}\,e^{\,y-y^*}$$
-
-Up-weight high scores — ==provided enough data share that score==.
-:::
-::: col.accent Querying — *how far past the data to ask?*
-An **optimisation over $(y,z)$**: the largest $y$ that an independently trained forward model still confirms:
-
-$$\tilde y,\tilde z = \argmax_{y,z}\ f_\theta\big(f^{-1}_\theta(y,z)\big)$$
-
-$$\text{s.t.}\ \ \big\|y - f_\theta(f^{-1}_\theta(y,z))\big\|^2 \le \epsilon_1,\quad p(z)\ge\epsilon_2$$
-:::
+::: widget mins-explain {"mode":"pipe"}
 :::
 
 ::: keypoint
-Even the inverse route keeps a forward model — as a ==consistency check on how far to ask==, Lecture 1's trust region in a new costume.
+Lecture 5 learned the score from the design, then searched the designs.
+MINs learns the design from the score — ==then asks for a high score==.
 :::
 
 ::: note
-$N_y$ is the number of points with score $y$; $y^*$ the best score in $D$. The weight comes from a bias–variance bound (Backup 5). Source alignment: Part 2 pp. 17–24.
+Why invert, in the source's words (Part 2 p. 18): the inverse map's input is one number, $y$, so asking for a score is a search over one dimension; its output is produced by a generator trained on real designs, so it stays data-like. One score has many designs (Act 1), so the inverse is stochastic: $x=g(y,z)$ with noise $z\sim p(z)$ — the CVAE of the previous slide (p. 20). Training fits $g$ to the data pairs, $\min_g\E_{y\sim p(y)}\big[\mathrm{Div}\big(p_D(x\mid y),\,p_g(x\mid y)\big)\big]$: KL gives maximum likelihood, JS gives a GAN (p. 21). The paper writes $g$ as $f^{-1}_\theta$. Two questions remain, one slide each: which scores to train on (Q1), and which score to ask for (Q2). Source alignment: Part 2 pp. 17–21.
+:::
+
+### MINs, question 1 — which scores to train the generator on?
+::: widget mins-explain {"mode":"reweight"}
+Press → three times. The bars are shares of the training: how much the scores in each bin count.
+:::
+
+::: keypoint
+Lean the training toward high scores, but ==only as far as enough data share them==.
+Each data point counts $w_i=p(y_i)/p_D(y_i)$ — the "target ÷ what you have" ratio of CbAS, now over scores.
+:::
+
+::: note
+The weighted training loss is $\frac{1}{|D|}\sum_i w_i\,\mathrm{Div}\big(x_i, g(y_i)\big)$ with $w_i=p(y_i)/p_D(y_i)$ and $p(y)\propto\frac{N_y}{N_y+K}\,e^{\,y-y^*}$ (Part 2 p. 24). Symbols: $N_y$, the number of data points whose score falls in $y$'s bin; $K$, a constant; $y^*$, the best score in the data; $p_D(y)=N_y/|D|$. Why this shape — the paper's Theorem 3.1 bounds the error of the training gradient by three terms: $C_1\E_{y\sim p}[1/N_y]$ (variance from thin bins), $C_2\,d_2(p\|p_D)/|D|$ (how far $p$ moves from the data) and $C_3D_{\mathrm{TV}}(p^*,p)^2$ (bias from not training on the best score alone). Greedy ($p=p^*$) kills the third and blows up the first; uniform ($p=p_D$) the reverse; the trust factor $N_y/(N_y+K)$ is the compromise. Toy numbers: $N_y=(4,9,15,20,18,13,9,6,4,2)$, $K=5$; MINs' shares $(2,3,5,7,9,12,14,16,18,15)\%$; weights $w=(0.40,0.35,0.33,0.35,0.52,0.89,1.55,2.65,4.38,7.60)$. Source alignment: Part 2 pp. 22, 24.
+:::
+
+### MINs, question 2 — which score to ask for?
+The generator $g$ will make a design for any score we ask. Check each request with a **forward model** $\hat f$ — Lecture 5's surrogate, trained separately:
+
+$$\tilde y,\tilde z=\argmax_{y,\,z}\ \underbrace{\hat f\big(g(y,z)\big)}_{\text{predicted score of the design made}}\quad\text{s.t.}\quad\underbrace{\big(y-\hat f(g(y,z))\big)^2\le\epsilon_1}_{\text{it delivers what was asked}},\quad\underbrace{p(z)\ge\epsilon_2}_{\text{a typical noise }z}$$
+
+::: widget mins-explain {"mode":"query"}
+Press → twice. An illustrative curve, not a trained model.
+:::
+
+::: keypoint
+Ask for the ==highest score the design still delivers==, judged by an independent check.
+Beyond it, the request is extrapolation — Lecture 1's trust region, in a new costume.
+:::
+
+::: note
+In the source (Part 2 p. 23): option 1, ask for the best score in the data — safe, but no improvement; option 2, this optimisation — "extrapolate as far as possible while staying on the data manifold". $p(z)\ge\epsilon_2$ keeps the noise where its prior has mass, so the design is an ordinary sample of $g$, not an odd corner of it. The paper names $g$ and the forward model $f^{-1}_\theta$ and $f_\theta$; they are two separately trained networks. The curve: prediction equals the request up to the data's best score 2.85, then $2.85+0.6(1-e^{-(y-2.85)/0.6})$; with $\epsilon_1=0.01$ the largest consistent request is about 3.2. The next slide shows what goes wrong when the forward model is searched directly; "How far past the data can you ask?" shows over-asking. Source alignment: Part 2 p. 23.
 :::
 
 ### An inverse map returns designs; the forward map's arg-max did not
