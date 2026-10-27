@@ -332,9 +332,9 @@
     "ch06_generative_design_optimization": {
       "previous_slides": 78,
       "previous_core_slides": 62,
-      "slides": 94,
-      "core_slides": 78,
-      "appendix_start": 79,
+      "slides": 95,
+      "core_slides": 79,
+      "appendix_start": 80,
       "first_topic_slide": 5,
       "widgets": [
         "manifold-search",

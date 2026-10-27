@@ -800,7 +800,7 @@ One. ==When success is rare, almost every proposal is thrown away== — Lecture 
 :::
 
 ::: note
-Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta)}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the ladder, three slides on): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
+Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0$, so $P(S)=0.01$ — one room in 100 is kept, and ten proposals keep none with probability $0.99^{10}\approx0.90$. The two fixes as CbAS writes them. Fix 1 (next slide): propose from last round's fit, $r^{(t)}=q(x\mid\phi^{(t-1)})$, and weight each draw by $w_i=\frac{p(x_i\mid\theta)}{q(x_i\mid\phi^{(t-1)})}P(S^{(t)}\mid x_i)$. Fix 2 (the ladder, four slides on): relax the condition so that (A) each $S^{(t)}$ is met often enough under the current proposal, and (B) $S^{(t)}\supset S^{(t+1)}\supset S$ — the bar only rises, and reaches the target. The source sets $S^{(t)}$ to $y\ge\gamma^{(t)}$ with $\gamma^{(t)}$ the $Q$-th percentile of the oracle's predictions on the current samples, capped at the target. The ratio corrects the change of proposal; it is not a validity check, and it fails if the proposal misses part of the target. Source alignment: Part 2 pp. 12–15.
 :::
 
 ### Why the importance ratio belongs in the weight
@@ -820,7 +820,13 @@ Definitions, all over the three designs. $p(x)=p(x\mid\theta)$: the prior genera
 ### Why divide by $q$ — Lecture 3's rule
 {math: compact}
 
-Lecture 3's weighted vote rested on one rule: **how often a sample is drawn, times its weight, gives the quantity we want**. Here the quantity is the target, $p(x)\,P(S\mid x)$.
+**The goal:** a generator that proposes the target, $p(x)\,P(S\mid x)$.
+
+**The problem:** drawn from the prior, success is rare — almost every draw gets weight 0.
+
+**The fix:** draw from $q$, last round's refit, where success is common.
+
+**The price:** the draws come from $q$, not the prior — correct each by $p(x)/q(x)$: **importance sampling**.
 
 $$\begin{aligned}
 \text{drawn from the prior, } w=P(S\mid x):&\quad \underbrace{p(x)}_{\text{how often drawn}}\times P(S\mid x) &&= p(x)\,P(S\mid x) &&\text{the target — the CbAS slide}\\
@@ -829,13 +835,41 @@ $$\begin{aligned}
 \end{aligned}$$
 
 ::: keypoint
-The rule never changed: the weight is always ==the target ÷ how often $x$ was drawn==.
-Drawn from the prior, $p/q=1$ and the weight is $P(S\mid x)$.
-Drawn from $q$, the ratio $p/q$ cancels $q$'s lean.
+Lecture 3's rule never changed: the weight is always ==the target ÷ how often $x$ was drawn==.
+Drawn from the prior, $p/q=1$ and the weight is $P(S\mid x)$ — the CbAS slide.
 :::
 
 ::: note
 In the widget's numbers: C is proposed by $q$ with probability $0.5$ and by the prior with $0.1$, so in 100 draws from $q$ it turns up 50 times where the prior would give it 10 — five times too often; each C draw therefore counts $p/q=1/5$, and $50\times\frac15\times0.8=10\times0.8=8$, exactly what 100 prior draws would have contributed. In general this is importance sampling: $\E_{p}[g(x)]=\E_{q}\big[\tfrac{p(x)}{q(x)}\,g(x)\big]$ for any $q$ that is positive wherever $p\,g$ is — draw from the convenient distribution, reweight to the one you mean. Lecture 3's likelihood weighting is the case where the proposal is the prior with the evidence clamped. Why CbAS draws from $q$ at all: success is more common there (Fix 1); the ratio is the price of that convenience. A design $q$ never draws gets no weight, however large its ratio — $q$ must cover the target.
+:::
+
+### Importance sampling — the same objective, from better draws
+{math: compact}
+
+**Importance sampling:** draw from a convenient $q$, then correct each draw by the **importance weight** $p(x)/q(x)$.
+
+::: small
+$p(x)$: the prior generator · $q(x)$: last round's search model, which proposes the draws · $q(x\mid\phi)$: the search model being refit · $P(S\mid x)$: the probability that $x$ succeeds.
+:::
+
+**Why the refit's objective does not change** — the average under $q$, one step per line:
+
+$$\begin{aligned}
+\E_{x\sim q}\Big[\frac{p(x)}{q(x)}\,P(S\mid x)\,\log q(x\mid\phi)\Big]
+&= \sum_x q(x)\,\frac{p(x)}{q(x)}\,P(S\mid x)\,\log q(x\mid\phi) && \text{an average under }q\text{: weight each }x\text{ by }q(x)\\
+&= \sum_x p(x)\,P(S\mid x)\,\log q(x\mid\phi) && q(x)\text{ cancels (needs }q>0\text{ where }p\,P(S\mid x)>0)\\
+&= \E_{x\sim p}\big[P(S\mid x)\,\log q(x\mid\phi)\big] && \text{the CbAS slide's objective, drawn from the prior}
+\end{aligned}$$
+
+In practice the average is a sum over the $N$ draws from $q$: $\ \max_\phi\ \frac1N\sum_{i=1}^N \frac{p(x_i)}{q(x_i)}\,P(S\mid x_i)\,\log q(x_i\mid\phi)$ — the ladder's line 4.
+
+::: keypoint
+Importance sampling changes ==where we draw==, not what we maximise.
+The importance weight $p/q$ turns an average under $q$ into an average under the prior.
+:::
+
+::: note
+For a function $g$, $\E_p[g(x)]=\E_q\big[\frac{p(x)}{q(x)}g(x)\big]$ whenever $q>0$ where $p\,g\neq0$; here $g(x)=P(S\mid x)\log q(x\mid\phi)$. The sums become integrals for continuous designs, with the same cancellation. Lecture 3's likelihood weighting is the special case whose proposal is the prior with the evidence clamped. The identity holds for any such $q$; what $q$ changes is the variance of the $N$-draw estimate — good when $q$ puts its draws where $p\,P(S\mid x)$ is large (success is common there), bad when $p/q$ swings wildly and a few draws carry all the weight, which is why the ladder raises the bar a rung at a time. "Correction sampling" is not the standard name; say importance sampling, or the importance-sampling correction.
 :::
 
 ### One shot, then the ladder
