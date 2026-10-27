@@ -815,12 +815,17 @@ Numbers: prior $(0.6,0.3,0.1)$, success $(0.1,0.5,0.8)$, target $p\times P(S)=(0
 :::
 
 ### One shot, then the ladder
-::: widget cbas-ladder {"seed":31}
-Press → to ask for the target in one shot, then to climb. Here $q$ is a Gaussian refit by weighted maximum likelihood — ==the pattern Lecture 4's CMA-ES also follows==: sample, weight the good candidates, refit the distribution.
+::: widget cbas-ladder
+Press → to climb, one round at a time. The score rises with $x$ here, so "good enough" is everything right of a line.
+:::
+
+::: keypoint
+One shot asks for the target at once: ==0 of 20== proposals pass, and there is nothing to refit to.
+The ladder raises the bar one rung per round: ==every round keeps 4 of 20==, and the generator walks to the target.
 :::
 
 ::: note
-The widget's title is the slide's point. Say the contrast with Lecture 3 aloud: there the model was fixed; here the proposal and the condition both move. Target $2.65$: one shot keeps $70$ effective draws of $4{,}000$; the ladder's worst round keeps $27\%$; the final design is worth $2.647$ against the dataset's best $2.523$ (true optimum $2.657$). Lecture 5's objective, with 200 designs.
+The two fixes of "Why one shot fails", together: propose from last round's generator (Fix 1), and ask for a little more each round (Fix 2). Numbers: prior $\mathcal N(3,1)$, target $x\ge6$ — one shot passes with probability $0.00135$, about 1 in 740. Each round draws 20 proposals (drawn as evenly spaced quantiles, so the picture is the expectation), sets the bar at the best 4 of them — CbAS's percentile rule, here the 80th — capped at the target, and refits a Gaussian to the prior cut at the bar, which is what the weighted fit with weights $\frac{p}{q}\,\mathbb 1[x\ge\text{bar}]$ aims at. Bars $3.85\to4.80\to5.50\to6.00$; generators $\mathcal N(4.40,0.47^2)\to\mathcal N(5.19,0.36^2)\to\mathcal N(5.82,0.30^2)\to\mathcal N(6.28,0.27^2)$, whose 20 proposals reach the target 17 times. Say the contrast with Lecture 3 aloud: there the model was fixed; here the proposal and the condition both move. The pattern — sample, keep the good ones, refit the distribution — is also Lecture 4's CMA-ES. Source alignment: Part 2 pp. 12–15.
 :::
 
 ### What CbAS does on a real design problem
