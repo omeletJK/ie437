@@ -806,12 +806,19 @@ Numbers behind the picture: prior $(0.02,0.98)$, $P(S\mid L)=0.5$, $P(S\mid R)=0
 :::
 
 ### Why the importance ratio belongs in the weight
+Two generators, two jobs. $p$ says what is **realistic**. $q$ looks where **success is common**.
+
 ::: widget cond-bars {"mode":"ratio"}
-Three designs, sampled from last round's model instead of the prior. Press → four times.
+Press → three times. Each square is one draw; filled squares succeed.
+:::
+
+::: keypoint
+$q$ makes the search ==efficient==: more of its draws succeed.
+$p/q$ keeps it ==honest==: each draw counts as if $p$ had drawn it — like weighting a poll that over-sampled one city.
 :::
 
 ::: note
-Numbers: prior $(0.6,0.3,0.1)$, success $(0.1,0.5,0.8)$, target $p\times P(S)=(0.06,0.15,0.08)$. Proposal $q=(0.2,0.3,0.5)$; weights $(0.6/0.2)(0.1)=0.30$, $(0.3/0.3)(0.5)=0.50$, $(0.1/0.5)(0.8)=0.16$; $q\times$weight gives back the target. Without the ratio, $q\times P(S)=(0.02,0.15,0.40)$.
+Where $q$ comes from: CbAS refits a generator every round (the CbAS slide's step 3); Fix 1 says to draw the next round's designs from that refit, $q=q(x\mid\phi^{(t-1)})$, because it already proposes successful designs more often than the prior $p=p(x\mid\theta^{(0)})$ does. The target never changes: $p\times P(S)$, plausible under the prior and likely to succeed. Numbers, per 100 draws: $p=(60,30,10)$, $q=(20,30,50)$, success $(0.1,0.5,0.8)$. Kept from $p$: $(6,15,8)$, the target. Kept from $q$: $(2,15,40)$. Ratios $p/q=(3,1,1/5)$, so the corrected counts are $(6,15,8)$. In the weight form, $w=\frac{p}{q}P(S\mid x)=(0.30,0.50,0.16)$ per draw, and $q\times w$ is the target. Without the ratio the refit would put $40/57=70\%$ of its mass on C, against the target's $8/29=28\%$, and the drift compounds: refit to its own successes each round, $q$'s share of C goes $50\% \to 70\% \to 81\% \to 87\%$, collapsing onto the design the success model likes most, plausible or not (Lecture 5). With the ratio every round fits the same target, C at $28\%$. If asked why not draw from $p$ alone: here 29 of 100 draws are kept, but with the harder request of the previous slide only 1 in 100. A design $q$ never draws cannot be counted at all, however large its ratio — the proposal must cover the target.
 :::
 
 ### One shot, then the ladder

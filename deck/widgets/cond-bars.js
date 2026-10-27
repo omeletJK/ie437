@@ -29,12 +29,15 @@
    mode "abc"     prior (0.6, 0.3, 0.1), success (0.1, 0.5, 0.8)
                   -> products (0.06, 0.15, 0.08) -> (0.207, 0.517, 0.276).
                     0  prior   1  success   2  the conditional: B, not C
-   mode "ratio"   CbAS's importance weight. Proposal q = (0.2, 0.3, 0.5);
-                  weight p/q * P(S) = (0.30, 0.50, 0.16);
-                  q * weight = (0.06, 0.15, 0.08) = p * P(S), the target.
-                  Without the ratio, q * P(S) = (0.02, 0.15, 0.40).
-                    0  the target  1  the proposal  2  the weights  3  they
-                    give back the target  4  without the ratio, C takes the mass
+   mode "ratio"   CbAS's importance weight, as a count of 100 draws.
+                  p = the prior generator (trained once on the data, fixed):
+                  (0.6, 0.3, 0.1). q = the proposal, last round's refit,
+                  already leaning to success: (0.2, 0.3, 0.5). Success
+                  P(S|x) = (0.1, 0.5, 0.8).
+                    0  draw 100 from p, keep what succeeds: 6, 15, 8 — the target
+                    1  draw 100 from q instead: 20, 30, 50
+                    2  keep what succeeds: 2, 15, 40 — C over-counted 5x
+                    3  count each kept draw p/q times: x3, x1, x1/5 -> 6, 15, 8
    ============================================================ */
 IE437.widget('cond-bars', function (host, opts) {
   var E = IE437.el;
@@ -54,25 +57,25 @@ IE437.widget('cond-bars', function (host, opts) {
   var contrib = q.map(function (qi, i) { return qi * wt[i]; });
   var noRatio = q.map(function (qi, i) { return qi * succ[i]; });
 
-  var N = { heater: 2, 'try': 2, rare: 2, abc: 2, ratio: 4 }[MODE], st = 0;
+  var N = { heater: 2, 'try': 2, rare: 2, abc: 2, ratio: 3 }[MODE], st = 0;
   var TITLE = {
     heater: 'Propose ten rooms, keep the ones that reach 22 °C',
     'try': 'Propose 25 rooms, keep the ones that reach 22 °C',
     rare: 'Propose 100 rooms, keep the ones that reach 22 °C in five minutes',
     abc: 'Three designs: how common, how promising, what is left',
-    ratio: 'Sampling from last round’s model, and correcting for it'
+    ratio: 'Draw from last round’s model, then correct the count'
   }[MODE];
 
   host.innerHTML =
     '<div class="wbar"><span class="wt">' + TITLE + '</span><span class="wspacer"></span>' +
     '<span class="wlabel">rule</span><span class="wnum">' +
-    (MODE === 'ratio' ? 'weight = prior / proposal × success' : 'after ∝ prior × success') + '</span></div>' +
+    (MODE === 'ratio' ? 'weight = p / q × success' : 'after ∝ prior × success') + '</span></div>' +
     '<div class="wbody" style="flex-direction:row;gap:20px;align-items:center;justify-content:center">' +
     '<div data-c></div>' +
-    '<div data-note style="width:290px;font:400 14px/1.6 var(--sans);color:var(--ink2)"></div></div>';
+    '<div data-note style="width:' + (MODE === 'ratio' ? 250 : 290) + 'px;font:400 14px/1.6 var(--sans);color:var(--ink2)"></div></div>';
 
   var SMALL = MODE === 'rare';                                   /* 100 rooms: smaller, 17 to a line */
-  var W = 660, H = SMALL ? 296 : HEAT ? 266 : 300, PT = 40, PB = 236;   /* plot top and base */
+  var W = MODE === 'ratio' ? 790 : 660, H = SMALL ? 296 : HEAT ? 266 : MODE === 'ratio' ? 300 : 300, PT = 40, PB = 236;   /* plot top and base */
   var PW = 178, GAP = 63;                                        /* panel width and gap */
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);
@@ -183,30 +186,56 @@ IE437.widget('cond-bars', function (host, opts) {
     }
   }
 
+  /* ---- CbAS's ratio as a count: 100 draws from p, 100 from q -------------------------- */
+  function tiles(x0, y0, n, kept, col) {                        /* n draws, the first `kept` filled */
+    for (var k = 0; k < n; k++) {
+      var cx = x0 + (k % 20) * 8, cy = y0 + Math.floor(k / 20) * 9;
+      E('rect', { x: cx, y: cy, width: 7, height: 7, rx: 1.5, fill: k < kept ? col : '#fff',
+        stroke: k < kept ? col : SLATE, 'stroke-width': .8, 'stroke-opacity': k < kept ? 1 : .55 }, sv);
+    }
+  }
+  function card(x, y, w, col, title, l1, l2, on) {
+    E('rect', { x: x, y: y, width: w, height: 58, rx: 6, fill: '#fff', stroke: col, 'stroke-width': on ? 1.6 : 1, 'stroke-opacity': on ? .9 : .35 }, sv);
+    txt(x + 10, y + 18, title, { 'font-size': 13, 'font-weight': 700, fill: col, 'fill-opacity': on ? 1 : .45 });
+    txt(x + 10, y + 35, l1, { 'font-size': 11.5, 'font-weight': 700, 'fill-opacity': on ? .85 : .35 });
+    txt(x + 10, y + 50, l2, { 'font-size': 11, 'fill-opacity': on ? .6 : .3 });
+  }
+  function drawRatio() {
+    var ROW = [110, 170, 230], P100 = prior.map(function (v) { return Math.round(100 * v); }),
+        Q100 = q.map(function (v) { return Math.round(100 * v); }),
+        KP = P100.map(function (n, i) { return Math.round(n * succ[i]); }),
+        KQ = Q100.map(function (n, i) { return Math.round(n * succ[i]); }),
+        RAT = prior.map(function (v, i) { return v / q[i]; }),
+        RTXT = P100.map(function (n, i) { return '× ' + n + '/' + Q100[i]; }),
+        sum = function (a) { return a.reduce(function (x, y) { return x + y; }, 0); };
+    var LX = 26, RX = 372;
+    /* two generators, two jobs */
+    card(0, 2, 330, GREEN, 'p — the prior generator', 'job: say what a realistic design is', 'trained once on the data; never moves', true);
+    card(RX - 26, 2, 404, INK, 'q — last round’s refit', 'job: look where success is common', 'refit every round, so it leans toward success', st >= 1);
+    txt(LX, 86, '100 drawn from p · filled = succeeds', { 'font-size': 10, 'font-family': MONO, 'fill-opacity': .5 });
+    if (st >= 1) txt(RX, 86, '100 drawn from q' + (st >= 2 ? ' · filled = succeeds' : ''), { 'font-size': 10, 'font-family': MONO, 'fill-opacity': .5 });
+    if (st >= 3) txt(RX + 240, 86, 'count each p/q times', { 'font-size': 10, 'font-family': MONO, fill: GREEN });
+    E('line', { x1: RX - 34, x2: RX - 34, y1: 70, y2: 300, stroke: INK, 'stroke-opacity': .12 }, sv);
+    names.forEach(function (nm, i) {
+      var y = ROW[i];
+      txt(0, y + 9, nm, { 'font-size': 15, 'font-weight': 700 });
+      tiles(LX, y, P100[i], KP[i], GREEN);
+      txt(LX + 168, y + 12, KP[i] + ' of ' + P100[i], { 'font-size': 12.5, 'font-weight': 700, fill: GREEN, 'font-family': MONO });
+      txt(RX - 26, y + 9, nm, { 'font-size': 15, 'font-weight': 700, 'fill-opacity': st >= 1 ? 1 : .3 });
+      if (st >= 1) tiles(RX, y, Q100[i], st >= 2 ? KQ[i] : 0, st >= 3 ? AMBER : RED);
+      if (st === 1) txt(RX + 168, y + 12, 'drew ' + Q100[i], { 'font-size': 12.5, 'font-weight': 700, fill: SLATE, 'font-family': MONO });
+      if (st >= 2) txt(RX + 168, y + 12, KQ[i] + ' of ' + Q100[i], { 'font-size': 12.5, 'font-weight': 700, fill: st >= 3 ? AMBER : RED, 'font-family': MONO });
+      if (st >= 3) txt(RX + 240, y + 12, RTXT[i] + ' = ' + Math.round(KQ[i] * RAT[i]), { 'font-size': 12.5, 'font-weight': 700, fill: GREEN, 'font-family': MONO });
+    });
+    txt(LX, 286, '= the target · but only ' + sum(KP) + ' of 100 kept', { 'font-size': 12, 'font-weight': 700, fill: GREEN });
+    if (st === 2) txt(RX, 286, sum(KQ) + ' of 100 kept — but C is 40, not 8', { 'font-size': 12, 'font-weight': 700, fill: RED });
+    if (st >= 3) txt(RX + 240, 286, '= the target again', { 'font-size': 12, 'font-weight': 700, fill: GREEN });
+  }
   function draw() {
     while (sv.firstChild) sv.removeChild(sv.firstChild);
     if (HEAT) drawCount();
-    else if (MODE === 'ratio') {
-      var rs = st - 1;                                       /* step 0 shows only the target */
-      if (rs >= 0) panel(0, 'how often proposed', 'q(x), last round', q, 0.6, SLATE, two);
-      else empty(0, 'how often proposed');
-      op(0, '×');
-      if (rs >= 1) panel(1, 'weight on each draw', 'p(x)/q(x) × P(S|x)', wt, 0.6, AMBER, two,
-        { hi: ['up', '', 'down'], hiCol: AMBER });
-      else empty(1, 'weight on each draw');
-      op(1, '=');
-      if (rs < 0) panel(2, 'what we want to fit', 'prior × success, p × P(S)', prod, 0.45, GREEN, two);
-      else if (rs >= 3) panel(2, 'without the ratio', 'q(x) × P(S|x)', noRatio, 0.45, RED, two,
-        { ghost: prod, dash: true, headCol: RED });
-      else if (rs >= 2) panel(2, 'what each design adds', 'q × weight = p × P(S)', contrib, 0.45, GREEN, two,
-        { ghost: prod });
-      else empty(2, 'what each design adds');
-      if (rs >= 2) {
-        E('rect', { x: px(2) + PW - 112, y: PT - 8, width: 14, height: 9, fill: 'none', stroke: INK,
-          'stroke-opacity': .45, 'stroke-dasharray': '3 3' }, sv);
-        txt(px(2) + PW - 94, PT, 'the target p × P(S)', { 'font-size': 9.5, 'fill-opacity': .6 });
-      }
-    } else {
+    else if (MODE === 'ratio') drawRatio();
+    else {
       panel(0, 'how common', 'prior p(x)', prior, 1, SLATE, two);
       op(0, '×');
       if (st >= 1) panel(1, 'how likely to succeed', 'P(S | x)', succ, 1, AMBER, two,
@@ -249,11 +278,14 @@ IE437.widget('cond-bars', function (host, opts) {
         'After conditioning, <b>B</b> — plausible <i>and</i> promising — holds the most mass. ==The best success probability does not win on its own.== This is the distribution CbAS approximates when the designs cannot be listed.'
       ],
       ratio: [
-        'What we want to fit: prior × success for three designs. B — plausible and promising — gets the most; C, rare but promising, comes second.',
-        'Last round’s model proposes C most often — it has already moved toward success.',
-        'Each draw is weighted by prior / proposal × success: C is <b>down</b>-weighted for being over-proposed, A <b>up</b>-weighted for being under-proposed.',
-        'Proposal × weight gives back exactly prior × success — the target. ==The proposal changes where we look, not what we fit.==',
-        'Drop the ratio and C takes most of the mass: the refit would chase the proposal’s own drift. A design the proposal never draws cannot be corrected at all — the proposal must cover the target.'
+        'Two generators, two jobs.<br>' +
+        'From <b style="color:#16A34A">p</b>, success keeps 6, 15, 8 — ==the target==.<br>' +
+        'But only 29 of 100 draws are kept; with a harder request, 1 in 100 (last slide).',
+        'So draw from <b>q</b>, last round’s refit. It has moved toward success: it draws C <b>five times</b> as often as p.',
+        'Twice as many kept: 57. But they follow ==q’s taste, not p’s==: C is 40, where the target has 8.<br>' +
+        'Fit this, and next round q leans further to C.',
+        'Count each kept draw ==p / q times== — like a poll that over-sampled one city: each answer there counts less.<br>' +
+        'Back to 6, 15, 8, with q’s efficiency.'
       ]
     })[MODE][st].replace(/==(.+?)==/g, '<span class="hl">$1</span>');
   }
