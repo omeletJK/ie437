@@ -144,7 +144,7 @@ IE437.widget('mins-explain', function (host, opts) {
     E('line', { x1: l4, x2: r4, y1: b4, y2: b4, stroke: INK, 'stroke-opacity': .35 }, s4);
     E('line', { x1: l4, x2: l4, y1: t4, y2: b4, stroke: INK, 'stroke-opacity': .35 }, s4);
     if (KK === 1) {
-      var xa = function (v) { return l4 + v / 2.85 * (r4 - l4); }, ya = function (v) { return b4 - v * (b4 - t4); };
+      var xa = function (v) { return l4 + v / 2.85 * (r4 - l4 - 10); }, ya = function (v) { return b4 - v / 1.18 * (b4 - t4); };
       var pts = []; for (var i = 0; i <= 100; i++) { var yv = 2.85 * i / 100; pts.push(xa(yv).toFixed(1) + ' ' + ya(Math.exp(yv - 2.85)).toFixed(1)); }
       E('path', { d: 'M' + pts.join('L'), fill: 'none', stroke: AMBER, 'stroke-width': 2.4 }, s4);
       [[2.85, '1'], [1.85, '1/e ≈ 0.37'], [0.85, '1/e² ≈ 0.14']].forEach(function (q) {
@@ -169,13 +169,13 @@ IE437.widget('mins-explain', function (host, opts) {
     } else {
       var BINS = [['a middling bin, y = 1.05', 0.20, 0.07], ['the top bin, y = 2.85', 0.02, 0.152]], yc = function (v) { return b4 - v / 0.22 * (b4 - t4); };
       BINS.forEach(function (bn, k) {
-        var x0 = l4 + 22 + k * 140;
+        var x0 = l4 + 8 + k * 128;
         E('rect', { x: x0, y: yc(bn[1]), width: 30, height: b4 - yc(bn[1]), fill: SLATE, 'fill-opacity': .55 }, s4);
         E('rect', { x: x0 + 36, y: yc(bn[2]), width: 30, height: b4 - yc(bn[2]), fill: BLUE, 'fill-opacity': .8 }, s4);
         u(x0 + 15, yc(bn[1]) - 5, bn[1].toFixed(2), { 'text-anchor': 'middle', 'font-family': MONO, 'font-weight': 700, fill: SLATE });
         u(x0 + 51, yc(bn[2]) - 5, bn[2].toFixed(2), { 'text-anchor': 'middle', 'font-family': MONO, 'font-weight': 700, fill: BLUE });
         u(x0 + 33, b4 + 13, bn[0], { 'text-anchor': 'middle', 'font-size': 9.5, 'fill-opacity': .7 });
-        u(x0 + 100, (yc(bn[1]) + b4) / 2, 'w = ' + (bn[2] / bn[1]).toFixed(2), { 'text-anchor': 'middle', 'font-family': MONO, 'font-weight': 700, fill: GREEN, 'font-size': 11.5 });
+        u(x0 + 70, (yc(bn[1]) + b4) / 2 - (k ? 32 : 6), 'w = ' + (bn[2] / bn[1]).toFixed(2), { 'font-family': MONO, 'font-weight': 700, fill: GREEN, 'font-size': 10.5 });
       });
       E('rect', { x: l4 + 4, y: b4 + 20, width: 10, height: 8, fill: SLATE, 'fill-opacity': .55 }, s4);
       u(l4 + 18, b4 + 28, 'p_D: the data’s share', { 'font-size': 10 });
