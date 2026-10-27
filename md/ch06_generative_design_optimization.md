@@ -761,10 +761,10 @@ Numbers behind the picture: prior $(0.2,0.8)$, the same success model. Of 25 pro
 
 ::: cols
 ::: col The prior $p(x\mid\theta)$ — trained once, then frozen
-Fitted to the data, as in Act 2. It says which designs are **plausible**, and $\theta$ never changes: it is the brake.
+Act 2's generator: it says what is **plausible** — the brake.
 :::
 ::: col.accent The search model $q(x\mid\phi)$ — refit every round
-It learns to propose designs that are plausible **and** succeed. It is CbAS's **output**: the final candidates are drawn from it.
+Proposes plausible designs **that succeed** — CbAS's **output**.
 :::
 :::
 
@@ -818,17 +818,23 @@ Definitions, all over the three designs. $p(x)=p(x\mid\theta)$: the prior genera
 :::
 
 ### One shot, then the ladder
+{math: compact}
+
 ::: widget cbas-ladder
-Press → to climb, one round at a time. The score rises with $x$ here, so "good enough" is everything right of a line.
+Press → to run round 1 one line at a time, then a round per press. Here $\hat y(x)=x$, so $P(\hat y\ge\gamma_t\mid x)$ is 1 right of the bar and 0 left; $Q=80\%$; $N=1000$, 20 drawn as dots; $q$ Gaussian; $\gamma=6$.
 :::
 
-::: keypoint
-One shot asks for the target at once: ==0 of 20== proposals pass, and there is nothing to refit to.
-The ladder raises the bar one rung per round: ==every round keeps 4 of 20==, and the generator walks to the target.
-:::
+**CbAS, one round** {p}(Brookes, Park & Listgarten, ICML 2019) — repeated until the bar reaches the target $\gamma$:
+
+$$\begin{aligned}
+&\htmlClass{alg1}{\textbf{1}\ \text{Propose}} &&\htmlClass{alg1}{x_1,\dots,x_N\sim q\big(x\mid\phi^{(t-1)}\big),\qquad q\big(x\mid\phi^{(0)}\big)=p(x\mid\theta)\ \text{(start at the prior)}}\\
+&\htmlClass{alg2}{\textbf{2}\ \text{Set the bar}} &&\htmlClass{alg2}{\gamma_t=\min\big(\gamma,\ Q\text{-th percentile of }\hat y(x_1),\dots,\hat y(x_N)\big)}\\
+&\htmlClass{alg3}{\textbf{3}\ \text{Weight}} &&\htmlClass{alg3}{w_i=\frac{p\big(x_i\mid\theta\big)}{q\big(x_i\mid\phi^{(t-1)}\big)}\;P\big(\hat y\ge\gamma_t\mid x_i\big)}\\
+&\htmlClass{alg4}{\textbf{4}\ \text{Refit}} &&\htmlClass{alg4}{\phi^{(t)}=\argmax_\phi\ \textstyle\sum_{i=1}^N w_i\,\log q\big(x_i\mid\phi\big)}
+\end{aligned}$$
 
 ::: note
-The two fixes of "Why one shot fails", together: propose from last round's generator (Fix 1), and ask for a little more each round (Fix 2). Numbers: prior $\mathcal N(3,1)$, target $x\ge6$ — one shot passes with probability $0.00135$, about 1 in 740. Each round draws 20 proposals (drawn as evenly spaced quantiles, so the picture is the expectation), sets the bar at the best 4 of them — CbAS's percentile rule, here the 80th — capped at the target, and refits a Gaussian to the prior cut at the bar, which is what the weighted fit with weights $\frac{p}{q}\,\mathbb 1[x\ge\text{bar}]$ aims at. Bars $3.85\to4.80\to5.50\to6.00$; generators $\mathcal N(4.40,0.47^2)\to\mathcal N(5.19,0.36^2)\to\mathcal N(5.82,0.30^2)\to\mathcal N(6.28,0.27^2)$, whose 20 proposals reach the target 17 times. Say the contrast with Lecture 3 aloud: there the model was fixed; here the proposal and the condition both move. The pattern — sample, keep the good ones, refit the distribution — is also Lecture 4's CMA-ES. Source alignment: Part 2 pp. 12–15.
+Line by line. Line 1: round 1 proposes from the prior; later rounds from the last refit (Fix 1 of "Why one shot fails"). Line 2: the bar is easy by construction — the top $1-Q$ of each round always clear it — and it only rises, capped at the target (Fix 2). Line 3: the previous slide's weight; $p/q=1$ in round 1, and afterwards it corrects for proposing from $q$ instead of the prior. Line 4: Lecture 2's maximum likelihood with weights — for a Gaussian, the weighted mean and variance. Numbers: one shot passes $0.00135$ of proposals, about 1 in 740. Bars $3.84\to4.79\to5.41\to5.86\to6.00$; refits $\mathcal N(4.40,0.47^2)\to\mathcal N(5.16,0.30^2)\to\mathcal N(5.68,0.21^2)\to\mathcal N(6.07,0.16^2)\to\mathcal N(6.21,0.16^2)$, which puts 91% of proposals past $x=6$. $N$ matters: with $N=20$ the weighted variance collapses and the ladder stalls near $5.35$ — why the paper draws hundreds of samples a round. Say the contrast with Lecture 3 aloud: there the model was fixed; here the proposal and the condition both move. The pattern — sample, keep the good ones, refit the distribution — is also Lecture 4's CMA-ES. Source alignment: Part 2 pp. 12–15.
 :::
 
 ### What CbAS does on a real design problem
