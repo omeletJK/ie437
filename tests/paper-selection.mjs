@@ -23,7 +23,7 @@ for(const h of ['COMs — what we want','The loss, term by term','NEMO — uncer
 for(const h of ['Backup — one COMs loss','Backup — RoMA','What the benchmark says'])advanced('ch05',h);
 order('ch05',['Offline model-based','COMs — what we want','Uncertainty is Lecture 4','Knowledge, ordered','Appendix —']);
 order('ch06',['Comparing two distributions','VAE — encode','Diffusion — learn the noise','CbAS — fit','G3 — ask','Classifier-free guidance','A KL-regularised view','How the KL view','G4 — use performance','Diffusion Policy —','Appendix —']);
-for(const h of ['Backup — one VAE calculation','DDOM and BootGen — the reported','BootGen — generated'])advanced('ch06',h);
+for(const h of ['Backup — one VAE calculation','DDOM and BootGen — the reported','BootGen — generated','Backup — GFlowNet','Backup — BootGen'])advanced('ch06',h);
 order('ch08',['Double DQN —','What comes after DQN']);
 order('ch10',['A deterministic actor explores','TD3 — keep','Calculate a TD3 target','SAC — reward','SAC in the learning loop','PPO and SAC —','Appendix —']);
 order('ch11',['Dyna — the same update','MBPO — branch','Dreamer — learn','What imagination teaches','From Dreamer to DreamerV3','Appendix —']);
@@ -62,5 +62,16 @@ const entropy=ps=>-ps.filter(p=>p>0).reduce((s,p)=>s+p*Math.log(p),0);
 near('Deterministic entropy',entropy([1,0]),0);
 near('Mixture reward plus entropy',.5*2+.5*1.8+.5*entropy([.5,.5]),2.2465735902799726);
 near('Two-step imagined return',[2,1,4].reduce((s,r,i)=>s+.9**i*r,0),6.14);
+// Ch 6 flow-balance widget: GFlowNet's P(x) = R(x)/Z on designs built in steps (AB has two building orders).
+{const R={AA:1,AB:2,BB:1},orders=[['A','AA'],['A','AB'],['B','AB'],['B','BB']],F={'A>AA':1,'A>AB':1,'B>AB':1,'B>BB':1};
+ F['s>A']=F['A>AA']+F['A>AB'];F['s>B']=F['B>AB']+F['B>BB'];const Z=F['s>A']+F['s>B'];
+ near('GFlowNet total flow equals total reward',Z,R.AA+R.AB+R.BB);
+ const out=n=>Object.entries(F).filter(([k])=>k.startsWith(n+'>')).reduce((t,[,f])=>t+f,0),pi=(a,b)=>F[a+'>'+b]/out(a);
+ const byFlow=d=>orders.filter(o=>o[1]===d).reduce((t,o)=>t+pi('s',o[0])*pi(o[0],d),0);
+ for(const d of ['AA','AB','BB'])near('GFlowNet balanced flows draw '+d+' at R/Z',byFlow(d),R[d]/Z);
+ const orderTotal=orders.reduce((t,o)=>t+R[o[1]],0);
+ near('Weighting each building order by R over-draws AB',orders.filter(o=>o[1]==='AB').reduce((t,o)=>t+R.AB,0)/orderTotal,2/3);}
+// BootGen rank weights: best over worst is (k|D|+|D|-1)/(k|D|), about 1+1/k.
+{const k=.01,n=1000,w=r=>1/(k*n+r);near('BootGen best-to-worst rank weight ratio',w(0)/w(n-1),(k*n+n-1)/(k*n));}
 console.log(JSON.stringify({decks:decks.size,numericalChecks:checks.length,checks},null,2));
 console.log('PASS: reading guides, main/advanced placement, prerequisite order and new numerical examples.');

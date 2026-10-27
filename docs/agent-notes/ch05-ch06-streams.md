@@ -114,6 +114,15 @@ Plan after a second agent's review (same day; its factual claims were checked ag
   optimiser hunts its errors; inverse samples one, so there is no arg-max to exploit, until a
   performance model steers again. The note lists what it could repair (attacker, near → like,
   validity, a batch, a small space) and what it cannot (reach past the data).
+- 2026-10-28: the professor read GFlowNet and BootGen as "prior × score" too and asked to show how
+  each paper implements it. The main slide's keypoint now says so in three lines (GFlowNet: a
+  uniform prior × reward, no data in it; BootGen: the data × rank weights, then × the proxy's top K).
+  Two backup slides at the end carry the equations: GFlowNet's flow-matching loss with the
+  `flow-balance` widget (AB built in two orders: weighting each order by R gives 4/6, balanced
+  flows give R/Z = 1/2), and BootGen's round as a table of three products (train, ask at y†,
+  label and keep). Kept honest against the KL table: these are prior × success in form, not the
+  same target — GFlowNet's prior is uniform, BootGen has no fixed target, and rank weights that
+  depend on y alone do not change the ideal p(x|y), only where a finite network spends capacity.
 
 **How to apply:** each stream gets idea → mechanism → papers → what it cannot do. See
 [papers-serve-the-flow](papers-serve-the-flow.md) and [ch04-frontier-lab-papers](ch04-frontier-lab-papers.md).

@@ -937,11 +937,13 @@ The paper's caption: high dashed and low solid values mark methods "led astray i
 :::
 
 ::: keypoint
-Both shift probability toward good designs, by objectives different from CbAS's — and both rely on a proxy wherever the real objective is not called.
+==Both build prior × success again==, and the success is a proxy wherever the real objective is not called.
+GFlowNet: a **uniform** prior × a reward $R(x)$ — no data in the prior.
+BootGen: the **data** × rank weights, then × the proxy's top $K$, round after round.
 :::
 
 ::: note
-GFlowNet's reward calls are online if they query the real objective; offline they go to a proxy — Lecture 5's surrogate. Genetic-guided GFlowNets distils a genetic search into a GFlowNet under the PMO benchmark's budget of 10,000 oracle calls: a summed score of 16.213 across 23 tasks, ahead of every method in the paper's comparison. Source alignment: Part 2 pp. 35–41 (BootGen). Rank weights $w\propto(k|D|+\operatorname{rank}(y,D))^{-1}$; the loop figure, Algorithm 1 and the results table are on the appendix slides.
+Each in one line, against CbAS's $p(x\mid\theta)\,P(S\mid x)$. GFlowNet: $P(x)=R(x)/Z$ — every design the building rules can make starts equal, and the reward alone tilts it; it is built by flow balance, not by a weighted refit. BootGen multiplies three times: the data by a rank weight when it trains, the generator by "reaches $y^\dagger$" when it samples, and the samples by the proxy's top $K$ when it augments. The equations and a worked example are on the last two backup slides ("Backup — GFlowNet …", "Backup — BootGen …"). GFlowNet's reward calls are online if they query the real objective; offline they go to a proxy — Lecture 5's surrogate. Genetic-guided GFlowNets distils a genetic search into a GFlowNet under the PMO benchmark's budget of 10,000 oracle calls: a summed score of 16.213 across 23 tasks, ahead of every method in the paper's comparison. Source alignment: Part 2 pp. 35–41 (BootGen). Rank weights $w\propto(k|D|+\operatorname{rank}(y,D))^{-1}$; the loop figure, Algorithm 1 and the results table are on the appendix slides.
 :::
 
 ### What moving the distribution buys, and what it costs
@@ -1798,4 +1800,48 @@ Weights $\propto[k|D|+\operatorname{rank}(y,D)]^{-1}$, normalised: higher-ranked
 
 ::: keypoint
 The training pool grows without new oracle evaluations: it gains **proxy-labelled synthetic samples, not new performance measurements**, so proxy errors can be reinforced as the loop repeats. This is pseudo-labelling and augmentation — not resampling the data to build a bootstrap ensemble.
+:::
+
+### Backup — GFlowNet: a uniform prior × reward, matched by flow balance
+{math: compact}
+
+::: widget flow-balance
+:::
+
+**GFlowNet's target and training loss** {p}(Bengio et al., 2021) — on every building sequence it tries, **flow in** against **reward + flow out**:
+
+$$P(x)=R(x)/Z,\quad Z=\textstyle\sum_{x'}R(x');\qquad \mathcal L(\tau)=\textstyle\sum_{s'\in\tau,\ s'\neq s_0}\Big(\log\Big[\epsilon+\textstyle\sum_{s}F_\theta(s\to s')\Big]-\log\Big[\epsilon+R(s')+\textstyle\sum_{s''}F_\theta(s'\to s'')\Big]\Big)^2$$
+
+::: keypoint
+Prior × success with a ==uniform prior==: the reward alone tilts it.
+Offline, $R$ is a proxy, and no data term holds the samples near the data.
+:::
+
+::: note
+Symbols. $x$: a finished design. $s$: a partly built design (a state); $s_0$ the empty start; $\tau$: one building sequence $s_0\to s_1\to\dots\to x$. $R(x)>0$: the reward of a finished design, and $R(s')=0$ for a partial one; offline it is a proxy's score, often sharpened as $\hat f(x)^\beta$. $F_\theta(s\to s')\ge0$: the flow on one step, the network's output. $\epsilon$: a small constant that keeps the logs finite. The sampler steps with $\pi(s'\mid s)=F_\theta(s\to s')/\sum_{s''}F_\theta(s\to s'')$, so $P(x)=\sum_{\tau\to x}\prod_t\pi(s_{t+1}\mid s_t)$ — a sum over building orders, which is why weighting each order by $R$ over-draws AB ($4/6$ instead of $2/4$). When every squared term is zero, $Z$ leaves the start and $R(x)$ arrives at each design, so $P(x)=R(x)/Z$. The balanced flows are not unique (A could pass on $0.5+1.5$), but every balanced set gives the same $P(x)$. Training is off-policy: sequences come from an exploring version of the sampler, and each needs only $R$ at its end — no samples from the target. Prior × success: the prior is uniform over what the building rules can make. CbAS's prior is $p(x\mid\theta)$, trained on the data, and its $p/q$ keeps the refit near it; GFlowNet's target has no such factor. A later loss, trajectory balance (Malkin et al., 2022), writes the same condition for a whole sequence, $\big(\log Z_\theta+\sum_t\log P_F(s_{t+1}\mid s_t)-\log R(x)-\sum_t\log P_B(s_t\mid s_{t+1})\big)^2$, where $\log P(x)=\log R(x)-\log Z$ is visible.
+:::
+
+### Backup — BootGen: prior × success, three times over
+{math: compact}
+
+**BootGen, one round** {p}(Kim, Berto, Ahn & Park, 2023). $D$: the designs and scores so far, at first the measured ones. $p_\theta(x\mid y)$: the generator, asked for score $y$. $\hat f_\phi$: the proxy, trained on the measured designs. $y^\dagger$: a high requested score. $K$: how many generated designs are kept.
+
+::: table center
+| step | what is computed | prior | × success |
+|---|---|---|---|
+| A · train | $\min_\theta\ -\sum_{(x,y)\in D}w(y,D)\,\log p_\theta(x\mid y)$<br>with $w(y,D)\propto\big(k\lvert D\rvert+\operatorname{rank}(y,D)\big)^{-1}$ | the data $D$ | the rank weight $w(y,D)$ |
+| B1 · ask | $\tilde x_1,\dots,\tilde x_L\sim p_\theta(x\mid y^\dagger)\ \propto\ p_\theta(x)\,p_\theta(y^\dagger\mid x)$ | the generator $p_\theta(x)$ | reaching $y^\dagger$ |
+| B2 · label, keep | $\tilde y_j=\hat f_\phi(\tilde x_j)$; add the $K$ pairs with the highest $\tilde y_j$ to $D$; back to A | the generator's samples | the proxy's top $K$ |
+:::
+
+Last, pool the samples of several generators trained this way; the proxy picks the final candidates.
+
+::: keypoint
+Each round multiplies by ==the proxy's judgement== once more.
+The measured designs stay in $D$.
+But no ratio like CbAS's $p/q$ ties the refit to them, so proxy errors can compound.
+:::
+
+::: note
+Row A. $\operatorname{rank}(y,D)$ counts from 0 for the best score; the weights are normalised to sum to one. $k$ sets how sharp the tilt is: the best design outweighs the worst by about $1+1/k$, so a large $k$ trains on the plain data — the prior alone — and a small $k$ on the top. A rank, not the value, so rescaling $y$ changes nothing — unlike MINs' and DDOM's $e^{y-y^*}$ weights. Because $w$ depends on $y$ only, a generator of unlimited capacity would still learn the data's own $p(x\mid y)$; what the weights change is where a finite network spends its accuracy — on high scores, the slice B1 asks from. Row B1 is Bayes' rule, G3's reading: no separate classifier, the conditional model holds $p_\theta(y^\dagger\mid x)$ implicitly. Row B2: the kept designs follow $p_\theta(x\mid y^\dagger)\,\mathbf 1[\hat f_\phi(x)\ge\tau_K]$, with $\tau_K$ the $K$-th best proxy score among the $L$ samples, and their labels are the proxy's values, not measurements (previous slide). Retraining recomputes the ranks, so the kept designs, labelled high, weigh the most next round — the CbAS pattern of sample, keep the good ones, refit, with the proxy as the judge. Pooling several generators spreads the risk that one of them has found a proxy error.
 :::
