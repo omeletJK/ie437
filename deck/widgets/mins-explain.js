@@ -16,6 +16,13 @@
                       3  p(y) ∝ N_y/(N_y+K) e^(y − y*) (MINs): top bin 15%,
                          mean score 1.95; each point counts w = p / p_D,
                          0.35 for a middling point, 7.6 for one of the best two
+   mode "term"      Q1's formula, one panel per part, {"k": 1 | 2 | 3}:
+                      1  e^(y − y*) against y: 1 at y* = 2.85, 1/e one unit lower
+                      2  N/(N + K) against N, K = 5: 1/2 at N = K; the toy's
+                         bins N = 2 -> 0.29, N = 20 -> 0.80
+                      3  w = p / p_D for two bins of the toy: a middling bin
+                         (p_D 0.20, p 0.07, w 0.35) and the top bin
+                         (p_D 0.02, p 0.15, w 7.6)
    mode "query"     Q2, which score to ask for. An illustrative curve: the
                     forward model's prediction for the design generated at
                     request y is y inside the data (y ≤ 2.85), and
@@ -125,6 +132,57 @@ IE437.widget('mins-explain', function (host, opts) {
     var show = function (k) { st = Math.max(0, Math.min(3, k)); draw(); };
     show(0);
     return { steps: 3, step: show, reset: function () { show(0); }, finish: function () { show(3); } };
+  }
+
+  /* ---------------- Q1's formula, term by term ---------------- */
+  if (MODE === 'term') {
+    var KK = opts.k || 1;
+    host.innerHTML = '<div class="wbody" style="align-items:center;justify-content:center;padding:6px 6px 2px"><div data-c></div></div>';
+    var s4 = IE437.svg(320, 150); host.querySelector('[data-c]').appendChild(s4);
+    var l4 = 36, r4 = 306, t4 = 12, b4 = 118;
+    function u(x, y, str, a) { var o = { x: x, y: y, 'font-size': 10.5, fill: INK, text: str }; for (var k in a || {}) o[k] = a[k]; return E('text', o, s4); }
+    E('line', { x1: l4, x2: r4, y1: b4, y2: b4, stroke: INK, 'stroke-opacity': .35 }, s4);
+    E('line', { x1: l4, x2: l4, y1: t4, y2: b4, stroke: INK, 'stroke-opacity': .35 }, s4);
+    if (KK === 1) {
+      var xa = function (v) { return l4 + v / 2.85 * (r4 - l4); }, ya = function (v) { return b4 - v * (b4 - t4); };
+      var pts = []; for (var i = 0; i <= 100; i++) { var yv = 2.85 * i / 100; pts.push(xa(yv).toFixed(1) + ' ' + ya(Math.exp(yv - 2.85)).toFixed(1)); }
+      E('path', { d: 'M' + pts.join('L'), fill: 'none', stroke: AMBER, 'stroke-width': 2.4 }, s4);
+      [[2.85, '1'], [1.85, '1/e ≈ 0.37'], [0.85, '1/e² ≈ 0.14']].forEach(function (q) {
+        E('circle', { cx: xa(q[0]), cy: ya(Math.exp(q[0] - 2.85)), r: 4, fill: AMBER }, s4);
+        u(xa(q[0]) - 6, ya(Math.exp(q[0] - 2.85)) - 8, q[1], { 'text-anchor': 'end', 'font-weight': 700, fill: AMBER, 'font-family': MONO });
+      });
+      [0, 1, 2].forEach(function (v) { u(xa(v), b4 + 13, String(v), { 'text-anchor': 'middle', 'font-size': 9.5, 'fill-opacity': .55, 'font-family': MONO }); });
+      u(xa(2.85), b4 + 13, 'y*', { 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700 });
+      u((l4 + r4) / 2, b4 + 28, 'score y', { 'text-anchor': 'middle', 'font-style': 'italic', 'fill-opacity': .6 });
+    } else if (KK === 2) {
+      var xb = function (v) { return l4 + v / 30 * (r4 - l4); }, yb = function (v) { return b4 - v * (b4 - t4); };
+      var pb = []; for (var j = 0; j <= 120; j++) { var n = 30 * j / 120; pb.push(xb(n).toFixed(1) + ' ' + yb(n / (n + 5)).toFixed(1)); }
+      E('path', { d: 'M' + pb.join('L'), fill: 'none', stroke: BLUE, 'stroke-width': 2.4 }, s4);
+      E('line', { x1: l4, x2: r4, y1: yb(1), y2: yb(1), stroke: INK, 'stroke-opacity': .25, 'stroke-dasharray': '3 3' }, s4);
+      u(r4, yb(1) - 4, 'full trust', { 'text-anchor': 'end', 'font-size': 9.5, 'fill-opacity': .55 });
+      [[2, '2 points: 0.29'], [5, 'N = K: 1/2'], [20, '20 points: 0.80']].forEach(function (q) {
+        E('circle', { cx: xb(q[0]), cy: yb(q[0] / (q[0] + 5)), r: 4, fill: BLUE }, s4);
+        u(xb(q[0]) + 7, yb(q[0] / (q[0] + 5)) + 14, q[1], { 'font-weight': 700, fill: BLUE, 'font-family': MONO });
+      });
+      [0, 10, 20, 30].forEach(function (v) { u(xb(v), b4 + 13, String(v), { 'text-anchor': 'middle', 'font-size': 9.5, 'fill-opacity': .55, 'font-family': MONO }); });
+      u((l4 + r4) / 2, b4 + 28, 'N_y — data points sharing the score (K = 5)', { 'text-anchor': 'middle', 'font-style': 'italic', 'fill-opacity': .6 });
+    } else {
+      var BINS = [['a middling bin, y = 1.05', 0.20, 0.07], ['the top bin, y = 2.85', 0.02, 0.152]], yc = function (v) { return b4 - v / 0.22 * (b4 - t4); };
+      BINS.forEach(function (bn, k) {
+        var x0 = l4 + 22 + k * 140;
+        E('rect', { x: x0, y: yc(bn[1]), width: 30, height: b4 - yc(bn[1]), fill: SLATE, 'fill-opacity': .55 }, s4);
+        E('rect', { x: x0 + 36, y: yc(bn[2]), width: 30, height: b4 - yc(bn[2]), fill: BLUE, 'fill-opacity': .8 }, s4);
+        u(x0 + 15, yc(bn[1]) - 5, bn[1].toFixed(2), { 'text-anchor': 'middle', 'font-family': MONO, 'font-weight': 700, fill: SLATE });
+        u(x0 + 51, yc(bn[2]) - 5, bn[2].toFixed(2), { 'text-anchor': 'middle', 'font-family': MONO, 'font-weight': 700, fill: BLUE });
+        u(x0 + 33, b4 + 13, bn[0], { 'text-anchor': 'middle', 'font-size': 9.5, 'fill-opacity': .7 });
+        u(x0 + 100, (yc(bn[1]) + b4) / 2, 'w = ' + (bn[2] / bn[1]).toFixed(2), { 'text-anchor': 'middle', 'font-family': MONO, 'font-weight': 700, fill: GREEN, 'font-size': 11.5 });
+      });
+      E('rect', { x: l4 + 4, y: b4 + 20, width: 10, height: 8, fill: SLATE, 'fill-opacity': .55 }, s4);
+      u(l4 + 18, b4 + 28, 'p_D: the data’s share', { 'font-size': 10 });
+      E('rect', { x: l4 + 140, y: b4 + 20, width: 10, height: 8, fill: BLUE, 'fill-opacity': .8 }, s4);
+      u(l4 + 154, b4 + 28, 'p: the share we want', { 'font-size': 10 });
+    }
+    return { finish: function () {} };
   }
 
   /* ---------------- Q2: which score to ask for ---------------- */

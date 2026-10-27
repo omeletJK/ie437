@@ -1091,6 +1091,42 @@ Each data point counts $w_i=p(y_i)/p_D(y_i)$ — the "target ÷ what you have" r
 The weighted training loss is $\frac{1}{|D|}\sum_i w_i\,\mathrm{Div}\big(x_i, g(y_i)\big)$ with $w_i=p(y_i)/p_D(y_i)$ and $p(y)\propto\frac{N_y}{N_y+K}\,e^{\,y-y^*}$ (Part 2 p. 24). Symbols: $N_y$, the number of data points whose score falls in $y$'s bin; $K$, a constant; $y^*$, the best score in the data; $p_D(y)=N_y/|D|$. Why this shape — the paper's Theorem 3.1 bounds the error of the training gradient by three terms: $C_1\E_{y\sim p}[1/N_y]$ (variance from thin bins), $C_2\,d_2(p\|p_D)/|D|$ (how far $p$ moves from the data) and $C_3D_{\mathrm{TV}}(p^*,p)^2$ (bias from not training on the best score alone). Greedy ($p=p^*$) kills the third and blows up the first; uniform ($p=p_D$) the reverse; the trust factor $N_y/(N_y+K)$ is the compromise. Toy numbers: $N_y=(4,9,15,20,18,13,9,6,4,2)$, $K=5$; MINs' shares $(2,3,5,7,9,12,14,16,18,15)\%$; weights $w=(0.40,0.35,0.33,0.35,0.52,0.89,1.55,2.65,4.38,7.60)$. Source alignment: Part 2 pp. 22, 24.
 :::
 
+### MINs, question 1 — what each part of the formula is for
+{math: compact}
+
+$$w_i=\frac{p(y_i)}{p_D(y_i)},\qquad p(y)\;\propto\;\underbrace{e^{\,y-y^*}}_{\text{(i) prefer high scores}}\;\cdot\;\underbrace{\frac{N_y}{N_y+K}}_{\text{(ii) trust only scores many points share}}$$
+
+::: cols c3
+::: col (i) prefer high scores: $e^{\,y-y^*}$
+::: widget mins-explain {"mode":"term","k":1}
+1 at the best score $y^*$; each unit lower divides the share by $e\approx2.7$. ==Smooth==: no hard cut-off, measured from the data's best.
+:::
+:::
+::: col (ii) trust: $N_y/(N_y+K)$
+::: reveal
+::: widget mins-explain {"mode":"term","k":2}
+Half trust at $N_y=K$; nearly full when many points share the score — the form of ==Lecture 2's Beta prior with $K$ pseudo-counts==.
+:::
+:::
+:::
+::: col.accent (iii) reweight the data: $w=p/p_D$
+::: reveal
+::: widget mins-explain {"mode":"term","k":3}
+We only have the data, shared as $p_D$. Counting each point $p/p_D$ times makes the training follow $p$ — ==CbAS's ratio again==.
+:::
+:::
+:::
+:::
+
+::: keypoint
+The tilt pulls the training toward the best scores — ==less bias==.
+The trust factor keeps it off scores too few points share — ==less variance==.
+:::
+
+::: note
+Why this shape, from the paper's Theorem 3.1 (Part 2 p. 24): the error of the training gradient is bounded by three terms, $C_1\E_{y\sim p}[1/N_y]$ — variance, large when $p$ puts weight on thinly populated scores; $C_2\,d_2(p\|p_D)/|D|$ — how far $p$ moves from the data's own shares; $C_3D_{\mathrm{TV}}(p^*,p)^2$ — bias, the distance from training on the best score alone. The tilt $e^{y-y^*}$ shrinks the third; the trust factor shrinks the first; together they keep the second moderate. Greedy training (all weight on $y^*$) has no bias and huge variance; training on the data as is ($p=p_D$) has no variance from reweighting and large bias. The scale of $y$ matters: $e^{y-y^*}$ treats one unit of score as a meaningful step; with scores in other units a temperature $e^{(y-y^*)/\tau}$ sets that step. The analogy for (ii): with a Beta prior worth $K$ pseudo-counts, the posterior mean is $\frac{N}{N+K}\cdot(\text{data mean})+\frac{K}{N+K}\cdot(\text{prior mean})$ — the data's say grows as $N/(N+K)$. Since $p_D(y)=N_y/|D|$, a bin's total weight is $N_y\cdot w=|D|\,p(y)$: the bins' shares are exactly $p$. Toy numbers from the previous slide: middling bin $p_D=0.20$, $p=0.07$, $w=0.35$; top bin $p_D=0.02$, $p=0.15$, $w=7.6$.
+:::
+
 ### MINs, question 2 — which score to ask for?
 The generator $g$ will make a design for any score we ask. Check each request with a **forward model** $\hat f$ — Lecture 5's surrogate, trained separately:
 
