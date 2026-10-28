@@ -1,37 +1,38 @@
 /* ============================================================
    widget: condition-shift                          (Chapter 6, Act 4)
-   Ask a generator for a score, and count what comes back.
+   Ask a generator for a score; see what you get.
 
-   The story, one request at a time: the generator proposes 10,000
-   designs; the ones whose learned score reaches the request gamma are
-   kept (Lecture 3's "keep what passes, count what is left"); then we
-   look at what the kept designs are really worth. Asking a little past
-   the data's best pays; asking far past it buys designs whose promise
-   the truth does not keep; asking further still, nothing passes.
+   One picture, three moves, numbered on the figure:
+     1  ask for a score gamma                      (amber, on the y-axis)
+     2  the generator returns the design its learned score says reaches
+        gamma — read across to the dashed curve, then down    (blue)
+     3  that design's true score is what you get    (on the solid curve)
+   A second chart plots got against asked for every request: on the
+   diagonal inside the data, then falling away past it.
 
    The problem is Lecture 5's, unchanged. Two hundred designs are drawn
    from N(3.0, 1.15^2) and kept only below x = 5.5 — nobody has built a
    design past there — and a score model is fitted to them with the same
    ReLU-knot ridge basis Lecture 5 used for its surrogate. It stands for
-   the x-to-y relation a conditional generator learns from D; past the
-   data it is a guess. The generator's proposals are the Gaussian fitted
-   to the designs, drawn as 10,000 evenly spaced quantiles, so the
-   picture is the expectation rather than one lucky draw.
+   the x-to-y relation a conditional generator learns from D. Asked for
+   gamma, an ideal conditional generator returns the designs that
+   relation links to gamma; here that is the one design with
+   fhat(x) = gamma (fhat rises monotonically). Past the data the
+   relation is a guess: it keeps rising, the truth turns down.
 
-   Verified in node before shipping (seed 11; the best measured design
-   is worth 2.523, the true optimum 2.657 at x = 6.04):
+   Verified in node before shipping (seed 11; the measured designs end
+   at x = 5.43, where fhat = 2.39; the best measured design is worth
+   2.523; the true optimum is 2.657 at x = 6.04):
 
-     request  kept / 10,000  promised (mean f_hat)  true (mean f)
-      2.00        984              2.22                2.27
-      2.40        155              2.56                2.59
-      2.50         88              2.65                2.61   <- truly better
-      2.60         47              2.74                2.59
-      2.80         12              2.92                2.42   <- promise broken
-      3.00          2              3.12                2.06
-      3.20          0                -                   -     <- nothing passes
+     asked   design returned   got (true score)
+      2.00        4.49              2.00      inside the data
+      2.60        5.94              2.65      just past: beats the data
+      2.80        6.44              2.59      less than asked
+      3.00        6.94              2.32      below the data's best
+      3.80        9.00              0.22      far past
 
-   Walked by the deck's ->: 2.00, then 2.50, then 2.80, then 3.20; the
-   slider sets any request in between.
+   Walked by the deck's ->: 2.00, 2.60, 3.00, 3.80; the slider sets any
+   request from 1.50 to 4.00.
    ============================================================ */
 IE437.widget('condition-shift', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', GREEN = '#16A34A',
@@ -50,11 +51,8 @@ IE437.widget('condition-shift', function (host, opts) {
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
   var D = [];
   while (D.length < N) { var x = 3.0 + 1.15 * gs(R); if (x > 0.30 && x < XCAP) D.push({ x: x, y: ftrue(x) + 0.03 * gs(R) }); }
-  var MU = 0, SD = 0;
-  D.forEach(function (d) { MU += d.x; }); MU /= N;
-  D.forEach(function (d) { SD += (d.x - MU) * (d.x - MU); }); SD = Math.sqrt(SD / N);
-  var BEST = -9;
-  D.forEach(function (d) { if (ftrue(d.x) > BEST) BEST = ftrue(d.x); });
+  var BEST = -9, XLO = 99, XHI = -99;
+  D.forEach(function (d) { if (ftrue(d.x) > BEST) BEST = ftrue(d.x); if (d.x < XLO) XLO = d.x; if (d.x > XHI) XHI = d.x; });
 
   /* ---------- the learned score: the same basis Lecture 5 fitted ---------- */
   var KN = [], MK = 26, j, LAM = 0.06;
@@ -80,135 +78,148 @@ IE437.widget('condition-shift', function (host, opts) {
   var WV = solve(A0, b0);
   function fhat(x) { var p = phi(x), s = 0; for (var a = 0; a < P; a++) s += WV[a] * p[a]; return s; }
 
-  /* ---------- the generator's proposals: 10,000 evenly spaced quantiles ---------- */
-  function ninv(p) {                                  /* Acklam's inverse normal */
-    var a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924],
-        b = [-54.4760987982241, 161.585836858041, -155.698979859887, 66.8013118877197, -13.2806815528857],
-        c = [-0.00778489400243029, -0.322396458041136, -2.40075827716184, -2.54973253934373, 4.37466414146497, 2.93816398269878],
-        d = [0.00778469570904146, 0.32246712907004, 2.445134137143, 3.75440866190742], qq, r;
-    if (p < 0.02425) { qq = Math.sqrt(-2 * Math.log(p));
-      return (((((c[0] * qq + c[1]) * qq + c[2]) * qq + c[3]) * qq + c[4]) * qq + c[5]) / ((((d[0] * qq + d[1]) * qq + d[2]) * qq + d[3]) * qq + 1); }
-    if (p <= 1 - 0.02425) { qq = p - 0.5; r = qq * qq;
-      return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * qq / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
-    qq = Math.sqrt(-2 * Math.log(1 - p));
-    return -(((((c[0] * qq + c[1]) * qq + c[2]) * qq + c[3]) * qq + c[4]) * qq + c[5]) / ((((d[0] * qq + d[1]) * qq + d[2]) * qq + d[3]) * qq + 1);
+  /* ---------- asked -> design returned -> got ---------- */
+  function design(g) {                                /* the x whose learned score is g */
+    var lo = 0, hi = 10, k, m;
+    for (k = 0; k < 50; k++) { m = (lo + hi) / 2; if (fhat(m) >= g) hi = m; else lo = m; }
+    return hi;
   }
-  var MM = 10000, PROP = [];
-  for (i = 1; i <= MM; i++) PROP.push(MU + SD * ninv((i - 0.5) / MM));
-  var FH = PROP.map(fhat), FT = PROP.map(ftrue);
-
-  var GAM = [2.00, 2.20, 2.40, 2.50, 2.60, 2.80, 2.90, 3.00, 3.20], STOPS = [0, 3, 5, 8], gi = 0;
-  function stats(g) {
-    var n = 0, sh = 0, st = 0, lo = 99, hi = -99, k;
-    for (k = 0; k < MM; k++) if (FH[k] >= g) { n++; sh += FH[k]; st += FT[k]; if (PROP[k] < lo) lo = PROP[k]; if (PROP[k] > hi) hi = PROP[k]; }
-    return { n: n, promised: n ? sh / n : NaN, truth: n ? st / n : NaN, lo: lo, hi: hi };
-  }
+  var EDGE = fhat(XHI);                               /* the largest request the data can vouch for */
+  var GAM = [], STOPS = [], gi;
+  for (i = 0; i <= 50; i++) GAM.push(1.5 + 0.05 * i);
+  [2.00, 2.60, 3.00, 3.80].forEach(function (g) { STOPS.push(Math.round((g - 1.5) / 0.05)); });
+  gi = STOPS[0];
 
   host.innerHTML =
-    '<div class="wbar"><span class="wt">ask the generator for a score &mdash; how many pass, and what they are really worth</span>' +
+    '<div class="wbar"><span class="wt">ask the generator for a score &mdash; and see what you get</span>' +
     '<span class="wspacer"></span>' +
-    '<span class="wlabel">request</span>' +
+    '<span class="wlabel">ask for</span>' +
     '<span class="wnum" data-val style="min-width:78px;display:inline-block;text-align:right"></span>' +
     '<span data-sl></span></div>' +
-    '<div class="wbody" style="flex-direction:row;gap:20px;align-items:flex-start;padding:11px 16px 9px">' +
+    '<div class="wbody" style="flex-direction:row;gap:18px;align-items:flex-start;padding:11px 16px 9px">' +
     '<div data-c></div>' +
-    '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:9px">' +
-    '<div data-key style="font:400 12px/1.65 var(--sans);color:var(--ink2)"></div>' +
-    '<div data-num style="border-top:1px solid rgba(22,24,29,.14);padding-top:9px;font:400 12.5px/1.75 var(--sans);color:var(--ink2)"></div>' +
+    '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px">' +
+    '<div data-num style="font:400 13px/1.7 var(--sans);color:var(--ink2)"></div>' +
+    '<div data-m></div>' +
+    '<div data-v style="font:500 13px/1.5 var(--sans)"></div>' +
     '</div></div>';
 
-  var CW = 600, CH = 296, PL = 34, PR = 12, PT = 12, PB = 24;
+  /* ---------- the main chart: design x against score ---------- */
+  var CW = 600, CH = 300, PL = 34, PR = 14, PT = 12, PB = 26;
   var sv = IE437.svg(CW, CH);
   host.querySelector('[data-c]').appendChild(sv);
   function cx(v) { return PL + v / 10 * (CW - PL - PR); }
   var YL = -0.4, YH = 4.4;
   function cy(v) { return CH - PB - (v - YL) / (YH - YL) * (CH - PT - PB); }
 
-  /* the definitions — every mark on the figure, named once */
-  host.querySelector('[data-key]').innerHTML =
-    '<span style="color:' + SLATE + '">&#9679;</span> 200 measured designs, the data D<br>' +
-    '<span style="color:' + BLUE + '">&#9548;&#9548;</span> score learned from D &mdash; past the data, a guess<br>' +
-    '<span style="color:' + INK + '">&#9473;&#9473;</span> true score &mdash; hidden from the method<br>' +
-    '<span style="color:' + AMBER + '">&#9548;&#9548;</span> the request: learned score &ge; &gamma;<br>' +
-    '<span style="color:' + SLATE + '">&#9601;&#9602;&#9601;</span> where the generator proposes designs<br>' +
-    '<span style="color:' + BLUE + '">&#9679;</span> kept designs, placed at their true score';
+  /* ---------- the second chart: got against asked ---------- */
+  var MW = 440, MH = 158, ML = 30, MR = 10, MT = 10, MB = 24, AL = 1.5, AH = 4.0, GL = -0.3, GH = 4.0;
+  var ms = IE437.svg(MW, MH);
+  host.querySelector('[data-m]').appendChild(ms);
+  function mx(v) { return ML + (v - AL) / (AH - AL) * (MW - ML - MR); }
+  function my(v) { return MH - MB - (v - GL) / (GH - GL) * (MH - MT - MB); }
 
-  function draw() {
+  function txt(svg, a, s) { a.text = s; return E('text', a, svg); }
+
+  function drawMain(g, xd, got, col) {
     while (sv.firstChild) sv.removeChild(sv.firstChild);
-    var g = GAM[gi], S = stats(g), k;
-
-    /* axes */
     E('line', { x1: PL, y1: cy(YL), x2: CW - PR, y2: cy(YL), stroke: INK, 'stroke-opacity': .28 }, sv);
     E('line', { x1: PL, y1: PT, x2: PL, y2: cy(YL), stroke: INK, 'stroke-opacity': .28 }, sv);
     [0, 1, 2, 3, 4].forEach(function (t) {
-      E('text', { x: PL - 6, y: cy(t) + 3.5, 'text-anchor': 'end', 'font-size': 9, fill: INK, 'fill-opacity': .5,
-        'font-family': 'IBM Plex Mono, monospace', text: t }, sv);
+      txt(sv, { x: PL - 6, y: cy(t) + 3.5, 'text-anchor': 'end', 'font-size': 9, fill: INK, 'fill-opacity': .5,
+        'font-family': 'IBM Plex Mono, monospace' }, t);
       E('line', { x1: PL, x2: CW - PR, y1: cy(t), y2: cy(t), stroke: INK, 'stroke-opacity': .07 }, sv);
     });
     [0, 2, 4, 6, 8].forEach(function (t) {
-      E('text', { x: cx(t), y: CH - 9, 'text-anchor': 'middle', 'font-size': 9, fill: INK, 'fill-opacity': .5,
-        'font-family': 'IBM Plex Mono, monospace', text: t }, sv);
+      txt(sv, { x: cx(t), y: CH - 10, 'text-anchor': 'middle', 'font-size': 9, fill: INK, 'fill-opacity': .5,
+        'font-family': 'IBM Plex Mono, monospace' }, t);
     });
-    E('text', { x: CW - PR, y: CH - 9, 'text-anchor': 'end', 'font-size': 9.5, fill: INK, 'fill-opacity': .55,
-      'font-style': 'italic', text: 'design x' }, sv);
-    E('text', { x: PL + 4, y: PT + 2, 'font-size': 9.5, fill: INK, 'fill-opacity': .55, 'font-style': 'italic', text: 'score' }, sv);
+    txt(sv, { x: CW - PR, y: CH - 10, 'text-anchor': 'end', 'font-size': 9.5, fill: INK, 'fill-opacity': .55, 'font-style': 'italic' }, 'design x');
+    txt(sv, { x: PL + 4, y: PT + 2, 'font-size': 9.5, fill: INK, 'fill-opacity': .55, 'font-style': 'italic' }, 'score');
 
     /* where the data lives */
-    E('rect', { x: cx(0.30), y: PT, width: cx(XCAP) - cx(0.30), height: cy(YL) - PT, fill: SLATE, 'fill-opacity': .08 }, sv);
-    E('text', { x: (cx(0.30) + cx(XCAP)) / 2, y: PT + 11, 'text-anchor': 'middle', 'font-size': 9.5,
-      'font-family': 'IBM Plex Mono, monospace', fill: INK, 'fill-opacity': .45, text: 'measured designs' }, sv);
-    E('text', { x: (cx(XCAP) + cx(10)) / 2, y: PT + 11, 'text-anchor': 'middle', 'font-size': 9.5,
-      'font-family': 'IBM Plex Mono, monospace', fill: INK, 'fill-opacity': .45, text: 'never measured' }, sv);
+    E('rect', { x: cx(XLO), y: PT, width: cx(XHI) - cx(XLO), height: cy(YL) - PT, fill: SLATE, 'fill-opacity': .09 }, sv);
+    txt(sv, { x: (cx(XLO) + cx(XHI)) / 2, y: PT + 11, 'text-anchor': 'middle', 'font-size': 9.5,
+      'font-family': 'IBM Plex Mono, monospace', fill: INK, 'fill-opacity': .5 }, 'measured designs');
+    txt(sv, { x: (cx(XHI) + cx(10)) / 2, y: PT + 11, 'text-anchor': 'middle', 'font-size': 9.5,
+      'font-family': 'IBM Plex Mono, monospace', fill: INK, 'fill-opacity': .5 }, 'never measured');
 
-    /* the kept band: where the learned score reaches the request */
-    if (S.n) E('rect', { x: cx(S.lo), y: PT, width: Math.max(2, cx(S.hi) - cx(S.lo)), height: cy(YL) - PT,
-      fill: BLUE, 'fill-opacity': .10 }, sv);
-
-    function line(fn, col, w, dash) {
+    function line(fn, c, w, dash) {
       var p = [], t;
       for (t = 0; t <= 300; t++) { var v = 10 * t / 300; p.push(cx(v).toFixed(1) + ' ' + cy(Math.max(YL, Math.min(YH, fn(v)))).toFixed(1)); }
-      E('path', { d: 'M' + p.join('L'), fill: 'none', stroke: col, 'stroke-width': w, 'stroke-dasharray': dash || '' }, sv);
+      E('path', { d: 'M' + p.join('L'), fill: 'none', stroke: c, 'stroke-width': w, 'stroke-dasharray': dash || '' }, sv);
     }
-    /* where the generator proposes: its density, as a low hill on the floor */
-    var hp = [], hm = 0, t3, base = cy(YL), HH = 30;
-    for (t3 = 0; t3 <= 200; t3++) { var vv = 10 * t3 / 200, dd = Math.exp(-0.5 * Math.pow((vv - MU) / SD, 2)); hp.push([vv, dd]); if (dd > hm) hm = dd; }
-    E('path', { d: 'M' + cx(0) + ' ' + base + 'L' + hp.map(function (p) { return cx(p[0]).toFixed(1) + ' ' + (base - p[1] / hm * HH).toFixed(1); }).join('L') +
-      'L' + cx(10) + ' ' + base + 'Z', fill: SLATE, 'fill-opacity': .22, stroke: SLATE, 'stroke-width': 1 }, sv);
-    E('text', { x: cx(MU), y: base - HH - 4, 'text-anchor': 'middle', 'font-size': 9.5, fill: SLATE, text: 'generator proposes' }, sv);
-
     line(fhat, BLUE, 2, '6 4');
     line(ftrue, INK, 2.2, '');
     D.forEach(function (d) { E('circle', { cx: cx(d.x), cy: cy(d.y), r: 1.8, fill: SLATE, 'fill-opacity': .55 }, sv); });
+    /* the curves, named where they are */
+    txt(sv, { x: cx(9.9), y: cy(3.15), 'text-anchor': 'end', 'font-size': 10, fill: BLUE, 'font-weight': 600 }, 'learned score');
+    txt(sv, { x: cx(9.9), y: cy(2.92), 'text-anchor': 'end', 'font-size': 10, fill: BLUE }, 'past the data, a guess');
+    txt(sv, { x: cx(8.6), y: cy(ftrue(8.6)) - 8, 'text-anchor': 'start', 'font-size': 10, fill: INK, 'font-weight': 600 }, 'true score');
 
-    /* the request */
-    E('line', { x1: PL, y1: cy(g), x2: CW - PR, y2: cy(g), stroke: AMBER, 'stroke-width': 1.8, 'stroke-dasharray': '5 4' }, sv);
-    E('text', { x: PL + 5, y: cy(g) - 5, 'font-size': 10.5, fill: AMBER, 'font-weight': 700,
-      text: 'asked: score ≥ ' + g.toFixed(2) }, sv);
+    /* 1 · ask */
+    E('line', { x1: PL, y1: cy(g), x2: cx(xd), y2: cy(g), stroke: AMBER, 'stroke-width': 2, 'stroke-dasharray': '5 4' }, sv);
+    txt(sv, { x: PL + 6, y: cy(g) - 6, 'font-size': 10.5, fill: AMBER, 'font-weight': 700 }, '① ask for ' + g.toFixed(2));
+    /* 2 · the design returned */
+    E('line', { x1: cx(xd), y1: cy(g), x2: cx(xd), y2: cy(YL), stroke: BLUE, 'stroke-width': 1.4, 'stroke-dasharray': '2 3' }, sv);
+    E('circle', { cx: cx(xd), cy: cy(g), r: 4.5, fill: BLUE }, sv);
+    txt(sv, { x: cx(xd) + (xd > 8.2 ? -6 : 6), y: cy(YL) - 6, 'text-anchor': xd > 8.2 ? 'end' : 'start', 'font-size': 10.5, fill: BLUE, 'font-weight': 700 },
+      '② design returned, x = ' + xd.toFixed(2));
+    /* 3 · what you get */
+    if (Math.abs(got - g) > 0.06)
+      E('line', { x1: cx(xd), y1: cy(g), x2: cx(xd), y2: cy(got), stroke: RED, 'stroke-width': 3, 'stroke-opacity': .55 }, sv);
+    E('circle', { cx: cx(xd), cy: cy(got), r: 5.5, fill: col, stroke: '#fff', 'stroke-width': 1.2 }, sv);
+    var right = xd < 7.6;
+    txt(sv, { x: cx(xd) + (right ? 10 : -10), y: cy(got) + (got < g - 0.06 ? 16 : -10), 'text-anchor': right ? 'start' : 'end',
+      'font-size': 10.5, fill: col, 'font-weight': 700 }, '③ you get ' + got.toFixed(2));
+  }
 
-    /* the kept designs, at their true score */
-    for (k = 0; k < MM; k++) if (FH[k] >= g)
-      E('circle', { cx: cx(PROP[k]).toFixed(1), cy: cy(FT[k]).toFixed(1), r: 3.2, fill: BLUE, 'fill-opacity': .45 }, sv);
-    if (S.n) E('text', { x: cx((S.lo + S.hi) / 2), y: PT + 26, 'text-anchor': 'middle', 'font-size': 10.5, fill: BLUE,
-      'font-weight': 700, text: 'kept ' + S.n.toLocaleString('en') + ' of 10,000' }, sv);
-    else E('text', { x: cx(8), y: PT + 26, 'text-anchor': 'middle', 'font-size': 10.5, fill: RED,
-      'font-weight': 700, text: 'kept 0 of 10,000' }, sv);
+  function drawMini(g, got, col) {
+    while (ms.firstChild) ms.removeChild(ms.firstChild);
+    E('rect', { x: mx(AL), y: MT, width: mx(EDGE) - mx(AL), height: my(GL) - MT, fill: SLATE, 'fill-opacity': .09 }, ms);
+    txt(ms, { x: (mx(AL) + mx(EDGE)) / 2, y: MT + 10, 'text-anchor': 'middle', 'font-size': 9, 'font-family': 'IBM Plex Mono, monospace',
+      fill: INK, 'fill-opacity': .5 }, 'the data vouches');
+    E('line', { x1: ML, y1: my(GL), x2: MW - MR, y2: my(GL), stroke: INK, 'stroke-opacity': .28 }, ms);
+    E('line', { x1: ML, y1: MT, x2: ML, y2: my(GL), stroke: INK, 'stroke-opacity': .28 }, ms);
+    [0, 1, 2, 3, 4].forEach(function (t) {
+      txt(ms, { x: ML - 5, y: my(t) + 3, 'text-anchor': 'end', 'font-size': 8.5, fill: INK, 'fill-opacity': .5, 'font-family': 'IBM Plex Mono, monospace' }, t);
+    });
+    [2, 3, 4].forEach(function (t) {
+      txt(ms, { x: mx(t), y: MH - 11, 'text-anchor': t === 4 ? 'end' : 'middle', 'font-size': 8.5, fill: INK, 'fill-opacity': .5, 'font-family': 'IBM Plex Mono, monospace' }, t);
+    });
+    txt(ms, { x: (mx(3) + mx(4)) / 2, y: MH - 11, 'text-anchor': 'middle', 'font-size': 9.5, fill: AMBER, 'font-weight': 600 }, 'asked');
+    txt(ms, { x: ML + 4, y: MT + 22, 'font-size': 9.5, fill: INK, 'font-weight': 600 }, 'got');
+    /* got = asked */
+    E('line', { x1: mx(AL), y1: my(AL), x2: mx(AH), y2: my(AH), stroke: INK, 'stroke-opacity': .3, 'stroke-dasharray': '3 3' }, ms);
+    txt(ms, { x: mx(3.75), y: my(3.75) + 14, 'text-anchor': 'middle', 'font-size': 9, fill: INK, 'fill-opacity': .55 }, 'got = asked');
+    /* the best measured design */
+    E('line', { x1: ML, y1: my(BEST), x2: MW - MR, y2: my(BEST), stroke: GREEN, 'stroke-opacity': .6, 'stroke-dasharray': '2 3' }, ms);
+    txt(ms, { x: MW - MR, y: my(BEST) - 4, 'text-anchor': 'end', 'font-size': 9, fill: GREEN }, 'best measured ' + BEST.toFixed(2));
+    /* got, for every request */
+    var p = [], t;
+    for (t = 0; t <= 100; t++) { var a = AL + (AH - AL) * t / 100; p.push(mx(a).toFixed(1) + ' ' + my(ftrue(design(a))).toFixed(1)); }
+    E('path', { d: 'M' + p.join('L'), fill: 'none', stroke: INK, 'stroke-width': 2 }, ms);
+    E('circle', { cx: mx(g), cy: my(got), r: 5, fill: col, stroke: '#fff', 'stroke-width': 1.2 }, ms);
+  }
 
-    /* the readout — each number from the quantities named above */
+  function draw() {
+    var g = GAM[gi], xd = design(g), got = ftrue(xd), inside = xd <= XHI;
+    var col = inside ? INK : got > BEST ? GREEN : RED;
+    drawMain(g, xd, got, col);
+    drawMini(g, got, col);
     host.querySelector('[data-val]').textContent = 'γ = ' + g.toFixed(2);
-    var v;
-    if (!S.n) v = '<span style="color:' + RED + '">Nothing passes. The exact answer is empty &mdash; a learned generator would still return designs, from its tail, on a guess.</span>';
-    else if (S.truth > BEST) v = '<span style="color:' + GREEN + '">A little past the data: fewer pass, and they ==truly beat== the best measured design.</span>';
-    else if (g <= BEST) v = '<span style="color:' + SLATE + '">No more than the data already has: many pass, no gain.</span>';
-    else v = '<span style="color:' + AMBER + '">Far past the data: few pass, and their truth falls short of the promise.</span>';
-    v = v.replace(/==([^=]+)==/, '<b>$1</b>');
     host.querySelector('[data-num]').innerHTML =
-      'proposals drawn from the generator: <b>10,000</b><br>' +
-      'kept (learned score &ge; ' + g.toFixed(2) + '): <b style="color:' + BLUE + '">' + S.n.toLocaleString('en') + '</b><br>' +
-      'promised &mdash; their learned score, on average: <b>' + (S.n ? S.promised.toFixed(2) : '&ndash;') + '</b><br>' +
-      'true &mdash; their true score, on average: <b style="color:' + (!S.n ? INK : S.truth > BEST ? GREEN : AMBER) + '">' +
-      (S.n ? S.truth.toFixed(2) : '&ndash;') + '</b><br>' +
-      '<span style="color:var(--ink3)">best measured design: ' + BEST.toFixed(2) + '</span>' +
-      '<div style="margin-top:6px">' + v + '</div>';
+      '<span style="color:' + AMBER + '">①</span> asked for: <b>' + g.toFixed(2) + '</b><br>' +
+      '<span style="color:' + BLUE + '">②</span> design returned: <b>x = ' + xd.toFixed(2) + '</b> ' +
+      '<span style="color:var(--ink3)">&mdash; ' + (inside ? 'among the measured designs' : 'past the measured designs') + '</span><br>' +
+      '<span style="color:' + col + '">③</span> you get: <b style="color:' + col + '">' + got.toFixed(2) + '</b> ' +
+      '<span style="color:var(--ink3)">&mdash; the best measured design is ' + BEST.toFixed(2) + '</span>';
+    var v;
+    if (inside) v = '<span style="color:' + SLATE + '">Inside the data: you get what you ask for.</span>';
+    else if (got > BEST && got >= g - 0.06) v = '<span style="color:' + GREEN + '">Just past the data: still about what you asked &mdash; better than every measured design.</span>';
+    else if (got > BEST) v = '<span style="color:' + AMBER + '">Further past: less than you asked, though still above the data&rsquo;s best.</span>';
+    else v = '<span style="color:' + RED + '">Far past the data: the learned score was a guess &mdash; you get less than the data already had.</span>';
+    host.querySelector('[data-v]').innerHTML = v;
   }
 
   var dial = IE437.slider(host.querySelector('[data-sl]'), {

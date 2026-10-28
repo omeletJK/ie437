@@ -1164,16 +1164,17 @@ Source alignment: Part 2 pp. 25–28; the full table, including faces and contro
 
 ### How far past the data can you ask?
 ::: widget condition-shift {"seed":11,"try":"Drag γ","tryAt":"bar"}
-Ask for a score $\gamma$: the generator proposes, keeps the designs whose learned score reaches $\gamma$, and we check their true score. Press → three times to ask for more.
+① Ask for a score. ② The generator returns the design its learned score links to that request. ③ That design's true score is what you get. Press → three times to ask for more.
 :::
 
 ::: keypoint
-A little past the data's best, ==the kept designs truly improve==.
-Far past it, the request is ==extrapolation moved from $x$ to $y$==: few pass, and they pass on a guess.
+Inside the measured designs, ==you get what you ask for==.
+A little past them, asking for more still pays.
+Far past them, the request is ==extrapolation moved from $x$ to $y$==: you get far less than you asked.
 :::
 
 ::: note
-What the widget does, step by step. The data and the true score are Lecture 5's. A score model fitted to the 200 measured designs stands for what a conditional generator learns about which designs go with which scores; past the measured region it is a guess (it keeps rising, the truth turns down). The generator proposes 10,000 designs; a design is kept if its learned score reaches the request $\gamma$ — Lecture 3's "keep what passes, count what is left", as on the heater slides. The four stops, with the best measured design worth 2.52: $\gamma=2.00$ — 984 kept, promised 2.22, true 2.27: no gain. $\gamma=2.50$ — 88 kept, promised 2.65, true 2.61: truly better than the data. $\gamma=2.80$ — 12 kept, promised 2.92, true 2.42: the promise is broken. $\gamma=3.20$ — none of 10,000 kept: the exact conditional is empty, because the generator puts almost no mass where the request could be met. A learned generator's tail is not exactly empty, so a real one asked for 3.2 still returns designs — far past the data, chosen on a guess. Lecture 5's route on the same problem, gradient ascent on the learned score, runs to $x=10$, promised 4.18, true $-0.14$.
+What the picture does. The data and the true score are Lecture 5's. The dashed curve is the score relation a conditional generator learns from the 200 measured designs; past the last measured design it is a guess — it keeps rising, while the truth turns down. Asked for $\gamma$, the generator returns the design that relation links to $\gamma$: read across from ① to the dashed curve, then down to ②. A real generator returns a spread of designs around that point; one design keeps the picture readable. The small chart repeats the read for every request: got against asked. The four stops (best measured design 2.52, true optimum 2.66): ask 2.00 → design 4.49 → get 2.00, inside the data. Ask 2.60 → design 5.94, just past the data → get 2.65: better than every measured design. Ask 3.00 → design 6.94 → get 2.32: less than asked, and less than the data already had. Ask 3.80 → design 9.00 → get 0.22. Lecture 5's route on the same problem, gradient ascent on the learned score, runs to $x=10$, promised 4.18, true $-0.14$ — the same failure, reached by searching $x$ instead of asking for $y$.
 :::
 
 ### Classifier-free guidance — push a conditional model toward its condition
