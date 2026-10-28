@@ -1131,22 +1131,38 @@ The trust factor keeps it off scores too few points share — ==less variance==.
 Why this shape, from the paper's Theorem 3.1 (Part 2 p. 24): the error of the training gradient is bounded by three terms, $C_1\E_{y\sim p}[1/N_y]$ — variance, large when $p$ puts weight on thinly populated scores; $C_2\,d_2(p\|p_D)/|D|$ — how far $p$ moves from the data's own shares; $C_3D_{\mathrm{TV}}(p^*,p)^2$ — bias, the distance from training on the best score alone. The tilt $e^{y-y^*}$ shrinks the third; the trust factor shrinks the first; together they keep the second moderate. Greedy training (all weight on $y^*$) has no bias and huge variance; training on the data as is ($p=p_D$) has no variance from reweighting and large bias. The scale of $y$ matters: $e^{y-y^*}$ treats one unit of score as a meaningful step; with scores in other units a temperature $e^{(y-y^*)/\tau}$ sets that step. The analogy for (ii): with a Beta prior worth $K$ pseudo-counts, the posterior mean is $\frac{N}{N+K}\cdot(\text{data mean})+\frac{K}{N+K}\cdot(\text{prior mean})$ — the data's say grows as $N/(N+K)$. Since $p_D(y)=N_y/|D|$, a bin's total weight is $N_y\cdot w=|D|\,p(y)$: the bins' shares are exactly $p$. Toy numbers from the previous slide: middling bin $p_D=0.20$, $p=0.07$, $w=0.35$; top bin $p_D=0.02$, $p=0.15$, $w=7.6$.
 :::
 
-### MINs, question 2 — which score to ask for?
-The generator $g$ will make a design for any score we ask. Check each request with a **forward model** $\hat f$ — Lecture 5's surrogate, trained separately:
-
-$$\tilde y,\tilde z=\argmax_{y,\,z}\ \underbrace{\hat f\big(g(y,z)\big)}_{\text{predicted score of the design made}}\quad\text{s.t.}\quad\underbrace{\big(y-\hat f(g(y,z))\big)^2\le\epsilon_1}_{\text{it delivers what was asked}},\quad\underbrace{p(z)\ge\epsilon_2}_{\text{a typical noise }z}$$
-
-::: widget mins-explain {"mode":"query"}
-Press → twice. An illustrative curve, not a trained model.
+### How far past the data can you ask?
+::: widget condition-shift {"seed":11,"try":"Drag y","tryAt":"bar"}
+① Ask for a score. ② The generator returns the design its learned link ties to that score. ③ That design's true score is what you get. Press → three times to ask for more.
 :::
 
 ::: keypoint
-Ask for the ==highest score the design still delivers==, judged by an independent check.
-Beyond it, the request is extrapolation — Lecture 1's trust region, in a new costume.
+Inside the data you get what you ask for, and a little past it asking for more still pays.
+Far past it, the request is ==extrapolation moved from $x$ to $y$==: you get far less than you asked.
+But ③ is hidden from the method — ==so where should it stop asking?==
 :::
 
 ::: note
-In the source (Part 2 p. 23): option 1, ask for the best score in the data — safe, but no improvement; option 2, this optimisation — "extrapolate as far as possible while staying on the data manifold". $p(z)\ge\epsilon_2$ keeps the noise where its prior has mass, so the design is an ordinary sample of $g$, not an odd corner of it. The paper names $g$ and the forward model $f^{-1}_\theta$ and $f_\theta$; they are two separately trained networks. The curve: prediction equals the request up to the data's best score 2.85, then $2.85+0.6(1-e^{-(y-2.85)/0.6})$; with $\epsilon_1=0.01$ the largest consistent request is about 3.2. The next slide shows what goes wrong when the forward model is searched directly; "How far past the data can you ask?" shows over-asking. Source alignment: Part 2 p. 23.
+What the picture does. The data and the true score are Lecture 5's. The dashed curve is the link between design and score that the generator $g$ learned from the 200 measured designs; past the last measured design it is a guess — it keeps rising, while the truth turns down. Asked for $y$, the generator returns the design that link ties to $y$: read across from ① to the dashed curve, then down to ②. A real generator returns a spread of designs around that point; one design keeps the picture readable. The small chart repeats the read for every request: got against asked. The four stops (best measured design 2.52, true optimum 2.66): ask 2.00 → design 4.49 → get 2.00, inside the data. Ask 2.60 → design 5.94, just past the data → get 2.65: better than every measured design. Ask 3.00 → design 6.94 → get 2.32: less than asked, and less than the data already had. Ask 3.80 → design 9.00 → get 0.22. Lecture 5's route on the same problem, gradient ascent on the learned score, runs to $x=10$, promised 4.18, true $-0.14$ — the same failure, reached by searching $x$ instead of asking for $y$. The last line of the keypoint is the question MINs answers on the next slide.
+:::
+
+### MINs, question 2 — which score to ask for?
+{math: compact}
+
+**MINs' query**, after training — a **round trip**: ask $g$ for a score $y$, then score its design with a **forward model** $\hat f$ trained separately:
+
+$$\tilde y,\tilde z=\argmax_{y,\,z}\ \underbrace{\hat f\big(g(y,z)\big)}_{\text{the score the round trip returns}}\quad\text{s.t.}\quad\underbrace{\big(y-\hat f(g(y,z))\big)^2\le\epsilon_1}_{\text{the round trip closes}},\quad\underbrace{p(z)\ge\epsilon_2}_{\text{an ordinary noise draw}}$$
+
+::: widget condition-shift {"seed":11,"mode":"trip","try":"Drag y","tryAt":"bar"}
+:::
+
+::: keypoint
+Raise the request ==while the two models still agree==.
+Where they disagree, the design has left the data — Lecture 1's trust region, in a new costume.
+:::
+
+::: note
+The picture is the previous slide's, with ④ added: $\hat f$ scores the design $g$ returned. ①→②→④ is a round trip the method can run; ③ stays hidden (faded). Press → three times: 2.00, MINs' pick 2.65, 3.00, 3.80. The intuition is a translation round trip: translate a sentence into English and back. If it comes back unchanged, both translators understood it; if it comes back different, at least one of them was guessing, and you cannot tell which. Here $g$ translates a score into a design and $\hat f$ translates it back. Inside the data both have seen such pairs and the trip closes. Past the data's best score $g$ has to invent, and a gap opens. Why not ask higher anyway, if $\hat f$ still says something high? Because that number is the verdict of a model on a design neither model has seen — exactly the out-of-data prediction Lecture 5 taught us not to trust; the gap is the alarm. Under the constraint the objective and the request differ by at most $\sqrt{\epsilon_1}$, so maximising $\hat f(g(y,z))$ is in effect pushing $y$ up to the edge of agreement. In the source (Part 2 p. 23): option 1, ask for the best score in the data — safe, but no improvement; option 2, this optimisation — "extrapolate as far as possible while staying on the data manifold". $p(z)\ge\epsilon_2$ keeps the noise where its prior has mass, so the design is an ordinary sample of $g$, not an odd corner of it. The paper names $g$ and the forward model $f^{-1}_\theta$ and $f_\theta$; they are two separately trained networks. In the widget the forward model is Lecture 4's GP posterior mean fitted to the same 200 designs (length scale 1.5): it agrees with $g$'s link inside the data and, past it, falls back toward the data's mean while $g$'s link keeps rising. With $\epsilon_1=0.01$ (a gap of at most 0.1) the four stops are: ask 2.00 → $\hat f$ says 2.01, closes; ask 2.65 → design 6.07, $\hat f$ says 2.62, closes — the highest request that does, MINs' pick, and its hidden true score 2.66 is the true optimum to two decimals; ask 3.00 → $\hat f$ 2.37, gap 0.63, open; ask 3.80 → $\hat f$ 1.59, gap 2.21. That the pick lands at the optimum is this example's luck; in general it lands near the edge of the data, where the two models stop agreeing. The previous slide showed the cost of over-asking; the next shows what goes wrong when the forward model is searched directly. Source alignment: Part 2 p. 23.
 :::
 
 ### An inverse map returns designs; the forward map's arg-max did not
@@ -1160,21 +1176,6 @@ On two of these tasks the forward map's answer is ==not a wrong design but no de
 
 ::: note
 Source alignment: Part 2 pp. 25–28; the full table, including faces and controllers, is the appendix slide "What MINs does on real design problems".
-:::
-
-### How far past the data can you ask?
-::: widget condition-shift {"seed":11,"try":"Drag γ","tryAt":"bar"}
-① Ask for a score. ② The generator returns the design its learned score links to that request. ③ That design's true score is what you get. Press → three times to ask for more.
-:::
-
-::: keypoint
-Inside the measured designs, ==you get what you ask for==.
-A little past them, asking for more still pays.
-Far past them, the request is ==extrapolation moved from $x$ to $y$==: you get far less than you asked.
-:::
-
-::: note
-What the picture does. The data and the true score are Lecture 5's. The dashed curve is the score relation a conditional generator learns from the 200 measured designs; past the last measured design it is a guess — it keeps rising, while the truth turns down. Asked for $\gamma$, the generator returns the design that relation links to $\gamma$: read across from ① to the dashed curve, then down to ②. A real generator returns a spread of designs around that point; one design keeps the picture readable. The small chart repeats the read for every request: got against asked. The four stops (best measured design 2.52, true optimum 2.66): ask 2.00 → design 4.49 → get 2.00, inside the data. Ask 2.60 → design 5.94, just past the data → get 2.65: better than every measured design. Ask 3.00 → design 6.94 → get 2.32: less than asked, and less than the data already had. Ask 3.80 → design 9.00 → get 0.22. Lecture 5's route on the same problem, gradient ascent on the learned score, runs to $x=10$, promised 4.18, true $-0.14$ — the same failure, reached by searching $x$ instead of asking for $y$.
 :::
 
 ### A conditional diffusion model — give the denoiser $y$ as well

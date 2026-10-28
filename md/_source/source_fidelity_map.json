@@ -3170,13 +3170,13 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "An inverse map returns designs; the forward map's arg-max did not",
-              "slide_at_review": 60,
+              "slide_at_review": 61,
               "placement_at_review": "main"
             },
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "How far past the data can you ask?",
-              "slide_at_review": 61,
+              "slide_at_review": 59,
               "placement_at_review": "main"
             },
             {
@@ -3206,7 +3206,7 @@
             {
               "deck": "ch06_generative_design_optimization",
               "heading": "MINs, question 2 — which score to ask for?",
-              "slide_at_review": 59,
+              "slide_at_review": 60,
               "placement_at_review": "main"
             }
           ],
