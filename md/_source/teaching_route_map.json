@@ -332,9 +332,9 @@
     "ch06_generative_design_optimization": {
       "previous_slides": 78,
       "previous_core_slides": 62,
-      "slides": 100,
-      "core_slides": 82,
-      "appendix_start": 83,
+      "slides": 102,
+      "core_slides": 84,
+      "appendix_start": 85,
       "first_topic_slide": 5,
       "widgets": [
         "manifold-search",
@@ -369,6 +369,9 @@
         "mins-explain",
         "mins-explain",
         "condition-shift",
+        "cfg-guide",
+        "cfg-guide",
+        "cfg-guide",
         "kl-tilt",
         "manifold-search",
         "flow-balance"

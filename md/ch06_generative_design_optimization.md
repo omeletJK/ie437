@@ -1177,30 +1177,60 @@ Far past them, the request is ==extrapolation moved from $x$ to $y$==: you get f
 What the picture does. The data and the true score are Lecture 5's. The dashed curve is the score relation a conditional generator learns from the 200 measured designs; past the last measured design it is a guess — it keeps rising, while the truth turns down. Asked for $\gamma$, the generator returns the design that relation links to $\gamma$: read across from ① to the dashed curve, then down to ②. A real generator returns a spread of designs around that point; one design keeps the picture readable. The small chart repeats the read for every request: got against asked. The four stops (best measured design 2.52, true optimum 2.66): ask 2.00 → design 4.49 → get 2.00, inside the data. Ask 2.60 → design 5.94, just past the data → get 2.65: better than every measured design. Ask 3.00 → design 6.94 → get 2.32: less than asked, and less than the data already had. Ask 3.80 → design 9.00 → get 0.22. Lecture 5's route on the same problem, gradient ascent on the learned score, runs to $x=10$, promised 4.18, true $-0.14$ — the same failure, reached by searching $x$ instead of asking for $y$.
 :::
 
-### Classifier-free guidance — push a conditional model toward its condition
-{sub: “Classifier-Free Diffusion Guidance” · Ho & Salimans · NeurIPS 2021 workshop}
+### A conditional diffusion model — give the denoiser $y$ as well
+{math: compact}
 
-::: paper
-- Why it is here | The sampler of DDOM and GTG, and the line between G3 and G4: no separate performance model.
-- What it is | A short Google paper: one diffusion model, trained with and without the condition.
-- Why it matters | It is how text-to-image models follow a prompt — GLIDE, DALL·E 2, Imagen, Stable Diffusion.
+::: widget cfg-guide {"mode":"cond"}
 :::
 
-Train **one** diffusion model with the condition and without it — drop $y$ at random — and combine its two noise predictions at sampling:
+**Training a conditional diffusion model** — Act 2's loss, with $y$ as one more input; at random, $y$ is hidden ($\varnothing$):
 
-$$\hat\epsilon=(1+w)\,\epsilon_\theta(x_t,t,y)-w\,\epsilon_\theta(x_t,t)$$
+$$\min_\theta\ \E\,\big\|\epsilon-\epsilon_\theta(x_t,t,y)\big\|^2$$
 
-::: cols
-::: col What it amounts to
-Adding $(1+w)\,\nabla\log p_t(y\mid x_t)$ for an **implicit** classifier, $p(y\mid x)\propto p(x\mid y)/p(x)$. The strength $w$ trades diversity for agreement with the condition.
-:::
-::: col.accent Why it is G3, not G4
-There is ==no separate model of performance==: the only signal is the labels the model was trained on. Its risk is G3's — asking for a $y$ the data cannot vouch for.
-:::
+::: keypoint
+Give the denoiser the condition $y$ as one more input.
+Hide $y$ at random while training, and ==one network answers both ways==: with $y$ and without it.
 :::
 
 ::: note
-The derivation is the appendix slide "Backup — guidance, with and without a classifier". Classifier guidance — the G4 form — comes after the tilt.
+Symbols. $x$: a design; $y$: its condition — in offline MBO its measured score, here simply "a high-score design". $x_t$: the design with noise of level $t$ added; $\epsilon$: that noise; $\epsilon_\theta(x_t,t,y)$: the network's prediction of it, given $y$; $\varnothing$: a "no condition" token that stands in for $y$. The guess of the clean design is $x_t$ with the predicted noise removed — in Act 2's notation $\hat x_0=\big(x_t-\sqrt{1-\bar\alpha_t}\,\epsilon_\theta\big)/\sqrt{\bar\alpha_t}$. Ho & Salimans hide $y$ in 10–20% of training examples; the rest of training is unchanged. The picture: two groups of designs in the plane, high-score $\mathcal N((0.9,0.25),0.55^2I)$ with weight 0.35 and the others $\mathcal N((-0.8,0),0.65^2I)$; the noisy design $x_t=(-0.05,1.45)$ at noise level 0.95; the guesses are exact for this mixture — without $y$ $(-0.10,0.50)$, with $y$ $(0.66,0.55)$. Asked without $y$, the guess averages over both groups, which is why it lands between them; generation removes noise a little at a time, so it still ends on a design. This is already G3: the conditional generator of MINs, with a diffusion model in place of the GAN.
+:::
+
+### Classifier-free guidance — go further in the direction the condition adds
+{sub: “Classifier-Free Diffusion Guidance” · Ho & Salimans · NeurIPS 2021 workshop}
+
+::: paper
+- Why it is here | The sampler of DDOM and GTG.
+- What it is | A short Google paper: one model, two ways.
+- Why it matters | How text-to-image models follow a prompt.
+:::
+
+::: widget cfg-guide {"mode":"guide"}
+:::
+
+**The guided noise prediction**, used at every generating step — the prediction with $y$, plus $w\ge0$ times what $y$ adds:
+
+$$\hat\epsilon=\epsilon_\theta(x_t,t,y)+w\,\big[\epsilon_\theta(x_t,t,y)-\epsilon_\theta(x_t,t,\varnothing)\big]$$
+
+::: keypoint
+Guidance goes ==$w$ times further== in the direction the condition adds.
+:::
+
+::: note
+Symbols as on the previous slide; $w$ is the guidance strength, chosen by hand, and $w=0$ is the plain conditional model. The paper writes the same prediction as $(1+w)\,\epsilon_\theta(x_t,t,y)-w\,\epsilon_\theta(x_t,t)$. Because the guess of the clean design is linear in the predicted noise, the guesses combine the same way: guided guess = with-$y$ guess $+\,w\,\times$ (with-$y$ guess $-$ without-$y$ guess) — the red arrow. In the picture: without $y$ $(-0.10,0.50)$, with $y$ $(0.66,0.55)$, guided with $w=2$ $(2.18,0.66)$ — already past the high-score group's centre, $(0.9,0.25)$. Why it is here: DDOM and GTG sample this way, and it marks the line between G3 and G4 — no separate model of performance is consulted; the only signal is the labels the model was trained on. Classifier guidance, the G4 form, comes after the KL tilt. The paper's place in practice: GLIDE, DALL·E 2, Imagen and Stable Diffusion all follow their prompts this way.
+:::
+
+### What the guidance strength $w$ does
+::: widget cfg-guide {"mode":"strength"}
+:::
+
+::: keypoint
+Larger $w$: the designs agree more with $y$, and vary less.
+They also drift to the edge of the data — ==where no measured label vouches for them==.
+:::
+
+::: note
+Why "classifier-free": the guided run behaves as if a classifier $p(y\mid x)\propto p(x\mid y)/p(x)$ — the wide bar's formula — pushed the samples with strength $w$, yet no classifier is ever trained; the two predictions imply it (derivation: "Backup — guidance, with and without a classifier"). "Look high-score" means that implied classifier puts the design on the high-score side, $p(\text{high}\mid x)>0.5$; "spread" is the samples' standard deviation per coordinate. Numbers: 120 runs each of the probability-flow ODE with the exact scores, 80 steps. $w=0$: 83% look high-score, spread 0.57, centre $x_1=0.78$ — the high-score group itself, $\mathcal N((0.9,0.25),0.55^2I)$, overlap included. $w=3$: 100%, spread 0.42, centre 1.52 — past the group's centre, toward its far edge. Its risk is G3's: asking harder for a $y$ the data cannot vouch for. DDOM uses strong guidance on purpose, to push past the data's best label; the right panel shows the price — the designs leave the region the data cover. It is the trade text-to-image models make between following the prompt and variety.
 :::
 
 ### DDOM — a diffusion model as the inverse map

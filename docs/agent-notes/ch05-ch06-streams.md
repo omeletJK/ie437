@@ -123,6 +123,15 @@ Plan after a second agent's review (same day; its factual claims were checked ag
   label and keep). Kept honest against the KL table: these are prior × success in form, not the
   same target — GFlowNet's prior is uniform, BootGen has no fixed target, and rank weights that
   depend on y alone do not change the ideal p(x|y), only where a finite network spends capacity.
+- 2026-10-28: the professor found the classifier-free guidance slide too hard as the first diffusion
+  conditioning slide (formula, implicit classifier and G3/G4 at once, no picture). It is now three
+  slides on one `cfg-guide` toy (two groups of designs in the plane, exact mixture scores): a
+  conditional diffusion model (the denoiser gets y; hide y at random → one network, two ways),
+  guidance (the arrow from the without-y guess to the with-y guess, stretched w times; ε̂ = ε(y) +
+  w[ε(y) − ε(∅)], the paper's (1+w) form in the note), and what w does (w = 0 vs 3: 83% → 100%
+  high-score, spread 0.57 → 0.42, drift to the group's far edge). The arrows are guesses of the
+  clean design — x_t with the predicted noise removed — not noise vectors or scores; the score /
+  implicit-classifier reading stays in the note and the backup.
 
 **How to apply:** each stream gets idea → mechanism → papers → what it cannot do. See
 [papers-serve-the-flow](papers-serve-the-flow.md) and [ch04-frontier-lab-papers](ch04-frontier-lab-papers.md).

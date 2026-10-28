@@ -23,6 +23,7 @@ for(const h of ['COMs — what we want','The loss, term by term','NEMO — uncer
 for(const h of ['Backup — one COMs loss','Backup — RoMA','What the benchmark says'])advanced('ch05',h);
 order('ch05',['Offline model-based','COMs — what we want','Uncertainty is Lecture 4','Knowledge, ordered','Appendix —']);
 order('ch06',['Comparing two distributions','VAE — encode','Diffusion — learn the noise','CbAS — fit','G3 — ask','Classifier-free guidance','A KL-regularised view','How the KL view','G4 — use performance','Diffusion Policy —','Appendix —']);
+core('ch06','A conditional diffusion model');core('ch06','What the guidance strength');
 for(const h of ['Backup — one VAE calculation','DDOM and BootGen — the reported','BootGen — generated','Backup — GFlowNet','Backup — BootGen'])advanced('ch06',h);
 order('ch08',['Double DQN —','What comes after DQN']);
 order('ch10',['A deterministic actor explores','TD3 — keep','Calculate a TD3 target','SAC — reward','SAC in the learning loop','PPO and SAC —','Appendix —']);
@@ -71,6 +72,13 @@ near('Two-step imagined return',[2,1,4].reduce((s,r,i)=>s+.9**i*r,0),6.14);
  for(const d of ['AA','AB','BB'])near('GFlowNet balanced flows draw '+d+' at R/Z',byFlow(d),R[d]/Z);
  const orderTotal=orders.reduce((t,o)=>t+R[o[1]],0);
  near('Weighting each building order by R over-draws AB',orders.filter(o=>o[1]==='AB').reduce((t,o)=>t+R.AB,0)/orderTotal,2/3);}
+// Ch 6 cfg-guide widget: the denoiser's guesses at x_t are exact for a two-group mixture (Tweedie: x_t + tau^2 * score).
+{const MO=[-0.8,0],SO=.65,MH=[.9,.25],SH=.55,PH=.35,X=[-.05,1.45],T=.95;
+ const g=(m,v)=>Math.exp(-((X[0]-m[0])**2+(X[1]-m[1])**2)/(2*v))/(2*Math.PI*v);
+ const vo=SO*SO+T*T,vh=SH*SH+T*T,a=(1-PH)*g(MO,vo),b=PH*g(MH,vh),r=b/(a+b);
+ const U=[0,1].map(k=>X[k]+T*T*((1-r)*(MO[k]-X[k])/vo+r*(MH[k]-X[k])/vh)),C=[0,1].map(k=>X[k]+T*T*(MH[k]-X[k])/vh);
+ near('CFG guess without y, x1',U[0],-.10,.005);near('CFG guess with y, x1',C[0],.66,.005);
+ near('CFG guided guess (w=2) equals the guided noise prediction mapped to a guess, x1',C[0]+2*(C[0]-U[0]),2.18,.005);}
 // BootGen rank weights: best over worst is (k|D|+|D|-1)/(k|D|), about 1+1/k.
 {const k=.01,n=1000,w=r=>1/(k*n+r);near('BootGen best-to-worst rank weight ratio',w(0)/w(n-1),(k*n+n-1)/(k*n));}
 console.log(JSON.stringify({decks:decks.size,numericalChecks:checks.length,checks},null,2));
