@@ -1096,7 +1096,9 @@ The weighted training loss is $\frac{1}{|D|}\sum_i w_i\,\mathrm{Div}\big(x_i, g(
 ### MINs, question 1 — what each part of the formula is for
 {math: compact}
 
-$$w_i=\frac{p(y_i)}{p_D(y_i)},\qquad p(y)\;\propto\;\underbrace{e^{\,y-y^*}}_{\text{(i) prefer high scores}}\;\cdot\;\underbrace{\frac{N_y}{N_y+K}}_{\text{(ii) trust only scores many points share}}$$
+**Training the generator** — Lecture 2's log-likelihood, each data point weighted, as in CbAS:
+
+$$\max_g\ \sum_{i}\ \underbrace{w_i}_{\text{(iii) how much point } i \text{ counts}}\ \underbrace{\log p_g(x_i\mid y_i)}_{\text{fit design } x_i \text{ to its score}}\,,\qquad w_i=\frac{p(y_i)}{p_D(y_i)},\qquad p(y)\;\propto\;\underbrace{e^{\,y-y^*}}_{\text{(i)}}\cdot\underbrace{\frac{N_y}{N_y+K}}_{\text{(ii)}}$$
 
 ::: cols c3
 ::: col (i) prefer high scores: $e^{\,y-y^*}$
@@ -1114,7 +1116,7 @@ Half trust at $N_y=K$; nearly full when many points share the score — the form
 ::: col.accent (iii) reweight the data: $w=p/p_D$
 ::: reveal
 ::: widget mins-explain {"mode":"term","k":3}
-We only have the data, shared as $p_D$. Counting each point $p/p_D$ times makes the training follow $p$ — ==CbAS's ratio again==.
+This is the $w_i$ in the loss. We only have the data, shared as $p_D$; counting each point $p/p_D$ times makes the training follow $p$ — ==CbAS's ratio again==.
 :::
 :::
 :::
