@@ -112,7 +112,8 @@ against an installed Google Chrome. See `docs/agent-notes/qa-visual-pass.md`.
 
 - All fourteen decks are built (Ch 0–12 plus the probability appendix). Ch 0 carries the source
   deck's figures and clips; Ch 4 ends on the three walls of BO with the lab's papers (2026-10-07);
-  Ch 5–6 were rewritten as problem → research streams with representative papers (2026-10-13).
+  Ch 5–6 were rewritten as problem → research streams with representative papers (2026-10-13);
+  Ch 7 was rebuilt around its source deck's diagrams (`backup-tree`, `mdp-pictures`, 2026-11-09).
   Other chapters are still figure-free; re-authoring them from their source decks needs the original
   PDFs, which are not in the repository.
 - Assignment 1 (Movie Programming, due 2026-10-09) is closed and graded. Nothing of the grading
