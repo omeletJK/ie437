@@ -349,7 +349,7 @@ IE437.widget('mdp-pictures', function (host, opts) {
     if (st >= 2) {
       curve(s, 'M' + (XL + 4 * C - 10) + ' 46 C ' + (XL + 4 * C + 60) + ' -4, ' + (XR - 60) + ' -4, ' + (XR + 6) + ' 46', RED, { 'stroke-width': 2.2 });
       tx(s, (XL + 4 * C + XR) / 2, 30, '\\argmax_a', { fill: RED, 'font-size': 11, 'text-anchor': 'middle' });
-      tx(s, XR, Y0 + 4 * C + 24, st >= 3 ? 'every cell points to its best neighbour; ties keep both' : 'the cell\u2019s greedy action, read off the values', { fill: SLATE, 'font-size': 11 });
+      tx(s, XR, Y0 + 4 * C + 24, st >= 3 ? 'best neighbour at every cell; ties keep both' : 'the cell\u2019s greedy action, read off the values', { fill: SLATE, 'font-size': 11 });
     }
   }
 
