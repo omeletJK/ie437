@@ -19,10 +19,12 @@ What was done:
   (π(s)=a₂, π(s₁)=a₁, π(s₂)=a₂; the path turns red, the rest fades); `eval` is that red path cut
   after one step and ends by writing the backup out as one term per successor.
 - `deck/widgets/mdp-pictures.js` — the remaining source figures redrawn: `career` (stepped),
-  `loop`, `graph` (option `stationary`), `grid`, `arrays`, `async`, `gpi` (stepped).
-- `assets/ch07/` — three crops that are pictures in their own right: `route-values.jpg` (p18),
-  `gridworld-sweeps.png` (p49, with the professor's blue cross through the last rows) and
-  `greedy-readoff.png` (p47).
+  `loop`, `graph` (option `stationary`), `grid`, `arrays`, `async`, `gpi` (stepped), and `readoff`
+  (p47, stepped: the greedy policy read off V^π; the arrows are computed from the value table, so
+  ties keep both arrows as in the source). The p47 crop was blurry and the professor asked for it
+  to be drawn, so it was removed from `assets/ch07/`.
+- `assets/ch07/` — two crops that are pictures in their own right: `route-values.jpg` (p18) and
+  `gridworld-sweeps.png` (p49, with the professor's blue cross through the last rows).
 - The temperature-thread backup, the two-sweep table and the contraction-bound table moved to the
   appendix (Backups 5–6) or the presenter note; the proofs were already there. Numbers live in
   `::: note` blocks, not on slides.

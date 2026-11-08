@@ -59,26 +59,14 @@ IE437.widget('backup-tree', function (host, opts) {
   }
   /* text with _x / _{xy} subscripts and ^x superscripts; a run between two § is red */
   function tx(s, x, y, str, a) {
-    var at = { x: x, y: y, 'font-size': 12, fill: INK };
-    for (var k in a || {}) at[k] = a[k];
-    var t = E('text', at, s), i = 0, buf = '', col = null;
-    function span(attrs) { if (col) attrs.fill = col; return E('tspan', attrs, t); }
-    function flush() { if (buf) { span({ text: buf }); buf = ''; } }
-    while (i < str.length) {
-      var ch = str[i];
-      if (ch === '§') { flush(); col = col ? null : RED; i++; continue; }
-      if ((ch === '_' || ch === '^') && i + 1 < str.length) {
-        flush();
-        var body;
-        if (str[i + 1] === '{') { var j = str.indexOf('}', i); body = str.slice(i + 2, j); i = j + 1; }
-        else { body = str[i + 1]; i += 2; }
-        var dy = ch === '_' ? '0.32em' : '-0.42em';
-        span({ dy: dy, 'font-size': '0.74em', text: body });
-        span({ dy: ch === '_' ? '-0.32em' : '0.42em', text: '\u200b' });
-      } else { buf += ch; i++; }
+    if (/[_^()=πγ≥⋯→\\′'+−]/.test(str) || /^[A-Za-z]$/.test(str) || (str.length <= 5 && /,/.test(str))) {
+      var m = { 'font-size': 12 }; for (var q in a || {}) m[q] = a[q];
+      m['font-size'] = Math.round(parseFloat(m['font-size']) * 1.25 * 10) / 10;   /* KaTeX faces set small */
+      return IE437.math(s, x, y, str, m);
     }
-    flush();
-    return t;
+    var at = { x: x, y: y, 'font-size': 12, fill: INK, text: str };
+    for (var k in a || {}) at[k] = a[k];
+    return E('text', at, s);
   }
 
   /* ---------- the diagram vocabulary ---------- */
@@ -154,7 +142,7 @@ IE437.widget('backup-tree', function (host, opts) {
     function col(on) { return pol && on ? RED : INK; }
     function wid(on) { return pol && on ? { 'stroke-width': 2.6 } : {}; }
     function lab(on) { return pol && on ? RED : SLATE; }
-    if (pol) tx(s, 8, 18, 'A policy π is given:   π(s) = a_2,   π(s_1) = a_1,   π(s_2) = a_2', { fill: RED, 'font-size': 12 });
+    if (pol) tx(s, 8, 18, '\\text{A policy }π\\text{ is given:   }π(s) = a_2,\\quad π(s_1) = a_1,\\quad π(s_2) = a_2', { fill: RED, 'font-size': 12 });
     else tx(s, 8, 18, 'All possible trajectories', { fill: RED, 'font-size': 12 });
     header(s, 60, 42, 'S_t'); header(s, 190, 42, 'A_t'); header(s, 330, 42, 'S_{t+1}');
     header(s, 490, 42, 'A_{t+1}'); header(s, 670, 42, 'S_{t+2}');
@@ -209,7 +197,7 @@ IE437.widget('backup-tree', function (host, opts) {
         tx(gLo, p[0] + RC + 8, p[1] + 4, '⋯', { fill: SLATE, 'font-size': 13 });
       });
     }
-    legend(s, 8, 372, 'edges carry T(s,a,s′) and R(s,a,s′)');
+    legend(s, 8, 372, '\\text{edges carry }T(s,a,s′)\\text{ and }R(s,a,s′)');
   }
 
   /* ============================================================
@@ -245,8 +233,8 @@ IE437.widget('backup-tree', function (host, opts) {
     }
     if (k >= 3 && !opts.q) {
       var g3 = layer(s);
-      tx(g3, 40, 262, 'V^π(s) = T(s,π(s),§s_1§){R(s,π(s),s_1) + γV^π(s_1)}  +', { 'font-size': 14 });
-      tx(g3, 110, 284, 'T(s,π(s),s_2){R(s,π(s),s_2) + γV^π(§s_2§)}', { 'font-size': 14 });
+      tx(g3, 40, 262, 'V^π(s) = T(s,π(s),\\red{s_1})\\{R(s,π(s),s_1) + γV^π(s_1)\\}  +', { 'font-size': 14 });
+      tx(g3, 110, 284, 'T(s,π(s),s_2)\\{R(s,π(s),s_2) + γV^π(\\red{s_2})\\}', { 'font-size': 14 });
     }
   }
 
@@ -278,7 +266,7 @@ IE437.widget('backup-tree', function (host, opts) {
       var gm = layer(s);
       var a0 = deg(S[0], S[1], ch[0][0], ch[0][1]), a1 = deg(S[0], S[1], ch[2][0], ch[2][1]);
       maxArc(gm, S[0], S[1], 58, a0 - 7, a1 + 7);
-      tx(gm, 118, 220, 'max', { fill: RED, 'font-size': 12, 'text-anchor': 'middle' });
+      tx(gm, 118, 220, '\\max', { fill: RED, 'font-size': 12, 'text-anchor': 'middle' });
     }
   }
 
@@ -309,7 +297,7 @@ IE437.widget('backup-tree', function (host, opts) {
       succ.forEach(function (p, j) {
         var a0 = deg(p[0], p[1], fans[j][0][0], fans[j][0][1]), a1 = deg(p[0], p[1], fans[j][2][0], fans[j][2][1]);
         maxArc(gm, p[0], p[1], 56, a0 - 8, a1 + 8);
-        tx(gm, 262, j === 0 ? 50 : 296, 'max_{a′} Q^*(s′,a′)', { fill: RED, 'text-anchor': 'middle', 'font-size': 11.5 });
+        tx(gm, 262, j === 0 ? 50 : 296, '\\max_{a′} Q^*(s′,a′)', { fill: RED, 'text-anchor': 'middle', 'font-size': 11.5 });
       });
     }
   }

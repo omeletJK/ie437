@@ -236,6 +236,15 @@ IE437.widget('my-widget', function (host, opts) {
 });
 ```
 
+**Maths inside a figure.** KaTeX runs only at build time, so an SVG label cannot be typeset by it;
+`IE437.math(parent, x, y, tex, attrs)` is the substitute. It sets a small TeX subset in the KaTeX
+faces (letters and lowercase Greek italic in KaTeX_Math, digits, brackets, relations and operators
+upright in KaTeX_Main): `V^\pi(s'=s_1)`, `T(s,\pi(s),s_1)`, `\max_{a'} Q^*(s',a')`, `\{ \}` for
+literal braces, `\text{..}` for upright prose in the deck's sans, `\red{..}` and `\hl{..}` to colour a
+run. The KaTeX faces set small, so give it 1.25 times the size you would give a sans label (the Ch 7
+widgets route every maths-looking string through it with that factor). Use it for every label that
+names a quantity; plain words stay in the deck's sans.
+
 **Controls.** Prefer `IE437.slider(mount, {...})` to a pair of `+`/`−` buttons: one gesture instead
 of eight clicks, and the value is visible *while* you drag rather than only after. Pass
 `bare: true` when the widget already prints its own `.wlabel` and `.wnum` beside the track.
@@ -303,7 +312,7 @@ Currently available:
 | Ch 4 | `gp-posterior` · `acquisition-zoo` · `acq-optimisers` (inner argmax: surface / grad / direct / cma) · `ucb-heater` (one UCB choice, stepped) · `bo-run` · `constrained-ei` (EI × PF vs plain EI, stepped) · `mobo-hypervolume` (Pareto front / HV & HVI / PHVI / EHVI / HVPI, stepped) · `bo-frontier` (three walls: stream map and lab thread / kernel choice / dimension / inducing points) · `explore-regret` |
 | Ch 5 | `two-failures` · `surrogate-exploit` (run / bound) · `offline-heater` (thread / try, stepped) · `conservative-coms` (term ×3 — the loss built one term at a time / dial — trust-region search at every α / optimiser — the 2 × 2 of model and search, stepped) · `lookahead-brake` (what Algorithm 2 climbs: says − 0.9 × promises, on a sketch; stepped) · `coms-tabular` (stepped) · `mbo-papers` (the chapter's paper map, clickable; `start: 1` opens on Session 2; `set` picks the chapter) · `lcb-flip` (UCB vs LCB on one GP) · `ensemble-alarm` (the κ rule on a bootstrapped ensemble) · `nml-explain` (the NML formula step by step: pretend and refit, score, normalise, decide; query-x slider) · `fgm-stitch` (graph / stitch) · `ko-discrepancy` (simulator + GP discrepancy) |
 | Ch 6 | `forward-inverse` · `gen-pictures` (source figures redrawn: goal / latent / arch / reparam / terms `k` 1–3 / ladder, stepped) · `kl-direction` (the two KL directions, stepped) · `elbo-views` (jensen, stepped / prior: draws from the prior against p(x|z), stepped / gap: q against a two-peaked posterior, sliders) · `latent-beta` · `mbo-papers` (`set: "ch06"` — generators and G1–G4; solid = builds on, dashed = compared; grey tags = not strictly offline) · `manifold-search` (g1: search the plane or the code, stepped / g4: guided sampling on a thin valid set, `s` slider) · `cond-bars` (heater / try / ratio, stepped; abc kept) · `cbas-ladder` (prior → one shot → ladder, stepped) · `condition-shift` · `kl-tilt` (q ∝ p·e^{β·estimate}; β slider, → switches the estimate to μ − 2σ) |
-| Ch 7 | `mdp-pictures` (source figures redrawn: career / loop / graph, `stationary` / grid / arrays / async / gpi, stepped) · `backup-tree` (the backup-diagram family: tree / eval, `q` / opt / qopt / improve, stepped) · `value-propagation` · `dp-schedules` · `discount-dial` · `contraction-rate` |
+| Ch 7 | `mdp-pictures` (source figures redrawn: career / loop / graph, `stationary` / grid / arrays / async / gpi / readoff — the greedy policy read off V^π, stepped) · `backup-tree` (the backup-diagram family: tree / eval, `q` / opt / qopt / improve, stepped) · `value-propagation` · `dp-schedules` · `discount-dial` · `contraction-rate` |
 | Ch 8 | `mc-vs-td` · `gpi-explore` · `cliff-walk` · `deadly-triad` |
 | Ch 9 | `control-grid` · `dt-to-hjb` · `lqr-riccati` · `pontryagin` |
 | Ch 10 | `policy-gradient` · `baseline-variance` · `continuous-argmax` · `ppo-clip` |

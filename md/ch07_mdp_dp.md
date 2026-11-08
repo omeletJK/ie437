@@ -443,7 +443,7 @@ The one-step inequality Q^pi(s,pi'(s)) ≥ V^pi(s) is cheap. The theorem is the 
 :::
 
 ### Policy iteration — read the greedy policy off the value
-::: figure.plain greedy-readoff | 620
+::: widget mdp-pictures {"mode":"readoff"}
 One round: evaluate $\pi$ to get $V^\pi$, then at each cell point to the neighbour with the best value. ==Repeat until the arrows stop moving.==
 :::
 

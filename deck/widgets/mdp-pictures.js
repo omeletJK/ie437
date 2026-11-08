@@ -16,6 +16,10 @@
    mode "async"    p. 52 — a full sweep against updates in any order
    mode "gpi"      p. 54 — generalised policy iteration: evaluation and
                    improvement zigzagging into V*, pi*. Stepped (2 steps).
+   mode "readoff"  p. 47 — policy improvement on the gridworld: V^π of the
+                   random policy on the left, the greedy policy read off it
+                   on the right. Stepped (3): one cell and its two best
+                   neighbours; that cell's arrows; every cell.
    ============================================================ */
 IE437.widget('mdp-pictures', function (host, opts) {
   var E = IE437.el;
@@ -52,24 +56,14 @@ IE437.widget('mdp-pictures', function (host, opts) {
   }
   /* text with _x / _{xy} subscripts and ^x superscripts */
   function tx(s, x, y, str, a) {
-    var at = { x: x, y: y, 'font-size': 12, fill: INK };
-    for (var k in a || {}) at[k] = a[k];
-    var t = E('text', at, s), i = 0, buf = '';
-    function flush() { if (buf) { E('tspan', { text: buf }, t); buf = ''; } }
-    while (i < str.length) {
-      var ch = str[i];
-      if ((ch === '_' || ch === '^') && i + 1 < str.length) {
-        flush();
-        var body;
-        if (str[i + 1] === '{') { var j = str.indexOf('}', i); body = str.slice(i + 2, j); i = j + 1; }
-        else { body = str[i + 1]; i += 2; }
-        var dy = ch === '_' ? '0.32em' : '-0.42em';
-        E('tspan', { dy: dy, 'font-size': '0.74em', text: body }, t);
-        E('tspan', { dy: ch === '_' ? '-0.32em' : '0.42em', text: '​' }, t);
-      } else { buf += ch; i++; }
+    if (/[_^()=πγ≥⋯→\\′'+−]/.test(str) || /^[A-Za-z]$/.test(str) || (str.length <= 5 && /,/.test(str))) {
+      var m = { 'font-size': 12 }; for (var q in a || {}) m[q] = a[q];
+      m['font-size'] = Math.round(parseFloat(m['font-size']) * 1.25 * 10) / 10;   /* KaTeX faces set small */
+      return IE437.math(s, x, y, str, m);
     }
-    flush();
-    return t;
+    var at = { x: x, y: y, 'font-size': 12, fill: INK, text: str };
+    for (var k in a || {}) at[k] = a[k];
+    return E('text', at, s);
   }
   /* a rounded box with one centred line of text */
   function box(s, x, y, w, h, label, stroke, fill, a) {
@@ -144,7 +138,7 @@ IE437.widget('mdp-pictures', function (host, opts) {
     tx(s, 546, 204, '⋯', { 'text-anchor': 'middle', 'font-size': 14 });
     arrow(s, 560, 200, 578, 200, INK);
     box(s, 580, 170, 82, 60, 'Goals', AMBER, LAMBER2, { rx: 14 });
-    tx(s, 8, 262, 'maximise the sum of rewards  r_t + r_{t+1} + r_{t+2} + ⋯');
+    tx(s, 8, 262, '\\text{maximise the sum of rewards  }r_t + r_{t+1} + r_{t+2} + ⋯');
   }
 
   /* ---------- graph (pp. 9, 11) ---------- */
@@ -194,9 +188,9 @@ IE437.widget('mdp-pictures', function (host, opts) {
         tx(g, cx + 64, YS + 4, '⋯');
       }
     });
-    tx(g, 410, 130, 'A_t : action taken at time t');
-    tx(g, 410, 156, 'R_t : reward received at time t');
-    tx(g, 410, 182, 'S_t : state at time t');
+    tx(g, 410, 130, 'A_t\\text{ : action taken at time }t');
+    tx(g, 410, 156, 'R_t\\text{ : reward received at time }t');
+    tx(g, 410, 182, 'S_t\\text{ : state at time }t');
   }
 
   /* ---------- grid (p. 36) ---------- */
@@ -218,8 +212,8 @@ IE437.widget('mdp-pictures', function (host, opts) {
     curve(s, 'M' + (ex - 22) + ' ' + (cy1 + 6) + ' C ' + (ex + 34) + ' ' + (cy1 - 2) + ', ' + (ex + 34) + ' ' + (cy1 + 30) + ', ' + (ex - 14) + ' ' + (cy1 + 20), RED);
     tx(s, ex + 8, cy1 + 46, 'T(7,→,7) = 1', { fill: RED, 'font-size': 11 });
     /* the facts */
-    var L = ['S = {1, …, 14}, two terminal corners', 'A = {↑, ↓, ←, →}, deterministic moves',
-             'a move off the grid leaves the state unchanged', 'R = −1 on every move,  γ = 1'];
+    var L = ['S = \\{1, …, 14\\},\\text{ two terminal corners}', 'A = \\{↑, ↓, ←, →\\},\\text{ deterministic moves}',
+             'a move off the grid leaves the state unchanged', 'R = −1\\text{ on every move,  }γ = 1'];
     L.forEach(function (t, i) { tx(s, 350, 60 + 26 * i, t); });
     tx(s, 350, 60 + 26 * 4, 'policy: all four actions equally likely', { fill: BLUE });
   }
@@ -262,8 +256,8 @@ IE437.widget('mdp-pictures', function (host, opts) {
     tx(s, 42, Y + 3 * H + 4, 'sweep', { 'text-anchor': 'end', fill: RED, 'font-size': 11 });
 
     box(s, 190, 100, 190, 52, '');
-    tx(s, 285, 121, 'Backgammon: about 10^{20} states', { 'text-anchor': 'middle', 'font-size': 11 });
-    tx(s, 285, 140, 'Go: 3^{361} states', { 'text-anchor': 'middle', 'font-size': 11 });
+    tx(s, 285, 121, '\\text{Backgammon: }10^{20}\\text{ states}', { 'text-anchor': 'middle', 'font-size': 11 });
+    tx(s, 285, 140, '\\text{Go: }3^{361}\\text{ states}', { 'text-anchor': 'middle', 'font-size': 11 });
 
     tx(s, 410, 16, 'Asynchronous DP: any order', { 'font-weight': 700 });
     column(s, 460, Y, 60, H, rows);
@@ -282,15 +276,15 @@ IE437.widget('mdp-pictures', function (host, opts) {
     E('line', { x1: x0, y1: lo(x0), x2: xv, y2: yv, stroke: INK, 'stroke-width': 1.2 }, s);
     var deg = Math.atan(k) * 180 / Math.PI, mx = 250;
     /* screen y grows downward, so the upper line (falling to the right) is a +deg rotation */
-    tx(s, mx, up(mx) - 8, 'V = V^π  (policy evaluation)', { fill: BLUE, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + deg.toFixed(2) + ' ' + mx + ' ' + (up(mx) - 8).toFixed(1) + ')' });
-    tx(s, mx, lo(mx) + 16, 'π = greedy(V)  (policy improvement)', { fill: GREEN, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + (-deg).toFixed(2) + ' ' + mx + ' ' + (lo(mx) + 16).toFixed(1) + ')' });
+    tx(s, mx, up(mx) - 8, 'V = V^π\\quad\\text{(policy evaluation)}', { fill: BLUE, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + deg.toFixed(2) + ' ' + mx + ' ' + (up(mx) - 8).toFixed(1) + ')' });
+    tx(s, mx, lo(mx) + 16, 'π = \\text{greedy}(V)\\quad\\text{(policy improvement)}', { fill: GREEN, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + (-deg).toFixed(2) + ' ' + mx + ' ' + (lo(mx) + 16).toFixed(1) + ')' });
     E('circle', { cx: xv, cy: yv, r: 3.5, fill: INK }, s);
     tx(s, xv + 10, yv - 6, 'V^*');
     tx(s, xv + 10, yv + 16, 'π^*');
     /* start */
     var sx = 60, sy = yv;
     E('circle', { cx: sx, cy: sy, r: 4, fill: INK }, s);
-    tx(s, sx, sy + 20, 'start: V, π', { 'text-anchor': 'middle', 'font-size': 11, fill: SLATE });
+    tx(s, sx, sy + 20, '\\text{start: }V,\\ π', { 'text-anchor': 'middle', 'font-size': 11, fill: SLATE });
     /* the zigzag: hop i lands at x_i, remaining distance shrinking geometrically */
     var legs = st >= 2 ? 8 : (st === 1 ? 2 : 0), r = 0.68, d0 = xv - sx;
     var px = sx, py = sy;
@@ -302,6 +296,68 @@ IE437.widget('mdp-pictures', function (host, opts) {
     if (st >= 2) tx(s, xv + 36, yv + 4, 'stabilised', { fill: RED });
   }
 
+  /* ---------- readoff (p. 47) ---------- */
+  var VINF = [[0, -14, -20, -22], [-14, -18, -20, -20], [-20, -20, -18, -14], [-22, -20, -14, 0]];
+  var DIRS = [[-1, 0], [0, -1], [0, 1], [1, 0]];           /* up, left, right, down */
+  function isTerm(r, c) { return (r === 0 && c === 0) || (r === 3 && c === 3); }
+  function greedy(r, c) {                                  /* actions whose successor has the best value */
+    var best = -Infinity, out = [];
+    DIRS.forEach(function (d, i) {
+      var rr = r + d[0], cc = c + d[1];
+      if (rr < 0 || rr > 3 || cc < 0 || cc > 3) { rr = r; cc = c; }  /* off the grid: stay */
+      var v = VINF[rr][cc];
+      if (v > best + 1e-9) { best = v; out = [i]; } else if (Math.abs(v - best) < 1e-9) out.push(i);
+    });
+    return out;
+  }
+  function drawReadoff(st) {
+    clear();
+    var s = svg(660, 300), C = 50, Y0 = 72, XL = 44, XR = 406, HR = 1, HC = 1, LRED = '#F6CACA';
+    tx(s, XL + 2 * C, 40, 'V^π(s)', { 'text-anchor': 'middle', 'font-size': 15 });
+    tx(s, XR + 2 * C, 40, 'π′(s)', { 'text-anchor': 'middle', 'font-size': 15 });
+    function grid(X) {
+      for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+        var hl = st >= 1 && r === HR && c === HC;
+        E('rect', { x: X + c * C, y: Y0 + r * C, width: C, height: C, fill: isTerm(r, c) ? PANEL2 : hl ? LRED : '#fff', stroke: INK, 'stroke-width': 1.2 }, s);
+      }
+    }
+    grid(XL); grid(XR);
+    /* left: the values */
+    for (var r = 0; r < 4; r++) for (var c = 0; c < 4; c++) {
+      var v = VINF[r][c], label = v === 0 ? '0.0' : String(v) + '.';
+      tx(s, XL + c * C + C / 2, Y0 + r * C + C / 2 + 5, label, { 'text-anchor': 'middle', 'font-size': 14, fill: '#1E3A8A' });
+    }
+    /* right: the greedy arrows */
+    function cellArrows(r, c) {
+      var cx = XR + c * C + C / 2, cy = Y0 + r * C + C / 2;
+      greedy(r, c).forEach(function (i) {
+        var d = DIRS[i];
+        arrow(s, cx + d[1] * 3, cy + d[0] * 3, cx + d[1] * 19, cy + d[0] * 19, INK, { 'stroke-width': 1.5 });
+      });
+    }
+    if (st >= 2) cellArrows(HR, HC);
+    if (st >= 3) for (var r2 = 0; r2 < 4; r2++) for (var c2 = 0; c2 < 4; c2++) if (!isTerm(r2, c2) && !(r2 === HR && c2 === HC)) cellArrows(r2, c2);
+    if (st >= 1) {
+      /* the chosen cell looks at its two best neighbours */
+      var cx = XL + HC * C + C / 2, cy = Y0 + HR * C + C / 2;
+      greedy(HR, HC).forEach(function (i) {
+        var d = DIRS[i];
+        arrow(s, cx + d[1] * 10, cy + d[0] * 10, cx + d[1] * (C + 22), cy + d[0] * (C + 22), RED, { 'stroke-width': 2.6 });
+      });
+      tx(s, XL, Y0 + 4 * C + 24, 'from −18, the best neighbours are the two −14s', { fill: RED, 'font-size': 11 });
+    }
+    if (st >= 2) {
+      curve(s, 'M' + (XL + 4 * C - 10) + ' 46 C ' + (XL + 4 * C + 60) + ' -4, ' + (XR - 60) + ' -4, ' + (XR + 6) + ' 46', RED, { 'stroke-width': 2.2 });
+      tx(s, (XL + 4 * C + XR) / 2, 30, 'argmax_a', { fill: RED, 'font-size': 11, 'text-anchor': 'middle' });
+      tx(s, XR, Y0 + 4 * C + 24, st >= 3 ? 'every cell points to its best neighbour; ties keep both arrows' : 'the cell\u2019s greedy action, read off the values', { fill: SLATE, 'font-size': 11 });
+    }
+  }
+
+  if (MODE === 'readoff') {
+    var rst = 0, rshow = function (i) { rst = Math.max(0, Math.min(3, i)); drawReadoff(rst); };
+    rshow(0);
+    return { steps: 3, step: rshow, reset: function () { rshow(0); }, finish: function () { rshow(3); } };
+  }
   if (MODE === 'career') {
     var cst = 0, cshow = function (i) { cst = Math.max(0, Math.min(1, i)); drawCareer(cst); };
     cshow(0);

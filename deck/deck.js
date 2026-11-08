@@ -31,6 +31,95 @@
       s.style.width = w + 'px'; s.style.height = h + 'px'; s.style.display = 'block';
       return s;
     },
+    /* math: a small TeX subset set in the KaTeX faces, so a label inside an SVG
+       figure matches the display maths beside it. Letters and lowercase Greek
+       are italic (KaTeX_Math); digits, brackets, relations and operators are
+       upright (KaTeX_Main). ^{..} and _{..} nest, ' is a prime, \text{..} is
+       upright prose in the deck's own sans, \red{..} and \hl{..} colour a run,
+       \{ \} are literal braces, \max \pi \gamma \cdots \ge \to as usual.
+       Attributes are those of a <text> element; font-size defaults to 13. */
+    math: function (parent, x, y, tex, attrs) {
+      var NS = 'http://www.w3.org/2000/svg';
+      var at = { x: x, y: y, 'font-size': 13, fill: '#16181D' };
+      for (var k in attrs || {}) at[k] = attrs[k];
+      var t = document.createElementNS(NS, 'text');
+      for (var a in at) t.setAttribute(a, at[a]);
+      var base = parseFloat(at['font-size']) || 13;
+      var MATH = 'KaTeX_Math, "Times New Roman", serif', MAIN = 'KaTeX_Main, "Times New Roman", serif';
+      var SYM = { pi: 'π', gamma: 'γ', alpha: 'α', beta: 'β', delta: 'δ', epsilon: 'ε', theta: 'θ', lambda: 'λ',
+        mu: 'μ', sigma: 'σ', tau: 'τ', phi: 'φ', infty: '∞', cdots: '⋯', ldots: '…', cdot: '·', ge: '≥', le: '≤',
+        ne: '≠', to: '→', leftarrow: '←', times: '×', sum: '∑', max: 'max', min: 'min', argmax: 'arg max',
+        prime: '′', mid: '|', star: '∗' };
+      var ITAL = { pi: 1, gamma: 1, alpha: 1, beta: 1, delta: 1, epsilon: 1, theta: 1, lambda: 1, mu: 1, sigma: 1, tau: 1, phi: 1 };
+      var REL = { '=': 1, '≥': 1, '≤': 1, '≠': 1 }, BIN = { '+': 1, '−': 1 };
+      function span(txt, fam, italic, fs, fill, dy) {
+        var sp = document.createElementNS(NS, 'tspan');
+        if (fam) sp.setAttribute('font-family', fam);
+        if (italic) sp.setAttribute('font-style', 'italic');
+        if (fs) sp.setAttribute('font-size', fs);
+        if (fill) sp.setAttribute('fill', fill);
+        if (dy) sp.setAttribute('dy', dy);
+        sp.textContent = txt; t.appendChild(sp); return sp;
+      }
+      function emit(str, fs, color, textMode) {
+        var i = 0, n = str.length;
+        function readGroup() {
+          var d = 0, j = i;
+          for (; j < n; j++) { if (str[j] === '{') d++; else if (str[j] === '}') { d--; if (d === 0) break; } }
+          var body = str.slice(i + 1, j); i = j + 1; return body;
+        }
+        function readArg() {
+          if (str[i] === '{') return readGroup();
+          if (str[i] === '\\') { var m = /^\\[A-Za-z]+/.exec(str.slice(i)); if (m) { i += m[0].length; return m[0]; } }
+          return str[i++];
+        }
+        if (textMode) { span(str, null, false, fs, color); return; }
+        while (i < n) {
+          var ch = str[i];
+          if (ch === '\\') {
+            var m = /^\\([A-Za-z]+|[{}\\ ,;!])/.exec(str.slice(i));
+            if (!m) { i++; continue; }
+            i += m[0].length; var cmd = m[1];
+            if (cmd === 'text') { emit(readArg(), fs, color, true); continue; }
+            if (cmd === 'red') { emit(readArg(), fs, '#D64545', false); continue; }
+            if (cmd === 'hl') { emit(readArg(), fs, '#2563EB', false); continue; }
+            if (cmd === '{' || cmd === '}') { span(cmd, MAIN, false, fs, color); continue; }
+            if (cmd === ' ' || cmd === ',' || cmd === ';' || cmd === '!') { span(' ', MAIN, false, fs, color); continue; }
+            if (cmd === 'quad') { span(' ', MAIN, false, fs, color); continue; }
+            if (SYM[cmd] !== undefined) {
+              if (REL[SYM[cmd]]) span(' ' + SYM[cmd] + ' ', MAIN, false, fs, color);
+              else span(SYM[cmd], ITAL[cmd] ? MATH : MAIN, !!ITAL[cmd], fs, color);
+              continue;
+            }
+            span(cmd, MAIN, false, fs, color); continue;
+          }
+          if (ch === '^' || ch === '_' || ch === "'" || ch === '′') {
+            var sup = ch !== '_', body;
+            if (ch === "'" || ch === '′') { body = '\\prime'; i++; while (str[i] === "'" || str[i] === '′') { body += '\\prime'; i++; } }
+            else { i++; body = readArg(); if (body === '*') body = '\\star'; }
+            var sfs = Math.round(fs * 72) / 100, shift = sup ? -0.42 * fs : 0.26 * fs;
+            span('​', MAIN, false, sfs, color, shift);
+            emit(body, sfs, color, false);
+            span('​', MAIN, false, sfs, color, -shift);
+            continue;
+          }
+          if (ch === '{') { emit(readGroup(), fs, color, false); continue; }
+          if (ch === '}' || ch === ' ') { i++; continue; }
+          if (/[A-Za-z]/.test(ch) || /[α-ω]/.test(ch)) {
+            var j = i + 1; while (j < n && /[A-Za-z]/.test(str[j]) && /[A-Za-z]/.test(ch)) j++;
+            var run = str.slice(i, j); i = j;
+            span(run + (str[i] === '(' ? ' ' : ''), MATH, true, fs, color);
+            continue;
+          }
+          if (REL[ch]) { span(' ' + ch + ' ', MAIN, false, fs, color); i++; continue; }
+          if (ch === '-' || BIN[ch]) { span(' ' + (ch === '-' ? '−' : ch) + ' ', MAIN, false, fs, color); i++; continue; }
+          span(ch, MAIN, false, fs, color); i++;
+        }
+      }
+      emit(tex, base, at.fill, false);
+      parent.appendChild(t);
+      return t;
+    },
     /* minimal line plot: series = [{pts:[[x,y]..], color, dash, w}] */
     plot: function (svg, spec) {
       while (svg.firstChild) svg.removeChild(svg.firstChild);
