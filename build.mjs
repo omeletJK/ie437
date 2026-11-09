@@ -28,6 +28,7 @@ const KATEX_OPTS = {
     '\\hl': '\\htmlClass{mhl}{#1}',
     '\\alert': '\\htmlClass{mhl}{#1}',
     '\\dm': '\\htmlClass{mdim}{#1}',
+    '\\step': '\\htmlClass{frag}{\\htmlData{frag=#1}{#2}}',
     '\\E': '\\mathbb{E}',
     '\\R': '\\mathbb{R}',
     '\\argmax': '\\operatorname*{arg\\,max}',

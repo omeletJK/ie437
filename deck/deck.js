@@ -217,7 +217,9 @@
   var FRAGS = slides.map(function (sl) {
     var groups = {}, order = [];
     $$('.frag', sl).forEach(function (f) {
-      var k = f.getAttribute('data-frag') || '1';
+      /* a KaTeX-made fragment (\step{k}{…}) carries its index on the span inside */
+      var k = f.getAttribute('data-frag') ||
+              (f.firstElementChild && f.firstElementChild.getAttribute('data-frag')) || '1';
       if (!groups[k]) { groups[k] = []; order.push(k); }
       groups[k].push(f);
     });

@@ -23,7 +23,8 @@
                    Step 1 adds the two max arcs.
    mode "improve"  pp. 38–40 — policy improvement: the policy's action
                    a_2 in blue, V^π(s) = Q^π(s,π(s)); step 1 brings the
-                   a_3 branch back and asks whether Q^π(s,a_3) beats it.
+                   a_1 branch back and asks whether Q^π(s,a_1) beats it,
+                   step 2 asks the same of a_3 (the source's three pages).
    ============================================================ */
 IE437.widget('backup-tree', function (host, opts) {
   var E = IE437.el;
@@ -314,7 +315,8 @@ IE437.widget('backup-tree', function (host, opts) {
     tx(gS, 30, 133, 'V^π(s)', { fill: BLUE, 'font-size': 12 });
     state(gS, S[0], S[1], RS, 's');
     ch.forEach(function (c, i) {
-      var policy = i === 1, probe = k >= 1 && i === 2, faded = !policy && !probe;
+      var probeIdx = k === 1 ? 0 : k >= 2 ? 2 : -1;
+      var policy = i === 1, probe = i === probeIdx, faded = !policy && !probe;
       var g = layer(s, faded ? FADE : null);
       var col = policy ? BLUE : probe ? RED : INK;
       var extra = policy ? { 'stroke-width': 2.6 } : probe ? { 'stroke-width': 2.6, 'stroke-dasharray': '6 4' } : {};
@@ -330,12 +332,12 @@ IE437.widget('backup-tree', function (host, opts) {
     });
     var gt = layer(s);
     tx(gt, 580, 160, 'V^π(s) = Q^π(s,π(s))', { fill: INK, 'font-size': 12 });
-    if (k >= 1) tx(gt, 580, 184, 'Q^π(s,a_3) ≥ V^π(s) ?', { fill: RED, 'font-size': 12 });
+    if (k >= 1) tx(gt, 580, 184, 'Q^π(s,a_' + (k === 1 ? 1 : 3) + ') ≥ V^π(s) ?', { fill: RED, 'font-size': 12 });
   }
 
   /* ---------- dispatch ---------- */
   var DRAW = { tree: drawTree, eval: drawEval, opt: drawOpt, qopt: drawQopt, improve: drawImprove };
-  var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 1 };
+  var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 2 };
   var draw = DRAW[MODE] || drawEval, n = STEPS[MODE] == null ? 2 : STEPS[MODE];
 
   function render(i) {

@@ -24,13 +24,28 @@ What was done:
   ties keep both arrows as in the source).
   Later the same day `ladder` (p53, stepped 3): the summary as a staircase of algorithm plates,
   used three times through its `start`/`upto` options; see
-  [algorithm-relations-as-a-ladder](algorithm-relations-as-a-ladder.md). The p47 crop was blurry and the professor asked for it
+  [algorithm-relations-as-a-ladder](algorithm-relations-as-a-ladder.md).
+- `deck/widgets/sweep-backup.js` — the p. 35 two-arrays / in-place picture made to move: a
+  five-state chain (right 0.6, left 0.4, cost 1, s_5 terminal, gamma 0.9) swept one backup at a
+  time, both panels in step, the backup written out under each column with the numbers it reads
+  and the in-place method's fresh number in red. Autoplays three sweeps on arrival; `+1 backup`
+  and `run` on its bar. It replaced `mdp-pictures` mode `arrays`, which stays in the file unused. The p47 crop was blurry and the professor asked for it
   to be drawn, so it was removed from `assets/ch07/`.
 - `assets/ch07/` — two crops that are pictures in their own right: `route-values.jpg` (p18) and
   `gridworld-sweeps.png` (p49, with the professor's blue cross through the last rows).
-- The temperature-thread backup, the two-sweep table and the contraction-bound table moved to the
-  appendix (Backups 5–6) or the presenter note; the proofs were already there. Numbers live in
-  `::: note` blocks, not on slides.
+- The temperature-thread backup, the two-sweep table and the contraction-bound table first moved to
+  the appendix (Backups 5–6) or the presenter note. After the lecture the same day the professor asked
+  for every backup slide back in the body, each right after the idea it supports, to be covered or
+  skipped on the spot ("설명할 지 말지는 현장에서 내가 직접 판단하겠다"): the lineage taxonomy after the
+  opening slide, the Bellman derivation after the expectation equation, the two worked backups after
+  value iteration, the contraction proof after the contraction slide, in-place/asynchronous after
+  asynchronous DP, the reading guide in the closing. The appendix section is gone.
+- Policy improvement was one slide; the professor asked for the source's step-by-step treatment
+  (pp. 38–44), so it is now four: the one-step question (`improve` mode, now two probes, a₁ then a₃
+  as in the source), the greedy criterion with the argmax analogy and the once/always boxes, the
+  theorem with its telescoping proof revealed one line per press (`\step{k}{…}`, a KaTeX macro
+  added to `build.mjs`, with a one-line fallback in `deck.js` so a KaTeX-made fragment carries its
+  group index on the inner span), and the algorithm box. Numbers still live in `::: note` blocks.
 
 **Why:** the professor asked for the original decks' concept pictures and flow back
 ("기존 슬라이드를 참조하여 그 흐름을 참조해서"), and the standing rule is a slide is a picture plus
