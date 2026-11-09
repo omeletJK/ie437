@@ -72,5 +72,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # The Pages service sometimes takes far longer than the action's 10-minute
+      # default to report a deployment (four 10-minute timeouts in a row on
+      # 2026-11-09, each with an empty status); give it half an hour.
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 1800000
