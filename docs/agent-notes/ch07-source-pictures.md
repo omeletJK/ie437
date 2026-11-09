@@ -38,6 +38,10 @@ What was done:
   main-body slides, picture first and the proof last as three labelled inequalities; the Backup
   proof slide is gone. IE437.math has no \mathcal, so the operator's letter is drawn in
   KaTeX_Caligraphic by hand (`calT`).
+- `deck/widgets/lineage-tables.js` (2026-11-09): the pp. 4–5 taxonomy was two side-by-side
+  markdown tables whose cells wrapped; the professor asked for one table per page with the
+  model-free version opening on a press. One full-width HTML table, two tabs above it, `→` swaps
+  model-based for model-free; the formula strip comes from a `::: wformulas` block.
 - `assets/ch07/` — two crops that are pictures in their own right: `route-values.jpg` (p18) and
   `gridworld-sweeps.png` (p49, with the professor's blue cross through the last rows).
 - The temperature-thread backup, the two-sweep table and the contraction-bound table first moved to

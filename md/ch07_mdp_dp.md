@@ -52,27 +52,12 @@ The tracker shows the crossing: static to dynamic, still model-based, still one 
 ### Where the two lineages split
 {sub: the source deck's own taxonomy, pp. 4–5}
 
-::: cols
-::: col Model based — $T$ and $R$ given
-| | finite actions | infinite actions |
-|---|---|---|
-| **discrete time** | ==MDP *(Lec 7)*== | dynamic system *(Lec 9)* |
-| **continuous time** | continuous-time MDP | continuous-time system |
+::: widget lineage-tables {}
+One grid, two columns of the lineage. Rows are the clock, columns the action set; the course sits in ==the discrete-time row==. Press once to swap the model-based table for the model-free one.
+:::
 
-::: small
-$P(s_{t+1}\mid s_t,a_t)$ &nbsp;·&nbsp; $x_{t+1}=f(x_t,u_t)$, $\dot x_t=f(x_t,u_t)$
-:::
-:::
-::: col.accent Model free — learned from experience
-| | finite actions | infinite actions |
-|---|---|---|
-| **discrete time** | ==value-based RL *(Lec 8)*== | policy-based RL *(Lec 10)* |
-| **continuous time** | — | — |
-
-::: small
-The empty cells are outside this course's scope.
-:::
-:::
+::: wformulas
+- $$P(s_{t+1}\mid s_t,a_t)\qquad\cdot\qquad x_{t+1}=f(x_t,u_t),\quad \dot x_t=f(x_t,u_t)$$
 :::
 
 ::: reveal
@@ -330,6 +315,29 @@ $$V^*(s)=\max_a\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma V^*(s')\big]$$
 
 ::: note
 Take the best action first, then follow the optimal policy. The max is over the actions available now; the expectation is over the transitions that action can produce. Any greedy policy with respect to V* is optimal, because V* already accounts for all future behaviour.
+:::
+
+### The Bellman optimality equation, derived
+{fill: top, math: compact}
+
+**Derivation of the Bellman optimality equation** — the best value is the best over policies, and the choice at $s$ can be split off from the rest of the policy:
+
+$$\begin{aligned}
+V^*(s) &= \max_{\pi} V^\pi(s) &&\textcolor{#D64545}{\scriptstyle \text{definition: the best any policy can do from } s} \\
+&\step{1}{= \max_{\pi}\ \sum_{s'} T\big(s,\pi(s),s'\big)\Big[R\big(s,\pi(s),s'\big)+\gamma\,V^\pi(s')\Big]} &&\step{1}{\textcolor{#D64545}{\scriptstyle \text{the Bellman expectation equation, for this } \pi}} \\
+&\step{2}{= \max_{a}\ \max_{\pi:\ \pi(s)=a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,V^\pi(s')\Big]} &&\step{2}{\textcolor{#D64545}{\scriptstyle \text{split } \pi \text{ into its choice at } s \text{ and everything else}}} \\
+&\step{3}{= \max_{a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,\max_{\pi}V^\pi(s')\Big]} &&\step{3}{\textcolor{#D64545}{\scriptstyle T\ge 0,\ \text{and the rest of } \pi \text{ only matters from } s' \text{ on: pick it best at each } s'}} \\
+&\step{4}{= \max_{a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,V^*(s')\Big]} &&\step{4}{\textcolor{#D64545}{\text{the definition again, at } s'.\quad\blacksquare}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+Line 3 is the principle of optimality: whatever is chosen now, ==the remainder must be optimal from wherever you land==, and because the state is Markov that remainder can be chosen at each $s'$ on its own.
+:::
+:::
+
+::: note
+One line per press. Line 1 writes the value of each candidate policy with its own Bellman expectation equation; nothing has been maximised yet. Line 2 only reorganises the maximum: choosing a policy is choosing an action at s and then a policy for everything else. Line 3 is the step with content. The inner max over the rest of pi sits inside a sum with non-negative weights T, and the rest of pi influences only V^pi(s'), so the best choice is to make V^pi(s') as large as possible at every s' separately; the Markov property is what allows one remainder policy to be best from every s' at once (a stationary deterministic optimal policy exists for a finite discounted MDP). Line 4 recognises max_pi V^pi(s') as V^*(s'). For Q^*: the same lines with the first action fixed, Q^*(s,a) = sum_s' T[R + gamma V^*(s')], and V^*(s') = max_a' Q^*(s',a') puts the max at the successor, which is the next slide.
 :::
 
 ### Bellman optimality for $Q^*$ — the max moves to the next state

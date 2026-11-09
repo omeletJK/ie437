@@ -448,6 +448,8 @@ function build(file) {
 
   const html = slides.map((s, i) => {
     ctx.frag = 0; ctx.slideAttrs = s.attrs;
+    /* a stepped equation (\step{k}) owns groups 1..k; reveal blocks on the same slide follow it */
+    for (const m of s.lines.join('\n').matchAll(/\\step\{(\d+)\}/g)) ctx.frag = Math.max(ctx.frag, +m[1]);
     const layout = s.attrs.layout || (s.kind === 'section' ? 'section' : 'default');
     const dark = s.attrs.theme === 'dark' || layout === 'title' || layout === 'section' || layout === 'standout';
     const ast = parseBlocks(s.lines);
