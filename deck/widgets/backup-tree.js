@@ -91,6 +91,7 @@ IE437.widget('backup-tree', function (host, opts) {
   function chance(g, x, y, r, label, pos, fs) {
     E('circle', { cx: x, cy: y, r: r, fill: '#fff', stroke: GREEN, 'stroke-width': 1.7, 'stroke-dasharray': '4 3' }, g);
     if (!label) return;
+    if (pos === 'right') { tx(g, x + r + 5, y + 4, label, { 'font-size': fs || 11 }); return; }
     var ly = pos === 'below' ? y + r + 12 : y - r - 6;
     tx(g, x, ly, label, { 'text-anchor': 'middle', 'font-size': fs || 11 });
   }
@@ -220,10 +221,12 @@ IE437.widget('backup-tree', function (host, opts) {
           var S1 = st(lvl, i), g = L(S1);
           edge(g, p[0], p[1], RC, c[0], c[1], RC2, BLUE, wid(S1));
           elab(g, p[0], p[1], c[0], c[1], ['a_' + (i + 1)], j === 0 ? 1 : -1, { t: .62, d: 9, fs: 10, fill: lab(S1, BLUE) });
-          chance(g, c[0], c[1], RC2, 's_' + (j + 1) + ',a_' + (i + 1), j === 0 ? 'above' : 'below', 10.5);
+          chance(g, c[0], c[1], RC2, 's_' + (j + 1) + ',a_' + (i + 1), j === 0 ? 'above' : (i === 2 ? 'right' : 'below'), 10.5);
           hit(p[0], p[1], c[0], c[1], lvl, i);
-          /* leaves hang off the chosen action, or off the source's default while the tree is open */
-          var leafOn = eff[lvl] == null ? (i === DEF[lvl]) : (i === eff[lvl]);
+          /* leaves hang off the chosen action only; while a state is still open under a hand-built
+             policy nothing beyond it is shown, so the transitions unfold when the action is picked
+             (the keyboard walk, which has no open states, shows the source's picture) */
+          var leafOn = eff[lvl] != null ? (i === eff[lvl]) : (!clicked && i === DEF[lvl]);
           if (leafOn) [[670, c[1] - 22], [670, c[1] + 22]].forEach(function (q, m) {
             edge(g, c[0], c[1], RC2, q[0], q[1], RL, GREEN, wid(S1));
             if (j === 0 && m === 1) elab(g, c[0], c[1], q[0], q[1], ['T(s_1,a_' + (i + 1) + ',s_2)', 'R(s_1,a_' + (i + 1) + ',s_2)'], -1, { d: 17, fs: 10, fill: lab(S1, GREEN) });
