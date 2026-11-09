@@ -20,6 +20,12 @@
                    random policy on the left, the greedy policy read off it
                    on the right. Stepped (3): one cell and its two best
                    neighbours; that cell's arrows; every cell.
+   mode "ladder"   p. 53 — the summary: one backup, four loop scopes.
+                   Policy evaluation, policy improvement (the two bracketed
+                   as policy iteration), value iteration, asynchronous value
+                   iteration, as a staircase of plates; each step down
+                   deletes one loop and the deleted thing is red. Options
+                   start (first state shown) and upto (last state, max 3).
    ============================================================ */
 IE437.widget('mdp-pictures', function (host, opts) {
   var E = IE437.el;
@@ -267,6 +273,59 @@ IE437.widget('mdp-pictures', function (host, opts) {
     curve(s, 'M520 ' + (Y + 5 * H + 15) + ' C 620 ' + (Y + 5 * H + 15) + ', 620 ' + (Y + 22) + ', 522 ' + (Y + 22), RED);
   }
 
+  /* ---------- ladder (p. 53) ---------- */
+  /* plain prose label (never routed through the maths renderer) */
+  function lbl(s, x, y, str, a) {
+    var at = { x: x, y: y, 'font-size': 11.5, fill: SLATE, text: str };
+    for (var k in a || {}) at[k] = a[k];
+    return E('text', at, s);
+  }
+  /* one algorithm plate: red title above, a "for ..." line and one formula inside */
+  var PH = 58;
+  function plate(s, x, y, w, title, line1, formula) {
+    lbl(s, x, y - 7, title, { fill: RED, 'font-weight': 700, 'font-size': 12 });
+    E('rect', { x: x, y: y, width: w, height: PH, rx: 6, fill: PANEL, stroke: PANEL2, 'stroke-width': 1 }, s);
+    tx(s, x + 14, y + 20, line1, { 'font-size': 12.5 });
+    tx(s, x + w / 2 + 16, y + 44, formula, { 'font-size': 13.5, 'text-anchor': 'middle' });
+  }
+  /* a self-loop on the right edge of a plate, with a short label */
+  function selfLoop(s, x, y, c, text) {
+    curve(s, 'M' + x + ' ' + (y - 14) + ' C ' + (x + 40) + ' ' + (y - 14) + ', ' + (x + 40) + ' ' + (y + 14) + ', ' + (x + 2) + ' ' + (y + 14), c, { 'stroke-width': 1.5 });
+    if (text) lbl(s, x + 46, y + 4, text, { fill: c });
+  }
+  function drawLadder(st) {
+    clear();
+    var s = svg(760, 336), W = 480;
+    var YA = 20, YB = 100, YC = 186, YD = 272;
+    /* 0 — policy evaluation */
+    plate(s, 10, YA, W, 'Policy evaluation', '\\text{for each state }s\\text{:}',
+      'V_{k+1}(s) ← \\sum_{s\'} T(s,π(s),s\')[R + γ V_k(s\')]');
+    if (st < 1) selfLoop(s, 10 + W, YA + PH / 2, BLUE, 'repeat until V stops changing');
+    /* 1 — policy improvement, and the loop that makes policy iteration */
+    if (st >= 1) {
+      plate(s, 10, YB, W, 'Policy improvement', '\\text{for each state }s\\text{:}',
+        'π\'(s) = \\argmax_a \\sum_{s\'} T(s,a,s\')[R + γ V^π(s\')]');
+      var xr = 10 + W, ya = YA + PH / 2, yb = YB + PH / 2;
+      curve(s, 'M' + xr + ' ' + yb + ' C ' + (xr + 72) + ' ' + yb + ', ' + (xr + 72) + ' ' + ya + ', ' + (xr + 2) + ' ' + ya, INK, { 'stroke-width': 1.6 });
+      lbl(s, xr + 76, (ya + yb) / 2 - 4, 'Policy iteration', { fill: INK, 'font-weight': 700, 'font-size': 12.5 });
+      lbl(s, xr + 76, (ya + yb) / 2 + 13, 'evaluate, improve, repeat');
+    }
+    /* 2 — value iteration: the two plates folded into one */
+    if (st >= 2) {
+      plate(s, 70, YC, W, 'Value iteration', '\\text{for each state }s\\text{:}',
+        'V_{k+1}(s) ← \\red{\\max_a} \\sum_{s\'} T(s,a,s\')[R + γ V_k(s\')]');
+      lbl(s, 178, YC - 7, 'one evaluation sweep, the improvement folded into it', { fill: RED });
+      selfLoop(s, 70 + W, YC + PH / 2, INK, 'one sweep per round');
+    }
+    /* 3 — asynchronous value iteration: the sweep dropped */
+    if (st >= 3) {
+      plate(s, 120, YD, W, 'Asynchronous value iteration', '\\text{for }\\red{\\text{any single}}\\text{ state }s\\text{:}',
+        'V(s) ← \\max_a \\sum_{s\'} T(s,a,s\')[R + γ V(s\')]');
+      lbl(s, 312, YD - 7, 'no sweep: any order, every state often enough', { fill: RED });
+      selfLoop(s, 120 + W, YD + PH / 2, INK, 'one state per round');
+    }
+  }
+
   /* ---------- gpi (p. 54) ---------- */
   function drawGpi(st) {
     clear();
@@ -362,6 +421,12 @@ IE437.widget('mdp-pictures', function (host, opts) {
     var cst = 0, cshow = function (i) { cst = Math.max(0, Math.min(1, i)); drawCareer(cst); };
     cshow(0);
     return { steps: 1, step: cshow, reset: function () { cshow(0); }, finish: function () { cshow(1); } };
+  }
+  if (MODE === 'ladder') {
+    var l0 = Math.max(0, Math.min(3, +opts.start || 0)), l1 = Math.max(l0, Math.min(3, opts.upto == null ? 3 : +opts.upto));
+    var lst = l0, lshow = function (i) { lst = Math.max(l0, Math.min(l1, l0 + i)); drawLadder(lst); };
+    lshow(0);
+    return { steps: l1 - l0, step: lshow, reset: function () { lshow(0); }, finish: function () { lshow(l1 - l0); } };
   }
   if (MODE === 'gpi') {
     var gst = 0, gshow = function (i) { gst = Math.max(0, Math.min(2, i)); drawGpi(gst); };

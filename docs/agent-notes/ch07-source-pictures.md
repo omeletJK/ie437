@@ -21,7 +21,10 @@ What was done:
 - `deck/widgets/mdp-pictures.js` — the remaining source figures redrawn: `career` (stepped),
   `loop`, `graph` (option `stationary`), `grid`, `arrays`, `async`, `gpi` (stepped), and `readoff`
   (p47, stepped: the greedy policy read off V^π; the arrows are computed from the value table, so
-  ties keep both arrows as in the source). The p47 crop was blurry and the professor asked for it
+  ties keep both arrows as in the source).
+  Later the same day `ladder` (p53, stepped 3): the summary as a staircase of algorithm plates,
+  used three times through its `start`/`upto` options; see
+  [algorithm-relations-as-a-ladder](algorithm-relations-as-a-ladder.md). The p47 crop was blurry and the professor asked for it
   to be drawn, so it was removed from `assets/ch07/`.
 - `assets/ch07/` — two crops that are pictures in their own right: `route-values.jpg` (p18) and
   `gridworld-sweeps.png` (p49, with the professor's blue cross through the last rows).

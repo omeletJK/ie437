@@ -352,24 +352,13 @@ Moving the $\max$ inside the expectation gives $\mathbb{E}[\max\ldots]$, which v
 ::: qstrip
 :::
 
-**Dynamic programming** computes optimal policies ==given a perfect model of the environment==. It has exactly two moves:
-
-::: cols
-::: col Policy evaluation — make $V$ agree with $\pi$
-$$V_{k+1}(s) \leftarrow \sum_{s'} T(s,\pi(s),s')\big[R + \gamma V_k(s')\big]$$
-
-Sweep the expectation backup until it stops changing.
-:::
-::: col.accent Policy improvement — make $\pi$ greedy on $V$
-$$\pi'(s) = \argmax_a \sum_{s'} T(s,a,s')\big[R + \gamma V^\pi(s')\big]$$
-
-One $\argmax$ over a finite set, per state.
-:::
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":1}
+**Dynamic programming** computes optimal policies ==given a perfect model of the environment==. It has exactly two moves: *evaluation* makes $V$ agree with $\pi$, *improvement* makes $\pi$ greedy on $V$. Chained, they are **policy iteration**.
 :::
 
 ::: reveal
 ::: keypoint
-The right-hand box *is* Lecture 1's $\argmax$, once per state over $|\mathcal A|$ candidates. What is new is ==the quantity being optimised.==
+The second plate *is* Lecture 1's $\argmax$, once per state over $|\mathcal A|$ candidates. What is new is ==the quantity being optimised.==
 :::
 :::
 
@@ -456,13 +445,13 @@ Every *evaluate* arrow hides a whole iterative solve over the state set. ==Polic
 :::
 
 ### Value iteration — one optimality backup per sweep
-**Value iteration** — the Bellman optimality equation used as an update rule:
-
-$$V_{k+1}(s)\leftarrow\max_a\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma V_k(s')\big]$$
+::: widget mdp-pictures {"mode":"ladder","start":1,"upto":2}
+Stop policy evaluation after ==one sweep== and fold the improvement into it: the two plates become one, and the only new symbol is the $\max$. This is the Bellman optimality equation used as an update rule.
+:::
 
 ::: reveal
 ::: keypoint
-Stop policy evaluation after one sweep and fold the improvement into it. Read the greedy policy off the final values.
+Read the greedy policy off the final values. The same $V^*$ as policy iteration, reached by a different schedule.
 :::
 :::
 
@@ -560,6 +549,21 @@ Every sweep so far updated all states in lockstep. Nothing required that: back s
 
 ::: note
 Backgammon has about 10^20 states and Go 3^361; one full sweep will not finish. Sampled RL is asynchronous DP driven by whichever states the trajectory visits. The "every state infinitely often" condition here is the ancestor of Lecture 8's exploration requirement.
+:::
+
+### One backup, four loop scopes
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":3}
+The same backup sits on every plate. Each step down ==deletes one loop==: the convergence loop inside evaluation, then the sweep over states. What remains is one state, one max backup, repeated.
+:::
+
+::: reveal
+::: keypoint
+Policy iteration, value iteration and asynchronous DP are not three algorithms. They are ==one backup under three loop scopes==, and Lecture 8 deletes the next thing: the model inside the backup.
+:::
+:::
+
+::: note
+Source deck p. 53. Read it top to bottom as a ladder of deletions. Evaluation to convergence and improvement, bracketed, is policy iteration; cut the inner loop to one sweep and the two plates fold into value iteration (the m = 1 end of the dial two slides back); drop the sweep and any single state may be backed up in any order, which is asynchronous value iteration. All three converge to the same V* and pi* as long as every state keeps being updated. The next deletion, the model, is the whole of Lecture 8.
 :::
 
 ### Three things we have not paid for

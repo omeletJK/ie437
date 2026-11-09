@@ -17,6 +17,7 @@ note in the same commit as the change, so a clone always carries the current rul
 - [Build on what they know — an undergraduate course](build-on-what-they-know.md) — advanced models are built in the main body from Ch 1–3's Bayes and optimisation; the Ch 6 ELBO restoration (2026-10-26)
 - [Papers serve the flow](papers-serve-the-flow.md) — no paper tours; cite only famous papers that carry a step of the core argument
 - [Introduce a paper: why here, what it is, why it matters](introduce-papers.md) — every slide that introduces a paper carries a `::: paper` card; Ch 5 and 6 done 2026-10-26, Ch 8–12 not yet
+- [Relations between methods: a ladder of deletions](algorithm-relations-as-a-ladder.md) — a family of algorithms is one formula on indented plates, the changed token in red, a loop arrow per scope (Ch 7 summary, 2026-11-09)
 - [One idea per line when contrasting](one-idea-per-line.md) — two concepts set against each other get two sentences on two lines, not one run joined by a semicolon
 
 ## Decisions about the course, the repository and the packages
@@ -28,7 +29,7 @@ note in the same commit as the change, so a clone always carries the current rul
 - [Ch 4 MOBO: restored source diagrams](ch04-mobo-restored-diagrams.md) — multi-objective slides minimise on purpose, as the source does; do not flip back to maximisation
 - [Ch 4 Frontier: three walls + lab papers](ch04-frontier-lab-papers.md) — where the lab-paper map lives, how to add papers, and the re-render click trap
 - [Ch 5/6: streams with representative papers](ch05-ch06-streams.md) — Ch 5 conservatism / uncertainty / system knowledge; Ch 6 four intervention points G1–G4; both rewritten and committed 2026-10-13
-- [Ch 7: rebuilt around the source deck's diagrams](ch07-source-pictures.md) — backup-tree and mdp-pictures widgets redraw the original PowerPoint figures; arithmetic to the appendix (2026-11-09)
+- [Ch 7: rebuilt around the source deck's diagrams](ch07-source-pictures.md) — backup-tree and mdp-pictures widgets redraw the original PowerPoint figures; arithmetic to the appendix (2026-11-09); the `ladder` mode is the p. 53 summary
 - [Midterm project — a two-week take-home in the Assignment 1 form](midterm-project.md) — what it asks, the decisions behind v2.0–2.2, due 2026-11-02 10:00 KST, and the rules for editing it before the deadline
 
 The agent brief for building a whole chapter is `md/_AGENT_BRIEF.md`; the handoff chain is
