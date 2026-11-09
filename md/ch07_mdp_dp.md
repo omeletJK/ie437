@@ -256,13 +256,13 @@ What $V^\pi(s)$ averages over. From $s$ every action, from each action every out
 
 ::: reveal
 ::: keypoint
-Fix $\pi$ and the decision branches close. What is left is ==the red path==: one layer of chance, and beyond it a subtree that is itself a value function.
+Fix $\pi$ and the decision branches close. What is left is ==the bold path==: one layer of chance (green), and beyond it a subtree that is itself a value function.
 :::
 :::
 
 ### The Bellman expectation equation
 ::: widget backup-tree {"mode":"eval"}
-The red path, cut after one step. A **state node** $s$ leads to a **chance node** $(s,a_2)$, whose branches carry the weights $T$ and end at successors holding $V^\pi(s')$. Written out, the backup is ==one term per successor.==
+The policy's path, cut after one step. A **state node** $s$ leads to a **chance node** $(s,a_2)$, whose branches carry the weights $T$ and end at successors holding $V^\pi(s')$. Written out, the backup is ==one term per successor.==
 :::
 
 **Bellman expectation equation** — the update rule of policy evaluation in Act 3:
@@ -349,6 +349,33 @@ Start on the chance node: the action is already fixed, so the only choice left i
 
 $$Q^*(s,a)=\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma\max_{a'}Q^*(s',a')\big]$$
 
+### $V^*$ and $Q^*$ — one backup, read from its two nodes
+{fill: top, math: compact}
+
+**The two links between $V^*$ and $Q^*$** — the blue state node and the green chance node of the same backup diagram, each written in terms of the other:
+
+$$\begin{aligned}
+\textcolor{#2563EB}{V^*(s)} &= \max_a\, \textcolor{#16A34A}{Q^*(s,a)} &&\textcolor{#D64545}{\scriptstyle \text{state node: the best of its chance nodes}} \\
+\textcolor{#16A34A}{Q^*(s,a)} &= \sum_{s'} T(s,a,s')\Big[R(s,a,s') + \gamma\, \textcolor{#2563EB}{V^*(s')}\Big] &&\textcolor{#D64545}{\scriptstyle \text{chance node: one step, then the state node at } s'}
+\end{aligned}$$
+
+**Eliminate one, and the other's Bellman optimality equation appears** — the only difference is where the $\max$ lands:
+
+$$\begin{aligned}
+\step{1}{\textcolor{#2563EB}{V^*(s)} = \max_a \sum_{s'} T(s,a,s')\Big[R(s,a,s') + \gamma\, \textcolor{#2563EB}{V^*(s')}\Big]} &&\step{1}{\textcolor{#D64545}{\scriptstyle \text{second line into the first: the } \max \text{ sits at } s\text{, before the dice}}} \\
+\step{2}{\textcolor{#16A34A}{Q^*(s,a)} = \sum_{s'} T(s,a,s')\Big[R(s,a,s') + \gamma\, \max_{a'} \textcolor{#16A34A}{Q^*(s',a')}\Big]} &&\step{2}{\textcolor{#D64545}{\scriptstyle \text{first line, taken at } s'\text{, into the second: the } \max \text{ waits at } s'\text{, after the dice}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+One equation, two readings. Eliminate $Q^*$ and you choose at the state you are in; eliminate $V^*$ and the choice ==waits for the next state==. Lecture 8 keeps the second, because a sample shows you $s'$ but never the expectation.
+:::
+:::
+
+::: note
+The two links are not new facts. The first is line 3 of the previous derivation: the bracket being maximised over a is, by definition, Q^*(s,a). The second is the peeling step of the expectation equation applied to "take a now, then follow pi^*". Substituting one into the other gives the two optimality equations, so they are one statement about one backup diagram, read from its state node or from its chance node. Say the timing aloud: in the V^* form the max is outside the sum, a choice made before the transition; in the Q^* form the max is inside, at s', a choice made after seeing where you landed. Both are legitimate because each max is over actions chosen at its own time; the next slide checks that with a coin. Lecture 8 needs the Q^* form because without T the outer expectation cannot be computed, but a sampled s' still lets you read off max_{a'} Q(s',a').
+:::
+
 ### Check the timing — guessing a coin before or after the toss
 A fair coin will be tossed. Choose **heads** or **tails**; a correct guess pays 1.
 
@@ -418,6 +445,45 @@ The second plate *is* Lecture 1's $\argmax$, once per state over $|\mathcal A|$ 
 :::
 :::
 
+### Policy evaluation — from a condition to an update
+**Iterative policy evaluation** — the Bellman expectation equation of Act 2, read as an update. Put the table you *have* on the right and the table you are *making* on the left; this is the step every sweep of Act 3 repeats:
+
+$$\begin{aligned}
+V^\pi(s) &= \sum_{s'} T(s,\pi(s),s')\Big[R(s,\pi(s),s') + \gamma\, V^\pi(s')\Big] &&\scriptstyle\text{a condition: } |\mathcal S| \text{ equations, } V^\pi \text{ on both sides}\\[8pt]
+\step{1}{V_{\textcolor{#D64545}{k+1}}(s)} &\step{1}{\;\textcolor{#D64545}{\leftarrow}\; \sum_{s'} T(s,\pi(s),s')\Big[R(s,\pi(s),s') + \gamma\, V_{\textcolor{#D64545}{k}}(s')\Big]} &&\step{1}{\textcolor{#D64545}{\scriptstyle\text{a procedure: old table in, new table out, for every } s}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+$V^\pi$ is the one table the update ==leaves unchanged==, so if the iteration settles it has settled on $V^\pi$. Whether it settles, and how fast, is Act 4's question.
+:::
+:::
+
+::: note
+Line 1 is the slide students met in Act 2: a system of |S| linear equations, solvable by inversion in O(|S|^3) but not by reading. Line 2 changes nothing except the two indices and the arrow, marked red: the right-hand side reads the table from the previous sweep, the left-hand side writes the next one. Substituting V^pi on the right returns V^pi on the left, so V^pi is a fixed point; Act 4 shows the update is a contraction, so it is the only one and V_k reaches it geometrically at rate gamma. Starting from V_0 = 0, V_k is exactly the value of the first k steps of the return, so convergence is the tail of the geometric series. Nothing has been said yet about the order of states or about one table versus two; that is the next two slides.
+:::
+
+### Policy evaluation — the algorithm
+**Iterative policy evaluation** — one update per state, repeated until the table stops moving.
+
+::: block Algorithm — iterative policy evaluation | input $\pi$, tolerance $\varepsilon>0$; output $V\approx V^\pi$
+Initialise $V(s)=0$ for every $s\in\mathcal S$.
+
+1. $\Delta\leftarrow 0$;
+2. for each state $s\in\mathcal S$: &nbsp; $v\leftarrow V(s)$; &nbsp; $V(s)\leftarrow\sum_{s'}T(s,\pi(s),s')\big[R(s,\pi(s),s')+\gamma V(s')\big]$; &nbsp; $\Delta\leftarrow\max(\Delta,\lvert v-V(s)\rvert)$;
+3. repeat from 1 until $\Delta<\varepsilon$.
+:::
+
+::: reveal
+::: keypoint
+One pass through step 2 is a **sweep**. Step 3 ==stops short of the exact answer== on purpose: $\varepsilon$ buys time with accuracy, the first of several such trades in this act.
+:::
+:::
+
+::: note
+Written as in Sutton and Barto, with a single array: step 2 reads V(s') for successors that may already have been updated in this sweep. The next slide puts this one-array version beside the two-array version, in which the right-hand side reads only the previous sweep's table. Step 2 is one expectation backup per state, the figure of the previous slide; the cost of a sweep is |S| backups of |S| terms each, O(|S|^2) per sweep for a deterministic policy, |S|^2 |A| for a stochastic one. Delta is the largest change in the table during the sweep; Act 4's contraction bound turns Delta < epsilon into a bound on how far V is from V^pi. Policy improvement, later in this act, has its own algorithm box in the same form.
+:::
+
 ### Policy evaluation — sweeping the backup
 {fill: top}
 
@@ -432,7 +498,7 @@ This is a **full backup**: nothing is sampled, nothing is skipped. Lecture 8's c
 :::
 
 ::: note
-Initialise V_0 = 0. Repeat: for each state, V_{k+1}(s) ← Σ_{s'} T(s,π(s),s')[R + γ V_k(s')], until max_s |V_{k+1} − V_k| ≤ ε. In-place: usually faster, half the memory; the first crack in the idea that DP must proceed in lockstep. Act 4 widens it.
+The two-array column is the update of two slides ago with its indices k and k+1 made literal; the in-place column is the algorithm box as written, one array. In place is usually faster and takes half the memory, and it is the first crack in the idea that DP must proceed in lockstep. Act 4 widens it.
 :::
 
 ### The gridworld — the source deck's worked example
@@ -580,6 +646,26 @@ Read the greedy policy off the final values. The same $V^*$ as policy iteration,
 
 ::: note
 Use V_k to score every action with a one-step lookahead; store the largest score as V_{k+1}(s); repeat. Lecture 8 replaces the model-weighted expectation with sampled transitions; tabular Q-learning first, a network later.
+:::
+
+### Value iteration — the algorithm
+**Value iteration** — computes the optimal state-value function $V^*$ directly, one sweep of evaluation and one of improvement folded into a single max backup; the policy is read off at the end.
+
+::: block Algorithm — value iteration | input $T$, $R$, $\gamma$ and a tolerance $\varepsilon$; output $V^*$ and $\pi^*$
+1. Initialise $V_0(s)\leftarrow 0$ for all $s\in\mathcal S$.
+2. Repeat for $k=0,1,2,\dots$: for each state $s\in\mathcal S$, &nbsp; $V_{k+1}(s)\leftarrow\max_{a\in\mathcal A(s)}\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma V_k(s')\big]$
+3. until $\max_{s\in\mathcal S}\,\big|V_{k+1}(s)-V_k(s)\big|\le\varepsilon$.
+4. Read the policy off the converged values: $\pi^*(s)=\argmax_{a\in\mathcal A(s)}\sum_{s'}T(s,a,s')\big[R(s,a,s')+\gamma V^*(s')\big]$.
+:::
+
+::: reveal
+::: keypoint
+No policy is kept during the loop: ==the max backup is evaluation and improvement in one line==, and that is why the $\argmax$ at the end costs one more sweep and nothing else.
+:::
+:::
+
+::: note
+Source p. 51. Say it in three lines: initialise, sweep with the max backup until the largest change is below epsilon, read the greedy policy off V*. Compare with the policy improvement algorithm two slides back: there the argmax needed V^pi for a fixed pi; here the same one-step lookahead is taken every sweep and the policy appears only at the end. Why the loop stops is Act 4: the max backup is a gamma-contraction, so the change per sweep shrinks geometrically and the stopping test is sound; with the tolerance epsilon the final error is at most gamma*epsilon/(1-gamma).
 :::
 
 ### One optimality backup, worked — the temperature thread

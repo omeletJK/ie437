@@ -18,6 +18,14 @@ What was done:
   `tree` grows the trajectory tree in three steps and on the fourth fixes a policy
   (π(s)=a₂, π(s₁)=a₁, π(s₂)=a₂; the path turns red, the rest fades); `eval` is that red path cut
   after one step and ends by writing the backup out as one term per successor.
+  Colour grammar since 2026-11-09 (the professor asked for it): an edge takes the colour of the
+  node it leaves, blue for a decision (state → chance, you choose), green for chance (chance →
+  state, the world chooses with T); emphasis is weight and fading, and red is kept for comparison
+  only (max arcs, the improvement probe, highlighted terms). The `tree` mode is clickable: a
+  decision edge or chance node at s, s_1 or s_2 sets the policy's action there, the header reads
+  "Your policy: …", the arrow key fills the source's a_2, a_1, a_2 where nothing was chosen, R
+  clears. Chance edges are never chosen (V^π averages over them); a sampled episode belongs to
+  Ch 8. The pick handler stops propagation, because the deck turns the page on a click.
 - `deck/widgets/mdp-pictures.js` — the remaining source figures redrawn: `career` (stepped),
   `loop`, `graph` (option `stationary`), `grid`, `arrays`, `async`, `gpi` (stepped), and `readoff`
   (p47, stepped: the greedy policy read off V^π; the arrows are computed from the value table, so

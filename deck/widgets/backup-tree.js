@@ -2,14 +2,25 @@
    widget: backup-tree                                  (Chapter 7)
    The source deck's backup diagrams, redrawn in one language.
    A state node is a blue circle, a chance node a green dashed
-   circle, edges carry T and R, and a light-blue cone fanning out
-   of a successor stands for its value. Plain figure panels, one
+   circle, and the edges take the colour of the node they leave:
+   a DECISION edge (state -> chance, you choose the action) is blue,
+   a CHANCE edge (chance -> state, the world chooses with T) is
+   green. Emphasis is weight and fading, never a third colour; red
+   is kept for comparison only (the max arcs, the improvement probe,
+   the highlighted terms of a formula). A light-blue cone fanning
+   out of a successor stands for its value. Plain figure panels, one
    per mode; every step redraws the picture from scratch.
 
    mode "tree"     pp. 19–20 — all possible trajectories: S_t, A_t,
                    S_{t+1}, A_{t+1}, S_{t+2}. Stepped (3): the root and
                    its actions; the successors with T/R; the next level;
-                   then a policy is given and its path turns red.
+                   then a policy is given and everything off its path
+                   fades. The tree is also clickable: a decision edge
+                   (or its chance node) at s, s_1 or s_2 sets the
+                   policy's action there, so the audience can build the
+                   path by hand; the arrow key fills in the source's
+                   policy (a_2, a_1, a_2) wherever nothing was chosen,
+                   and R clears the choices.
    mode "eval"     pp. 21–22, 28 — the Bellman expectation backup for
                    V^π(s): one action a_2 = π(s), two successors, two
                    value cones, then the backup written term by term.
@@ -120,14 +131,17 @@ IE437.widget('backup-tree', function (host, opts) {
   function header(s, x, y, str) { tx(s, x, y, str, { 'text-anchor': 'middle', fill: SLATE, 'font-size': 12 }); }
   function deg(x1, y1, x2, y2) { return Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI; }
 
-  /* a legend line: state node, chance node, what the edges carry */
-  function legend(s, x, y, edges) {
+  /* a legend line: state node, chance node, then the two kinds of edge */
+  function legend(s, x, y) {
     var lg = layer(s);
     E('circle', { cx: x + 7, cy: y, r: 7, fill: '#fff', stroke: BLUE, 'stroke-width': 1.6 }, lg);
     tx(lg, x + 19, y + 4, 'state node', { fill: SLATE, 'font-size': 11 });
-    E('circle', { cx: x + 117, cy: y, r: 7, fill: '#fff', stroke: GREEN, 'stroke-width': 1.6, 'stroke-dasharray': '3 2.5' }, lg);
-    tx(lg, x + 129, y + 4, 'chance node', { fill: SLATE, 'font-size': 11 });
-    tx(lg, x + 239, y + 4, edges, { fill: SLATE, 'font-size': 11 });
+    E('circle', { cx: x + 110, cy: y, r: 7, fill: '#fff', stroke: GREEN, 'stroke-width': 1.6, 'stroke-dasharray': '3 2.5' }, lg);
+    tx(lg, x + 122, y + 4, 'chance node', { fill: SLATE, 'font-size': 11 });
+    arrow(lg, x + 222, y, x + 262, y, BLUE, { 'stroke-width': 2 });
+    tx(lg, x + 268, y + 4, 'decision edge: you choose the action', { fill: SLATE, 'font-size': 11 });
+    arrow(lg, x + 502, y, x + 542, y, GREEN, { 'stroke-width': 2 });
+    tx(lg, x + 548, y + 4, 'chance edge: the world chooses, with T and R', { fill: SLATE, 'font-size': 11 });
   }
 
   /* ============================================================
@@ -136,69 +150,92 @@ IE437.widget('backup-tree', function (host, opts) {
      2 the next level, grown from the a_2 branch · 3 a policy is given:
      π(s)=a_2, π(s_1)=a_1, π(s_2)=a_2 in red, the rest faded
      ============================================================ */
+  var DEF = [1, 0, 1];                       /* the source's policy: π(s)=a_2, π(s_1)=a_1, π(s_2)=a_2 */
+  var picks = [null, null, null], clicked = false;
   function drawTree(k) {
-    var W = 800, H = 380, s = svg(W, H), pol = k >= 3;
+    var W = 800, H = 380, s = svg(W, H);
+    var kk = Math.max(k, clicked ? 2 : 0);   /* a click opens the tree to the level it needs */
+    var pol = k >= 3 || clicked;             /* policy mode: the chosen path stays, the rest fades */
+    var eff = picks.map(function (p, i) { return p != null ? p : (k >= 3 ? DEF[i] : null); });
     var gLo = layer(s, pol ? FADE : null), gHi = layer(s);
-    function L(on) { return pol && !on ? gLo : gHi; }
-    function col(on) { return pol && on ? RED : INK; }
-    function wid(on) { return pol && on ? { 'stroke-width': 2.6 } : {}; }
-    function lab(on) { return pol && on ? RED : SLATE; }
-    if (pol) tx(s, 8, 18, '\\text{A policy }π\\text{ is given:   }π(s) = a_2,\\quad π(s_1) = a_1,\\quad π(s_2) = a_2', { fill: RED, 'font-size': 12 });
-    else tx(s, 8, 18, 'All possible trajectories', { fill: RED, 'font-size': 12 });
+    /* a decision at state `lvl` (0 = s, 1 = s_1, 2 = s_2) is "on" when chosen, "open" when nothing is chosen yet */
+    function st(lvl, i) { return eff[lvl] == null ? 'open' : (eff[lvl] === i ? 'on' : 'off'); }
+    function L(state) { return pol && state === 'off' ? gLo : gHi; }
+    function wid(state) { return pol && state === 'on' ? { 'stroke-width': 2.6 } : {}; }
+    function lab(state, c) { return pol && state === 'on' ? c : SLATE; }
+    /* a clickable decision: a wide transparent line over the edge, setting picks[lvl] = i */
+    function hit(x1, y1, x2, y2, lvl, i) {
+      var h = E('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: '#000', 'stroke-opacity': 0, 'stroke-width': 16, cursor: 'pointer', 'data-pick': lvl + ':' + i }, gHi);
+      /* the deck advances on a click anywhere in a slide; a pick must not turn the page */
+      h.addEventListener('click', function (ev) { ev.stopPropagation(); ev.preventDefault(); picks[lvl] = i; clicked = true; render(k); });
+      return h;
+    }
+    /* header: the policy so far */
+    if (pol) {
+      var parts = ['π(s) = ' + (eff[0] == null ? '?' : 'a_' + (eff[0] + 1)), 'π(s_1) = ' + (eff[1] == null ? '?' : 'a_' + (eff[1] + 1)), 'π(s_2) = ' + (eff[2] == null ? '?' : 'a_' + (eff[2] + 1))];
+      tx(s, 8, 18, '\\text{' + (clicked ? 'Your policy: ' : 'A policy π is given: ') + '}' + parts.join(',\\quad '), { fill: INK, 'font-size': 12 });
+      if (eff.some(function (p) { return p == null; })) tx(s, 520, 18, 'click an action at each open state', { fill: BLUE, 'font-size': 11 });
+    } else {
+      tx(s, 8, 18, 'All possible trajectories', { fill: INK, 'font-size': 12 });
+      tx(s, 230, 18, 'click an action to start a policy', { fill: SLATE, 'font-size': 11 });
+    }
     header(s, 60, 42, 'S_t'); header(s, 190, 42, 'A_t'); header(s, 330, 42, 'S_{t+1}');
     header(s, 490, 42, 'A_{t+1}'); header(s, 670, 42, 'S_{t+2}');
 
     var root = [60, 230], RS = 14, RC = 12, RC2 = 10, RL = 8;
     var ch = [[190, 140], [190, 230], [190, 320]];
     var succ = [[[330, 120], [330, 160]], [[330, 210], [330, 250]], [[330, 300], [330, 340]]];
-    /* level 1: the root and its three actions */
+    var r0 = eff[0] == null ? 1 : eff[0];    /* the branch the next level grows from */
+
+    /* level 1: the root and its three actions (decision edges, blue) */
     ch.forEach(function (c, i) {
-      var on = i === 1, g = L(on);
-      edge(g, root[0], root[1], RS, c[0], c[1], RC, col(on), wid(on));
-      elab(g, root[0], root[1], c[0], c[1], ['a_' + (i + 1)], i === 2 ? -1 : 1, { t: .55, d: 10, fill: lab(on) });
+      var S0 = st(0, i), g = L(S0);
+      edge(g, root[0], root[1], RS, c[0], c[1], RC, BLUE, wid(S0));
+      elab(g, root[0], root[1], c[0], c[1], ['a_' + (i + 1)], i === 2 ? -1 : 1, { t: .55, d: 10, fill: lab(S0, BLUE) });
       chance(g, c[0], c[1], RC, 's,a_' + (i + 1), i === 2 ? 'below' : 'above');
+      hit(root[0], root[1], c[0], c[1], 0, i);
     });
     state(gHi, root[0], root[1], RS, 's');
 
-    /* level 2: every outcome of every action */
-    if (k >= 1) {
+    /* level 2: every outcome of every action (chance edges, green) */
+    if (kk >= 1) {
       ch.forEach(function (c, i) {
-        var on = i === 1, g = L(on);
+        var S0 = st(0, i), g = L(S0);
         succ[i].forEach(function (p, j) {
-          edge(g, c[0], c[1], RC, p[0], p[1], RC, col(on), wid(on));
-          if (i === 0 && j === 0) elab(g, c[0], c[1], p[0], p[1], ['T(s,a_1,s_1)', 'R(s,a_1,s_1)'], 1, { d: 17, fs: 10 });
-          if (i === 1 && j === 1) elab(g, c[0], c[1], p[0], p[1], ['T(s,a_2,s_2)', 'R(s,a_2,s_2)'], -1, { d: 17, fs: 10, fill: lab(on) });
+          edge(g, c[0], c[1], RC, p[0], p[1], RC, GREEN, wid(S0));
+          if (i === 0 && j === 0 && r0 !== 0) elab(g, c[0], c[1], p[0], p[1], ['T(s,a_1,s_1)', 'R(s,a_1,s_1)'], 1, { d: 17, fs: 10 });
+          if (i === r0 && j === 1) elab(g, c[0], c[1], p[0], p[1], ['T(s,a_' + (i + 1) + ',s_2)', 'R(s,a_' + (i + 1) + ',s_2)'], -1, { d: 17, fs: 10, fill: lab(S0, GREEN) });
           state(g, p[0], p[1], RC, 's_' + (j + 1), 11);
         });
       });
     }
 
-    /* level 3: from the a_2 branch's two successors, every action again */
-    if (k >= 2) {
+    /* level 3: from the grown branch's two successors, every action again; the fans keep
+       fixed positions so the picture does not jump when the root's action changes */
+    if (kk >= 2) {
       var fans = [[[490, 110], [490, 155], [490, 200]], [[490, 260], [490, 305], [490, 350]]];
-      var leaves = { '0,0': [[670, 88], [670, 132]], '1,1': [[670, 283], [670, 327]] };
-      var pick = [0, 1];                           /* π(s_1) = a_1, π(s_2) = a_2 */
-      succ[1].forEach(function (p, j) {
+      succ[r0].forEach(function (p, j) {
+        var lvl = j + 1;
         fans[j].forEach(function (c, i) {
-          var on = i === pick[j], g = L(on);
-          edge(g, p[0], p[1], RC, c[0], c[1], RC2, col(on), wid(on));
-          elab(g, p[0], p[1], c[0], c[1], ['a_' + (i + 1)], j === 0 ? 1 : -1, { t: .62, d: 9, fs: 10, fill: lab(on) });
+          var S1 = st(lvl, i), g = L(S1);
+          edge(g, p[0], p[1], RC, c[0], c[1], RC2, BLUE, wid(S1));
+          elab(g, p[0], p[1], c[0], c[1], ['a_' + (i + 1)], j === 0 ? 1 : -1, { t: .62, d: 9, fs: 10, fill: lab(S1, BLUE) });
           chance(g, c[0], c[1], RC2, 's_' + (j + 1) + ',a_' + (i + 1), j === 0 ? 'above' : 'below', 10.5);
-          var lv = leaves[j + ',' + i];
-          if (lv) lv.forEach(function (q, m) {
-            edge(g, c[0], c[1], RC2, q[0], q[1], RL, col(on), wid(on));
-            if (j === 0 && m === 1) elab(g, c[0], c[1], q[0], q[1], ['T(s_1,a_1,s_2)', 'R(s_1,a_1,s_2)'], -1, { d: 17, fs: 10, fill: lab(on) });
+          hit(p[0], p[1], c[0], c[1], lvl, i);
+          /* leaves hang off the chosen action, or off the source's default while the tree is open */
+          var leafOn = eff[lvl] == null ? (i === DEF[lvl]) : (i === eff[lvl]);
+          if (leafOn) [[670, c[1] - 22], [670, c[1] + 22]].forEach(function (q, m) {
+            edge(g, c[0], c[1], RC2, q[0], q[1], RL, GREEN, wid(S1));
+            if (j === 0 && m === 1) elab(g, c[0], c[1], q[0], q[1], ['T(s_1,a_' + (i + 1) + ',s_2)', 'R(s_1,a_' + (i + 1) + ',s_2)'], -1, { d: 17, fs: 10, fill: lab(S1, GREEN) });
             state(g, q[0], q[1], RL, '');
             tx(g, q[0] + RL + 5, q[1] + 4, 's_' + (m + 1), { fill: SLATE, 'font-size': 10.5 });
           });
         });
       });
       /* the other branches continue the same way */
-      [succ[0][0], succ[0][1], succ[2][0], succ[2][1]].forEach(function (p) {
-        tx(gLo, p[0] + RC + 8, p[1] + 4, '⋯', { fill: SLATE, 'font-size': 13 });
-      });
+      succ.forEach(function (pair, i) { if (i !== r0) pair.forEach(function (p) { tx(gLo, p[0] + RC + 8, p[1] + 4, '⋯', { fill: SLATE, 'font-size': 13 }); }); });
     }
-    legend(s, 8, 372, '\\text{edges carry }T(s,a,s′)\\text{ and }R(s,a,s′)');
+    legend(s, 8, 372);
   }
 
   /* ============================================================
@@ -214,8 +251,8 @@ IE437.widget('backup-tree', function (host, opts) {
     var succ = [[430, 75], [430, 205]];
     var g0 = layer(s);
     tx(g0, 30, 110, 'V^π(s)', { fill: BLUE, 'font-size': 12 });
-    edge(g0, S[0], S[1], RS, C[0], C[1], RC, INK);
-    elab(g0, S[0], S[1], C[0], C[1], ['a_2 = π(s)'], 1, { d: 11, fs: 11 });
+    edge(g0, S[0], S[1], RS, C[0], C[1], RC, BLUE, { 'stroke-width': 2.2 });
+    elab(g0, S[0], S[1], C[0], C[1], ['a_2 = π(s)'], 1, { d: 11, fs: 11, fill: BLUE });
     chance(g0, C[0], C[1], RC, 's,a_2', 'below');
     if (opts.q) tx(g0, C[0], C[1] - RC - 8, 'Q^π(s,a)', { fill: GREEN, 'text-anchor': 'middle', 'font-size': 11.5 });
     state(g0, S[0], S[1], RS, 's');
@@ -223,8 +260,8 @@ IE437.widget('backup-tree', function (host, opts) {
     if (k >= 1) {
       var g1 = layer(s);
       succ.forEach(function (p, j) {
-        edge(g1, C[0], C[1], RC, p[0], p[1], RS, INK);
-        elab(g1, C[0], C[1], p[0], p[1], ['T(s,π(s),s_' + (j + 1) + ')', 'R(s,π(s),s_' + (j + 1) + ')'], j === 0 ? 1 : -1, { d: 20 });
+        edge(g1, C[0], C[1], RC, p[0], p[1], RS, GREEN, { 'stroke-width': 2.2 });
+        elab(g1, C[0], C[1], p[0], p[1], ['T(s,π(s),s_' + (j + 1) + ')', 'R(s,π(s),s_' + (j + 1) + ')'], j === 0 ? 1 : -1, { d: 20, fill: GREEN });
         state(g1, p[0], p[1], RS, 's_' + (j + 1));
       });
     }
@@ -253,12 +290,12 @@ IE437.widget('backup-tree', function (host, opts) {
     ch.forEach(function (c, i) {
       var chosen = k >= 1 && i === 0, faded = k >= 1 && i !== 0;
       var g = layer(s, faded ? FADE : null);
-      edge(g, S[0], S[1], RS, c[0], c[1], RC, chosen ? RED : INK, chosen ? { 'stroke-width': 2.6 } : {});
-      elab(g, S[0], S[1], c[0], c[1], ['a_' + (i + 1)], i === 2 ? -1 : 1, { t: .62, d: 10, fill: chosen ? RED : SLATE });
+      edge(g, S[0], S[1], RS, c[0], c[1], RC, BLUE, chosen ? { 'stroke-width': 2.6 } : {});
+      elab(g, S[0], S[1], c[0], c[1], ['a_' + (i + 1)], i === 2 ? -1 : 1, { t: .62, d: 10, fill: chosen ? BLUE : SLATE });
       chance(g, c[0], c[1], RC, '', 'above');
       tx(g, c[0], c[1] - RC - 7, 'Q^{π*}(s,a_' + (i + 1) + ')', { fill: GREEN, 'text-anchor': 'middle', 'font-size': 11 });
       succ[i].forEach(function (p, j) {
-        edge(g, c[0], c[1], RC, p[0], p[1], RL, chosen ? GREEN : INK, chosen ? { 'stroke-width': 2.6 } : {});
+        edge(g, c[0], c[1], RC, p[0], p[1], RL, GREEN, chosen ? { 'stroke-width': 2.6 } : {});
         state(g, p[0], p[1], RL, 's_' + (j + 1), 10.5);
         if (i === 0) cone(g, p[0], p[1], RL, 'V^*(s′=s_' + (j + 1) + ')');
       });
@@ -283,12 +320,12 @@ IE437.widget('backup-tree', function (host, opts) {
     tx(g0, C[0], C[1] - RC - 10, 'Q^*(s,a)', { fill: GREEN, 'text-anchor': 'middle', 'font-size': 12 });
     chance(g0, C[0], C[1], RC, 's,a', 'below');
     succ.forEach(function (p, j) {
-      edge(g0, C[0], C[1], RC, p[0], p[1], RS, INK);
-      elab(g0, C[0], C[1], p[0], p[1], ['T(s,a,s_' + (j + 1) + ')', 'R(s,a,s_' + (j + 1) + ')'], j === 0 ? 1 : -1, { d: 20 });
+      edge(g0, C[0], C[1], RC, p[0], p[1], RS, GREEN, { 'stroke-width': 2.2 });
+      elab(g0, C[0], C[1], p[0], p[1], ['T(s,a,s_' + (j + 1) + ')', 'R(s,a,s_' + (j + 1) + ')'], j === 0 ? 1 : -1, { d: 20, fill: GREEN });
       state(g0, p[0], p[1], RS, 's_' + (j + 1));
       fans[j].forEach(function (q, i) {
-        edge(g0, p[0], p[1], RS, q[0], q[1], RC2, INK);
-        elab(g0, p[0], p[1], q[0], q[1], ['a′_' + (i + 1)], i === 2 ? -1 : 1, { t: .68, d: 9, fs: 10 });
+        edge(g0, p[0], p[1], RS, q[0], q[1], RC2, BLUE);
+        elab(g0, p[0], p[1], q[0], q[1], ['a′_' + (i + 1)], i === 2 ? -1 : 1, { t: .68, d: 9, fs: 10, fill: BLUE });
         chance(g0, q[0], q[1], RC2, '', 'above');
         tx(g0, q[0] + RC2 + 5, q[1] + 4, 's_' + (j + 1) + ',a′_' + (i + 1), { fill: SLATE, 'font-size': 10 });
       });
@@ -318,14 +355,14 @@ IE437.widget('backup-tree', function (host, opts) {
       var probeIdx = k === 1 ? 0 : k >= 2 ? 2 : -1;
       var policy = i === 1, probe = i === probeIdx, faded = !policy && !probe;
       var g = layer(s, faded ? FADE : null);
-      var col = policy ? BLUE : probe ? RED : INK;
+      var col = probe ? RED : BLUE;
       var extra = policy ? { 'stroke-width': 2.6 } : probe ? { 'stroke-width': 2.6, 'stroke-dasharray': '6 4' } : {};
       edge(g, S[0], S[1], RS, c[0], c[1], RC, col, extra);
       elab(g, S[0], S[1], c[0], c[1], [policy ? 'a_2 = π(s)' : 'a_' + (i + 1)], i === 2 ? -1 : 1, { t: .55, d: 11, fs: 11, fill: policy ? BLUE : probe ? RED : SLATE });
       chance(g, c[0], c[1], RC, '', 'above');
       tx(g, c[0], c[1] - RC - 7, 'Q^π(s,a_' + (i + 1) + ')', { fill: probe ? RED : GREEN, 'text-anchor': 'middle', 'font-size': 11 });
       succ[i].forEach(function (p, j) {
-        edge(g, c[0], c[1], RC, p[0], p[1], RL, INK);
+        edge(g, c[0], c[1], RC, p[0], p[1], RL, GREEN, policy ? { 'stroke-width': 2.2 } : {});
         state(g, p[0], p[1], RL, 's_' + (j + 1), 10.5);
         if (policy) cone(g, p[0], p[1], RL, 'V^π(s′=s_' + (j + 1) + ')');
       });
@@ -348,7 +385,7 @@ IE437.widget('backup-tree', function (host, opts) {
   return {
     steps: n,
     step: function (i) { render(i); },
-    reset: function () { render(0); },
+    reset: function () { picks = [null, null, null]; clicked = false; render(0); },
     finish: function () { render(n); }
   };
 });
