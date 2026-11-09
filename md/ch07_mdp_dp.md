@@ -83,7 +83,7 @@ These columns describe the examples chosen for this course: finite-action MDPs i
 ::: flow
 - **Act 1 · the arena** | state, action, return, policy, $V$ and $Q$
 - **Act 2 · the Bellman equation** | one backup diagram, read four ways
-- !**Act 3 · solve it** | evaluate, improve, policy and value iteration
+- **Act 3 · solve it** | evaluate, improve, policy and value iteration
 - **Act 4 · why it works** | the two processes meet; the contraction
 :::
 
@@ -612,12 +612,12 @@ The first sweep discovers B's reward. The next sweep carries it back to A. At $\
 ### Two schedules, counted
 {fill: top}
 
-::: widget dp-schedules {"m":1}
-One MDP, one stopping rule, both algorithms, and a dial for the number of evaluation sweeps per improvement. At $m=\infty$ the schedule *is* policy iteration; drive $m$ down and it slides toward value iteration. Same $V^*$, same $\pi^*$, an eightfold difference in work, and the cheapest schedule is ==neither endpoint.==
+::: widget dp-schedules {"m":3}
+The gridworld from before, solved to the same $V^*$ and $\pi^*$ three ways, and the work counted literally: one backup is one $(s,a)$ lookahead, grey for evaluation, red for improvement. ==Policy iteration spends almost all its work evaluating a policy it is about to replace.== The dial sets $m$, the evaluation sweeps per improvement; $m=3$ is the blue cross.
 :::
 
 ::: note
-Policy iteration reaches pi* in 9 improvements but spends 16,124 backups; value iteration needs 17 sweeps and 1,972 backups. The cheapest schedule is m = 2.
+Step 0: policy iteration alone. From the random policy, evaluating to a change below 0.01 at gamma = 1 takes over ninety sweeps, all grey; the first improvement already returns the optimal policy and the second confirms it, a thin red sliver. Step 1: value iteration, four max sweeps, a bar a few per cent as long. Step 2: the dial. m = 3 is the blue cross of the earlier slide: three sweeps order the values correctly and the first greedy policy is already optimal; the later rounds only confirm it (one more round to see the values stop moving, one to see the policy stand still). m = 1 is value iteration with the improvement counted separately. Say aloud: the grey is not wasted because evaluation is wrong, it is wasted because the policy being evaluated is about to be thrown away; the argmax only needs the values ordered, not converged. Read the actual counts off the widget.
 :::
 
 ## Act 4 — why it works
@@ -641,47 +641,88 @@ The meeting point is the solution of the Bellman optimality equation. Policy ite
 :::
 :::
 
-### Why the meeting point is unique — the contraction
-**Contraction** — the one property the whole guarantee rests on (proof on the next slide):
+### The Bellman operator — a machine that turns one table into another
+::: widget contraction-machine {"mode":"machine"}
+$V$ is not a number but a **table**, one value per state. $\mathcal T$ takes the whole table, does one max backup at every state, and hands back a new table: $(\mathcal T V)(s)$ is ==the $s$-th entry of the output.== One sweep of value iteration is one turn of the machine.
+:::
 
-$$\lVert \mathcal T V - \mathcal T V'\rVert_\infty \;\le\; \gamma\,\lVert V - V'\rVert_\infty,\qquad (\mathcal T V)(s) = \max_a \sum_{s'} T(s,a,s')\big[R + \gamma V(s')\big]$$
+**Value iteration, written with the operator** — the update rule of Act 3, one symbol shorter:
+
+$$V_{k+1} = \mathcal T V_k,\qquad (\mathcal T V)(s) = \max_a \sum_{s'} T(s,a,s')\big[R + \gamma V(s')\big]$$
+
+::: note
+Read TV as "V after one sweep". The tables shown are the five-state chain from the sweeping slide, two sweeps in, under two actions (right 0.8/0.2, left 0.2/0.8, cost 1, s5 terminal, gamma 0.9). Nothing here is new except the name: the operator is the loop body of value iteration.
+:::
+
+### Contraction — two tables go in, two closer tables come out
+{fill: tight, math: compact}
+
+::: widget contraction-machine {"mode":"two"}
+Measure how far apart two tables are by their ==largest gap==, $\lVert V - V'\rVert_\infty$. Whatever two tables go in, the two that come out are closer: the largest gap has shrunk by at least the factor $\gamma$.
+:::
+
+**Contraction** — the one property the whole guarantee rests on (proved two slides on):
+
+$$\lVert \mathcal T V - \mathcal T V'\rVert_\infty \;\le\; \gamma\,\lVert V - V'\rVert_\infty$$
 
 ::: reveal
-Value iteration is $V_{k+1} = \mathcal T V_k$. Two value functions a distance $\delta$ apart are pushed to within $\gamma\delta$, so $\gamma<1$ buys three things at once:
+::: keypoint
+Turn the machine again and again and the gap goes $d,\ \gamma d,\ \gamma^2 d,\dots$ So $\gamma<1$ buys three things at once: a ==unique== fixed point $V^*$ (two fixed points would have to stay apart), convergence from ==any== $V_0$, and the rate $\gamma^k$.
+:::
+:::
 
-- a **unique** fixed point $V^*$;
-- **convergence from any $V_0$**;
-- a **rate**: $\lVert V_k - V^*\rVert_\infty \le \gamma^k \lVert V_0 - V^*\rVert_\infty$.
+::: note
+With γ = 0.8 and an initial error of 10 the bound gives 8, 3.3, 1.07 and 0.09 after 1, 5, 10 and 21 sweeps. Put V' = V* in the inequality: TV* = V* (Bellman optimality), so ‖V_{k+1} − V*‖ ≤ γ‖V_k − V*‖, which is the convergence statement. An a posteriori certificate uses the Bellman residual: ‖V − V*‖ ≤ ‖TV − V‖ / (1 − γ). With γ = 1 the contraction argument no longer applies.
+:::
+
+### The one step that needs care — two maxima are closer than their arguments
+{fill: tight, math: compact}
+
+::: widget contraction-machine {"mode":"maxineq"}
+Two students sit the same four questions and differ by at most 3 marks on ==every question==. Their best marks then differ by at most 3, even when the best marks fall on different questions.
+:::
+
+**The max inequality** — the licence the proof needs to move a $\max$ inside an absolute value:
+
+$$\big|\max_a f(a) - \max_a g(a)\big| \;\le\; \max_a \big|f(a) - g(a)\big|$$
+
+::: reveal
+::: keypoint
+Comparing the two bests can never show a bigger difference than ==comparing question by question==. Here $f$ and $g$ are the two tables' backups at one state, indexed by the action.
+:::
+:::
+
+::: note
+Proof in one line: max f = f(a*) ≤ g(a*) + max|f − g| ≤ max g + max|f − g|, and symmetrically. The slide's numbers: f = 62, 85, 71, 90 and g = 60, 88, 69, 87, every pair within 3; the bests 90 and 88 differ by 2.
+:::
+
+### The contraction, proved — three inequalities, three reasons
+{fill: tight, math: compact}
+
+Fix one state $s$ and compare the two outputs there. The reward terms are identical and cancel, so only $\gamma\,[V(s') - V'(s')]$ survives inside the brackets.
+
+::: reveal
+**Step 1 — the max inequality** (previous slide): the $\max$ over actions moves inside the absolute value.
+
+$$\big|(\mathcal T V)(s) - (\mathcal T V')(s)\big| \;\le\; \max_a \Big|\sum_{s'} T(s,a,s')\,\gamma\,\big[V(s') - V'(s')\big]\Big|$$
 :::
 
 ::: reveal
+**Step 2 — a weighted average never beats its largest term**: $T(s,a,\cdot)$ sums to one, so the weighted gaps are at most the largest gap $d = \lVert V - V'\rVert_\infty$.
+
+$$\le\; \gamma \max_a \sum_{s'} T(s,a,s')\,\big|V(s') - V'(s')\big| \;\le\; \gamma\, d$$
+:::
+
+::: reveal
+**Step 3 — $s$ was arbitrary**: every entry of the output differs by at most $\gamma d$, so the largest one does too, and that is $\lVert \mathcal T V - \mathcal T V'\rVert_\infty \le \gamma\lVert V - V'\rVert_\infty$. $\blacksquare$
+
 ::: keypoint
 $\gamma$ is not bookkeeping that keeps a sum finite. It is ==the number that makes the machine well-posed==, and it is also its convergence rate.
 :::
 :::
 
 ::: note
-With γ = 0.8 and an initial error of 10 the bound gives 8, 3.3, 1.07 and 0.09 after 1, 5, 10 and 21 sweeps. An a posteriori certificate uses the Bellman residual: ‖V − V*‖ ≤ ‖TV − V‖ / (1 − γ). With γ = 1 the contraction argument no longer applies.
-:::
-
-### The contraction, proved
-{fill: top}
-
-**Claim** — the inequality the previous slide rests on: $\lVert \mathcal T V - \mathcal T V'\rVert_\infty \le \gamma\lVert V - V'\rVert_\infty$, where $(\mathcal T V)(s)=\max_a\sum_{s'}T(s,a,s')[R+\gamma V(s')]$.
-
-For any state $s$, using $\big|\max_a f(a) - \max_a g(a)\big| \le \max_a |f(a)-g(a)|$:
-
-$$\begin{aligned}
-\big|(\mathcal T V)(s) - (\mathcal T V')(s)\big|
-&\le \max_a \Big|\sum_{s'} T(s,a,s')\,\gamma\,\big[V(s') - V'(s')\big]\Big|\\
-&\le \gamma \max_a \sum_{s'} T(s,a,s')\,\big|V(s')-V'(s')\big|
-\;\le\; \gamma \lVert V - V'\rVert_\infty
-\end{aligned}$$
-
-since $\sum_{s'}T(s,a,s')=1$. Taking the maximum over $s$ gives the claim. $\blacksquare$
-
-::: small
-**Consequence (Banach).** For $\gamma<1$, $\mathcal T$ has a unique fixed point $V^*$, and $V_{k+1}=\mathcal T V_k$ converges to it from any $V_0$ with $\lVert V_k - V^*\rVert_\infty \le \gamma^k\lVert V_0-V^*\rVert_\infty$. The $\max$ inequality is the only step that needs care. Q-learning combines this contraction with stochastic-approximation, coverage and step-size conditions (Lecture 8, Backup 2).
+Consequence (Banach): for γ < 1, T has a unique fixed point V*, and V_{k+1} = TV_k converges to it from any V_0 with ‖V_k − V*‖ ≤ γ^k ‖V_0 − V*‖. The max inequality is the only step that needs care; the other two are "a probability-weighted average is at most the maximum" and "take the worst state". Q-learning combines this contraction with stochastic-approximation, coverage and step-size conditions (Lecture 8, Backup 2).
 :::
 
 ### Check — what value iteration is really doing
