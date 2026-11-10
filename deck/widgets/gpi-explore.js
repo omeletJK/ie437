@@ -7,6 +7,8 @@
    currently dislikes — so it never learns they were better.
    The coverage figure is the point: greedy leaves most (s,a)
    pairs untried, and an untried pair can never be evaluated.
+   Options: eps (0.3), seed (4), auto — episodes run on arrival (250;
+   by then the ε-greedy agent's greedy path reaches the +5).
    ============================================================ */
 IE437.widget('gpi-explore', function (host, opts) {
   var E = IE437.el;
@@ -16,6 +18,50 @@ IE437.widget('gpi-explore', function (host, opts) {
   var ACT = [[-1, 0], [0, 1], [1, 0], [0, -1]];          // up right down left
   var GLYPH = ['↑', '→', '↓', '←'];
   var eps2 = opts.eps || 0.3, seed = opts.seed || 4, ep = 0, A, B;
+  var AUTO = opts.auto == null ? 250 : Math.max(0, +opts.auto | 0);   // episodes run on arrival (data-auto)
+
+  /* ---------- mode: "problem" — the arena alone, large, before any agent runs.
+     {"mode":"problem"} draws the cells, S, the two rewards, the step cost, the
+     end rule and the four actions; no agents, no toolbar, no counts. ---------- */
+  if (opts.mode === 'problem') {
+    var INK = '#16181D', SLATE = '#64748B', MONO = 'IBM Plex Mono, monospace';
+    host.innerHTML = '<div class="wbody" style="align-items:center;justify-content:center;padding:12px 14px 8px"><div data-p></div></div>';
+    var PW = 720, PH = 280, ps = IE437.svg(PW, PH);
+    host.querySelector('[data-p]').appendChild(ps);
+    var uid = 'gp' + Math.floor(Math.random() * 1e9);
+    var dfs = E('defs', {}, ps);
+    var mk = E('marker', { id: uid, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto' }, dfs);
+    E('path', { d: 'M0 0L10 5L0 10Z', fill: INK }, mk);
+    var cw = 72, ox = 16, oy = 20;
+    for (var pr = 0; pr < R; pr++) for (var pc = 0; pc < C; pc++) {
+      var x = ox + pc * cw, y = oy + pr * cw;
+      E('rect', { x: x, y: y, width: cw, height: cw, fill: '#fff', stroke: 'currentColor', 'stroke-opacity': .22 }, ps);
+      if (pr === SMALL[0] && pc === SMALL[1]) {
+        E('rect', { x: x, y: y, width: cw, height: cw, fill: AMB, 'fill-opacity': .28 }, ps);
+        E('text', { x: x + cw / 2, y: y + cw / 2 + 8, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: AMB, 'font-family': MONO, text: '+1' }, ps);
+      } else if (pr === BIG[0] && pc === BIG[1]) {
+        E('rect', { x: x, y: y, width: cw, height: cw, fill: TEAL, 'fill-opacity': .26 }, ps);
+        E('text', { x: x + cw / 2, y: y + cw / 2 + 8, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 700, fill: TEAL, 'font-family': MONO, text: '+5' }, ps);
+      } else if (pr === START[0] && pc === START[1]) {
+        E('text', { x: x + cw / 2, y: y + cw / 2 + 7, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, fill: INK, 'font-family': MONO, text: 'S' }, ps);
+        E('text', { x: x + cw / 2, y: y + cw - 7, 'text-anchor': 'middle', 'font-size': 8.5, fill: SLATE, 'font-family': MONO, 'letter-spacing': '.08em', text: 'START' }, ps);
+      }
+    }
+    E('text', { x: ox + SMALL[1] * cw + cw / 2, y: oy - 7, 'text-anchor': 'middle', 'font-size': 9, fill: AMB, 'font-family': MONO, 'letter-spacing': '.1em', text: 'NEAR REWARD' }, ps);
+    E('text', { x: ox + BIG[1] * cw + cw / 2, y: oy - 7, 'text-anchor': 'middle', 'font-size': 9, fill: TEAL, 'font-family': MONO, 'letter-spacing': '.1em', text: 'FAR REWARD' }, ps);
+    var ly = oy + R * cw + 24;
+    E('text', { x: ox, y: ly, 'font-size': 12.5, fill: INK, style: 'font-family:var(--sans)', text: '−0.05 per step' }, ps);
+    E('text', { x: ox + C * cw, y: ly, 'text-anchor': 'end', 'font-size': 12.5, fill: INK, style: 'font-family:var(--sans)', text: 'the episode ends on a reward' }, ps);
+    /* the four actions, as a compass */
+    var kx = 630, ky = oy + R * cw / 2, L = 40;
+    E('circle', { cx: kx, cy: ky, r: 4, fill: INK }, ps);
+    [[0, -1, '↑'], [1, 0, '→'], [0, 1, '↓'], [-1, 0, '←']].forEach(function (a) {
+      E('line', { x1: kx + a[0] * 8, y1: ky + a[1] * 8, x2: kx + a[0] * L, y2: ky + a[1] * L, stroke: INK, 'stroke-width': 1.6, 'marker-end': 'url(#' + uid + ')' }, ps);
+    });
+    E('text', { x: kx, y: ky - L - 16, 'text-anchor': 'middle', 'font-size': 9, fill: SLATE, 'font-family': MONO, 'letter-spacing': '.1em', text: '4 ACTIONS' }, ps);
+    E('text', { x: kx, y: ky + L + 24, 'text-anchor': 'middle', 'font-size': 10.5, fill: SLATE, style: 'font-family:var(--sans)', text: 'one cell each; a wall holds you' }, ps);
+    return {};
+  }
 
   var idx = function (r, c) { return r * C + c; };
   var isGoal = function (r, c) { return (r === SMALL[0] && c === SMALL[1]) || (r === BIG[0] && c === BIG[1]); };
@@ -81,13 +127,13 @@ IE437.widget('gpi-explore', function (host, opts) {
   }
 
   host.innerHTML =
-    '<div class="wbar"><span class="wt">Generalized policy iteration &mdash; with and without exploration</span>' +
+    '<div class="wbar"><span class="wt">Generalised policy iteration &mdash; with and without exploration</span>' +
     '<span class="wspacer"></span>' +
     '<span class="wlabel">right &epsilon;</span><span class="wnum" data-e></span>' +
     '<button class="wb" data-ec>cycle &epsilon;</button>' +
     '<button class="wb" data-r1>+1 ep</button>' +
-    '<button class="wb" data-auto data-r50>+50</button>' +
-    '<button class="wb" data-r200>+200</button>' +
+    '<button class="wb" data-r50>+50</button>' +
+    '<button class="wb" data-auto data-run>run ' + AUTO + '</button>' +
     '</div>' +
     '<div class="wbody" style="gap:12px">' +
     '<div style="display:flex;gap:26px;justify-content:center">' +
@@ -160,7 +206,9 @@ IE437.widget('gpi-explore', function (host, opts) {
 
   host.querySelector('[data-r1]').onclick = function () { run(1); };
   host.querySelector('[data-r50]').onclick = function () { run(50); };
-  host.querySelector('[data-r200]').onclick = function () { run(200); };
+  /* arrival: the engine clicks the data-auto button once the slide is active.
+     run() batches the episodes and redraws once, so 250 of them are instant. */
+  host.querySelector('[data-run]').onclick = function () { run(AUTO); };
   var __reset = reset;
   host.querySelector('[data-ec]').onclick = function () {
     eps2 = eps2 === 0.1 ? 0.2 : eps2 === 0.2 ? 0.3 : 0.1; reset();

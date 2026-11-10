@@ -5,6 +5,7 @@
    Q-learning learns the OPTIMAL (cliff-edge) path but scores
    worse online, because it must keep acting epsilon-greedily.
    SARSA accounts for its own exploration and detours.
+   Options: eps (0.1), seed (3), auto — episodes run on arrival (100).
    ============================================================ */
 IE437.widget('cliff-walk', function (host, opts) {
   var E = IE437.el;
@@ -13,6 +14,45 @@ IE437.widget('cliff-walk', function (host, opts) {
   var ALPHA = 0.5, GAMMA = 1.0, MAXT = 300;
   var ACT = [[-1, 0], [0, 1], [1, 0], [0, -1]], GLYPH = ['↑', '→', '↓', '←'];
   var eps = opts.eps || 0.1, ep = 0, S, Q;
+  var AUTO = opts.auto == null ? 100 : Math.max(0, +opts.auto | 0);   // episodes run on arrival (data-auto)
+
+  /* ---------- mode: "problem" — the cliff grid alone, large, before any learning.
+     {"mode":"problem"} draws S, G, the cliff with its penalty, the step cost and
+     the four actions; no agents, no toolbar, no curves. ---------- */
+  if (opts.mode === 'problem') {
+    var INK = '#16181D', SLATE = '#64748B', MONO = 'IBM Plex Mono, monospace';
+    host.innerHTML = '<div class="wbody" style="align-items:center;justify-content:center;padding:12px 14px 8px"><div data-p></div></div>';
+    var PW = 820, PH = 256, ps = IE437.svg(PW, PH);
+    host.querySelector('[data-p]').appendChild(ps);
+    var uid = 'cw' + Math.floor(Math.random() * 1e9);
+    var dfs = E('defs', {}, ps);
+    var mk = E('marker', { id: uid, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto' }, dfs);
+    E('path', { d: 'M0 0L10 5L0 10Z', fill: INK }, mk);
+    var cw = 50, ox = 16, oy = 14;
+    for (var pr = 0; pr < R; pr++) for (var pc = 0; pc < C; pc++) {
+      var x = ox + pc * cw, y = oy + pr * cw, cliff = pr === 3 && pc >= 1 && pc <= 10;   // isCliff is defined below
+      E('rect', { x: x, y: y, width: cw, height: cw, fill: cliff ? RED : '#fff', 'fill-opacity': cliff ? .24 : 1,
+        stroke: 'currentColor', 'stroke-opacity': .22 }, ps);
+      if (pr === START[0] && pc === START[1])
+        E('text', { x: x + cw / 2, y: y + cw / 2 + 7, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, fill: INK, 'font-family': MONO, text: 'S' }, ps);
+      else if (pr === GOAL[0] && pc === GOAL[1])
+        E('text', { x: x + cw / 2, y: y + cw / 2 + 7, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, fill: SARSA, 'font-family': MONO, text: 'G' }, ps);
+    }
+    E('text', { x: ox + 6 * cw, y: oy + 3 * cw + cw / 2 + 5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 700, fill: RED,
+      'font-family': MONO, text: 'THE CLIFF: −100, back to S' }, ps);
+    var ly = oy + R * cw + 24;
+    E('text', { x: ox, y: ly, 'font-size': 12.5, fill: INK, style: 'font-family:var(--sans)', text: 'every other step −1 (so the shortest path to G scores best)' }, ps);
+    E('text', { x: ox + C * cw, y: ly, 'text-anchor': 'end', 'font-size': 12.5, fill: INK, style: 'font-family:var(--sans)', text: 'the episode ends at G' }, ps);
+    /* the four actions, as a compass */
+    var kx = 730, ky = oy + R * cw / 2, L = 40;
+    E('circle', { cx: kx, cy: ky, r: 4, fill: INK }, ps);
+    [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(function (a) {
+      E('line', { x1: kx + a[0] * 8, y1: ky + a[1] * 8, x2: kx + a[0] * L, y2: ky + a[1] * L, stroke: INK, 'stroke-width': 1.6, 'marker-end': 'url(#' + uid + ')' }, ps);
+    });
+    E('text', { x: kx, y: ky - L - 16, 'text-anchor': 'middle', 'font-size': 9, fill: SLATE, 'font-family': MONO, 'letter-spacing': '.1em', text: '4 ACTIONS' }, ps);
+    E('text', { x: kx, y: ky + L + 24, 'text-anchor': 'middle', 'font-size': 10.5, fill: SLATE, style: 'font-family:var(--sans)', text: 'one cell each; a wall holds you' }, ps);
+    return {};
+  }
 
   var idx = function (r, c) { return r * C + c; };
   var isCliff = function (r, c) { return r === 3 && c >= 1 && c <= 10; };
@@ -68,6 +108,7 @@ IE437.widget('cliff-walk', function (host, opts) {
     '<button class="wb" data-r1>+1 ep</button>' +
     '<button class="wb" data-r50>+50</button>' +
     '<button class="wb" data-r200>+200</button>' +
+    '<button class="wb" data-auto data-run>run ' + AUTO + '</button>' +
     '</div>' +
     '<div class="wbody" style="flex-direction:row;gap:16px;align-items:stretch">' +
     '<div style="flex:1.25;display:flex;flex-direction:column;gap:9px;justify-content:center;min-width:0">' +
@@ -148,6 +189,8 @@ IE437.widget('cliff-walk', function (host, opts) {
   host.querySelector('[data-r1]').onclick = function () { run(1); };
   host.querySelector('[data-r50]').onclick = function () { run(50); };
   host.querySelector('[data-r200]').onclick = function () { run(200); };
+  /* arrival: the engine clicks the data-auto button; run() redraws once at the end */
+  host.querySelector('[data-run]').onclick = function () { run(AUTO); };
   var __reset = reset;
   host.querySelector('[data-ec]').onclick = function () {
     eps = eps === 0.05 ? 0.1 : eps === 0.1 ? 0.2 : 0.05; reset();

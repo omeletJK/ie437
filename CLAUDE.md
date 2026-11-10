@@ -115,6 +115,9 @@ against an installed Google Chrome. See `docs/agent-notes/qa-visual-pass.md`.
   Ch 5–6 were rewritten as problem → research streams with representative papers (2026-10-13);
   Ch 7 was rebuilt around its source deck's diagrams (`backup-tree`, `mdp-pictures`, 2026-11-09),
   and its summary is the `ladder` of algorithm plates (`docs/agent-notes/algorithm-relations-as-a-ladder.md`).
+  Ch 8 followed on 2026-11-11 with the same recipe (`docs/agent-notes/ch08-rework-plan.md`): the
+  backup tree continued into sampled modes, algorithm boxes before every demo, derivations one
+  line per press, the map as a tracker, DQN's pictures, and the ladder extended to six rungs.
   Other chapters are still figure-free; re-authoring them from their source decks needs the original
   PDFs, which are not in the repository.
 - Assignment 1 (Movie Programming, due 2026-10-09) is closed and graded. Nothing of the grading

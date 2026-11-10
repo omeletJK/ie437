@@ -16,6 +16,14 @@
    mode "async"    p. 52 — a full sweep against updates in any order
    mode "gpi"      p. 54 — generalised policy iteration: evaluation and
                    improvement zigzagging into V*, pi*. Stepped (2 steps).
+                   {"labels": "q"} writes the Ch 8 form: Q = Q^π, π =
+                   ε-greedy(Q), meeting at Q*, π*.
+   mode "count"    Ch 8 p. 15 — a model learned by counting: the 3 x 3 grid
+                   (A above, B C D across, E below; exits at A −10 and D +10),
+                   four episodes drawn as arrows one per press, each in its
+                   own colour and offset so parallel arrows stay visible, and
+                   on the right the counted T̂ and R̂ filling in as the
+                   episodes arrive. Stepped (4).
    mode "readoff"  p. 47 — policy improvement on the gridworld: V^π of the
                    random policy on the left, the greedy policy read off it
                    on the right. Stepped (3): one cell and its two best
@@ -26,6 +34,15 @@
                    iteration, as a staircase of plates; each step down
                    deletes one loop and the deleted thing is red. Options
                    start (first state shown) and upto (last state, max 3).
+                   With {"plates": [...]} the same staircase is drawn from the
+                   caller's own plates instead (Ch 8: MC, TD, SARSA, Q-learning,
+                   DQN). Each plate is {title, line, formula, note, loop}:
+                   title red bold prose above the plate, line prose inside
+                   (routed through the maths renderer only if it holds a TeX
+                   command), formula maths centred, note red prose beside the
+                   title, loop an optional self-loop label. Up to six plates;
+                   start/upto index them as before. The Ch 7 drawing is
+                   untouched when plates is absent.
    ============================================================ */
 IE437.widget('mdp-pictures', function (host, opts) {
   var E = IE437.el;
@@ -326,6 +343,38 @@ IE437.widget('mdp-pictures', function (host, opts) {
     }
   }
 
+  /* ---------- ladder from the caller's plates (Ch 8 and later) ---------- */
+  var PLATE_W = 480, PLATE_INDENT = 50, PLATE_MAX = 6;
+  function drawPlates(list, st) {
+    clear();
+    var n = Math.min(PLATE_MAX, list.length), tall = n > 4;
+    var pitch = tall ? 74 : 86, ph = tall ? 52 : 58, W = PLATE_W;
+    var width = 10 + PLATE_INDENT * (n - 1) + W + 180;          /* room for the self-loop and its label */
+    var s = svg(width, 20 + n * pitch);
+    for (var i = 0; i <= st && i < n; i++) {
+      var p = list[i] || {}, x = 10 + PLATE_INDENT * i, y = 20 + pitch * i;
+      var title = lbl(s, x, y - 7, p.title || '', { fill: RED, 'font-weight': 700, 'font-size': 12 });
+      E('rect', { x: x, y: y, width: W, height: ph, rx: 6, fill: PANEL, stroke: PANEL2, 'stroke-width': 1 }, s);
+      if (p.line) {
+        if (/\\/.test(p.line)) tx(s, x + 14, y + (tall ? 18 : 20), p.line, { 'font-size': 12.5 });
+        else lbl(s, x + 14, y + (tall ? 18 : 20), p.line, { fill: INK, 'font-size': 13 });
+      }
+      if (p.formula) {
+        var fs = +p.size || 13.5;
+        var f = tx(s, x + W / 2 + 16, y + (tall ? 40 : 44), p.formula, { 'font-size': fs, 'text-anchor': 'middle' });
+        /* a long formula shrinks to the plate rather than running out of it */
+        var fw = 0; try { fw = f.getBBox().width; } catch (e) { }
+        if (fw > W - 24) f.setAttribute('font-size', Math.max(13, Math.round(fs * 1.25 * (W - 24) / fw * 10) / 10));
+      }
+      if (p.note) {
+        var tw = 0; try { tw = title.getComputedTextLength(); } catch (e) { }
+        if (!tw) tw = 6.4 * (p.title || '').length;
+        lbl(s, x + tw + 14, y - 7, p.note, { fill: RED });
+      }
+      if (p.loop) selfLoop(s, x + W, y + ph / 2, INK, p.loop);
+    }
+  }
+
   /* ---------- gpi (p. 54) ---------- */
   function drawGpi(st) {
     clear();
@@ -333,17 +382,17 @@ IE437.widget('mdp-pictures', function (host, opts) {
     var up = function (x) { return yv - k * (xv - x); }, lo = function (x) { return yv + k * (xv - x); };
     E('line', { x1: x0, y1: up(x0), x2: xv, y2: yv, stroke: INK, 'stroke-width': 1.2 }, s);
     E('line', { x1: x0, y1: lo(x0), x2: xv, y2: yv, stroke: INK, 'stroke-width': 1.2 }, s);
-    var deg = Math.atan(k) * 180 / Math.PI, mx = 250;
+    var deg = Math.atan(k) * 180 / Math.PI, mx = 250, Q = opts.labels === 'q';
     /* screen y grows downward, so the upper line (falling to the right) is a +deg rotation */
-    tx(s, mx, up(mx) - 8, 'V = V^π\\quad\\text{(policy evaluation)}', { fill: BLUE, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + deg.toFixed(2) + ' ' + mx + ' ' + (up(mx) - 8).toFixed(1) + ')' });
-    tx(s, mx, lo(mx) + 16, 'π = \\text{greedy}(V)\\quad\\text{(policy improvement)}', { fill: GREEN, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + (-deg).toFixed(2) + ' ' + mx + ' ' + (lo(mx) + 16).toFixed(1) + ')' });
+    tx(s, mx, up(mx) - 8, (Q ? 'Q = Q^π' : 'V = V^π') + '\\quad\\text{(policy evaluation)}', { fill: BLUE, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + deg.toFixed(2) + ' ' + mx + ' ' + (up(mx) - 8).toFixed(1) + ')' });
+    tx(s, mx, lo(mx) + 16, (Q ? 'π = ε\\text{-greedy}(Q)' : 'π = \\text{greedy}(V)') + '\\quad\\text{(policy improvement)}', { fill: GREEN, 'font-size': 11, 'text-anchor': 'middle', transform: 'rotate(' + (-deg).toFixed(2) + ' ' + mx + ' ' + (lo(mx) + 16).toFixed(1) + ')' });
     E('circle', { cx: xv, cy: yv, r: 3.5, fill: INK }, s);
-    tx(s, xv + 10, yv - 6, 'V^*');
+    tx(s, xv + 10, yv - 6, Q ? 'Q^*' : 'V^*');
     tx(s, xv + 10, yv + 16, 'π^*');
     /* start */
     var sx = 60, sy = yv;
     E('circle', { cx: sx, cy: sy, r: 4, fill: INK }, s);
-    tx(s, sx, sy + 20, '\\text{start: }V,\\ π', { 'text-anchor': 'middle', 'font-size': 11, fill: SLATE });
+    tx(s, sx, sy + 20, '\\text{start: }' + (Q ? 'Q' : 'V') + ',\\ π', { 'text-anchor': 'middle', 'font-size': 11, fill: SLATE });
     /* the zigzag: hop i lands at x_i, remaining distance shrinking geometrically */
     var legs = st >= 2 ? 8 : (st === 1 ? 2 : 0), r = 0.68, d0 = xv - sx;
     var px = sx, py = sy;
@@ -353,6 +402,58 @@ IE437.widget('mdp-pictures', function (host, opts) {
       px = x; py = y;
     }
     if (st >= 2) tx(s, xv + 36, yv + 4, 'stabilised', { fill: RED });
+  }
+
+  /* ---------- count (Ch 8 p. 15): a model learned by counting ---------- */
+  var CELLS = { A: [0, 1], B: [1, 0], C: [1, 1], D: [1, 2], E: [2, 1] };
+  var EPIS = [{ c: BLUE, path: ['B', 'C', 'D'], r: '+10' }, { c: GREEN, path: ['B', 'C', 'D'], r: '+10' },
+              { c: AMBER, path: ['E', 'C', 'D'], r: '+10' }, { c: RED, path: ['E', 'C', 'A'], r: '−10' }];
+  function drawCount(st) {
+    clear();
+    var s = svg(720, 236), X0 = 16, Y0 = 36, C = 60;
+    function ctr(name) { var rc = CELLS[name]; return [X0 + rc[1] * C + C / 2, Y0 + rc[0] * C + C / 2]; }
+    /* the grid: five cells named, the corners blank */
+    for (var r = 0; r < 3; r++) for (var c = 0; c < 3; c++) {
+      var name = null; for (var k in CELLS) if (CELLS[k][0] === r && CELLS[k][1] === c) name = k;
+      var x = X0 + c * C, y = Y0 + r * C;
+      E('rect', { x: x, y: y, width: C, height: C, fill: name ? '#fff' : PANEL2, stroke: INK, 'stroke-width': 1.2 }, s);
+      if (!name) continue;
+      lbl(s, x + 6, y + 15, name, { fill: SLATE, 'font-weight': 700, 'font-size': 12.5 });
+      /* A's exit arrow runs up through the cell, so its label stacks in the left half */
+      if (name === 'A') { lbl(s, x + 5, y + C - 18, 'exit', { fill: RED, 'font-size': 9.5 }); lbl(s, x + 5, y + C - 6, '−10', { fill: RED, 'font-size': 9.5 }); }
+      if (name === 'D') lbl(s, x + 5, y + C - 6, 'exit +10', { fill: GREEN, 'font-size': 9.5 });
+    }
+    /* the episodes, one per step, each offset so parallel arrows stay apart */
+    var OFF = [-7.5, -2.5, 2.5, 7.5];
+    for (var e = 0; e < st && e < EPIS.length; e++) (function (ep, o) {
+      for (var i = 0; i + 1 < ep.path.length; i++) {
+        var a = ctr(ep.path[i]), b = ctr(ep.path[i + 1]), horiz = a[1] === b[1];
+        if (horiz) arrow(s, a[0] + 8, a[1] + o, b[0] - 8, b[1] + o, ep.c, { 'stroke-width': 2 });
+        else arrow(s, a[0] + o, a[1] - 8, b[0] + o, b[1] + 8, ep.c, { 'stroke-width': 2 });
+      }
+      var last = ctr(ep.path[ep.path.length - 1]);
+      if (ep.path[ep.path.length - 1] === 'D') arrow(s, last[0] + 8, last[1] + o, X0 + 3 * C + 22, last[1] + o, ep.c, { 'stroke-width': 2 });
+      else arrow(s, last[0] + o, last[1] - 8, last[0] + o, Y0 - 18, ep.c, { 'stroke-width': 2 });
+    })(EPIS[e], OFF[e]);
+    if (st >= 1) lbl(s, X0 + 3 * C + 28, ctr('D')[1] + 4, '+10', { fill: GREEN, 'font-size': 12, 'font-weight': 700 });
+    if (st >= 4) lbl(s, ctr('A')[0] + 16, Y0 - 12, '−10', { fill: RED, 'font-size': 12, 'font-weight': 700 });
+    /* the key: each episode as it is drawn */
+    for (var j = 0; j < st && j < EPIS.length; j++) {
+      var ep2 = EPIS[j];
+      lbl(s, 244, 64 + 26 * j, 'Episode ' + (j + 1) + '   ' + ep2.path.join(' → ') + ' → exit, ' + ep2.r, { fill: ep2.c, 'font-size': 12 });
+    }
+    /* the counted model */
+    var TX = 470;
+    lbl(s, TX, 52, 'Model learned by counting', { fill: SLATE, 'font-size': 11 });
+    var nB = Math.min(st, 2), nC = st, nCD = Math.min(st, 3), nCA = st >= 4 ? 1 : 0;
+    var rows = [];
+    if (nB) rows.push('T̂(B, east, C) = ' + nB + '/' + nB);
+    if (nCD) rows.push('T̂(C, east, D) = ' + nCD + '/' + nC);
+    if (nCA) rows.push('T̂(C, east, A) = ' + nCA + '/' + nC);
+    if (st >= 1) rows.push('R̂(D, exit) = +10');
+    if (st >= 4) rows.push('R̂(A, exit) = −10');
+    rows.forEach(function (t, i) { lbl(s, TX, 78 + 22 * i, t, { fill: INK, 'font-size': 12.5 }); });
+    if (!st) lbl(s, TX, 78, 'nothing observed yet', { fill: SLATE, 'font-size': 12 });
   }
 
   /* ---------- readoff (p. 47) ---------- */
@@ -423,10 +524,17 @@ IE437.widget('mdp-pictures', function (host, opts) {
     return { steps: 1, step: cshow, reset: function () { cshow(0); }, finish: function () { cshow(1); } };
   }
   if (MODE === 'ladder') {
-    var l0 = Math.max(0, Math.min(3, +opts.start || 0)), l1 = Math.max(l0, Math.min(3, opts.upto == null ? 3 : +opts.upto));
-    var lst = l0, lshow = function (i) { lst = Math.max(l0, Math.min(l1, l0 + i)); drawLadder(lst); };
+    var plates = Array.isArray(opts.plates) && opts.plates.length ? opts.plates.slice(0, PLATE_MAX) : null;
+    var lmax = plates ? plates.length - 1 : 3;
+    var l0 = Math.max(0, Math.min(lmax, +opts.start || 0)), l1 = Math.max(l0, Math.min(lmax, opts.upto == null ? lmax : +opts.upto));
+    var lst = l0, lshow = function (i) { lst = Math.max(l0, Math.min(l1, l0 + i)); if (plates) drawPlates(plates, lst); else drawLadder(lst); };
     lshow(0);
     return { steps: l1 - l0, step: lshow, reset: function () { lshow(0); }, finish: function () { lshow(l1 - l0); } };
+  }
+  if (MODE === 'count') {
+    var nst = 0, nshow = function (i) { nst = Math.max(0, Math.min(4, i)); drawCount(nst); };
+    nshow(0);
+    return { steps: 4, step: nshow, reset: function () { nshow(0); }, finish: function () { nshow(4); } };
   }
   if (MODE === 'gpi') {
     var gst = 0, gshow = function (i) { gst = Math.max(0, Math.min(2, i)); drawGpi(gst); };

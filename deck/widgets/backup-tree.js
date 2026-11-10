@@ -36,6 +36,50 @@
                    a_2 in blue, V^π(s) = Q^π(s,π(s)); step 1 brings the
                    a_1 branch back and asks whether Q^π(s,a_1) beats it,
                    step 2 asks the same of a_3 (the source's three pages).
+
+   Chapter 8 continues the picture with the model gone: the whole
+   tree is drawn faded and one sampled path full weight over it, the
+   rewards sit on the chance edges taken (green r_{t+1}), and the last
+   step writes the update under the picture with its target in red.
+   mode "return"   Ch 8 pp. 43–44 — Monte Carlo: the sampled episode runs
+                   S_t … S_{t+2} ⋯ T; step 2 writes G_t, step 3 the
+                   update V(s) ← V(s) + α[G_t − V(s)]. Stepped (3).
+   mode "sample"   TD(0) on the eval layout: both successors faded with
+                   their T labels, the observed one forward with r_{t+1},
+                   a cone for the current estimate V(s_1); step 2 the
+                   update with the TD target in red. Stepped (2; 3 with
+                   nums {v, v1, r, alpha, gamma}: the numbers substituted;
+                   4 with nums.mc = {r2}: the realised continuation after
+                   s_1 — next step pays r2, episode ends — drawn faded
+                   past s_1, and the Monte Carlo line G_t = r + γ r2,
+                   V(s) ← V(s) + α[G_t − V(s)] written under the TD line,
+                   so the picture shows what MC had to wait for).
+   mode "sarsa"    Ch 8 pp. 51–55 — a^2 at s^0 by ε-greedy, r_{t+1} to
+                   s^1, then the action actually chosen next (blue,
+                   dashed: chosen, not yet taken) names the target.
+                   Stepped (3; 4 with nums {q, r, qnext[], pick, alpha,
+                   gamma}, pick indexing qnext).
+   mode "qlearn"   Ch 8 pp. 62–66 — the same through step 1; at s^1 all
+                   actions with the red max arc. Same nums; with nums the
+                   fan's chance nodes carry their values Q(s^1,a^i) = qnext[i]
+                   and the fan has qnext.length edges (two or three).
+                   Stepped (3; 4 with nums). {"both": true} also draws the
+                   behaviour policy's pick (nums.pick) as SARSA's blue dashed
+                   edge beside the max arc, and the last step writes both
+                   numeric lines, "Q-learning:" and "SARSA:", prefixed in
+                   slate, the backed-up value red in each.
+   Both Ch 8 options: names {s, s1, s2, a, a1, actions[]} relabels the
+   sampled path (s^0 → "x=−2", s^1 → the state reached, s^2 → the other
+   successor, the chosen action → "heat", …) in node labels and in the
+   written-out lines, set upright; named circles are drawn wider and
+   their label shrinks to fit. names.actions with TWO entries draws two
+   root actions (the chosen one is the second) and the same two at s^1,
+   matching a two-entry qnext.
+   Written lines: a negative number after an operator is parenthesised,
+   0.9·(−1) − (−4); the red side note goes inline after a short line and
+   on its own right-aligned row under a long one (names); the rows are
+   laid out from the bottom of the SVG and the tree shrinks vertically
+   when three or four rows are written, so nothing runs past the bottom.
    ============================================================ */
 IE437.widget('backup-tree', function (host, opts) {
   var E = IE437.el;
@@ -85,7 +129,21 @@ IE437.widget('backup-tree', function (host, opts) {
   /* a state node: blue circle, name inside */
   function state(g, x, y, r, label, fs) {
     E('circle', { cx: x, cy: y, r: r, fill: '#fff', stroke: BLUE, 'stroke-width': 1.7 }, g);
-    if (label) tx(g, x, y + 4, label, { 'text-anchor': 'middle', 'font-size': fs || 12 });
+    if (label) fit(tx(g, x, y + 4, label, { 'text-anchor': 'middle', 'font-size': fs || 12 }), 2 * r - 6);
+  }
+  /* a label that must stay inside a width: shrink its face when the slide is laid out and it is wider
+     (a hidden slide measures 0 and is left alone; it is redrawn on entry) */
+  function fit(t, maxW) {
+    var w = 0; try { w = t.getComputedTextLength(); } catch (e) { }
+    if (!w || w <= maxW) return t;
+    var fs = parseFloat(t.getAttribute('font-size')) || 12, k = maxW / w;
+    t.setAttribute('font-size', Math.round(fs * k * 10) / 10);
+    var sp = t.getElementsByTagName('tspan');
+    for (var i = 0; i < sp.length; i++) {
+      var f = sp[i].getAttribute('font-size'); if (f) sp[i].setAttribute('font-size', Math.round(parseFloat(f) * k * 10) / 10);
+      var dy = sp[i].getAttribute('dy'); if (dy) sp[i].setAttribute('dy', Math.round(parseFloat(dy) * k * 10) / 10);
+    }
+    return t;
   }
   /* a chance node: green dashed circle, name above or below */
   function chance(g, x, y, r, label, pos, fs) {
@@ -375,9 +433,310 @@ IE437.widget('backup-tree', function (host, opts) {
     if (k >= 1) tx(gt, 580, 184, 'Q^π(s,a_' + (k === 1 ? 1 : 3) + ') ≥ V^π(s) ?', { fill: RED, 'font-size': 12 });
   }
 
+  /* ============================================================
+     Chapter 8 — the same tree, but the model is gone: one sampled
+     path is drawn full weight over the whole tree faded, rewards sit
+     on the chance edges actually taken, and the last step writes the
+     update under the picture with its target in red.
+     Shared options: names {s, s1, s2, a, a1, actions[]} relabels the
+     sampled path for the temperature example (set upright, in \text);
+     nums substitutes numbers on one more step.
+     ============================================================ */
+  var NM = opts.names || {}, NUMS = opts.nums || null;
+  var NAMED = !!(NM.s || NM.s1 || NM.s2 || NM.a || NM.a1 || NM.actions);   /* the written lines are long */
+  function nm(key, dflt) { return NM[key] ? '\\text{' + NM[key] + '}' : dflt; }
+  /* a name set upright inside a circle of radius r needs a smaller face than a symbol */
+  function nfs(r, named, dflt) { return !named ? dflt : r <= 12 ? 8 : r <= 13 ? 8.5 : r <= 15 ? 9 : r <= 17 ? 9.5 : 10; }
+  function fix2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+  /* a number written after an operator: a negative one is parenthesised, 0.9·(−1) − (−4) */
+  function pn(v) { return v < 0 ? '(' + v + ')' : String(v); }
+  /* the maths renderer spaces every minus as a binary sign (thin spaces); after "(", "[" or a space it is unary */
+  function tight(t) {
+    var sp = t.getElementsByTagName('tspan');
+    for (var i = 0; i < sp.length; i++) {
+      if (!/^\s−\s$/.test(sp[i].textContent)) continue;
+      var prev = i ? sp[i - 1].textContent : '';
+      if (!prev || /[(\[\s]$/.test(prev)) sp[i].textContent = '−';
+    }
+    return t;
+  }
+  /* rows of written lines, laid out upwards from the bottom of an SVG of height H */
+  function rowY(H, rows, i) { return H - 10 - 22 * (rows - 1 - i); }
+  /* the symbols of a sampled path: sup = the source's s^k, a^k (pp. 51–66), else Ch 7's s_k, a_k */
+  function symbols(sup) {
+    return {
+      s: nm('s', sup ? 's^0' : 's'),
+      succ: function (j) { return j ? nm('s2', sup ? 's^2' : 's_2') : nm('s1', sup ? 's^1' : 's_1'); },
+      a: function (i, chosen) {
+        if (NM.actions && NM.actions[i]) return '\\text{' + NM.actions[i] + '}';
+        if (chosen && NM.a) return '\\text{' + NM.a + '}';
+        return (sup ? 'a^' : 'a_') + (i + 1);
+      },
+      a1: function (i) {
+        if (NM.actions && NM.actions[i]) return '\\text{' + NM.actions[i] + '}';
+        return NM.a1 ? '\\text{' + NM.a1 + '}' : (sup ? 'a^' : 'a_') + (i + 1);
+      }
+    };
+  }
+  /* a written-out line under the picture, and a red side note after it */
+  function line(g, x, y, str) { return tight(tx(g, x, y, str, { 'font-size': 14 })); }
+  /* the same line opening with a name in slate: "Q-learning:  Q(s,a) ← …" */
+  function named(g, x, y, prefix, str) {
+    var t = line(g, x, y, '\\text{' + prefix + '  }' + str);
+    if (t.firstChild) t.firstChild.setAttribute('fill', SLATE);
+    return t;
+  }
+  /* the note sits after the line when it fits; `own` (a long, named line) puts it on the row below,
+     right-aligned; `ownY` is that row's baseline (default y + 20) */
+  function note(g, t, y, str, W, own, ownY) {
+    var w = 0; try { w = t.getComputedTextLength(); } catch (e) { }
+    if (!w) w = (t.textContent || '').length * 7.2;          /* the slide is not laid out yet */
+    var x = parseFloat(t.getAttribute('x')) + w + 14;
+    if (own || x + str.length * 5.6 > W - 6) tx(g, W - 10, ownY == null ? y + 20 : ownY, str, { fill: RED, 'font-size': 11, 'text-anchor': 'end' });
+    else tx(g, x, y, str, { fill: RED, 'font-size': 11 });
+  }
+  /* the faded trajectory tree behind a sampled path: root, three actions with two outcomes
+     each, and from the chosen branch's first successor three actions again. G holds the
+     geometry; Y the symbols; the labels of the sampled branch are drawn again, full, by the
+     caller, so the base keeps every label plain */
+  function baseTree(g, G, Y, pick) {
+    var root = G.root, ch = G.ch, succ = G.succ, fans = G.fans;
+    ch.forEach(function (c, i) {
+      edge(g, root[0], root[1], G.RS, c[0], c[1], G.RC, BLUE);
+      elab(g, root[0], root[1], c[0], c[1], [Y.a(i, i === pick)], i === ch.length - 1 ? -1 : 1, { t: .55, d: 10 });
+      chance(g, c[0], c[1], G.RC, Y.s + ',' + Y.a(i, i === pick), 'above');
+      succ[i].forEach(function (p, j) {
+        edge(g, c[0], c[1], G.RC, p[0], p[1], G.RC, GREEN);
+        state(g, p[0], p[1], G.RC, Y.succ(j), nfs(G.RC, NM.s1 || NM.s2, 11));
+        if (i !== pick) tx(g, p[0] + G.RC + 8, p[1] + 4, '⋯', { fill: SLATE, 'font-size': 13 });
+      });
+    });
+    var p = succ[pick][0];
+    fans.forEach(function (c, i) {
+      edge(g, p[0], p[1], G.RC, c[0], c[1], G.RC2, BLUE);
+      elab(g, p[0], p[1], c[0], c[1], [Y.a1(i)], i === fans.length - 1 ? -1 : 1, { t: .62, d: 9, fs: 10 });
+      chance(g, c[0], c[1], G.RC2, G.fanLabels === false ? '' : G.fanLabel(i), G.fanPos ? G.fanPos(i) : 'right', 10.5);
+    });
+    state(g, root[0], root[1], G.RS, Y.s, nfs(G.RS, NM.s, 12));
+  }
+
+  /* ============================================================
+     return — Monte Carlo (pp. 43–44): one whole episode is sampled
+     and its discounted reward sum G_t is the target. Stepped (3).
+     ============================================================ */
+  function drawReturn(k) {
+    var W = 740, H = 336, s = svg(W, H);
+    var Y = symbols(false), PICK = 1, NEXT = 0;
+    var G = { root: [50, 160], RS: 14, RC: 12, RC2: 10,
+      ch: [[165, 80], [165, 160], [165, 240]],
+      succ: [[[280, 60], [280, 100]], [[280, 140], [280, 180]], [[280, 220], [280, 260]]],
+      fans: [[400, 100], [400, 140], [400, 180]],
+      fanLabel: function (i) { return Y.succ(0) + ',' + Y.a1(i); },
+      fanPos: function (i) { return i === 0 ? 'above' : 'right'; } };
+    var leaves = [[520, 80], [520, 120]], RL = 8, T = [655, 120];
+    header(s, 50, 22, 'S_t'); header(s, 165, 22, 'A_t'); header(s, 280, 22, 'S_{t+1}');
+    header(s, 400, 22, 'A_{t+1}'); header(s, 520, 22, 'S_{t+2}'); header(s, T[0], 22, 'S_T');
+    var gLo = layer(s, FADE), gHi = layer(s);
+    baseTree(gLo, G, Y, PICK);
+    leaves.forEach(function (q, m) {
+      edge(gLo, G.fans[NEXT][0], G.fans[NEXT][1], G.RC2, q[0], q[1], RL, GREEN);
+      state(gLo, q[0], q[1], RL, '');
+      tx(gLo, q[0] + RL + 5, q[1] + 4, Y.succ(m), { fill: SLATE, 'font-size': 10.5 });
+    });
+    /* the sampled path, full weight: s —a_2→ (s,a_2) —r_{t+1}→ s_1 —a_1→ (s_1,a_1) —r_{t+2}→ s_2 ⋯ r_T → T */
+    var root = G.root, c = G.ch[PICK], p = G.succ[PICK][0], f = G.fans[NEXT], q = leaves[1];
+    edge(gHi, root[0], root[1], G.RS, c[0], c[1], G.RC, BLUE, { 'stroke-width': 2.6 });
+    elab(gHi, root[0], root[1], c[0], c[1], [Y.a(PICK, true)], 1, { t: .55, d: 10, fill: BLUE });
+    chance(gHi, c[0], c[1], G.RC, Y.s + ',' + Y.a(PICK, true), 'above');
+    state(gHi, root[0], root[1], G.RS, Y.s, nfs(G.RS, NM.s, 12));
+    if (k >= 1) {
+      edge(gHi, c[0], c[1], G.RC, p[0], p[1], G.RC, GREEN, { 'stroke-width': 2.6 });
+      elab(gHi, c[0], c[1], p[0], p[1], ['r_{t+1}'], 1, { t: .5, d: 11, fs: 11, fill: GREEN });
+      state(gHi, p[0], p[1], G.RC, Y.succ(0), nfs(G.RC, NM.s1, 11));
+      edge(gHi, p[0], p[1], G.RC, f[0], f[1], G.RC2, BLUE, { 'stroke-width': 2.6 });
+      elab(gHi, p[0], p[1], f[0], f[1], [Y.a1(NEXT)], 1, { t: .62, d: 9, fs: 10, fill: BLUE });
+      chance(gHi, f[0], f[1], G.RC2, G.fanLabel(NEXT), 'above', 10.5);
+      edge(gHi, f[0], f[1], G.RC2, q[0], q[1], RL, GREEN, { 'stroke-width': 2.6 });
+      elab(gHi, f[0], f[1], q[0], q[1], ['r_{t+2}'], -1, { t: .5, d: 11, fs: 11, fill: GREEN });
+      state(gHi, q[0], q[1], RL, '');
+      tx(gHi, q[0] + RL + 5, q[1] + 4, Y.succ(1), { fill: SLATE, 'font-size': 10.5 });
+      tx(gHi, 578, q[1] + 4, '⋯', { fill: GREEN, 'font-size': 14, 'text-anchor': 'middle' });
+      arrow(gHi, 598, q[1], T[0] - 12, q[1], GREEN, { 'stroke-width': 2.6 });
+      tx(gHi, 621, q[1] - 13, 'r_T', { fill: GREEN, 'font-size': 11, 'text-anchor': 'middle' });
+      E('rect', { x: T[0] - 9, y: T[1] - 9, width: 18, height: 18, fill: '#fff', stroke: INK, 'stroke-width': 1.6 }, gHi);
+      tx(gHi, T[0], T[1] + 4, 'T', { 'text-anchor': 'middle', 'font-size': 11 });
+      tx(gHi, T[0] + 14, T[1] + 4, 'terminal', { fill: SLATE, 'font-size': 10.5 });
+    }
+    if (k >= 2) {
+      var g2 = layer(s);
+      var t = line(g2, 40, 300, 'G_t = r_{t+1} + γ r_{t+2} + γ^2 r_{t+3} + \\cdots + γ^{T−t−1} r_T');
+      note(g2, t, 300, 'the return actually collected', W);
+    }
+    if (k >= 3) line(layer(s), 40, 324, 'V(' + Y.s + ')\\ \\leftarrow\\ V(' + Y.s + ') + α[\\red{G_t} − V(' + Y.s + ')]');
+  }
+
+  /* ============================================================
+     sample — TD(0): the eval picture with the model gone. Both
+     successors stay faded with their T labels; the one the world
+     chose comes forward with r_{t+1}, and the cone at s_1 is the
+     current estimate. Stepped (2; 3 with nums).
+     ============================================================ */
+  function drawSample(k) {
+    var MC = NUMS && NUMS.mc && NUMS.mc.r2 != null ? NUMS.mc : null;
+    var rows = 1 + (NUMS ? 1 : 0) + (MC ? 1 : 0);
+    var W = MC ? 760 : 720, H = 248 + 22 * rows, s = svg(W, H);
+    var Y = symbols(false), A = nm('a', 'a');
+    var S = [70, 140], RS = 18, C = [260, 140], RC = 16;
+    var succ = [[430, 75], [430, 205]];
+    var gLo = layer(s, FADE), g0 = layer(s);
+    tx(g0, 30, 110, 'V(' + Y.s + ')', { fill: BLUE, 'font-size': 12 });
+    edge(g0, S[0], S[1], RS, C[0], C[1], RC, BLUE, { 'stroke-width': 2.2 });
+    elab(g0, S[0], S[1], C[0], C[1], [A + ' = π(' + Y.s + ')'], 1, { d: 11, fs: 11, fill: BLUE });
+    chance(g0, C[0], C[1], RC, Y.s + ',' + A, 'below');
+    state(g0, S[0], S[1], RS, Y.s, nfs(RS, NM.s, 12));
+    succ.forEach(function (p, j) {
+      if (k >= 1 && j === 0) return;
+      edge(gLo, C[0], C[1], RC, p[0], p[1], RS, GREEN, { 'stroke-width': 2.2 });
+      elab(gLo, C[0], C[1], p[0], p[1], ['T(' + Y.s + ',' + A + ',' + Y.succ(j) + ')', 'R(' + Y.s + ',' + A + ',' + Y.succ(j) + ')'], j === 0 ? 1 : -1, { t: NM.s ? .4 : .5, d: NM.s ? 22 : 20, fill: GREEN });
+      state(gLo, p[0], p[1], RS, Y.succ(j), nfs(RS, NM.s1 || NM.s2, 12));
+    });
+    if (k >= 1) {
+      var g1 = layer(s), p = succ[0];
+      edge(g1, C[0], C[1], RC, p[0], p[1], RS, GREEN, { 'stroke-width': 2.6 });
+      elab(g1, C[0], C[1], p[0], p[1], ['r_{t+1}'], -1, { d: 12, fs: 11, fill: GREEN });
+      state(g1, p[0], p[1], RS, Y.succ(0), nfs(RS, NM.s1, 12));
+      cone(g1, p[0], p[1], RS, 'V(' + Y.succ(0) + ')\\ \\text{(current estimate)}');
+    }
+    if (k >= 2) {
+      var g2 = layer(s);
+      var t = line(g2, 40, rowY(H, rows, 0), 'V(' + Y.s + ')\\ \\leftarrow\\ V(' + Y.s + ') + α[\\red{r_{t+1} + γ V(' + Y.succ(0) + ')} − V(' + Y.s + ')]');
+      note(g2, t, rowY(H, rows, 0), 'TD target', W);
+    }
+    if (k >= 3 && NUMS) {
+      var n = NUMS, v = n.v + n.alpha * (n.r + n.gamma * n.v1 - n.v);
+      line(layer(s), 40, rowY(H, rows, 1), '= ' + n.v + ' + ' + n.alpha + '[' + n.r + ' + ' + n.gamma + '\\cdot' + pn(n.v1) + ' − ' + pn(n.v) + '] = ' + fix2(v));
+    }
+    /* the continuation Monte Carlo had to wait for: s_1 —a′→ chance —r_{t+2}→ T, drawn faded, and its line */
+    if (k >= 4 && MC) {
+      var n2 = NUMS, Gt = Math.round((n2.r + n2.gamma * MC.r2) * 1000) / 1000, vm = n2.v + n2.alpha * (Gt - n2.v);
+      var gm = layer(s, .45), p1 = succ[0], c2 = [518, 150], T = [606, 190], RC2 = 11, RT = 9;
+      edge(gm, p1[0], p1[1], RS, c2[0], c2[1], RC2, BLUE, { 'stroke-width': 2.2 });
+      elab(gm, p1[0], p1[1], c2[0], c2[1], ['a′'], -1, { t: .55, d: 10, fs: 10.5, fill: BLUE });
+      chance(gm, c2[0], c2[1], RC2, '', 'right');
+      edge(gm, c2[0], c2[1], RC2, T[0], T[1], RT + 2, GREEN, { 'stroke-width': 2.2 });
+      elab(gm, c2[0], c2[1], T[0], T[1], ['r_{t+2} = ' + MC.r2], -1, { t: .5, d: 14, fs: 11, fill: GREEN });
+      E('rect', { x: T[0] - RT, y: T[1] - RT, width: 2 * RT, height: 2 * RT, fill: '#fff', stroke: INK, 'stroke-width': 1.6 }, gm);
+      tx(gm, T[0], T[1] + 4, 'T', { 'text-anchor': 'middle', 'font-size': 11 });
+      tx(gm, T[0] + RT + 5, T[1] + 4, 'episode ends', { fill: SLATE, 'font-size': 10.5 });
+      named(layer(s), 40, rowY(H, rows, 2), 'Monte Carlo, once the episode ends:',
+        '\\red{G_t} = ' + n2.r + ' + ' + n2.gamma + '\\cdot' + pn(MC.r2) + ' = ' + Gt + ',\\quad V(' + Y.s + ')\\ \\leftarrow\\ ' +
+        n2.v + ' + ' + n2.alpha + '[\\red{' + pn(Gt) + '} − ' + pn(n2.v) + '] = ' + fix2(vm));
+    }
+  }
+
+  /* ============================================================
+     sarsa (pp. 51–55) and qlearn (pp. 62–66): two levels of the tree,
+     the behaviour policy's a^2 at s^0, the observed r_{t+1} to s^1,
+     then at s^1 either the action actually chosen next (SARSA: blue,
+     dashed because it is chosen, not yet taken) or the max over all
+     three (Q-learning: red arc). Stepped (3; 4 with nums).
+     ============================================================ */
+  function drawControl(k, ql) {
+    var W = 760, H = 336, s = svg(W, H);
+    var Y = symbols(true), PICK = 1, BOTH = ql && !!opts.both;
+    var n = NUMS, NEXT = n && n.pick != null ? n.pick : 0;   /* the action the behaviour policy takes next */
+    /* how many actions: at the root names.actions decides, at s^1 qnext (or the same names) */
+    var nA = NM.actions && NM.actions.length === 2 ? 2 : 3;
+    var nF = n && n.qnext && n.qnext.length === 2 ? 2 : (nA === 2 ? 2 : 3);
+    /* the rows written under the tree: the update, its note on its own row when the line is long
+       (names), then one numeric row, or two with "both"; the tree shrinks to leave them room */
+    var rows = 1 + (NAMED ? 1 : 0) + (n ? (BOTH ? 2 : 1) : 0);
+    var f = rows >= 4 ? .75 : rows >= 3 ? .85 : 1, cy = rows >= 4 ? 140 : rows >= 3 ? 150 : 160;
+    var circ = !!(NM.s || NM.s1 || NM.s2);
+    var RS = circ ? 20 : 16, RC = circ ? (nA === 2 ? 17 : 15) : 13, RC2 = 11;
+    var pitch = nA === 2 ? 110 : circ ? 90 : 85, dS = circ ? 26 : 22;
+    function yy(d) { return Math.round((cy + d * f) * 10) / 10; }     /* a vertical offset from the root, scaled */
+    var ch = [], succ = [], i;
+    for (i = 0; i < nA; i++) {
+      var d = (i - (nA - 1) / 2) * pitch;
+      ch.push([230, yy(d)]); succ.push([[370, yy(d - dS)], [370, yy(d + dS)]]);
+    }
+    var p = succ[PICK][0], fans = [];
+    for (i = 0; i < nF; i++) fans.push([520, Math.round((p[1] + (i - (nF - 1) / 2) * 50 * f) * 10) / 10]);
+    var G = { root: [70, cy], RS: RS, RC: RC, RC2: RC2, ch: ch, succ: succ, fans: fans,
+      fanLabel: function (i) { return Y.succ(0) + ',' + Y.a1(i); }, fanLabels: k < 2 };
+    header(s, 70, 22, 'S_t'); header(s, 230, 22, 'A_t'); header(s, 370, 22, 'S_{t+1}'); header(s, 520, 22, ql ? '\\max A_{t+1}' : 'A_{t+1}');
+    var gLo = layer(s, FADE), gHi = layer(s);
+    baseTree(gLo, G, Y, PICK);
+    var root = G.root, c = G.ch[PICK];
+    /* step 0: the behaviour policy picks a^2 at s^0 */
+    edge(gHi, root[0], root[1], G.RS, c[0], c[1], G.RC, BLUE, { 'stroke-width': 2.6 });
+    elab(gHi, root[0], root[1], c[0], c[1], [Y.a(PICK, true)], nA === 2 ? -1 : 1, { t: .55, d: 10, fill: BLUE });
+    chance(gHi, c[0], c[1], G.RC, Y.s + ',' + Y.a(PICK, true), 'above');
+    if (nA === 2) tx(gHi, 8, cy + 62, 'a_t \\leftarrow ε\\text{-greedy}(Q(s_t,\\cdot))', { fill: BLUE, 'font-size': 9.5 });
+    else tx(gHi, 128, cy + 23, 'a_t \\leftarrow ε\\text{-greedy}(Q(s_t,\\cdot))', { fill: BLUE, 'font-size': 9.5 });
+    state(gHi, root[0], root[1], G.RS, Y.s, nfs(G.RS, NM.s, 12));
+    /* step 1: the world answers with s^1 and r_{t+1} */
+    if (k >= 1) {
+      edge(gHi, c[0], c[1], G.RC, p[0], p[1], G.RC, GREEN, { 'stroke-width': 2.6 });
+      elab(gHi, c[0], c[1], p[0], p[1], ['r_{t+1}'], 1, { t: .5, d: 11, fs: 11, fill: GREEN });
+      state(gHi, p[0], p[1], G.RC, Y.succ(0), nfs(G.RC, NM.s1, 12));
+    }
+    /* step 2: what the target reads at s^1: every action's value (Q-learning), or the one chosen next */
+    if (k >= 2) {
+      var g2 = layer(s);
+      G.fans.forEach(function (f, i) {
+        var on = ql || i === NEXT, picked = (!ql || BOTH) && i === NEXT;
+        var extra = picked ? { 'stroke-width': 2.6, 'stroke-dasharray': '6 4' } : ql ? { 'stroke-width': 2.2 } : {};
+        edge(g2, p[0], p[1], G.RC, f[0], f[1], G.RC2, BLUE, extra);
+        elab(g2, p[0], p[1], f[0], f[1], [Y.a1(i)], i === G.fans.length - 1 ? -1 : 1, { t: .62, d: 9, fs: 10, fill: on ? BLUE : SLATE });
+        chance(g2, f[0], f[1], G.RC2, '', 'right');
+        var val = n && n.qnext && n.qnext[i] != null ? ' = ' + n.qnext[i] : '';
+        var lbl = (ql || on) ? 'Q(' + G.fanLabel(i) + ')' + val : G.fanLabel(i);
+        tight(tx(g2, f[0] + G.RC2 + 5, f[1] + 4, lbl, { fill: (ql || on) ? GREEN : SLATE, 'font-size': 10.5, opacity: ql && !val ? .55 : 1 }));
+      });
+      if (ql) {
+        var last = G.fans[G.fans.length - 1];
+        var a0 = deg(p[0], p[1], G.fans[0][0], G.fans[0][1]), a1 = deg(p[0], p[1], last[0], last[1]);
+        maxArc(g2, p[0], p[1], 52, a0 - 8, a1 + 8);
+        tx(g2, last[0] - 12, last[1] + G.RC2 + 17, '\\max_{a′} Q(' + Y.succ(0) + ',a′)', { fill: RED, 'font-size': 11.5 });
+        if (BOTH) {
+          var ly = last[1] + G.RC2 + 30;
+          E('line', { x1: last[0] - 12, y1: ly, x2: last[0] + 16, y2: ly, stroke: BLUE, 'stroke-width': 2.4, 'stroke-dasharray': '6 4' }, g2);
+          tx(g2, last[0] + 22, ly + 4, 'the action the behaviour policy takes', { fill: BLUE, 'font-size': 10 });
+        }
+      }
+    }
+    /* step 3: the update, target in red */
+    var Qsa = 'Q(' + Y.s + ',' + Y.a(PICK, true) + ')';
+    var target = ql ? '\\max_{a′} Q(' + Y.succ(0) + ',a′)' : 'Q(' + G.fanLabel(NEXT) + ')';
+    if (k >= 3) {
+      var g3 = layer(s), y3 = rowY(H, rows, 0);
+      var t = line(g3, 30, y3, Qsa + '\\ \\leftarrow\\ ' + Qsa + ' + α[r_{t+1} + γ\\,\\red{' + target + '} − ' + Qsa + ']');
+      note(g3, t, y3, ql ? 'the best action, taken or not' : 'the action actually taken next', W, NAMED, rowY(H, rows, 1));
+    }
+    /* step 4: the numbers; with "both" the same transition backed up by each rule */
+    if (k >= 4 && n) {
+      var g4 = layer(s), r0 = NAMED ? 2 : 1;
+      function numeric(qn) {
+        var q = n.q + n.alpha * (n.r + n.gamma * qn - n.q);
+        return n.q + ' + ' + n.alpha + '[' + n.r + ' + ' + n.gamma + '\\cdot\\red{' + pn(qn) + '} − ' + pn(n.q) + '] = ' + fix2(q);
+      }
+      var qMax = Math.max.apply(null, n.qnext), qPick = n.qnext[NEXT];
+      if (BOTH) {
+        named(g4, 30, rowY(H, rows, r0), 'Q-learning:', Qsa + '\\ \\leftarrow\\ ' + numeric(qMax));
+        named(g4, 30, rowY(H, rows, r0 + 1), 'SARSA:', Qsa + '\\ \\leftarrow\\ ' + numeric(qPick));
+      } else line(g4, 30, rowY(H, rows, r0), '= ' + numeric(ql ? qMax : qPick));
+    }
+  }
+  function drawSarsa(k) { drawControl(k, false); }
+  function drawQlearn(k) { drawControl(k, true); }
+
   /* ---------- dispatch ---------- */
-  var DRAW = { tree: drawTree, eval: drawEval, opt: drawOpt, qopt: drawQopt, improve: drawImprove };
-  var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 2 };
+  var DRAW = { tree: drawTree, eval: drawEval, opt: drawOpt, qopt: drawQopt, improve: drawImprove,
+    'return': drawReturn, sample: drawSample, sarsa: drawSarsa, qlearn: drawQlearn };
+  var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 2,
+    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 4 : 3, qlearn: NUMS ? 4 : 3 };
   var draw = DRAW[MODE] || drawEval, n = STEPS[MODE] == null ? 2 : STEPS[MODE];
 
   function render(i) {
