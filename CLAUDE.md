@@ -50,8 +50,10 @@ docs/agent-notes/         the authoring decisions and the professor's slide feed
   throwing assertion, so restructuring the widget-registry section of `deck.js` breaks the landing
   page build loudly — that is intended.
 - Slides: English, British spelling, prose over bullet fragments, no exclamation marks. A slide is
-  a picture plus one key sentence; contrasted ideas go on separate lines; algebra goes to an
-  appendix slide and numbers to the presenter note. Label every formula block with what it is and where it is used. Related slides share one
+  a picture plus one key sentence; contrasted ideas go on separate lines; a derivation or a piece
+  of formula theory stays in the body right after the idea it supports, one line per press, never
+  in an appendix or archive (2026-11-11); numbers go to the presenter note. Label every formula
+  block with what it is and where it is used. Related slides share one
   figure format. Cite a paper only when it carries a step of the argument, and give the slide that
   introduces it a `::: paper` card: why it is here, what it is, why it matters. All of this is spelled
   out with its history in `docs/agent-notes/`.

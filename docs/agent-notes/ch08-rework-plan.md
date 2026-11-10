@@ -81,3 +81,18 @@ the DQN rung, appears with four rungs after Q-learning and six at the end of Act
 hand-over table is folded into its note; source page numbers and teaching cues moved out of slide
 text into notes; demos autoplay on arrival; `deck.js` now resets widgets before `showStep`, so
 arriving from the next slide shows a stepped widget's last picture (a bug Ch 7 had too).
+
+**Third pass, 2026-11-11**, after three post-deploy reviews (consolidated): the opening grid of
+problems (p. 9) is drawn by `rl-roadmap` with `grid: "problems"` in the same frame as the map, so
+slide 3 and the act openings read as one figure family; "Why Q-learning is off-policy" is the
+`qlearn` tree with `both` and `policies`, π_B in blue on the data and π_E in red at the max arc, the
+two rules written under it, in place of two underbrace formulas; the GPI caption says Q, and its
+second keypoint sentence (the exploration tax) moved to the note, which also removes the last real
+overflow; the Act 3 ladder is sized for its five plates (`upto`), not for all six; the random walk
+arrives after 100 episodes; the convergence slide's label names the theorem; the four captions
+that said "the source" or "press" are plain, with the press cues in notes. A fourth round the same
+day: the problems grid's row heads widened and its in-figure title made an axis question; the
+filled map greys off-policy Monte Carlo control as "not in this course" (`skip`); the control
+tree's canvas is shorter when it writes one row, which ends SARSA's 3 px overflow; no slide is over
+any more. The professor's policy, recorded in CLAUDE.md and `simplify-confusing-slides.md`:
+derivations and formula theory stay in the body and are taught, never archived in an appendix.

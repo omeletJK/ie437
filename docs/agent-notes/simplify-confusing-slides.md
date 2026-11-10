@@ -1,6 +1,6 @@
-# Simplify confusing slides: picture + one keypoint, algebra to appendix
+# Simplify confusing slides: picture + one keypoint; derivations in the body
 
-*When the professor says a slide is hard to understand, the confirmed fix is to simplify maximally — one picture plus one keypoint in the main body, derivation to the appendix*
+*When the professor says a slide is hard to understand, the confirmed fix is to simplify maximally — one picture plus one keypoint. Since 2026-11-11 the derivation stays in the body, one line per press, right after the idea; nothing goes to an appendix.*
 
 On 2026-10-13 the professor did not understand Lecture 5 pages 30–31 (a tabular COMs derivation
 followed by a three-design picture of it). Offered three options; the answer was "최대한 간단하게
@@ -30,3 +30,11 @@ the distributions being compared, as plain lines. A short label marks the point 
 misses this mode"). The second direction is introduced on the tilt slide, the one place it is used. Before
 building a stepped widget, name the one quantity that changes and the one reading the student
 should take away. Show a concept only on the slide where an argument needs it.
+
+**Derivations stay in the body (2026-11-11).** After the Ch 7 and Ch 8 rebuilds, a review proposed
+treating the derivation slides as optional material to skip on the day. The professor's policy:
+derivations and formula theory are not split off into an appendix or archive; they are part of the
+body and are taught. The Ch 7 shape is the standard: the picture first, then the derivation one
+line per press (`\step{k}`), labelled with what it is and where it is used, right after the idea
+it supports, with the numbers in the presenter note. The 2026-10-13 "algebra to the appendix" above
+is superseded; Ch 8 dissolved its appendix the same way on 2026-11-11.

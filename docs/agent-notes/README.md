@@ -13,7 +13,7 @@ note in the same commit as the change, so a clone always carries the current rul
 - [One figure format per story](one-figure-format-per-story.md) — related slides share the figure students met first (Ch 5 COMs → Act 1 chart); no panel ahead of its concept
 - [Label every formula block](label-every-formula-block.md) — an unlabelled L_opt block read as "another interpretation"; say what a formula is and where it is used, then show the mechanism
 - [One term, one picture](one-term-one-picture.md) — losses built term by term get one panel per objective, revealed with the term; the \htmlClass{frag} trick for growing an equation
-- [Simplify confusing slides: picture + one keypoint, algebra to appendix](simplify-confusing-slides.md) — the Lec 5 p.30–31 merge the professor asked for, and the two map files to renumber when headings merge
+- [Simplify confusing slides: picture + one keypoint; derivations in the body](simplify-confusing-slides.md) — the Lec 5 p.30–31 merge the professor asked for, the two map files to renumber when headings merge, and the 2026-11-11 rule that derivations are taught in the body, not archived
 - [Build on what they know — an undergraduate course](build-on-what-they-know.md) — advanced models are built in the main body from Ch 1–3's Bayes and optimisation; the Ch 6 ELBO restoration (2026-10-26)
 - [Papers serve the flow](papers-serve-the-flow.md) — no paper tours; cite only famous papers that carry a step of the core argument
 - [Introduce a paper: why here, what it is, why it matters](introduce-papers.md) — every slide that introduces a paper carries a `::: paper` card; Ch 5 and 6 done 2026-10-26, Ch 8–12 not yet

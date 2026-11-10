@@ -345,9 +345,10 @@ IE437.widget('mdp-pictures', function (host, opts) {
 
   /* ---------- ladder from the caller's plates (Ch 8 and later) ---------- */
   var PLATE_W = 480, PLATE_INDENT = 50, PLATE_MAX = 6;
-  function drawPlates(list, st) {
+  function drawPlates(list, st, nmax) {
     clear();
-    var n = Math.min(PLATE_MAX, list.length), tall = n > 4;
+    /* the drawing is sized for the plates this slide can reach (upto), not for every plate given */
+    var n = Math.min(PLATE_MAX, list.length, nmax || list.length), tall = n > 4;
     var pitch = tall ? 74 : 86, ph = tall ? 52 : 58, W = PLATE_W;
     var width = 10 + PLATE_INDENT * (n - 1) + W + 180;          /* room for the self-loop and its label */
     var s = svg(width, 20 + n * pitch);
@@ -527,7 +528,7 @@ IE437.widget('mdp-pictures', function (host, opts) {
     var plates = Array.isArray(opts.plates) && opts.plates.length ? opts.plates.slice(0, PLATE_MAX) : null;
     var lmax = plates ? plates.length - 1 : 3;
     var l0 = Math.max(0, Math.min(lmax, +opts.start || 0)), l1 = Math.max(l0, Math.min(lmax, opts.upto == null ? lmax : +opts.upto));
-    var lst = l0, lshow = function (i) { lst = Math.max(l0, Math.min(l1, l0 + i)); if (plates) drawPlates(plates, lst); else drawLadder(lst); };
+    var lst = l0, lshow = function (i) { lst = Math.max(l0, Math.min(l1, l0 + i)); if (plates) drawPlates(plates, lst, l1 + 1); else drawLadder(lst); };
     lshow(0);
     return { steps: l1 - l0, step: lshow, reset: function () { lshow(0); }, finish: function () { lshow(l1 - l0); } };
   }

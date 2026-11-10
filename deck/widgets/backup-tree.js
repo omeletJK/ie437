@@ -68,6 +68,12 @@
                    edge beside the max arc, and the last step writes both
                    numeric lines, "Q-learning:" and "SARSA:", prefixed in
                    slate, the backed-up value red in each.
+                   {"both": true, "policies": true} names the two policies
+                   instead (Ch 8 pp. 75–77): the data come from π_B (the
+                   blue edges, a_t and the dashed a′_B), the target of
+                   Q-learning from π_E = greedy(Q), never executed (red, at
+                   the max arc); without nums the last step writes the two
+                   update rules, SARSA's and Q-learning's, with that note.
    Both Ch 8 options: names {s, s1, s2, a, a1, actions[]} relabels the
    sampled path (s^0 → "x=−2", s^1 → the state reached, s^2 → the other
    successor, the chosen action → "heat", …) in node labels and in the
@@ -492,7 +498,8 @@ IE437.widget('backup-tree', function (host, opts) {
     var w = 0; try { w = t.getComputedTextLength(); } catch (e) { }
     if (!w) w = (t.textContent || '').length * 7.2;          /* the slide is not laid out yet */
     var x = parseFloat(t.getAttribute('x')) + w + 14;
-    if (own || x + str.length * 5.6 > W - 6) tx(g, W - 10, ownY == null ? y + 20 : ownY, str, { fill: RED, 'font-size': 11, 'text-anchor': 'end' });
+    var plain = str.replace(/\\text\{|\}/g, '');                 /* the markup takes no room */
+    if (own || x + plain.length * 5.6 > W - 6) tx(g, W - 10, ownY == null ? y + 20 : ownY, str, { fill: RED, 'font-size': 11, 'text-anchor': 'end' });
     else tx(g, x, y, str, { fill: RED, 'font-size': 11 });
   }
   /* the faded trajectory tree behind a sampled path: root, three actions with two outcomes
@@ -642,15 +649,17 @@ IE437.widget('backup-tree', function (host, opts) {
      three (Q-learning: red arc). Stepped (3; 4 with nums).
      ============================================================ */
   function drawControl(k, ql) {
-    var W = 760, H = 336, s = svg(W, H);
     var Y = symbols(true), PICK = 1, BOTH = ql && !!opts.both;
+    var POL = BOTH && !!opts.policies;                        /* name π_B on the data and π_E on the target */
     var n = NUMS, NEXT = n && n.pick != null ? n.pick : 0;   /* the action the behaviour policy takes next */
     /* how many actions: at the root names.actions decides, at s^1 qnext (or the same names) */
     var nA = NM.actions && NM.actions.length === 2 ? 2 : 3;
     var nF = n && n.qnext && n.qnext.length === 2 ? 2 : (nA === 2 ? 2 : 3);
     /* the rows written under the tree: the update, its note on its own row when the line is long
        (names), then one numeric row, or two with "both"; the tree shrinks to leave them room */
-    var rows = 1 + (NAMED ? 1 : 0) + (n ? (BOTH ? 2 : 1) : 0);
+    var rows = 1 + (NAMED ? 1 : 0) + (n ? (BOTH ? 2 : 1) : (POL ? 1 : 0));
+    /* one written row needs less canvas; the formula slides below the figure gain the room */
+    var W = 760, H = rows >= 2 ? 336 : 324, s = svg(W, H);
     var f = rows >= 4 ? .75 : rows >= 3 ? .85 : 1, cy = rows >= 4 ? 140 : rows >= 3 ? 150 : 160;
     var circ = !!(NM.s || NM.s1 || NM.s2);
     var RS = circ ? 20 : 16, RC = circ ? (nA === 2 ? 17 : 15) : 13, RC2 = 11;
@@ -673,8 +682,9 @@ IE437.widget('backup-tree', function (host, opts) {
     edge(gHi, root[0], root[1], G.RS, c[0], c[1], G.RC, BLUE, { 'stroke-width': 2.6 });
     elab(gHi, root[0], root[1], c[0], c[1], [Y.a(PICK, true)], nA === 2 ? -1 : 1, { t: .55, d: 10, fill: BLUE });
     chance(gHi, c[0], c[1], G.RC, Y.s + ',' + Y.a(PICK, true), 'above');
-    if (nA === 2) tx(gHi, 8, cy + 62, 'a_t \\leftarrow ε\\text{-greedy}(Q(s_t,\\cdot))', { fill: BLUE, 'font-size': 9.5 });
-    else tx(gHi, 128, cy + 23, 'a_t \\leftarrow ε\\text{-greedy}(Q(s_t,\\cdot))', { fill: BLUE, 'font-size': 9.5 });
+    var rootLbl = POL ? 'a_t ∼ π_B\\ \\text{(the behaviour policy drives)}' : 'a_t \\leftarrow ε\\text{-greedy}(Q(s_t,\\cdot))';
+    if (nA === 2) tx(gHi, 8, cy + 62, rootLbl, { fill: BLUE, 'font-size': 9.5 });
+    else tx(gHi, 128, cy + 23, rootLbl, { fill: BLUE, 'font-size': 9.5 });
     state(gHi, root[0], root[1], G.RS, Y.s, nfs(G.RS, NM.s, 12));
     /* step 1: the world answers with s^1 and r_{t+1} */
     if (k >= 1) {
@@ -703,14 +713,22 @@ IE437.widget('backup-tree', function (host, opts) {
         if (BOTH) {
           var ly = last[1] + G.RC2 + 30;
           E('line', { x1: last[0] - 12, y1: ly, x2: last[0] + 16, y2: ly, stroke: BLUE, 'stroke-width': 2.4, 'stroke-dasharray': '6 4' }, g2);
-          tx(g2, last[0] + 22, ly + 4, 'the action the behaviour policy takes', { fill: BLUE, 'font-size': 10 });
+          tx(g2, last[0] + 22, ly + 4, POL ? 'a′_B ∼ π_B\\text{, the action taken next}' : 'the action the behaviour policy takes', { fill: BLUE, 'font-size': 10 });
+          if (POL) tx(g2, last[0] - 12, ly + 17, 'π_E = \\text{greedy}(Q)\\text{, never executed}', { fill: RED, 'font-size': 10 });
         }
       }
     }
     /* step 3: the update, target in red */
     var Qsa = 'Q(' + Y.s + ',' + Y.a(PICK, true) + ')';
     var target = ql ? '\\max_{a′} Q(' + Y.succ(0) + ',a′)' : 'Q(' + G.fanLabel(NEXT) + ')';
-    if (k >= 3) {
+    if (k >= 3 && POL && !n) {
+      /* the two rules on the same tuple: SARSA reads π_B's next action, Q-learning reads π_E's */
+      var g3p = layer(s), yS = rowY(H, rows, 0), yQ = rowY(H, rows, 1);
+      var tS = named(g3p, 30, yS, 'SARSA:', Qsa + '\\ \\leftarrow\\ ' + Qsa + ' + α[r_{t+1} + γ\\,\\red{Q(' + Y.succ(0) + ',a′_B)} − ' + Qsa + ']');
+      note(g3p, tS, yS, 'a′_B\\text{: what } π_B \\text{ does}', W);
+      var tQ = named(g3p, 30, yQ, 'Q-learning:', Qsa + '\\ \\leftarrow\\ ' + Qsa + ' + α[r_{t+1} + γ\\,\\red{\\max_{a′} Q(' + Y.succ(0) + ',a′)} − ' + Qsa + ']');
+      note(g3p, tQ, yQ, '\\text{what } π_E \\text{ would do}', W);
+    } else if (k >= 3) {
       var g3 = layer(s), y3 = rowY(H, rows, 0);
       var t = line(g3, 30, y3, Qsa + '\\ \\leftarrow\\ ' + Qsa + ' + α[r_{t+1} + γ\\,\\red{' + target + '} − ' + Qsa + ']');
       note(g3, t, y3, ql ? 'the best action, taken or not' : 'the action actually taken next', W, NAMED, rowY(H, rows, 1));
