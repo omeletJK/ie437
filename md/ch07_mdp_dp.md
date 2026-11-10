@@ -320,24 +320,25 @@ Take the best action first, then follow the optimal policy. The max is over the 
 ### The Bellman optimality equation, derived
 {fill: top, math: compact}
 
-**Derivation of the Bellman optimality equation** — the best value is the best over policies, and the choice at $s$ can be split off from the rest of the policy:
+**Derivation of the Bellman optimality equation** — the best value is the best over all policies, and one maximum over policies can be taken in two stages, the entry at $s$ first:
 
 $$\begin{aligned}
 V^*(s) &= \max_{\pi} V^\pi(s) &&\textcolor{#D64545}{\scriptstyle \text{definition: the best any policy can do from } s} \\
 &\step{1}{= \max_{\pi}\ \sum_{s'} T\big(s,\pi(s),s'\big)\Big[R\big(s,\pi(s),s'\big)+\gamma\,V^\pi(s')\Big]} &&\step{1}{\textcolor{#D64545}{\scriptstyle \text{the Bellman expectation equation, for this } \pi}} \\
-&\step{2}{= \max_{a}\ \max_{\pi:\ \pi(s)=a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,V^\pi(s')\Big]} &&\step{2}{\textcolor{#D64545}{\scriptstyle \text{split } \pi \text{ into its choice at } s \text{ and everything else}}} \\
-&\step{3}{= \max_{a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,\max_{\pi}V^\pi(s')\Big]} &&\step{3}{\textcolor{#D64545}{\scriptstyle T\ge 0,\ \text{and the rest of } \pi \text{ only matters from } s' \text{ on: pick it best at each } s'}} \\
+&\step{2}{\phantom{=}\ \textcolor{#D64545}{\scriptstyle \text{a policy is a table, one action per state: } \pi=\big(\pi(s),\,\pi_{\text{rest}}\big)\text{, the entry at } s \text{ and all the others}}} \\
+&\step{2}{= \max_{a}\ \max_{\pi_{\text{rest}}}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,V^\pi(s')\Big]} &&\step{2}{\textcolor{#D64545}{\scriptstyle \text{one maximum in two stages: the entry at } s \text{ first, then the rest}}} \\
+&\step{3}{= \max_{a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,\max_{\pi}V^\pi(s')\Big]} &&\step{3}{\textcolor{#D64545}{\scriptstyle a \text{ sits in } T, R\text{; } \pi_{\text{rest}} \text{ only in } V^\pi(s')\text{; } T\ge0\text{, so the inner max moves inside}}} \\
 &\step{4}{= \max_{a}\ \sum_{s'} T(s,a,s')\Big[R(s,a,s')+\gamma\,V^*(s')\Big]} &&\step{4}{\textcolor{#D64545}{\text{the definition again, at } s'.\quad\blacksquare}}
 \end{aligned}$$
 
 ::: reveal
 ::: keypoint
-Line 3 is the principle of optimality: whatever is chosen now, ==the remainder must be optimal from wherever you land==, and because the state is Markov that remainder can be chosen at each $s'$ on its own.
+The fourth equality is the principle of optimality: whatever is chosen now, ==the remainder must be optimal from wherever you land==, and because the state is Markov that remainder can be chosen at each $s'$ on its own.
 :::
 :::
 
 ::: note
-One line per press. Line 1 writes the value of each candidate policy with its own Bellman expectation equation; nothing has been maximised yet. Line 2 only reorganises the maximum: choosing a policy is choosing an action at s and then a policy for everything else. Line 3 is the step with content. The inner max over the rest of pi sits inside a sum with non-negative weights T, and the rest of pi influences only V^pi(s'), so the best choice is to make V^pi(s') as large as possible at every s' separately; the Markov property is what allows one remainder policy to be best from every s' at once (a stationary deterministic optimal policy exists for a finite discounted MDP). Line 4 recognises max_pi V^pi(s') as V^*(s'). For Q^*: the same lines with the first action fixed, Q^*(s,a) = sum_s' T[R + gamma V^*(s')], and V^*(s') = max_a' Q^*(s',a') puts the max at the successor, which is the next slide.
+One line per press. Line 1 writes the value of each candidate policy with its own Bellman expectation equation; nothing has been maximised yet. Line 2 only reorganises the maximum, and this is the line students ask about: no second maximisation has appeared. A policy is a table, so choosing one is choosing its entry at s and then every other entry, and max over pairs equals max over the first coordinate of the max over the second, exactly as max_{x,y} f = max_x max_y f. The two maxes together range over the same set of tables as the one max before them. Line 3 is the step with content. The inner max over the rest of pi sits inside a sum with non-negative weights T, and the rest of pi influences only V^pi(s'), so the best choice is to make V^pi(s') as large as possible at every s' separately; the Markov property is what allows one remainder policy to be best from every s' at once (a stationary deterministic optimal policy exists for a finite discounted MDP). Line 4 recognises max_pi V^pi(s') as V^*(s'). For Q^*: the same lines with the first action fixed, Q^*(s,a) = sum_s' T[R + gamma V^*(s')], and V^*(s') = max_a' Q^*(s',a') puts the max at the successor, which is the next slide.
 :::
 
 ### Bellman optimality for $Q^*$ — the max moves to the next state
