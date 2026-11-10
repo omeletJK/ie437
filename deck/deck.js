@@ -545,17 +545,19 @@
     balance(sl);
     /* widgets mount above, so their step count is only known now */
     if (dir === 'back') step = stepsOn(cur);
-    showStep(sl, step, false);
     LIVE.forEach(function (w) {
       if (w.__host && sl.contains(w.__host)) {
         /* Arriving is the reset gesture. A widget you dragged or ran comes back
            clean when you step off the slide and step on again (up-arrow then
-           down-arrow), which is why none of them carries a reset button. */
+           down-arrow), which is why none of them carries a reset button.
+           Reset BEFORE showStep: arriving from the next slide lands on the
+           last step, and a stepped widget must then show its last picture. */
         if (w.reset) { try { w.reset(); } catch (e) { } }
         if (w.enter) w.enter();
       }
       else if (w.leave) w.leave();
     });
+    showStep(sl, step, false);
     pulseTry(sl);
     autoplay(sl);
     /* the first pass measures a slide whose widgets have only just mounted,

@@ -74,7 +74,7 @@ function mdInline(text) {
 /* "Act 3 — whose value?"  ->  "whose value?"  (the Act label lives in the kicker) */
 const stripLead = t => String(t).replace(/^\s*(act|part|appendix|closing)\b[^\u2014-]*[\u2014-]\s*/i, '')
   .replace(/^([a-z])/, (m) => m.toUpperCase());
-const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 const rawText = n => n.children.map(c => c.text || '').join('\n');
 
 /* ---------------- attribute line  {a: b, c: d} -------------------- */
