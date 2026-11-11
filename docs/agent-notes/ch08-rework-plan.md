@@ -132,3 +132,28 @@ readings of the deployed deck as an undergraduate or master's student would meet
   the slide's). An inline update in an algorithm box breaks mid-bracket unless the whole expression
   is wrapped in one brace group, `${…}$`. A widget drawn at 640 px looks lost on a slide of its own;
   `max-bias` is drawn at 1040 × 340.
+
+**Executed versus read, on the control trees (2026-11-11, after the lecture).** The SARSA and
+Q-learning trees drew the next action as a *dashed* blue edge ("chosen, not yet taken") beside two
+solid thin blue ones, and the professor read it the other way round: in the tree's own grammar a
+thick solid blue edge is the action taken and a faded one the action not taken, and the dashed line
+said nothing. The mechanism the pictures must carry is: SARSA chooses a′ by ε-greedy, puts it in
+the target, *and then executes it*; Q-learning reads the best action's value for the target and
+*never executes that choice*, the next action is chosen by ε-greedy only after the update. The
+widget now draws it so: at s′ SARSA's chosen a′ is thick blue, the other two stay faded; Q-learning's
+three branches are thin red (values read, not taken), the argmax thicker with "max … read for the
+target, not executed" beside its node; and a last press draws the execution in both, a green
+r_{t+2} transition from the blue branch to a blank s_{t+2} marked "executed", while the red max
+branch ends at its node. Rule for the whole family: blue = taken, red = read, no dashed edges for
+choices. The worked-number slides (names without `pick`) leave the execution out.
+
+**SARSA moves into Act 2 (2026-11-11, after the lecture).** The professor asked whether Acts 2
+and 3 were blurred: Act 2 is the improvement idea, Act 3 the on/off-policy question, yet Act 3
+opened with SARSA, which answers Act 2's question (the GPI loop with Act 1's other estimator), and
+"Act 3 on the map" lit a column (bootstrap) while its title names a row (whose value). The two
+SARSA slides (tree, algorithm box) now sit at the end of Act 2, after the Monte Carlo control demo
+so that box and demo stay adjacent, before the check. Act 2 lights the on-policy row (`mc-on`,
+`sarsa`); Act 3 lights `q` with `mc-off` greyed "not in this course"; the Q3 strip moved to the
+Q-learning slide, whose caption lost its second sentence to the note so the strip fits. Each act
+now follows one axis of the map: Act 1 the columns, Act 2 the on-policy row, Act 3 the off-policy
+row. Route slide, the GPI line and the revision-table note were updated to match.

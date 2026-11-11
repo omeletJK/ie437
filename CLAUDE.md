@@ -31,7 +31,7 @@ docs/agent-notes/         the authoring decisions and the professor's slide feed
 ## Read next, in this order
 
 1. `README.md` — how the build works, posting a notice, assignment materials, publishing.
-2. `docs/agent-notes/README.md` — the index of decisions. The ten *feedback* notes say how the
+2. `docs/agent-notes/README.md` — the index of decisions. The *feedback* notes say how the
    professor wants slides to teach; they override your own taste.
 3. `md/_SCHEMA.md`, then `md/_AGENT_BRIEF.md` and `md/_CHAIN.md` when you work on a chapter.
 
@@ -50,7 +50,8 @@ docs/agent-notes/         the authoring decisions and the professor's slide feed
   throwing assertion, so restructuring the widget-registry section of `deck.js` breaks the landing
   page build loudly — that is intended.
 - Slides: English, British spelling, prose over bullet fragments, no exclamation marks. A slide is
-  a picture plus one key sentence; contrasted ideas go on separate lines; a derivation or a piece
+  a picture plus one key sentence; contrasted ideas go on separate lines; one sentence per line,
+  never a sentence that starts mid-line or strands a word at a wrap (2026-11-11); a derivation or a piece
   of formula theory stays in the body right after the idea it supports, one line per press, never
   in an appendix or archive (2026-11-11); numbers go to the presenter note. Label every formula
   block with what it is and where it is used. Related slides share one

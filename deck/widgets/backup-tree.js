@@ -55,25 +55,34 @@
                    V(s) ← V(s) + α[G_t − V(s)] written under the TD line,
                    so the picture shows what MC had to wait for).
    mode "sarsa"    Ch 8 pp. 51–55 — a^2 at s^0 by ε-greedy, r_{t+1} to
-                   s^1, then the action actually chosen next (blue,
-                   dashed: chosen, not yet taken) names the target.
-                   Stepped (3; 4 with nums {q, r, qnext[], pick, alpha,
-                   gamma}, pick indexing qnext).
-   mode "qlearn"   Ch 8 pp. 62–66 — the same through step 1; at s^1 all
-                   actions with the red max arc. Same nums; with nums the
-                   fan's chance nodes carry their values Q(s^1,a^i) = qnext[i]
-                   and the fan has qnext.length edges (two or three).
-                   Stepped (3; 4 with nums). {"both": true} also draws the
-                   behaviour policy's pick (nums.pick) as SARSA's blue dashed
-                   edge beside the max arc, and the last step writes both
-                   numeric lines, "Q-learning:" and "SARSA:", prefixed in
-                   slate, the backed-up value red in each.
+                   s^1, then the action chosen next by the same policy as a
+                   thick blue edge (the tree's "taken" mark; the other two
+                   stay faded), its value green under the node: it stands in
+                   the target. The last press executes it: a green
+                   transition r_{t+2} to a blank s_{t+2}. Stepped (4; 5 with
+                   nums {q, r, qnext[], pick, alpha, gamma}, pick indexing
+                   qnext; the numbers come before the execution).
+   mode "qlearn"   Ch 8 pp. 62–66 — the same through step 1; at s^1 the
+                   three actions are thin red edges (values read, not
+                   taken), the argmax (from qnext, else the middle one)
+                   thicker, the red max arc across them, "read for the
+                   target, not executed" beside the best node. The last
+                   press draws the action ε-greedy then executes (nums.pick,
+                   else the bottom one) as a thick blue edge continuing to
+                   s_{t+2}; the max branch ends. Without nums or pick (the
+                   worked numbers) the execution is left out. Same nums;
+                   with nums the fan has qnext.length edges (two or three)
+                   and the values are written. {"both": true} draws the
+                   executed action blue from step 2, as SARSA's tuple knows
+                   it, and the last numeric step writes both lines,
+                   "Q-learning:" and "SARSA:", prefixed in slate, the
+                   backed-up value red in each.
                    {"both": true, "policies": true} names the two policies
                    instead (Ch 8 pp. 75–77): the data come from π_B (the
-                   blue edges, a_t and the dashed a′_B), the target of
-                   Q-learning from π_E = greedy(Q), never executed (red, at
-                   the max arc); without nums the last step writes the two
-                   update rules, SARSA's and Q-learning's, with that note.
+                   blue edges, a_t and a′_B), the target of Q-learning from
+                   π_E = greedy(Q), never executed (red, at the max arc);
+                   without nums the last written step gives the two update
+                   rules, SARSA's and Q-learning's, with that note.
    Both Ch 8 options: names {s, s1, s2, a, a1, actions[]} relabels the
    sampled path (s^0 → "x=−2", s^1 → the state reached, s^2 → the other
    successor, the chosen action → "heat", …) in node labels and in the
@@ -643,18 +652,33 @@ IE437.widget('backup-tree', function (host, opts) {
 
   /* ============================================================
      sarsa (pp. 51–55) and qlearn (pp. 62–66): two levels of the tree,
-     the behaviour policy's a^2 at s^0, the observed r_{t+1} to s^1,
-     then at s^1 either the action actually chosen next (SARSA: blue,
-     dashed because it is chosen, not yet taken) or the max over all
-     three (Q-learning: red arc). Stepped (3; 4 with nums).
+     the behaviour policy's a^2 at s^0, the observed r_{t+1} to s^1, then
+     what happens at s^1. The grammar is the tree's own: a thick blue
+     edge is an action the agent takes, a faded one an action it does
+     not, a thin red edge a value only read. SARSA: a′ chosen (blue),
+     the update reads it, then it is executed. Q-learning: the three
+     values read (red) and the max backed up; after the update the agent
+     chooses a′ by ε-greedy (blue), whichever it is, and executes it; the
+     max branch ends there, never executed. The last press draws the
+     execution: a green transition from the blue branch to s_{t+2}.
+     Stepped (4; 5 with nums, the numbers before the execution).
      ============================================================ */
   function drawControl(k, ql) {
     var Y = symbols(true), PICK = 1, BOTH = ql && !!opts.both;
     var POL = BOTH && !!opts.policies;                        /* name π_B on the data and π_E on the target */
-    var n = NUMS, NEXT = n && n.pick != null ? n.pick : 0;   /* the action the behaviour policy takes next */
+    var n = NUMS;
+    var hasPick = !!(n && n.pick != null);
+    var NEXT = hasPick ? n.pick : (ql ? 2 : 0);              /* the action the behaviour policy takes next */
     /* how many actions: at the root names.actions decides, at s^1 qnext (or the same names) */
     var nA = NM.actions && NM.actions.length === 2 ? 2 : 3;
     var nF = n && n.qnext && n.qnext.length === 2 ? 2 : (nA === 2 ? 2 : 3);
+    /* the argmax at s^1: from qnext when given, else the middle action, so that the picture has one */
+    var ARG = 1;
+    if (n && n.qnext) { ARG = 0; for (i = 1; i < n.qnext.length; i++) if (n.qnext[i] > n.qnext[ARG]) ARG = i; }
+    if (ARG >= nF) ARG = nF - 1;
+    /* Q-learning draws the executed action only where the story has one: the concept slides
+       (no nums) and the comparisons (nums.pick); the worked numbers alone leave it out */
+    var EXEC = !ql || !n || hasPick, kExec = n ? 5 : 4;
     /* the rows written under the tree: the update, its note on its own row when the line is long
        (names), then one numeric row, or two with "both"; the tree shrinks to leave them room */
     var rows = 1 + (NAMED ? 1 : 0) + (n ? (BOTH ? 2 : 1) : (POL ? 1 : 0));
@@ -692,30 +716,51 @@ IE437.widget('backup-tree', function (host, opts) {
       elab(gHi, c[0], c[1], p[0], p[1], ['r_{t+1}'], 1, { t: .5, d: 11, fs: 11, fill: GREEN });
       state(gHi, p[0], p[1], G.RC, Y.succ(0), nfs(G.RC, NM.s1, 12));
     }
-    /* step 2: what the target reads at s^1: every action's value (Q-learning), or the one chosen next */
+    /* the fan node labels sit under their nodes, so that the executed branch can continue to the right */
+    function fanText(g, i, str, col, op) {
+      var f = G.fans[i];
+      tight(tx(g, f[0], f[1] + G.RC2 + 12, str, { 'text-anchor': 'middle', fill: col, 'font-size': 10.5, opacity: op == null ? 1 : op }));
+    }
+    /* the executed next action: a thick blue edge, as a_t at the root */
+    function execEdge(g, i, lbl, withLabel) {
+      var f = G.fans[i];
+      edge(g, p[0], p[1], G.RC, f[0], f[1], G.RC2, BLUE, { 'stroke-width': 2.6 });
+      if (withLabel) elab(g, p[0], p[1], f[0], f[1], [Y.a1(i)], i === G.fans.length - 1 ? -1 : 1, { t: .62, d: 9, fs: 10, fill: BLUE });
+      chance(g, f[0], f[1], G.RC2, '', 'right');
+      if (lbl) tx(g, 430, G.fans[G.fans.length - 1][1] + G.RC2 + 34, lbl, { fill: BLUE, 'font-size': 9.5 });
+    }
+    var nextLbl = POL ? 'a′_B ∼ π_B\\text{: chosen by the policy that acts}'
+      : ql ? 'a′ \\leftarrow ε\\text{-greedy}(Q(s′,\\cdot))\\text{: chosen after the update, best or not}'
+      : 'a′ \\leftarrow ε\\text{-greedy}(Q(s′,\\cdot))\\text{: chosen now, in the target}';
+    var blueNow = ql && EXEC && (BOTH || k >= kExec);        /* the executed action is already known in blue */
+    /* step 2: what the target reads at s^1 */
     if (k >= 2) {
       var g2 = layer(s);
-      G.fans.forEach(function (f, i) {
-        var on = ql || i === NEXT, picked = (!ql || BOTH) && i === NEXT;
-        var extra = picked ? { 'stroke-width': 2.6, 'stroke-dasharray': '6 4' } : ql ? { 'stroke-width': 2.2 } : {};
-        edge(g2, p[0], p[1], G.RC, f[0], f[1], G.RC2, BLUE, extra);
-        elab(g2, p[0], p[1], f[0], f[1], [Y.a1(i)], i === G.fans.length - 1 ? -1 : 1, { t: .62, d: 9, fs: 10, fill: on ? BLUE : SLATE });
-        chance(g2, f[0], f[1], G.RC2, '', 'right');
-        var val = n && n.qnext && n.qnext[i] != null ? ' = ' + n.qnext[i] : '';
-        var lbl = (ql || on) ? 'Q(' + G.fanLabel(i) + ')' + val : G.fanLabel(i);
-        tight(tx(g2, f[0] + G.RC2 + 5, f[1] + 4, lbl, { fill: (ql || on) ? GREEN : SLATE, 'font-size': 10.5, opacity: ql && !val ? .55 : 1 }));
-      });
-      if (ql) {
-        var last = G.fans[G.fans.length - 1];
-        var a0 = deg(p[0], p[1], G.fans[0][0], G.fans[0][1]), a1 = deg(p[0], p[1], last[0], last[1]);
-        maxArc(g2, p[0], p[1], 52, a0 - 8, a1 + 8);
-        tx(g2, last[0] - 12, last[1] + G.RC2 + 17, '\\max_{a′} Q(' + Y.succ(0) + ',a′)', { fill: RED, 'font-size': 11.5 });
-        if (BOTH) {
-          var ly = last[1] + G.RC2 + 30;
-          E('line', { x1: last[0] - 12, y1: ly, x2: last[0] + 16, y2: ly, stroke: BLUE, 'stroke-width': 2.4, 'stroke-dasharray': '6 4' }, g2);
-          tx(g2, last[0] + 22, ly + 4, POL ? 'a′_B ∼ π_B\\text{, the action taken next}' : 'the action the behaviour policy takes', { fill: BLUE, 'font-size': 10 });
-          if (POL) tx(g2, last[0] - 12, ly + 17, 'π_E = \\text{greedy}(Q)\\text{, never executed}', { fill: RED, 'font-size': 10 });
-        }
+      if (!ql) {
+        /* SARSA: one action chosen now, the others stay faded; its value is the target */
+        execEdge(g2, NEXT, nextLbl, true);
+        var vS = n && n.qnext && n.qnext[NEXT] != null ? ' = ' + n.qnext[NEXT] : '';
+        fanText(g2, NEXT, 'Q(' + G.fanLabel(NEXT) + ')' + vS, GREEN);
+      } else {
+        /* Q-learning: every action's value is read, in red, and the max is kept */
+        G.fans.forEach(function (f, i) {
+          var val = n && n.qnext && n.qnext[i] != null ? ' = ' + n.qnext[i] : '';
+          var isNext = blueNow && i === NEXT;
+          if (!isNext) edge(g2, p[0], p[1], G.RC, f[0], f[1], G.RC2, RED, { 'stroke-width': i === ARG ? 2.2 : 1.3, opacity: i === ARG ? 1 : .6 });
+          elab(g2, p[0], p[1], f[0], f[1], [Y.a1(i)], i === G.fans.length - 1 ? -1 : 1, { t: .62, d: 9, fs: 10, fill: isNext ? BLUE : i === ARG ? RED : SLATE });
+          chance(g2, f[0], f[1], G.RC2, '', 'right');
+          if (i !== ARG) fanText(g2, i, 'Q(' + G.fanLabel(i) + ')' + val, GREEN, val ? 1 : .55);
+        });
+        var fst = G.fans[0], lst = G.fans[G.fans.length - 1];
+        maxArc(g2, p[0], p[1], 52, deg(p[0], p[1], fst[0], fst[1]) - 8, deg(p[0], p[1], lst[0], lst[1]) + 8);
+        /* the best action's node carries the max itself, beside it; above it when that branch also continues */
+        var fa = G.fans[ARG], mx = fa[0] + G.RC2 + 6, my = fa[1] + 4;
+        if (EXEC && ARG === NEXT) { mx = fa[0] - 30; my = fa[1] - G.RC2 - 21; }
+        var vMax = n && n.qnext ? ' = ' + n.qnext[ARG] : '';
+        tight(tx(g2, mx, my, '\\max_{a′} Q(' + Y.succ(0) + ',a′)' + vMax + (POL ? '\\text{: } π_E = \\text{greedy}(Q)' : ''), { fill: RED, 'font-size': 11 }));
+        tx(g2, mx, my + 13, POL ? '\\text{read for the target, never executed}' : '\\text{read for the target, not executed}', { fill: RED, 'font-size': 9.5 });
+        /* the comparisons know the action taken next already: SARSA's tuple carries it */
+        if (BOTH && EXEC) execEdge(g2, NEXT, nextLbl, false);
       }
     }
     /* step 3: the update, target in red */
@@ -731,7 +776,7 @@ IE437.widget('backup-tree', function (host, opts) {
     } else if (k >= 3) {
       var g3 = layer(s), y3 = rowY(H, rows, 0);
       var t = line(g3, 30, y3, Qsa + '\\ \\leftarrow\\ ' + Qsa + ' + α[r_{t+1} + γ\\,\\red{' + target + '} − ' + Qsa + ']');
-      note(g3, t, y3, ql ? 'the best action, taken or not' : 'the action actually taken next', W, NAMED, rowY(H, rows, 1));
+      note(g3, t, y3, ql ? 'the best action, executed or not' : 'the action chosen, executed next', W, NAMED, rowY(H, rows, 1));
     }
     /* step 4: the numbers; with "both" the same transition backed up by each rule */
     if (k >= 4 && n) {
@@ -746,6 +791,19 @@ IE437.widget('backup-tree', function (host, opts) {
         named(g4, 30, rowY(H, rows, r0 + 1), 'SARSA:', Qsa + '\\ \\leftarrow\\ ' + numeric(qPick));
       } else line(g4, 30, rowY(H, rows, r0), '= ' + numeric(ql ? qMax : qPick));
     }
+    /* last step: the execution. Q-learning chooses its next action only now, by ε-greedy, whichever
+       it is; the blue branch continues into the world with a green transition to s_{t+2}, the max
+       branch does not */
+    if (k >= kExec && EXEC) {
+      var g5 = layer(s);
+      if (ql && !BOTH) execEdge(g5, NEXT, nextLbl, false);
+      var fx = G.fans[NEXT], sx = [640, fx[1]];
+      header(g5, 640, 22, 'S_{t+2}');
+      edge(g5, fx[0], fx[1], G.RC2, sx[0], sx[1], G.RC, GREEN, { 'stroke-width': 2.6 });
+      elab(g5, fx[0], fx[1], sx[0], sx[1], ['r_{t+2}'], 1, { t: .5, d: 10, fs: 10.5, fill: GREEN });
+      state(g5, sx[0], sx[1], G.RC, '', 11);
+      tx(g5, sx[0] + G.RC + 6, sx[1] + 4, '\\text{executed}', { fill: GREEN, 'font-size': 10 });
+    }
   }
   function drawSarsa(k) { drawControl(k, false); }
   function drawQlearn(k) { drawControl(k, true); }
@@ -754,7 +812,7 @@ IE437.widget('backup-tree', function (host, opts) {
   var DRAW = { tree: drawTree, eval: drawEval, opt: drawOpt, qopt: drawQopt, improve: drawImprove,
     'return': drawReturn, sample: drawSample, sarsa: drawSarsa, qlearn: drawQlearn };
   var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 2,
-    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 4 : 3, qlearn: NUMS ? 4 : 3 };
+    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 5 : 4, qlearn: NUMS ? 5 : 4 };
   var draw = DRAW[MODE] || drawEval, n = STEPS[MODE] == null ? 2 : STEPS[MODE];
 
   function render(i) {

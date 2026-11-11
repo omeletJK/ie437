@@ -19,7 +19,9 @@ note in the same commit as the change, so a clone always carries the current rul
 - [Introduce a paper: why here, what it is, why it matters](introduce-papers.md) — every slide that introduces a paper carries a `::: paper` card; Ch 5 and 6 done 2026-10-26, Ch 8–12 not yet
 - [Relations between methods: a ladder of deletions](algorithm-relations-as-a-ladder.md) — a family of algorithms is one formula on indented plates, the changed token in red, a loop arrow per scope (Ch 7 summary, 2026-11-09)
 - [One idea per line when contrasting](one-idea-per-line.md) — two concepts set against each other get two sentences on two lines, not one run joined by a semicolon
+- [One sentence, one line](one-sentence-per-line.md) — no sentence starts mid-line and no word is stranded by a wrap; `lede`, `small` and captions now break where the source breaks, as keypoints do (Ch 8, 2026-11-11)
 - [Formula, then algorithm, then the moving picture](formula-then-algorithm-then-demo.md) — an animated demo of a procedure comes after the labelled update rule and an algorithm box in the standard form (Ch 7 policy evaluation, 2026-11-09)
+- [algorithm-box](algorithm-box.md) — pseudocode as structure: keyword column, indentation for scope, one lit update line; `::: algorithm` replaced the ten `::: block Algorithm` panels (2026-11-11)
 
 ## Decisions about the course, the repository and the packages
 

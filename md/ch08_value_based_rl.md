@@ -54,7 +54,8 @@ The tracker shows the crossing: still dynamic, still one agent, but the model ax
 {sub: four cells the course has now visited}
 
 ::: widget rl-roadmap {"grid":"problems","cells":["bandit","rl"]}
-Down a row the action changes the next state; across a column the model is gone and only experience remains. ==This lecture takes the step across, first for one state, then for many.==
+Down a row the action changes the next state; across a column the model is gone and only experience remains.
+==This lecture takes the step across, first for one state, then for many.==
 :::
 
 ::: note
@@ -64,8 +65,8 @@ Source p. 9. The same frame returns as the map of model-free methods from the ne
 ### Learning route — change the target, then change the representation
 ::: flow
 - **Act 1 · evaluate** | bandit, experience, Monte Carlo and TD targets
-- **Act 2 · improve** | greedy on $Q$, and the price of exploring
-- **Act 3 · whose value** | SARSA and Q-learning on the backup tree
+- **Act 2 · improve** | greedy on $Q$ and the price of exploring; Monte Carlo control and SARSA
+- **Act 3 · whose value** | Q-learning against SARSA on the backup tree
 - **Act 4 · scale** | a network for the table, and the three problems it brings
 :::
 
@@ -75,7 +76,8 @@ Source p. 9. The same frame returns as the map of model-free methods from the ne
 
 ::: reveal
 ::: keypoint
-Read every backup picture as Lecture 7's tree with one thing sampled. Algorithm boxes come before every demo: ==predict the demo from the box.==
+Read every backup picture as Lecture 7's tree with one thing sampled.
+Algorithm boxes come before every demo: ==predict the demo from the box.==
 :::
 :::
 
@@ -86,15 +88,19 @@ First pass: follow the idea from a sampled return to a sampled one-step target, 
 ## Act 1 — evaluation without a model
 {short: ACT 1, num: Act 1}
 
-**Q1.** Fix a policy. With no $T$ and no $R$, how good is it?
+**Q1.** Fix a policy.\
+With no $T$ and no $R$, how good is it?
 
 ### Act 1 on the map
 ::: widget rl-roadmap {}
-The map of model-free methods. Columns: estimate from whole episodes, or from single transitions. Rows: evaluate the policy that collects the data, or another one. ==Act 1 fills in the two columns for a fixed policy.==
+Columns: estimate from whole episodes, or from single transitions; rows: evaluate the policy that collects the data, or another one.
+==Act 1 fills in the two columns for a fixed policy.==
 :::
 
 ::: small
-**Four words the map uses.** *Prediction* scores a fixed policy; *control* finds a better one. To *bootstrap* is to build the target from your own current estimate of the next state, without waiting for the outcome. *On-policy* methods learn the value of the policy that collects the data; *off-policy* methods learn the value of a different one.
+**Four words the map uses.** *Prediction* scores a fixed policy; *control* finds a better one.
+To *bootstrap* is to build the target from your own current estimate of the next state, without waiting for the outcome.
+*On-policy* methods learn the value of the policy that collects the data; *off-policy* methods learn the value of a different one.
 :::
 
 ::: note
@@ -108,7 +114,8 @@ Source pp. 12, 17, 49, 59: the same table appears four times with the current ce
 :::
 
 ::: widget bandit-arms {"mode":"arms","eps":0.1,"seed":3}
-Five levers, each paying a random reward around a hidden mean. Pull, and the bar is the ==average of what that arm paid so far==; the dot is the hidden mean. The count under each arm is how often it was tried. Before each pull, say which arm you would choose next.
+Each lever pays a random reward around a hidden mean, the dot; the bar is the ==average of what that arm paid so far==, and the count below it is how often it was tried.
+Before each pull, say which arm you would choose next.
 :::
 
 ::: small
@@ -121,7 +128,9 @@ Source pp. 4–7: the n-armed bandit. No states to move between: choose an arm, 
 
 ### The exploration trade-off, counted
 ::: widget bandit-arms {"mode":"curves"}
-Ten arms, two hundred fresh bandits, a thousand pulls. The greedy player locks onto the first good arm. ==A little exploring pays a little every step and finds the best arm.==
+Ten arms, two hundred fresh bandits, a thousand pulls.
+The greedy player locks onto the first good arm.
+==A little exploring pays a little every step and finds the best arm.==
 :::
 
 **$\varepsilon$-greedy** — the exploration rule of every algorithm in this lecture, with $Q_t(a)$ the estimate after $t$ pulls:
@@ -157,7 +166,8 @@ Source p. 29, moved here so that alpha is met on the simplest problem before any
 
 ### The arena — from MDP to experience
 ::: widget mdp-pictures {"mode":"loop"}
-Lecture 7's loop, unchanged. What changed is what we can see: the agent acts, the environment answers with a reward and a state, and ==that stream is the only window onto $T$ and $R$.==
+Lecture 7's loop, unchanged.
+What changed is what we can see: the agent acts, the environment answers with a reward and a state, and ==that stream is the only window onto $T$ and $R$.==
 :::
 
 **The template of reinforcement learning** — one line per step:
@@ -172,7 +182,8 @@ Source pp. 10–11. The MDP of Lecture 7 is offline: have a model, find the poli
 {sub: four episodes, and the model they imply}
 
 ::: widget mdp-pictures {"mode":"count"}
-Four episodes under one policy. ==Count how often each transition happened== and the model is a table of fractions; average the rewards and $\hat R$ is a table of means.
+Four episodes under one policy.
+==Count how often each transition happened== and the model is a table of fractions; average the rewards and $\hat R$ is a table of means.
 :::
 
 **Model-based reinforcement learning** — estimate, then solve with Lecture 7; $T(s,a,s')$ is the transition probability $P(s'\mid s,a)$:
@@ -194,13 +205,15 @@ $$Q^*(s,a) = \sum_{s'} \textcolor{#D64545}{\hat T(s,a,s')}\Big[\textcolor{#D6454
 ::: keypoint
 To choose an action we only ever read $Q^*$.
 The model is a detour: a whole transition kernel estimated, then summed away.
-==Skip the model and estimate the value.== That is the model-free programme, and the rest of today.
+==Skip the model and estimate the value==: the model-free programme, and the rest of today.
 :::
 :::
 
 ::: reveal
 ::: small
-**The route there.** Act 1 scores a fixed policy, $V^\pi$, because the sampling idea is cleanest there. Act 2 runs the same update on pairs $(s,a)$ to get $Q^\pi$. Act 3 reaches $Q^*$.
+**The route there.** Act 1 scores a fixed policy, $V^\pi$, because the sampling idea is cleanest there.
+Act 2 runs the same update on pairs $(s,a)$ to get $Q^\pi$.
+Act 3 reaches $Q^*$.
 :::
 :::
 
@@ -235,7 +248,8 @@ Source pp. 43–45. This is Lecture 7's Bellman derivation again, with the model
 
 ### Monte Carlo prediction — average what actually happened
 ::: widget backup-tree {"mode":"return"}
-Lecture 7's tree with one path lit: the episode that actually happened, reward by reward, to the end. ==The return along that path is the sample== of line 2.
+Lecture 7's tree with one path lit: the episode that actually happened, reward by reward, to the end.
+==The return along that path is the sample== of line 2.
 :::
 
 **Monte Carlo update** — policy evaluation by returns: the incremental mean with the return $G_t$ as its target; the episode ends at step $T$:
@@ -249,30 +263,35 @@ Source pp. 19–25. Unbiased: the expectation of G_t is V^pi(s_t) exactly. No mo
 ### Algorithm — Monte Carlo prediction
 **First-visit Monte Carlo** — the evaluation half of Act 2's control loop:
 
-::: block Algorithm — Monte Carlo prediction | input $\pi$, step size $\alpha$; output $V\approx V^\pi$
-Initialise $V(s)\leftarrow 0$ for every $s\in\mathcal S$.
-
-1. Generate an episode $s_0,a_0,r_1,s_1,\dots,s_T$ by following $\pi$.
-2. For $t=T-1,\dots,0$: &nbsp; $G\leftarrow r_{t+1}+\gamma G$; &nbsp; if $s_t$ is first visited at $t$: &nbsp; $V(s_t)\leftarrow V(s_t)+\alpha\,[G-V(s_t)]$.
-3. Repeat from 1 for the next episode.
+::: algorithm Monte Carlo prediction | input $\pi$, step size $\alpha$; output $V\approx V^\pi$
+[initialise] $V(s)\leftarrow 0$ for every $s\in\mathcal S$
+[for each] episode
+  [run $\pi$] $s_0,a_0,r_1,s_1,\dots,r_T,s_T$ // act to the end; no update yet
+  [for each] state $s_t$ first visited at $t$
+    [return] $G_t\leftarrow r_{t+1}+\gamma r_{t+2}+\cdots+\gamma^{T-t-1}r_T$ // what actually happened after $t$
+  ! [learn] $V(s_t)\leftarrow V(s_t)+\alpha\,[\red{G_t}-V(s_t)]$ // the only line that changes down the ladder
+---
+in code the returns come from one backward pass: for $t=T-1,\dots,0$, &nbsp; $G\leftarrow r_{t+1}+\gamma G$, so each return costs one addition
 :::
 
 ::: small
-**First-visit** uses only the return after the first time a state appears in an episode; **every-visit** uses the return after each appearance. Both converge to $V^\pi$; the boxes in this lecture use first-visit.
+**First-visit** uses only the return after the first time a state appears in an episode; **every-visit** uses the return after each appearance.
+Both converge to $V^\pi$; the boxes in this lecture use first-visit.
 :::
 
 ::: note
-Source pp. 19–21 and 34. Step 2 walks the episode backwards so each return is one addition. The same loop with (s_t, a_t) in place of s_t estimates Q^pi, which Act 2 needs.
+Source pp. 19–21 and 34. The box reads in the order of the idea: run, collect each return, learn. The footer gives the implementation: walk the episode backwards so one running G collects every return, G_t = r_{t+1} + gamma G_{t+1}, one addition per step; walking forwards would re-sum the rest of the episode at every t. The same loop with (s_t, a_t) in place of s_t estimates Q^pi, which Act 2 needs.
 :::
 
 ### Temporal difference — learn a guess from a guess
 {sub: one real step, then your own estimate of the rest}
 
 ::: widget backup-tree {"mode":"sample"}
-The same tree, cut after one step. Both successors were possible; ==only one of them happened==, with its reward. The cone at the state we landed in is our own current estimate of the rest.
+The same tree, cut after one step: ==only one successor happened==, and the cone below it is our own estimate of the rest.
 :::
 
-**TD(0) update** — policy evaluation by one step. Putting the estimate $V(s_{t+1})$ inside the target is what ==bootstrapping== means:
+**TD(0) update** — policy evaluation by one step.\
+Putting the estimate $V(s_{t+1})$ inside the target is what ==bootstrapping== means:
 
 $$V(s_t) \;\leftarrow\; V(s_t) + \alpha\big[\,\underbrace{r_{t+1} + \gamma V(s_{t+1})}_{\textcolor{#D64545}{\text{the TD target}}} - V(s_t)\,\big]$$
 
@@ -282,7 +301,8 @@ Source pp. 44–46. Do not wait: after a single transition (s_t, r_{t+1}, s_{t+1
 
 ### One transition, two targets
 ::: widget backup-tree {"mode":"sample","nums":{"v":2,"v1":3,"r":1,"alpha":0.2,"gamma":0.9,"mc":{"r2":4}}}
-The same transition with numbers on it. The TD target is available ==the moment the step is taken==; the Monte Carlo target only once the episode has ended, one step and a reward of 4 later.
+The same transition with numbers on it.
+The TD target is available ==the moment the step is taken==; the Monte Carlo target only once the episode has ended, one step and a reward of 4 later.
 :::
 
 ::: note
@@ -292,12 +312,14 @@ V(s) = 2, V(s') = 3, alpha = 0.2, gamma = 0.9, reward 1 on the first step. TD ta
 ### Algorithm — tabular TD(0)
 **TD(0) prediction** — the loop the next demo runs:
 
-::: block Algorithm — tabular TD(0) | input $\pi$, step size $\alpha$; output $V\approx V^\pi$
-Initialise $V(s)\leftarrow 0$ for every $s\in\mathcal S$.
-
-1. Initialise $s$ at the start of an episode.
-2. Repeat for each step: &nbsp; $a\leftarrow\pi(s)$; &nbsp; take $a$, observe $r$, $s'$; &nbsp; $V(s)\leftarrow V(s)+\alpha\,[r+\gamma V(s')-V(s)]$; &nbsp; $s\leftarrow s'$;
-3. until $s$ is terminal; then repeat from 1.
+::: algorithm tabular TD(0) | input $\pi$, step size $\alpha$; output $V\approx V^\pi$
+[initialise] $V(s)\leftarrow 0$ for every $s\in\mathcal S$
+[for each] episode
+  [start] $s\leftarrow s_0$
+  [for each] step, until $s$ is terminal
+    [act] $a\leftarrow\pi(s)$; take $a$, observe $r$, $s'$ // one transition
+  ! [learn] $V(s)\leftarrow V(s)+\alpha\,[\red{r+\gamma V(s')}-V(s)]$ // now, not at the end of the episode
+    [move] $s\leftarrow s'$
 :::
 
 ::: reveal
@@ -312,7 +334,9 @@ Source p. 46. Compare with Lecture 7's iterative policy evaluation: the sum over
 
 ### Both estimators, the same episodes
 ::: widget mc-vs-td {"alpha":0.1,"seed":7,"auto":100}
-Five states in a row, a random walk from C, reward 1 only on leaving to the right, so the true value of the $i$-th state from the left is $i/6$. Monte Carlo and TD see the ==identical== episodes and differ only in the target. Watch TD's one-step target settle while the realised returns keep jittering; raise $\alpha$ and watch Monte Carlo degrade first.
+Five states in a row, a random walk from C, reward 1 only on leaving to the right, so the true value of the $i$-th state from the left is $i/6$.
+Monte Carlo and TD see the ==identical== episodes and differ only in the target.
+Watch TD's one-step target settle while the realised returns keep jittering; raise $\alpha$ and watch Monte Carlo degrade first.
 :::
 
 ::: note
@@ -322,14 +346,18 @@ Source p. 57, Sutton and Barto's random walk. The left panel is the estimate aft
 ### Bias and variance — the ledger
 ::: cols
 ::: col Monte Carlo target $G_t$
-**Bias:** none. $\E[G_t]=V^\pi(s_t)$ exactly.
+**Bias:** none.\
+$\E[G_t]=V^\pi(s_t)$ exactly.
 
-**Variance:** high. A function of every random reward and transition along the whole episode.
+**Variance:** high.\
+Every random reward of the episode enters it.
 :::
 ::: col.accent TD(0) target $r_{t+1}+\gamma V(s_{t+1})$
-**Bias:** present. It uses the current estimate $V(s_{t+1})$; unbiased only once that estimate is right.
+**Bias:** present.\
+It leans on $V(s_{t+1})$, which is not yet right.
 
-**Variance:** usually lower. One reward and one estimate; the downstream noise is discarded.
+**Variance:** usually lower.\
+One reward and one estimate; later noise is discarded.
 :::
 :::
 
@@ -347,19 +375,19 @@ The bridge between them: bootstrap after n steps, G_t^(n) = r_{t+1} + ... + gamm
 ### DP, Monte Carlo, TD — what each one borrows
 ::: cols c3
 ::: col Dynamic programming (Lecture 7)
-Updates from other estimates without waiting for the end: it **bootstraps**.
+Updates from estimates: it **bootstraps**.
 
 Needs the explicit model.
 :::
 ::: col Monte Carlo
-Learns from raw experience, **no model**.
+Learns from experience, **no model**.
 
-Must wait until the episode ends to see a return.
+Must wait for the episode to end.
 :::
 ::: col.accent Temporal difference
-Learns from raw experience, no model: from Monte Carlo.
+No model, like Monte Carlo.
 
-Updates from its own estimates, online: from dynamic programming.
+Bootstraps, like dynamic programming.
 :::
 :::
 
@@ -377,7 +405,7 @@ Source p. 42, the diagram with the two red arrows into TD. The yellow box at its
 ### Check — Monte Carlo against TD
 {q: 1}
 
-::: quiz Monte Carlo waits for the episode to end and averages the actual return; TD updates after one step using its own estimate of what follows. What is the trade?
+::: quiz Monte Carlo averages actual returns after the episode; TD updates after one step from its own estimate.<br>What is the trade?
 - =MC uses an unbiased full-return target; TD can introduce bootstrap bias, often reduces variance, and can update immediately
 - MC has lower variance and higher bias; TD the reverse
 - Both are unbiased; TD is simply faster to compute
@@ -388,11 +416,13 @@ MC's target is a real sampled return, correct in expectation but carrying the no
 ## Act 2 — improvement without a model
 {short: ACT 2, num: Act 2}
 
-**Q2.** We can score a policy. How do we make it better, still without $T$?
+**Q2.** We can score a policy.\
+How do we make it better, still without $T$?
 
 ### Act 2 on the map
-::: widget rl-roadmap {"cell":"mc-on","dim":true}
-The first cell: evaluate by whole episodes, and ==evaluate the very policy that collects them.== Act 2 builds control out of Monte Carlo prediction and one greedy step.
+::: widget rl-roadmap {"cells":["mc-on","sarsa"],"dim":true}
+The on-policy row: ==evaluate the very policy that collects the data==, by whole episodes or by single transitions.
+Act 2 builds control out of Act 1's two estimators and one greedy step.
 :::
 
 ### Why $V$ is not enough — the hidden $T$
@@ -402,14 +432,14 @@ The first cell: evaluate by whole episodes, and ==evaluate the very policy that 
 :::
 
 ::: widget backup-tree {"mode":"eval","q":true}
-Lecture 7's picture: $Q$ lives on the chance node, ==one lookahead past $V$==. Below, the improvement step and its model-free replacement.
+Lecture 7's picture: $Q$ lives on the chance node, ==one lookahead past $V$==.
 :::
 
 $$\pi'(s) = \argmax_a \sum_{s'} \textcolor{#D64545}{T(s,a,s')}\big[R(s,a,s') + \gamma V(s')\big] \qquad\Longrightarrow\qquad \pi'(s) = \argmax_a\, \hl{Q(s,a)}$$
 
 ::: reveal
 ::: keypoint
-The lookahead needs $T$. Stored in $Q$, it is already inside the number: ==no sum, no model.==
+The lookahead needs $T$; stored in $Q$ it is already inside the number: ==no sum, no model.==
 :::
 :::
 
@@ -420,12 +450,13 @@ Source p. 26. The source's own sentence from Lecture 7: the Q function caches th
 ### Generalised policy iteration, now from samples
 {fill: tight, math: compact}
 ::: widget mdp-pictures {"mode":"gpi","labels":"q"}
-Lecture 7's dance, unchanged: make $Q$ agree with $\pi$, make $\pi$ greedy on $Q$, meet where both hold. ==Each half is now sampled.==
+Lecture 7's dance, unchanged: make $Q$ agree with $\pi$, make $\pi$ greedy on $Q$, meet where both hold.
+==Each half is now sampled.==
 :::
 
 **The two halves, model-free:**
 
-$$\text{evaluate:}\ \ Q \to Q^\pi \ \text{ by Monte Carlo returns here, by TD in Act 3}, \qquad \text{improve:}\ \ \pi \to \varepsilon\text{-greedy}(Q)$$
+$$\text{evaluate:}\ \ Q \to Q^\pi \ \text{ by Monte Carlo returns, or by TD: SARSA}, \qquad \text{improve:}\ \ \pi \to \varepsilon\text{-greedy}(Q)$$
 
 ::: reveal
 ::: keypoint
@@ -441,10 +472,10 @@ A greedy policy never tries the actions it dislikes, so it never learns they wer
 {math: compact, fill: tight}
 
 ::: widget bandit-arms {"mode":"soft","eps":0.2}
-Every action keeps a floor of $\varepsilon/|\mathcal A|$; the $\varepsilon$-greedy policy stacks the remaining $1-\varepsilon$ on the greedy action. ==The bandit's rule, now a policy at every state.==
+Every action keeps a floor of $\varepsilon/|\mathcal A|$ and the greedy action takes the remaining $1-\varepsilon$: ==the bandit's rule, now a policy at every state.==
 :::
 
-**$\varepsilon$-soft** means every action has probability at least $\varepsilon/|\mathcal A(s)|$. **$\varepsilon$-greedy** is the $\varepsilon$-soft policy that puts all the rest on the greedy action:
+**$\varepsilon$-soft** policies give every action at least $\varepsilon/|\mathcal A(s)|$; **$\varepsilon$-greedy** is the one that puts all the rest on the greedy action:
 
 $$\pi(a\mid s) = \frac{\varepsilon}{|\mathcal A(s)|} + (1-\varepsilon)\,\mathbb 1\big[a = \argmax_{a'} Q(s,a')\big]$$
 
@@ -462,7 +493,9 @@ Source p. 37: the two bar charts, epsilon/|A| on every action with the greedy ac
 ### Policy improvement still holds for soft policies
 {fill: top, math: compact}
 
-**$\varepsilon$-greedy improvement theorem** — Lecture 7's theorem extended to policies that keep exploring. Let $\pi$ be any $\varepsilon$-soft policy and $\pi'$ the $\varepsilon$-greedy policy on $Q^\pi$. $Q^\pi(s,\pi'(s))$ is shorthand for the value of drawing one action from $\pi'$ and following $\pi$ afterwards:
+**$\varepsilon$-greedy improvement theorem** — Lecture 7's theorem extended to policies that keep exploring.\
+Let $\pi$ be any $\varepsilon$-soft policy and $\pi'$ the $\varepsilon$-greedy policy on $Q^\pi$.\
+$Q^\pi(s,\pi'(s))$ is shorthand for the value of drawing one action from $\pi'$ and following $\pi$ afterwards:
 
 $$\begin{aligned}
 Q^\pi\big(s,\pi'(s)\big) &= \sum_a \pi'(a\mid s)\,Q^\pi(s,a) &&\textcolor{#D64545}{\scriptstyle \text{one step of } \pi' \text{, then } \pi} \\
@@ -485,13 +518,15 @@ Source p. 38. Line 2 splits pi' into its uniform epsilon part and its greedy 1 m
 ### Algorithm — on-policy Monte Carlo control
 **Monte Carlo control with a soft policy** — evaluation and improvement proceed together within one episode:
 
-::: block Algorithm — $\varepsilon$-soft on-policy Monte Carlo control | input $\varepsilon$, step size $\alpha$; output $Q\approx Q^*$ and $\pi$
-Initialise $Q(s,a)\leftarrow 0$ and $\pi\leftarrow$ an arbitrary $\varepsilon$-soft policy.
-
-1. Generate an episode using $\pi$.
-2. For each $(s_t,a_t)$ first visited in the episode: &nbsp; $G\leftarrow$ the return that followed; &nbsp; $Q(s_t,a_t)\leftarrow Q(s_t,a_t)+\alpha\,[G-Q(s_t,a_t)]$.
-3. For each $s$ in the episode: &nbsp; $a^*\leftarrow\argmax_a Q(s,a)$; &nbsp; set $\pi(a\mid s)$ to $1-\varepsilon+\varepsilon/|\mathcal A|$ for $a^*$ and $\varepsilon/|\mathcal A|$ otherwise.
-4. Repeat from 1.
+::: algorithm $\varepsilon$-soft on-policy Monte Carlo control | input $\varepsilon$, step size $\alpha$; output $Q\approx Q^*$ and $\pi$
+[initialise] $Q(s,a)\leftarrow 0$; $\pi\leftarrow$ any $\varepsilon$-soft policy
+[for each] episode
+  [run $\pi$] $s_0,a_0,r_1,s_1,\dots,r_T,s_T$ // act to the end
+  [for each] pair $(s_t,a_t)$ first visited at $t$
+    [return] $G_t\leftarrow r_{t+1}+\gamma r_{t+2}+\cdots+\gamma^{T-t-1}r_T$
+  ! [evaluate] $Q(s_t,a_t)\leftarrow Q(s_t,a_t)+\alpha\,[\red{G_t}-Q(s_t,a_t)]$ // the Monte Carlo update, now on $Q$
+  [for each] state $s$ in the episode
+    [improve] $\pi(a\mid s)\leftarrow 1-\varepsilon+\varepsilon/|\mathcal A|$ for $a=\argmax_{a'}Q(s,a')$, else $\varepsilon/|\mathcal A|$ // $\varepsilon$-greedy on $Q$
 :::
 
 ::: note
@@ -500,7 +535,8 @@ Source pp. 34 and 39. Step 2 is policy evaluation by returns, step 3 is policy i
 
 ### The problem the demo poses
 ::: widget gpi-explore {"mode":"problem"}
-A corridor with a start, a near reward of $+1$ and a far reward of $+5$; every step costs a little and an episode ends on a reward. ==Will an agent that never explores ever see the $+5$?==
+A corridor with a start, a near reward of $+1$ and a far reward of $+5$; every step costs a little and an episode ends on a reward.
+==Will an agent that never explores ever see the $+5$?==
 :::
 
 ::: note
@@ -509,17 +545,57 @@ State the arena before running anything: three rows, start in the middle, +1 two
 
 ### The tax, seen — what a greedy agent never learns
 ::: widget gpi-explore {"eps":0.3,"seed":4,"rule":"mc"}
-Two agents run the Monte Carlo control box, identical but for $\varepsilon$. The greedy one locks onto the near $+1$ it stumbled into first and stops looking: read its coverage, ==the actions it dislikes are never tried, so their values are never corrected.== The exploring one pays a little per episode and finds the far $+5$.
+Two agents run the Monte Carlo control box, identical but for $\varepsilon$.
+The greedy one locks onto the near $+1$ it stumbled into first and stops looking: ==the actions it dislikes are never tried, so their values are never corrected.==
+The exploring one pays a little per episode and finds the far $+5$.
 :::
 
 ::: note
 The coverage figure under each grid is the count: the fraction of (s, a) pairs tried at least once. The widget runs 250 episodes of the Monte Carlo control box on arrival: the greedy agent has tried a quarter of the pairs and its arrows all point to the +1; the exploring agent has tried most of them and reaches the +5. Press +1 ep to replay. Cycle epsilon to see the trade: with epsilon 0.2 the +5 is still found, with less coverage; with epsilon 0.1 both agents settle for the +1 within 250 episodes, so too little exploring is slow, not safe.
 :::
 
+### SARSA — TD control on the backup tree
+{math: compact, fill: tight}
+
+::: widget backup-tree {"mode":"sarsa"}
+$\varepsilon$-greedy picks $a$, the world answers $r, s'$, and ==the same policy picks $a'$==.
+That $a'$ does two jobs: it stands in the target, and after the update it is executed.
+:::
+
+**SARSA update** — on-policy TD control: Monte Carlo control with Act 1's other estimator, named after the tuple $(s,a,r,s',a')$:
+
+$$Q(s,a)\leftarrow Q(s,a)+\alpha\big[r+\gamma\, \textcolor{#D64545}{Q(s',a')} - Q(s,a)\big]$$
+
+::: note
+Source pp. 51–55 draw exactly this: s^0, three actions, a^2 chosen with probability 1 minus epsilon, r_{t+1} and s^1 observed, then at s^1 the behaviour policy chooses a^1 and Q(s^1, a^1) stands in the target. The last press executes a^1: the green transition to s_{t+2} is the same action, now taken, which is what on-policy means in the picture. State, Action, Reward, State, Action: the name is the tuple. Because the next action is the behaviour policy's, SARSA estimates Q^pi for the behaviour policy and improves it towards greediness at the same time, as all on-policy methods do.
+:::
+
+### Algorithm — SARSA
+::: algorithm SARSA, on-policy TD control | input $\varepsilon$, step size $\alpha$; output $Q$ and the $\varepsilon$-greedy $\pi$
+[initialise] $Q(s,a)\leftarrow 0$
+[for each] episode
+  [start] $s\leftarrow s_0$; choose $a$ from $s$, $\varepsilon$-greedy on $Q$
+  [for each] step, until $s$ is terminal
+    [act] take $a$, observe $r$, $s'$
+    [choose] $a'$ from $s'$, $\varepsilon$-greedy on $Q$ // the next action, before the update
+  ! [learn] $Q(s,a)\leftarrow Q(s,a)+\alpha\,[r+\gamma\,\red{Q(s',a')}-Q(s,a)]$ // the action actually taken next
+    [move] $s\leftarrow s'$, $a\leftarrow a'$
+:::
+
+::: small
+Both of Act 1's estimators fit the same loop; the greedy step and the exploration tax are unchanged.
+SARSA learns the value of the exploring policy it runs.
+It reaches the optimal policy only if every $(s,a)$ keeps being visited and $\varepsilon$ decays to zero, for example $\varepsilon_t = 1/t$.
+:::
+
+::: note
+Source p. 50. The behaviour policy and the estimation policy are the same epsilon-greedy policy. Converges to the optimal policy if every (s, a) is visited infinitely often and epsilon decays, for example epsilon = 1/t.
+:::
+
 ### Check — the price of exploring
 {q: 2}
 
-::: quiz On-policy Monte Carlo control keeps $\varepsilon$ fixed at $0.1$ and runs for ever. What does it converge to?
+::: quiz On-policy Monte Carlo control keeps $\varepsilon$ fixed at $0.1$ and runs for ever.<br>What does it converge to?
 - The optimal policy, because $Q$ converges to $Q^*$
 - =The best $\varepsilon$-soft policy: improvement is guaranteed, but the policy evaluated keeps taking a random action one time in ten
 - Nothing: a fixed $\varepsilon$ prevents $Q$ from settling
@@ -530,53 +606,23 @@ The $\varepsilon$-greedy improvement theorem guarantees each round improves the 
 ## Act 3 — whose value are we learning?
 {short: ACT 3, num: Act 3}
 
-**Q3.** The data come from an exploring policy. Which policy's value does the update actually estimate?
+**Q3.** The data come from an exploring policy.\
+Which policy's value does the update actually estimate?
 
 ### Act 3 on the map
-::: widget rl-roadmap {"cells":["sarsa","q"],"dim":true}
-The bootstrap column. Two cells, two control rules, ==one difference between them==: whose action stands in the target.
+::: widget rl-roadmap {"cell":"q","dim":true,"skip":["mc-off"]}
+The off-policy row.
+Same data and same bootstrap as SARSA, ==one difference==: whose action stands in the target.
 :::
 
-### SARSA — TD control on the backup tree
+### Q-learning — the max moves into the target
 {q: 3, math: compact, fill: tight}
 
 ::: qstrip
 :::
 
-::: widget backup-tree {"mode":"sarsa"}
-$\varepsilon$-greedy picks $a$, the world answers $r, s'$, ==the same policy picks $a'$==: back up the pair actually followed.
-:::
-
-**SARSA update** — on-policy TD control; the name is the tuple $(s,a,r,s',a')$:
-
-$$Q(s,a)\leftarrow Q(s,a)+\alpha\big[r+\gamma\, \textcolor{#D64545}{Q(s',a')} - Q(s,a)\big]$$
-
-::: note
-Source pp. 51–55 draw exactly this: s^0, three actions, a^2 chosen with probability 1 minus epsilon, r_{t+1} and s^1 observed, then at s^1 the behaviour policy chooses a^1 and Q(s^1, a^1) stands in the target. State, Action, Reward, State, Action: the name is the tuple. Because the next action is the behaviour policy's, SARSA estimates Q^pi for the behaviour policy and improves it towards greediness at the same time, as all on-policy methods do.
-:::
-
-### Algorithm — SARSA
-::: block Algorithm — SARSA, on-policy TD control | input $\varepsilon$, step size $\alpha$; output $Q$ and the $\varepsilon$-greedy $\pi$
-Initialise $Q(s,a)\leftarrow 0$.
-
-1. Initialise $s$; choose $a$ from $s$ by the $\varepsilon$-greedy policy on $Q$.
-2. Repeat for each step: &nbsp; take $a$, observe $r$, $s'$; &nbsp; choose $a'$ from $s'$ by the $\varepsilon$-greedy policy on $Q$; &nbsp; ${Q(s,a)\leftarrow Q(s,a)+\alpha\,[r+\gamma\,\hl{Q(s',a')}-Q(s,a)]}$; &nbsp; $s\leftarrow s'$, $a\leftarrow a'$;
-3. until $s$ is terminal; then repeat from 1.
-:::
-
-::: small
-SARSA learns the value of the exploring policy it runs. It reaches the optimal policy only if every $(s,a)$ keeps being visited and $\varepsilon$ decays to zero, for example $\varepsilon_t = 1/t$.
-:::
-
-::: note
-Source p. 50. The behaviour policy and the estimation policy are the same epsilon-greedy policy. Converges to the optimal policy if every (s, a) is visited infinitely often and epsilon decays, for example epsilon = 1/t.
-:::
-
-### Q-learning — the max moves into the target
-{sub: learn the value of the best policy while following another}
-
 ::: widget backup-tree {"mode":"qlearn"}
-The same tree, the same first two moves. At $s'$ we do not use the action we will take: ==we back up the best one==, taken or not. The red arc is Lecture 7's max, now taken at the one $s'$ that occurred.
+At $s'$ the three values are read, not taken, and ==the best one stands in the target==.
 :::
 
 **Q-learning update** — off-policy TD control, the form Lecture 7 handed over with the expectation sampled:
@@ -584,22 +630,25 @@ The same tree, the same first two moves. At $s'$ we do not use the action we wil
 $$Q(s,a)\leftarrow Q(s,a)+\alpha\big[r+\gamma\, \textcolor{#D64545}{\max_{a'} Q(s',a')} - Q(s,a)\big]$$
 
 ::: note
-Source pp. 60–66. Lecture 7's Bellman optimality equation for Q^*: the sum over s' weighted by T is replaced by the one s' that occurred, and the max over a' stays. The learned Q approximates Q^* directly, whatever policy is being followed, as long as every pair keeps being visited. The one difference from SARSA is the red term.
+Source pp. 60–66. Lecture 7's Bellman optimality equation for Q^*: the sum over s' weighted by T is replaced by the one s' that occurred, and the max over a' stays. Read the colours with the students: red edges are values looked up, not actions taken; the thick red one is the max, and it ends at its node. The last press adds the blue edge: only after the update does epsilon-greedy choose the action actually executed, best or not, here a different one, and only that branch continues into the world. The learned Q approximates Q^* directly, whatever policy is being followed, as long as every pair keeps being visited. The one difference from SARSA is the red term.
 :::
 
 ### Algorithm — Q-learning
-::: block Algorithm — Q-learning, off-policy TD control | input $\varepsilon$, step size $\alpha$; output $Q\approx Q^*$
-Initialise $Q(s,a)\leftarrow 0$.
-
-1. Initialise $s$.
-2. Repeat for each step: &nbsp; choose $a$ from $s$ by the $\varepsilon$-greedy policy on $Q$; &nbsp; take $a$, observe $r$, $s'$; &nbsp; ${Q(s,a)\leftarrow Q(s,a)+\alpha\,[r+\gamma\,\hl{\max_{a'}Q(s',a')}-Q(s,a)]}$; &nbsp; $s\leftarrow s'$;
-3. until $s$ is terminal; then repeat from 1.
+::: algorithm Q-learning, off-policy TD control | input $\varepsilon$, step size $\alpha$; output $Q\approx Q^*$
+[initialise] $Q(s,a)\leftarrow 0$
+[for each] episode
+  [start] $s\leftarrow s_0$
+  [for each] step, until $s$ is terminal
+    [act] choose $a$ from $s$, $\varepsilon$-greedy on $Q$; take $a$, observe $r$, $s'$
+  ! [learn] $Q(s,a)\leftarrow Q(s,a)+\alpha\,[r+\gamma\,\red{\max_{a'}Q(s',a')}-Q(s,a)]$ // the best next action, taken or not
+    [move] $s\leftarrow s'$ // no $a'$ to carry: the next action is chosen afresh
 :::
 
 ::: reveal
 ::: keypoint
 Set the two boxes side by side: one line differs.
-SARSA chooses $a'$ and uses it. Q-learning ==never chooses $a'$ for the target==; it takes the max and then chooses whatever it likes for the next step.
+SARSA chooses $a'$ and uses it.
+Q-learning ==never chooses $a'$ for the target==; it takes the max and then chooses whatever it likes for the next step.
 :::
 :::
 
@@ -609,7 +658,8 @@ Source p. 61. The behaviour policy is epsilon-greedy; the estimation policy is g
 
 ### The ladder so far — one backup, the model deleted rung by rung
 ::: widget mdp-pictures {"mode":"ladder","start":0,"upto":4,"plates":[{"title":"Value iteration (Lecture 7)","line":"for each state s:","formula":"V(s) ← \\max_a \\sum_{s′} T(s,a,s′)[R + γ V(s′)]","note":"the full backup: every successor, weighted by the model","loop":"one sweep per round"},{"title":"Monte Carlo","line":"for each visited state s, after the episode:","formula":"V(s) ← V(s) + α[\\red{G_t} − V(s)]","note":"the expectation replaced by one whole return","loop":"one episode per round"},{"title":"TD(0)","line":"for each transition (s, r, s′):","formula":"V(s) ← V(s) + α[\\red{r + γ V(s′)} − V(s)]","note":"one step sampled, the rest bootstrapped","loop":"one transition per round"},{"title":"SARSA","line":"for each transition (s, a, r, s′, a′):","formula":"Q(s,a) ← Q(s,a) + α[r + γ \\red{Q(s′,a′)} − Q(s,a)]","note":"V becomes Q; the next action is the one actually taken","loop":"one transition per round"},{"title":"Q-learning","line":"for each transition (s, a, r, s′):","formula":"Q(s,a) ← Q(s,a) + α[r + γ \\red{\\max_{a′} Q(s′,a′)} − Q(s,a)]","note":"the next action is the best one, taken or not","loop":"one transition per round"},{"title":"DQN","line":"for a minibatch from the replay buffer:","formula":"θ ← θ + α[r + γ \\max_{a′} Q(s′,a′;\\red{θ^-}) − Q(s,a;\\red{θ})]∇_θ Q(s,a;θ)","note":"the table becomes a network; the target is frozen","loop":"one minibatch per round"}]}
-Lecture 7's ladder, continued downwards. ==Each rung changes one thing in the target==, marked in red: a return replaces the expectation, one step plus a bootstrap replaces the return, $V$ becomes $Q$ with the action taken next, and the max returns in that action's place.
+Lecture 7's ladder, continued downwards: ==each rung changes one thing in the target==, marked in red.
+A return replaces the expectation, one step plus a bootstrap replaces the return, $V$ becomes $Q$ with the action taken next, and the max returns in that action's place.
 :::
 
 ::: note
@@ -618,7 +668,8 @@ Read it with the Ch 7 summary in mind: Lecture 7 deleted loops, this lecture del
 
 ### Same data, different target
 ::: widget backup-tree {"mode":"qlearn","both":true,"nums":{"q":2,"r":1,"qnext":[5,1],"pick":1,"alpha":0.2,"gamma":0.9}}
-One observed transition with numbers on it. At $s'$ the two actions are worth 5 and 1, and exploration happens to pick the one worth 1. ==Q-learning backs up the 5; SARSA backs up the 1.==
+At $s'$ the two actions are worth 5 and 1, and exploration happens to pick the one worth 1.
+==Q-learning backs up the 5; SARSA backs up the 1.==
 :::
 
 ::: note
@@ -627,13 +678,13 @@ Q(s, a) = 2, reward 1, gamma 0.9, alpha 0.2. Q-learning: target 1 + 0.9 × 5 = 5
 
 ### Why Q-learning is off-policy, precisely
 ::: widget backup-tree {"mode":"qlearn","both":true,"policies":true}
-The same tuple as the last slide, with its two policies named. Blue is $\pi_B$, the policy that acts: it chose $a_t$ and will choose $a'_B$. Red is $\pi_E$, the policy whose value is learnt. ==SARSA sets $\pi_E = \pi_B$; Q-learning sets $\pi_E$ greedy, and never executes it.==
+Blue is $\pi_B$, the policy that acts, which chose $a_t$ and will choose $a'_B$; red is $\pi_E$, the policy whose value is learnt.
+==SARSA sets $\pi_E = \pi_B$; Q-learning sets $\pi_E$ greedy, and never executes it.==
 :::
 
 ::: reveal
 ::: block The clean extreme | act with $\varepsilon = 1$, fully at random
-SARSA learns the value of acting randomly.
-Q-learning learns the value of the optimal policy, while acting randomly.
+SARSA learns the value of acting randomly; Q-learning learns the value of the optimal policy, while acting randomly.
 :::
 :::
 
@@ -643,7 +694,8 @@ Source pp. 75–77. Three presses: the behaviour policy acts, the world answers,
 
 ### The map, filled
 ::: widget rl-roadmap {"cells":["mc-on","sarsa","q"],"skip":["mc-off"]}
-Two forks organise everything: ==bootstrap or not==, and ==whose policy stands in the target==. Monte Carlo control and SARSA evaluate the policy that drives; Q-learning studies one policy while living as another.
+Two forks organise everything: ==bootstrap or not==, and ==whose policy stands in the target==.
+Monte Carlo control and SARSA evaluate the policy that drives; Q-learning studies one policy while living as another.
 :::
 
 ::: note
@@ -653,7 +705,8 @@ Source p. 59. On-policy: the policy that generates the data is the policy evalua
 ### Temperature thread — learn from one measured transition
 
 ::: widget backup-tree {"mode":"qlearn","names":{"s":"x=−2","s1":"x=−1","s2":"x=−2","actions":["off","heat"]},"nums":{"q":-4,"r":-2,"qnext":[-3,-1],"alpha":0.5,"gamma":0.9}}
-The heater of Lecture 7 without its model. One heating step is measured: from $-2$ to $-1$, reward $-2$. The old estimate was $-4$. ==Does this observation raise it or lower it?==
+The heater of Lecture 7 without its model: one measured heating step from $-2$ to $-1$, reward $-2$, against an old estimate of $-4$.
+==Does this observation raise it or lower it?==
 :::
 
 ::: note
@@ -663,7 +716,8 @@ Ask for the prediction before pressing. Q(−2, heat) = −4, max_a Q(−1, a) =
 ### Try it — the heating step fails
 
 ::: widget backup-tree {"mode":"qlearn","names":{"s":"x=−2","s1":"x=−2","s2":"x=−1","actions":["off","heat"]},"nums":{"q":-4,"r":-5,"qnext":[-3,-4],"alpha":0.5,"gamma":0.9}}
-Start again from $-4$. This time the heater fails: the state stays at $-2$, the reward is $-5$, and the best continuation from there is $-3$. ==Work the update before revealing it.==
+Start again from $-4$, and this time the heater fails: the state stays at $-2$, the reward is $-5$, and the best continuation from there is $-3$.
+==Work the update before revealing it.==
 :::
 
 ::: note
@@ -672,7 +726,9 @@ Students write the answer first. Target −5 + 0.9 × (−3) = −7.7; TD error 
 
 ### Six rooms — Q-learning one update at a time
 ::: widget six-rooms {}
-Rooms A to F, doors between them, reward 100 for stepping outside into F. Before each update, name the entry that will change. One observed transition, one update: ==only the visited entry changes==, and the reward at F reaches earlier rooms only through bootstrapping.
+Rooms A to F, doors between them, reward 100 for stepping outside into F.
+One observed transition, one update: ==only the visited entry changes==, and the reward at F reaches earlier rooms only through bootstrapping.
+Before each update, name the entry that will change.
 :::
 
 ::: note
@@ -681,12 +737,14 @@ Source pp. 67–73, one press per observed transition; step size 0.5, discount 0
 
 ### The problem the cliff poses
 ::: widget cliff-walk {"mode":"problem"}
-Start at S, reach G. Every step costs $1$; stepping onto the cliff costs $100$ and sends you back to S. ==The shortest path runs along the edge.== Would you walk it while exploring?
+From S to G every step costs $1$; stepping onto the cliff costs $100$ and sends you back to S.
+==The shortest path runs along the edge==: would you walk it while exploring?
 :::
 
 ### The cliff — where the difference becomes visible
 ::: widget cliff-walk {"eps":0.1,"seed":3}
-Q-learning learns the optimal path along the edge, but it acts $\varepsilon$-greedily, and the occasional random step plunges it off: higher reward in theory, worse online. SARSA accounts for its own exploration and learns a ==cautious== detour.
+Q-learning learns the optimal path along the edge, but it acts $\varepsilon$-greedily, and the occasional random step plunges it off: higher reward in theory, worse online.
+SARSA accounts for its own exploration and learns a ==cautious== detour.
 :::
 
 ::: note
@@ -699,7 +757,7 @@ Source p. 74, Sutton and Barto's cliff walking. (The source's windy gridworld, p
 ::: paper
 - Why it is here | The guarantee that Act 3's sampled max backup still reaches $Q^*$, and the two conditions it costs.
 - What it is | The convergence proof for tabular Q-learning: a contraction fed with samples, under infinite visits and decaying step sizes.
-- Why it matters | Every condition it names is one that function approximation breaks, which is Act 4's deadly triad.
+- Why it matters | Function approximation breaks every condition it names: Act 4's deadly triad.
 :::
 
 **Convergence theorem.** $Q_k \to Q^*$ with probability $1$ if every $(s,a)$ is visited infinitely often and the step sizes satisfy:
@@ -707,24 +765,26 @@ Source p. 74, Sutton and Barto's cliff walking. (The source's windy gridworld, p
 $$\underbrace{\sum_t \alpha_t(s,a)=\infty}_{\textcolor{#D64545}{\text{steps large enough to travel any distance}}} \qquad\text{and}\qquad \underbrace{\sum_t \alpha_t(s,a)^2<\infty}_{\textcolor{#D64545}{\text{steps small enough for the noise to average out}}}$$
 
 ::: small
-$\alpha_t = 1/t$ satisfies both. The constant $\alpha$ of the algorithm boxes satisfies only the first: the estimate reaches the neighbourhood of $Q^*$ and keeps jittering there, in a band that shrinks with $\alpha$.
+$\alpha_t = 1/t$ satisfies both.
+The constant $\alpha$ of the algorithm boxes satisfies only the first: the estimate reaches the neighbourhood of $Q^*$ and jitters there, in a band that shrinks with $\alpha$.
 :::
 
 ::: reveal
 ::: keypoint
-Lecture 7's machine is still underneath: the operator $Q\mapsto \E_{s'}[\,r+\gamma\max_{a'}Q(s',a')\,]$ is a $\gamma$-contraction, each application brings any two tables closer by the factor $\gamma$, with the unique fixed point $Q^*$.
-Q-learning feeds it ==one sample instead of the expectation==; the step-size condition averages the noise away, and the visiting condition keeps every entry corrected.
+Lecture 7's machine is underneath: the operator $Q\mapsto \E_{s'}[\,r+\gamma\max_{a'}Q(s',a')\,]$ is a $\gamma$-contraction with fixed point $Q^*$.
+Q-learning feeds it ==one sample instead of the expectation==.
+The step sizes average the noise away, and the visits keep every entry corrected.
 :::
 :::
 
 ::: note
-Source p. 60 and the stochastic-approximation argument. Finite stationary MDP, bounded rewards, gamma below 1. Exploration supplies the infinite visits, for example a fixed epsilon; the Robbins–Monro step sizes must hold per pair. What breaks under function approximation: replace the table by Q(·; w) and the update is no longer a contraction in any norm the parameters respect; the projection onto the function class can expand distances. That is the formal root of Act 4's deadly triad.
+Source p. 60 and the stochastic-approximation argument. A gamma-contraction: each application brings any two tables closer by the factor gamma. Finite stationary MDP, bounded rewards, gamma below 1. Exploration supplies the infinite visits, for example a fixed epsilon; the Robbins–Monro step sizes must hold per pair. What breaks under function approximation: replace the table by Q(·; w) and the update is no longer a contraction in any norm the parameters respect; the projection onto the function class can expand distances. That is the formal root of Act 4's deadly triad.
 :::
 
 ### Check — what makes Q-learning off-policy
 {q: 3}
 
-::: quiz SARSA updates toward $r + \gamma Q(s', a')$ using the action actually taken next; Q-learning uses $r + \gamma \max_{a'} Q(s', a')$. Why does that one difference make Q-learning off-policy?
+::: quiz SARSA's target is $r + \gamma Q(s', a')$ with the action actually taken next; Q-learning's is $r + \gamma \max_{a'} Q(s', a')$.<br>Why does that one difference make Q-learning off-policy?
 - Because the $\max$ makes the update deterministic
 - Because Q-learning needs a replay buffer and SARSA does not
 - =Because the target refers to the greedy action, not the one the behaviour policy chose, so it estimates the optimal policy's value from another policy's data
@@ -735,11 +795,13 @@ SARSA evaluates the policy that is driving, exploration and all; on the cliff it
 ## Act 4 — scaling past the table
 {short: ACT 4, num: Act 4}
 
-**Q4.** Everything so far stores one number per $(s,a)$. What happens when the state is an image?
+**Q4.** Everything so far stores one number per $(s,a)$.\
+What happens when the state is an image?
 
 ### Act 4 on the map
 ::: widget rl-roadmap {"cell":"q","dim":true}
-One cell, kept: Q-learning. Act 4 changes nothing in the update. ==It changes what holds $Q$.==
+One cell, kept: Q-learning.
+Act 4 changes nothing in the update: ==it changes what holds $Q$.==
 :::
 
 ### The wall — a table cannot hold the world
@@ -749,7 +811,8 @@ One cell, kept: Q-learning. Act 4 changes nothing in the update. ==It changes wh
 :::
 
 ::: figure pacman-states | 760
-The left state was visited and turned out badly. The two on the right are new. ==A table has nothing to say about a state it has never seen.==
+The left state was visited and turned out badly; the two on the right are new.
+==A table has nothing to say about a state it has never seen.==
 :::
 
 **How many states there are** — four stacked Atari frames:
@@ -762,7 +825,9 @@ More configurations than atoms in the universe. A table fails three times over: 
 
 ### Why history is part of the state
 ::: widget dqn-pictures {"mode":"ball"}
-One frame gives the ball's position. ==It cannot give its velocity==: the same picture arises from a ball moving left or right. Two frames can.
+One frame gives the ball's position.
+==It cannot give its velocity==: the same picture arises from a ball moving left or right.
+Two frames can.
 :::
 
 ::: note
@@ -813,12 +878,14 @@ Source p. 81. In the tabular world the chase still converged, Watkins and Dayan.
 :::
 
 ### Algorithm — Q-learning with function approximation
-::: block Algorithm — Q-learning with function approximation | input features $\phi$, step size $\alpha$, $\varepsilon$; output $w$
-Initialise $w\leftarrow 0$.
-
-1. Initialise $s$.
-2. Repeat for each step: &nbsp; choose $a$ from $s$ by the $\varepsilon$-greedy policy on $Q(s,\cdot;w)$; &nbsp; take $a$, observe $r$, $s'$; &nbsp; ${w\leftarrow w+\alpha\,[r+\gamma\max_{a'}Q(s',a';w)-Q(s,a;w)]\,\nabla_wQ(s,a;w)}$; &nbsp; $s\leftarrow s'$;
-3. until $s$ is terminal; then repeat from 1.
+::: algorithm Q-learning with function approximation | input features $\phi$, step size $\alpha$, $\varepsilon$; output $w$
+[initialise] $w\leftarrow 0$
+[for each] episode
+  [start] $s\leftarrow s_0$
+  [for each] step, until $s$ is terminal
+    [act] choose $a$ from $s$, $\varepsilon$-greedy on $Q(s,\cdot\,;w)$; take $a$, observe $r$, $s'$
+  ! [learn] $w\leftarrow w+\alpha\,[r+\gamma\max_{a'}Q(s',a';w)-Q(s,a;w)]\,\red{\nabla_w Q(s,a;w)}$ // the table cell becomes a gradient step
+    [move] $s\leftarrow s'$
 :::
 
 ::: note
@@ -835,14 +902,14 @@ Source p. 81. The same loop as tabular Q-learning with the table write replaced 
 - **Minibatch** | average that step over $m$ samples, not one
 :::
 
-**One training step of a network** — the previous box's update, averaged over $m$ samples; every slide to the end of this act changes how it is fed:
+**One training step of a network** — the previous box's update, averaged over $m$ samples; the rest of this act changes how it is fed:
 
 $$\theta \leftarrow \theta - \alpha\,\nabla_\theta\,\frac{1}{m}\sum_{i=1}^{m} \tfrac12\big(y_i - Q_\theta(s_i,a_i)\big)^2, \qquad y_i = r_i + \gamma\max_{a'}Q_\theta(s'_i,a') \ \text{ held constant}$$
 
 ::: reveal
 ::: keypoint
 Supervised learning rests on two assumptions: the samples are independent, and the labels $y_i$ do not move.
-Reinforcement learning ==breaks both==: consecutive transitions are neighbours, and the labels are computed by the network being trained.
+Reinforcement learning ==breaks both==: consecutive transitions are neighbours, and the network being trained writes its own labels.
 :::
 :::
 
@@ -870,7 +937,8 @@ Source p. 89 and the summary p. 114. The first problem is the convnet's job and 
 
 ### Problem 1 — the state is an image, and the convolutional network
 ::: widget dqn-pictures {"mode":"pipeline"}
-Four recent frames, grey-scaled and cropped, go into one convolutional network that outputs ==one $Q$ value per action==. One forward pass scores every action, so the argmax is a lookup.
+Four recent frames, grey-scaled and cropped, go into one convolutional network that outputs ==one $Q$ value per action==.
+One forward pass scores every action, so the argmax is a lookup.
 :::
 
 ::: note
@@ -882,7 +950,7 @@ Source pp. 83–95. The network is Alexnet's grandchild: a convnet condenses the
 
 ::: paper
 - Why it is here | The proof that the three ingredients below can diverge together, with the two-state example the next slide runs.
-- What it is | Convergence of TD with linear features on-policy, and a counterexample once the updates are off-policy.
+- What it is | Convergence of TD with linear features on-policy, and a counterexample off-policy.
 - Why it matters | The reason DQN needs stabilisers at all, and the reason deep RL stays fragile after them.
 :::
 
@@ -894,8 +962,9 @@ Source pp. 83–95. The network is Alexnet's grandchild: a convnet condenses the
 
 ::: reveal
 ::: keypoint
-Q-learning with a network has all three. Each alone is fine; ==together they can diverge even when every true value is zero.==
-DQN does not remove any of them. It weakens two.
+Q-learning with a network has all three.
+Each alone is fine; ==together they can diverge even when every true value is zero.==
+DQN does not remove any of them: it weakens two.
 The moving target is the first two legs meeting; replay is allowed only because of the third.
 :::
 :::
@@ -906,7 +975,9 @@ Sutton and Barto's name for the combination; Tsitsiklis and Van Roy's 1997 count
 
 ### The triad, switched on and off
 ::: widget deadly-triad {"seed":5}
-Two states, every reward $0$, so the true value is $0$ everywhere. One shared weight: $s_1$ is valued $w$ and $s_2$ is valued $2w$. Updating $s_1$ towards $\gamma\cdot 2w$ has error $(2\gamma-1)\,w$, the same sign as $w$ once $\gamma>\tfrac12$, so ==every update pushes $w$ further from $0$.== Turn any one switch off and the same update sits at $0$.
+Two states, every reward $0$, so the true value is $0$ everywhere; one shared weight values $s_1$ at $w$ and $s_2$ at $2w$.
+Updating $s_1$ towards $\gamma\cdot 2w$ has error $(2\gamma-1)\,w$, the same sign as $w$ once $\gamma>\tfrac12$, so ==every update pushes $w$ further from $0$.==
+Turn any one switch off and the same update sits at $0$.
 :::
 
 ::: note
@@ -915,7 +986,8 @@ Tsitsiklis and Van Roy, 1997. s_1 has feature 1, s_2 has feature 2, both values 
 
 ### Problem 2 — correlated samples, and experience replay
 ::: widget dqn-pictures {"mode":"buffer"}
-Transitions are stored as they happen in a queue, oldest out first. Training draws ==a random minibatch== from the queue, so the frames in one update are no longer neighbours in time.
+Transitions are stored as they happen in a queue, oldest out first.
+Training draws ==a random minibatch== from the queue, so the frames in one update are no longer neighbours in time.
 :::
 
 **Experience replay** — the training step, with its minibatch drawn at random from the buffer $D$:
@@ -932,7 +1004,7 @@ Source pp. 97–103. Online Q-learning updates on consecutive, strongly correlat
 
 ### Problem 3 — the target is the network
 ::: widget dqn-pictures {"mode":"samenet"}
-The loss of one stored transition. The upper branch computes the target from $s'$ ==with the same network== that the lower branch is training. The gradient is taken through the lower branch only.
+One stored transition: the target comes from $s'$ ==through the same network== that is being trained, and the gradient flows through the lower branch only.
 :::
 
 **The DQN loss, naive form** — the semi-gradient of this act, written for a network:
@@ -945,7 +1017,8 @@ Source p. 102. Select the output entry for the action taken, compare with the ta
 
 ### Why the target moves
 ::: widget dqn-pictures {"mode":"moving"}
-With a table, one update changes one cell and nothing else. With a network, one update on any transition ==moves every entry of every state==, including the ones the next target will be read from.
+With a table, one update changes one cell and nothing else.
+With a network, one update on any transition ==moves every entry of every state==, including the ones the next target will be read from.
 :::
 
 ::: note
@@ -954,7 +1027,7 @@ Source pp. 104–105. The degree of movement grows with the flexibility of the a
 
 ### The target network
 ::: widget dqn-pictures {"mode":"targetnet"}
-Freeze a copy. The target is computed by ==a second network that does not move== during a block of $C$ updates; then the copy is refreshed and the next block begins.
+Freeze a copy: the target is computed by ==a second network that does not move== during a block of $C$ updates, then the copy is refreshed.
 :::
 
 **The DQN loss** — the form the Nature paper trains, with the frozen parameters $\theta^-$:
@@ -983,18 +1056,23 @@ Source pp. 86–88 and 108. DQN is not the first neural value-function approxima
 :::
 
 ### Algorithm — deep Q-learning with experience replay
-::: block Algorithm — DQN | input buffer size $N$, minibatch size $m$, copy period $C$, $\varepsilon$; output $\theta$
-Initialise the replay buffer $D$, the network $Q_\theta$ at random, and the target network $\theta^-\leftarrow\theta$.
-
-1. For each episode: observe $s_1$ and build the stacked frames.
-2. For each step: &nbsp; choose $a_t$ $\varepsilon$-greedily on $Q_\theta(s_t,\cdot)$; &nbsp; take it, observe $r_{t+1}$, $s_{t+1}$; &nbsp; store $(s_t,a_t,r_{t+1},s_{t+1})$ in $D$.
-3. Sample a minibatch of $m$ transitions from $D$; set $y_i = r_i$ if terminal, else $y_i = r_i+\gamma\max_{a'}Q_{\theta^-}(s'_i,a')$; take one gradient step on $\sum_i (y_i-Q_\theta(s_i,a_i))^2$.
-4. Every $C$ steps: $\theta^-\leftarrow\theta$.
+::: algorithm DQN | input buffer size $N$, minibatch size $m$, copy period $C$, $\varepsilon$; output $\theta$
+[initialise] replay buffer $D$; network $Q_\theta$ at random; target $\theta^-\leftarrow\theta$
+[for each] episode
+  [start] observe $s_1$; stack the recent frames
+  [for each] step $t$
+    [act] choose $a_t$, $\varepsilon$-greedy on $Q_\theta(s_t,\cdot)$; take it, observe $r_{t+1}$, $s_{t+1}$
+    [store] $(s_t,a_t,r_{t+1},s_{t+1})$ into $D$ // answer 2: the buffer
+    [sample] a minibatch of $m$ transitions from $D$ // old and new, mixed
+    [target] $y_i\leftarrow r_i$ if $s'_i$ is terminal, else $r_i+\gamma\max_{a'}\red{Q_{\theta^-}}(s'_i,a')$ // answer 3: the frozen copy
+  ! [learn] one gradient step on $\sum_i\big(y_i-Q_\theta(s_i,a_i)\big)^2$ // the same loss, on the batch
+    [every $C$ steps] $\theta^-\leftarrow\theta$
 :::
 
 ::: reveal
 ::: keypoint
-Trace each line to its act: $\varepsilon$-greedy from Act 2, the max in the target from Act 3, the bootstrap from Act 1, the buffer and the frozen copy from this act. ==One loop holds the whole lecture.==
+Trace each line to its act: $\varepsilon$-greedy to Act 2, the max to Act 3, the bootstrap to Act 1, replay and the frozen copy to Act 4.
+==One loop holds the whole lecture.==
 :::
 :::
 
@@ -1015,7 +1093,8 @@ Source p. 109, Algorithm 1 of the Nature paper. The terminal flag matters: for a
 
 ::: reveal
 ::: keypoint
-Both stabilisers help on every game, replay the more. ==Neither removes a leg of the triad==, and DQN still needs ten million frames per game.
+Both stabilisers help on every game, replay the more.
+==Neither removes a leg of the triad==, and DQN still needs ten million frames per game.
 :::
 :::
 
@@ -1027,7 +1106,9 @@ Source p. 113, reproduced from the Nature paper. Higher is better; the multiple 
 {sub: five actions, each truly worth 0}
 
 ::: widget max-bias {"seed":5}
-Five actions, every one truly worth $0$; the bars are one noisy estimate of each. ==The max picks the luckiest noise==, so on average it sits above the true value. A second, independent estimate of the picked action averages $0$.
+Five actions, every one truly worth $0$; the bars are one noisy estimate of each.
+==The max picks the luckiest noise==, so on average it sits above the true value.
+A second, independent estimate of the picked action averages $0$.
 :::
 
 ::: note
@@ -1039,7 +1120,7 @@ Ask first: every action is worth 0 and the estimates are unbiased, so what does 
 
 ::: paper
 - Why it is here | The cure for the last slide: in DQN the same noisy estimate picks the action and scores it.
-- What it is | Use the online network to choose $a^*$ at $s'$ and the frozen network to value it; one line of DQN changed.
+- What it is | One line of DQN changes: the online network chooses $a^*$ at $s'$, the frozen one values it.
 - Why it matters | A named flaw of the Act 3 max, and the first of a decade of refinements that keep DQN's skeleton.
 :::
 
@@ -1053,7 +1134,7 @@ Worked numbers: at s' the online network gives 8 for A and 7 for B, the target n
 
 ### One backup, one deletion per rung
 ::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"Value iteration (Lecture 7)","line":"for each state s:","formula":"V(s) ← \\max_a \\sum_{s′} T(s,a,s′)[R + γ V(s′)]","note":"the full backup: every successor, weighted by the model","loop":"one sweep per round"},{"title":"Monte Carlo","line":"for each visited state s, after the episode:","formula":"V(s) ← V(s) + α[\\red{G_t} − V(s)]","note":"the expectation replaced by one whole return","loop":"one episode per round"},{"title":"TD(0)","line":"for each transition (s, r, s′):","formula":"V(s) ← V(s) + α[\\red{r + γ V(s′)} − V(s)]","note":"one step sampled, the rest bootstrapped","loop":"one transition per round"},{"title":"SARSA","line":"for each transition (s, a, r, s′, a′):","formula":"Q(s,a) ← Q(s,a) + α[r + γ \\red{Q(s′,a′)} − Q(s,a)]","note":"V becomes Q; the next action is the one actually taken","loop":"one transition per round"},{"title":"Q-learning","line":"for each transition (s, a, r, s′):","formula":"Q(s,a) ← Q(s,a) + α[r + γ \\red{\\max_{a′} Q(s′,a′)} − Q(s,a)]","note":"the next action is the best one, taken or not","loop":"one transition per round"},{"title":"DQN","line":"for a minibatch from the replay buffer:","formula":"θ ← θ + α[r + γ \\max_{a′} Q(s′,a′;\\red{θ^-}) − Q(s,a;\\red{θ})]∇_θ Q(s,a;θ)","note":"the table becomes a network; the target is frozen","loop":"one minibatch per round"}]}
-Lecture 7's summary ladder, continued. Each rung is the rung above with ==one thing changed==, marked in red: the expectation sampled, the return cut to one step, the next action taken and then maximised, the table replaced by a network.
+Lecture 7's summary ladder, continued: each rung is the rung above with ==one thing changed==, marked in red.
 :::
 
 ::: note
@@ -1063,7 +1144,7 @@ Read it top to bottom. Lecture 7 deleted loops; this lecture deletes the model. 
 ### Check — the three ingredients
 {q: 4}
 
-::: quiz The deadly triad names three things that together can make value learning diverge. Which set?
+::: quiz The deadly triad names three things that together can make value learning diverge.<br>Which set?
 - Exploration, discounting, and a large state space
 - Non-stationarity, correlated samples, and a moving target network
 - High learning rate, sparse reward, and long horizon
@@ -1098,7 +1179,7 @@ Cover the Target column and ==rebuild it from the other three.==
 :::
 
 ::: note
-The ladder of the last act as a table, for revision. Rows 1 and 2 are Act 1, row 3 Act 2, rows 4 and 5 Act 3, row 6 Act 4. The column Whose value is the on-policy and off-policy fork; the column Updates after is the bootstrap fork.
+The ladder of the last act as a table, for revision. Rows 1 and 2 are Act 1, rows 3 and 4 Act 2, row 5 Act 3, row 6 Act 4. The column Whose value is the on-policy and off-policy fork; the column Updates after is the bootstrap fork.
 :::
 
 ### Where we are — the cell, filled
@@ -1108,7 +1189,9 @@ The ladder of the last act as a table, for revision. Rows 1 and 2 are Act 1, row
 ::: reveal
 ::: keypoint
 One repeated move, three times over.
-The model became a sample. The wait became a bootstrap. The table became a function.
+The model became a sample.
+The wait became a bootstrap.
+The table became a function.
 :::
 :::
 
@@ -1119,8 +1202,9 @@ $$a = \argmax_{a\in\mathcal A} Q(s,a), \qquad \text{cheap while } \mathcal A \te
 
 ::: reveal
 ::: keypoint
-Double DQN, dueling networks, prioritised replay and Rainbow all keep the skeleton: a sampled Bellman backup, $Q$ for model-free greed, a stabiliser.
-None brings back the model, and none can enumerate a continuous action space. ==That wall is where Lecture 9 begins.==
+Double DQN, dueling networks, prioritised replay and Rainbow keep one skeleton: a sampled backup, a max, a stabiliser.
+None brings back the model, and none can enumerate a continuous action space.
+==That wall is where Lecture 9 begins.==
 :::
 :::
 
@@ -1152,20 +1236,24 @@ A page to keep open while reading the deck alone. Two clashes to say aloud: T is
 
 | Role | Read or revisit | Question to answer |
 |---|---|---|
-| **Core** | [Sutton and Barto, *Reinforcement Learning: An Introduction*, 2nd ed., Chapters 2, 5 and 6](http://incompleteideas.net/book/the-book-2nd.html) | How does one sampled transition become a backup? |
+| **Core** | [Sutton and Barto, *Reinforcement Learning: An Introduction*, 2nd ed., Ch. 2, 5 and 6](http://incompleteideas.net/book/the-book-2nd.html) | How does one sampled transition become a backup? |
 | **Compare** | [Mnih et al., *Human-level control through deep reinforcement learning* (Nature 2015)](https://doi.org/10.1038/nature14236) and [van Hasselt, Guez and Silver, *Double Q-learning* (AAAI 2016)](https://arxiv.org/abs/1509.06461) | Which device is about the target, and which about the data? |
 | **Apply** | The random walk, the six rooms and the cliff from today; the windy gridworld of Sutton and Barto, Example 6.5 | Which experiment is prediction, and which is control? |
 
 ::: keypoint
-Dueling networks (Wang et al., 2016), prioritised replay (Schaul et al., 2016) and Rainbow (Hessel et al., 2018) are the extension map: each patches a named flaw and keeps the loop.
+Extensions: dueling networks (Wang et al., 2016), prioritised replay (Schaul et al., 2016) and Rainbow (Hessel et al., 2018).
+Each patches a named flaw and keeps the loop.
 :::
 
-### Lecture 7 could solve the Bellman equation, because it owned the world. Lecture 8 learned to solve it.
+### Lecture 7 could solve the Bellman equation, because it owned the world.<br>Lecture 8 learned to solve it.
 {layout: standout}
 
-by sampling the expectation, storing $Q$ instead of $V$, and replacing the table with a network whose stability had to be bought twice.
+by sampling the expectation, storing $Q$ instead of $V$,\
+and replacing the table with a network whose stability had to be bought twice.
 
 ### Questions?
 {layout: standout}
 
-From a five-state random walk to human-level Atari with one update rule: the distance between knowing the dynamics and never needing to. What stays fixed through all of it is the equation Bellman wrote; we only ever changed what we were allowed to look up.
+From a five-state random walk to human-level Atari with one update rule.\
+That is the distance between knowing the dynamics and never needing to.\
+The equation Bellman wrote stayed fixed; we only ever changed what we were allowed to look up.

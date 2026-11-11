@@ -240,7 +240,7 @@
      up to a cap, and whatever is still left over centres the column.
      This is what stops a slide reading "cramped on top, empty below".  */
   var GAP_MIN = 14, GAP_MAX = 64;
-  var GROW = 'table,.lgrid,.flow,.cols,.blk';   // blocks whose rows can absorb height
+  var GROW = 'table,.lgrid,.flow,.cols,.blk:not(.alg)';   // blocks whose rows can absorb height; an algorithm box keeps its own height
   /* ---------- fit ---------------------------------------------------
      The type is set for the back row of a hall, which means a slide that
      runs long no longer merely looks tight — it reaches the footer. So

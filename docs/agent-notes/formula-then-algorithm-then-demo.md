@@ -11,7 +11,7 @@ being written into the cells, and without the algorithm box they do not know whi
 
 The two slides now read: (1) the Bellman expectation equation with `=` turned into `←` and the
 indices k, k+1 added in red, in the ladder convention, with the keypoint that V^π is the fixed
-point; (2) an `::: block Algorithm — …` box in the same form as the policy improvement and value
+point; (2) an algorithm box in the same form as the policy improvement and value
 iteration boxes later in the act (initialise, Δ, sweep, stop at ε). The demo follows, and its note
 points back to both.
 
@@ -21,7 +21,8 @@ confirms rather than introduces.
 
 **How to apply:** whenever a slide animates a procedure (a sweep, an iteration, a sampling loop),
 check that the two slides before it give the update rule, labelled, and the algorithm as a box in
-the deck's standard `::: block Algorithm — name | input …; output …` form with numbered steps.
+the deck's `::: algorithm name | input …; output …` box (see [algorithm-box](algorithm-box.md); until
+2026-11-11 this was a numbered-prose `::: block Algorithm` box).
 Keep the tolerance symbol and the index convention identical across the chapter's algorithm boxes.
 Related: [label-every-formula-block](label-every-formula-block.md),
 [algorithm-relations-as-a-ladder](algorithm-relations-as-a-ladder.md),

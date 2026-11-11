@@ -28,6 +28,7 @@ const KATEX_OPTS = {
     '\\hl': '\\htmlClass{mhl}{#1}',
     '\\alert': '\\htmlClass{mhl}{#1}',
     '\\dm': '\\htmlClass{mdim}{#1}',
+    '\\red': '\\htmlClass{mred}{#1}',
     '\\step': '\\htmlClass{frag}{\\htmlData{frag=#1}{#2}}',
     '\\E': '\\mathbb{E}',
     '\\R': '\\mathbb{R}',
@@ -76,6 +77,10 @@ const stripLead = t => String(t).replace(/^\s*(act|part|appendix|closing)\b[^\u2
   .replace(/^([a-z])/, (m) => m.toUpperCase());
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 const rawText = n => n.children.map(c => c.text || '').join('\n');
+/* one source line, one line on the slide: a caption or a small paragraph breaks where its source
+   breaks, so a sentence is never cut by an accidental wrap (a block holding display math is left alone) */
+const mdLines = text => /\$\$/.test(text) ? mdInline(text)
+  : String(text).split(/\n+/).map(l => l.trim()).filter(Boolean).map(mdInline).join('<br>');
 
 /* ---------------- attribute line  {a: b, c: d} -------------------- */
 function parseAttrs(line) {
@@ -134,9 +139,9 @@ function renderNode(n, ctx) {
       return '<div class="pnote">' + inner() + '</div>';
 
     case 'lede':
-      return '<p class="lede">' + mdInline(rawText(n)) + '</p>';
+      return '<p class="lede">' + mdLines(rawText(n)) + '</p>';
     case 'small':
-      return '<p class="small">' + mdInline(rawText(n)) + '</p>';
+      return '<p class="small">' + mdLines(rawText(n)) + '</p>';
 
     case 'keypoint': {
       /* one source line, one line on the slide: contrasted ideas each get a line of their own */
@@ -152,6 +157,41 @@ function renderNode(n, ctx) {
       return '<div class="blk ' + cls + '">' +
         (title ? '<div class="bt">' + mdInline(title) + note + '</div>' : '') +
         '<div class="bb">' + inner() + '</div></div>';
+    }
+
+    /* the algorithm box: one statement per line, loops shown by indentation.
+       `::: algorithm Name | input …; output …`, then lines of the form
+         [keyword] body // margin note        two leading spaces per nesting level
+         ! [keyword] body // note             `!` marks the one line to light: the update rule
+         ---                                  what follows is a footer line (an implementation remark)
+       Keywords (initialise, for each, act, learn, until …) sit in a mono column; the body is prose
+       and inline maths; the note is set small in the right margin. See md/_SCHEMA.md. */
+    case 'algorithm': {
+      let title = n.arg, note = '';
+      const bar = n.arg.split('|');
+      if (bar.length > 1) { title = bar[0].trim(); note = '<span class="bx">' + mdInline(bar[1].trim()) + '</span>'; }
+      const src = rawText(n).split('\n');
+      const rows = [], foot = [];
+      let inFoot = false;
+      for (const line of src) {
+        if (!line.trim()) continue;
+        if (/^\s*---\s*$/.test(line)) { inFoot = true; continue; }
+        if (inFoot) { foot.push(line.trim()); continue; }
+        const m = line.match(/^( *)(!)?\s*(?:\[([^\]]*)\])?\s*(.*?)\s*$/);
+        const depth = Math.floor(m[1].length / 2);
+        let body = m[4], mnote = '';
+        const sl = body.indexOf('//');
+        if (sl >= 0) { mnote = body.slice(sl + 2).trim(); body = body.slice(0, sl).trim(); }
+        const guides = Array.from({ length: depth }, (_, i) => '<i class="ag" style="left:' + (7 + i * 18) + 'px"></i>').join('');
+        rows.push('<div class="ar d' + depth + (m[2] ? ' hot' : '') + '">' +
+          '<span class="ak" style="padding-left:' + (depth * 18) + 'px">' + guides + mdInline(m[3] || '') + '</span>' +
+          '<span class="al">' + mdInline(body) + '</span>' +
+          '<span class="an">' + mdInline(mnote) + '</span></div>');
+      }
+      return '<div class="blk alg ' + cls + '">' +
+        '<div class="bt">' + mdInline('Algorithm — ' + title) + note + '</div>' +
+        '<div class="abody">' + rows.join('') + '</div>' +
+        (foot.length ? '<div class="af">' + foot.map(mdInline).join('<br>') + '</div>' : '') + '</div>';
     }
 
     /* the paper card, on the slide that introduces a paper: one `- Label | text` line per cell —
@@ -181,7 +221,7 @@ function renderNode(n, ctx) {
       ctx.widgets.add(id);
       const cap = rawText(n).trim();
       return '<div class="widget" data-widget="' + esc(id) + '" data-opts=\'' + esc(opts) + '\'></div>' +
-        (cap ? '<div class="wcap">' + mdInline(cap) + '</div>' : '');
+        (cap ? '<div class="wcap">' + mdLines(cap) + '</div>' : '');
     }
 
     case 'figure': {
@@ -189,7 +229,7 @@ function renderNode(n, ctx) {
       const cap = rawText(n).trim();
       return '<figure class="fig ' + cls + '"' + (w ? ' style="max-width:' + w + 'px"' : '') + '>' +
         '<img src="' + assetURI(nm, ctx) + '" alt="' + esc(stripMd(cap).slice(0, 140)) + '">' +
-        (cap ? '<figcaption>' + mdInline(cap) + '</figcaption>' : '') + '</figure>';
+        (cap ? '<figcaption>' + mdLines(cap) + '</figcaption>' : '') + '</figure>';
     }
 
     case 'video': {
@@ -199,7 +239,7 @@ function renderNode(n, ctx) {
       return '<figure class="fig vid ' + cls + '"' + (w ? ' style="max-width:' + w + 'px"' : '') + '>' +
         '<video src="' + assetURI(nm + '.mp4', ctx) + '" poster="' + assetURI(nm + '.jpg', ctx) + '" ' +
         'muted loop playsinline autoplay preload="auto"></video>' +
-        (cap ? '<figcaption>' + mdInline(cap) + '</figcaption>' : '') + '</figure>';
+        (cap ? '<figcaption>' + mdLines(cap) + '</figcaption>' : '') + '</figure>';
     }
 
     case 'flow': {
@@ -506,7 +546,7 @@ function build(file) {
 
   const menu = slides.map((s, i) => s.kind === 'section'
     ? '<div class="msec">' + esc(s.title) + '</div>'
-    : '<div class="mrow" data-i="' + i + '"><span class="mn">' + (i + 1) + '</span><span>' + mdInline(s.title) + '</span></div>'
+    : '<div class="mrow" data-i="' + i + '"><span class="mn">' + (i + 1) + '</span><span>' + mdInline(s.title.replace(/<br\s*\/?>/gi, ' ')) + '</span></div>'
   ).join('\n');
 
   const widgets = [...ctx.widgets];
@@ -533,7 +573,7 @@ function build(file) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IE437 · ${label} — ${esc(fm.title)}</title>
 ${head}
-<style>.mhl{color:var(--accent)}.dark .mhl{color:var(--accent-d)}.mdim{color:var(--ink3)}.dark .mdim{color:var(--wink3)}</style>
+<style>.mhl{color:var(--accent)}.dark .mhl{color:var(--accent-d)}.mred{color:var(--red)}.dark .mred{color:#F07070}.mdim{color:var(--ink3)}.dark .mdim{color:var(--wink3)}</style>
 </head>
 <body>
 <div id="rail"></div>
