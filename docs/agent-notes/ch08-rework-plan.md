@@ -96,3 +96,39 @@ filled map greys off-policy Monte Carlo control as "not in this course" (`skip`)
 tree's canvas is shorter when it writes one row, which ends SARSA's 3 px overflow; no slide is over
 any more. The professor's policy, recorded in CLAUDE.md and `simplify-confusing-slides.md`:
 derivations and formula theory stay in the body and are taught, never archived in an appendix.
+
+**Fourth pass, 2026-11-11 — the student's side** (uncommitted until the professor asks). Two
+readings of the deployed deck as an undergraduate or master's student would meet it, consolidated.
+76 → 80 slides.
+
+- *Nothing is used before it is explained.* "From an average to an update" moved to right after the
+  bandit curves, written on rewards, so α is the step size before any update rule uses it. The first
+  map slide defines prediction, control, bootstrap, on-policy and off-policy in one small block. The
+  ε-soft slide defines ε-soft and ε-greedy; the soft-improvement proof says why a max beats an
+  average with non-negative weights. TD's label names bootstrapping.
+- *One notation.* The return is `G_t` everywhere, bridged once ("written `U_t` in Lecture 7");
+  `T(s,a,s')` is glossed as `P(s'|s,a)`; the replay step uses α and the explicit squared loss, not
+  η and an undefined L; the DQN box stores `r_{t+1}`. A notation card sits before the reading guide.
+- *The demo runs the box.* `gpi-explore` takes `rule: "mc"` (first-visit Monte Carlo control with a
+  constant step size), so the demo after the Monte Carlo control box runs that algorithm, not
+  Q-learning. With ε 0.3 and seed 4 the ε-greedy agent reaches the +5 and the greedy one settles
+  for the +1 inside 250 episodes.
+- *New slides.* "From features to a network — what training means" (parameters, loss, gradient
+  step, minibatch, and the two supervised-learning assumptions RL breaks) before the deadly triad;
+  "Why the max over-estimates" with the new widget `max-bias` (five actions truly worth 0, the max
+  of noisy estimates against a second independent estimate) before Double DQN; "The lecture on one
+  page" (six methods × target, update timing, whose value, storage); the notation card.
+- *Learning aids.* Prerequisites from Lecture 7 on the route slide; a prediction question before
+  the Monte Carlo against TD demo, the bandit and six rooms; plain subtitles on TD and Q-learning;
+  the convergence theorem's two step-size conditions carry red labels saying what each buys; the
+  triad demo's caption gives the sign argument; first-visit against every-visit, SARSA's condition
+  ε → 0 and "replay needs an off-policy rule" are on the slides, not only in notes; the windy
+  gridworld in the reading guide is attributed to Sutton and Barto, Example 6.5.
+- *Left out on purpose.* A student-notes toggle (an engine change), pacing marks or a split into
+  two lectures, and a companion notebook: each is the professor's call. Lecture 7's own wording was
+  not touched; the bridge is on the Lecture 8 side.
+- *QA lessons.* The walk checks vertical overflow only: a display formula too wide for the slide is
+  clipped silently, so look at wide formulas by eye (or compare each `.katex-html` right edge with
+  the slide's). An inline update in an algorithm box breaks mid-bracket unless the whole expression
+  is wrapped in one brace group, `${…}$`. A widget drawn at 640 px looks lost on a slide of its own;
+  `max-bias` is drawn at 1040 × 340.

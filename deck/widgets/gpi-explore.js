@@ -1,7 +1,7 @@
 /* ============================================================
    widget: gpi-explore
-   The exploration tax. Two Q-learning agents, identical except
-   for epsilon, on the same corridor: a NEAR small reward (+1)
+   The exploration tax. Two agents, identical except for epsilon,
+   on the same corridor: a NEAR small reward (+1)
    and a FAR large one (+5). The purely greedy agent locks onto
    whatever it stumbled into first and never tries the actions it
    currently dislikes — so it never learns they were better.
@@ -9,6 +9,12 @@
    pairs untried, and an untried pair can never be evaluated.
    Options: eps (0.3), seed (4), auto — episodes run on arrival (250;
    by then the ε-greedy agent's greedy path reaches the +5).
+     rule  "q" (default): the Q-learning update after every step.
+           "mc": the loop of the Monte Carlo control box — play the
+           whole episode, walk it backwards accumulating the return G,
+           and move Q(s,a) towards G at the first visit of each pair
+           (constant step size). Chapter 8 Act 2 uses "mc" so that the
+           demo runs the algorithm on the slide before it.
    ============================================================ */
 IE437.widget('gpi-explore', function (host, opts) {
   var E = IE437.el;
@@ -18,6 +24,7 @@ IE437.widget('gpi-explore', function (host, opts) {
   var ACT = [[-1, 0], [0, 1], [1, 0], [0, -1]];          // up right down left
   var GLYPH = ['↑', '→', '↓', '←'];
   var eps2 = opts.eps || 0.3, seed = opts.seed || 4, ep = 0, A, B;
+  var RULE = opts.rule === 'mc' ? 'mc' : 'q';
   var AUTO = opts.auto == null ? 250 : Math.max(0, +opts.auto | 0);   // episodes run on arrival (data-auto)
 
   /* ---------- mode: "problem" — the arena alone, large, before any agent runs.
@@ -81,7 +88,7 @@ IE437.widget('gpi-explore', function (host, opts) {
     return ties[Math.floor(ag.rand() * ties.length) % ties.length];
   }
   function episode(ag) {
-    var r = START[0], c = START[1], G = 0, t;
+    var r = START[0], c = START[1], G = 0, t, traj = [];
     for (t = 0; t < MAXT; t++) {
       var s = idx(r, c);
       ag.visit[s]++;
@@ -90,11 +97,20 @@ IE437.widget('gpi-explore', function (host, opts) {
       var nr = Math.max(0, Math.min(R - 1, r + ACT[a][0]));
       var nc = Math.max(0, Math.min(C - 1, c + ACT[a][1]));
       var rew = reward(nr, nc), ns = idx(nr, nc), done = isGoal(nr, nc);
-      ag.Q[s][a] += ALPHA * (rew + (done ? 0 : GAMMA * Math.max.apply(null, ag.Q[ns])) - ag.Q[s][a]);
+      if (RULE === 'mc') traj.push([s, a, rew]);
+      else ag.Q[s][a] += ALPHA * (rew + (done ? 0 : GAMMA * Math.max.apply(null, ag.Q[ns])) - ag.Q[s][a]);
       G += rew; r = nr; c = nc;
       if (done) { ag.goal = (rew === BIGR) ? 'big' : 'small'; break; }
     }
     if (t >= MAXT) ag.goal = 'none';
+    if (RULE === 'mc') {                       /* first-visit Monte Carlo: the return, backwards */
+      var first = {}, U = 0, i, k;
+      for (i = 0; i < traj.length; i++) { k = traj[i][0] * 4 + traj[i][1]; if (!(k in first)) first[k] = i; }
+      for (i = traj.length - 1; i >= 0; i--) {
+        U = traj[i][2] + GAMMA * U; k = traj[i][0] * 4 + traj[i][1];
+        if (first[k] === i) ag.Q[traj[i][0]][traj[i][1]] += ALPHA * (U - ag.Q[traj[i][0]][traj[i][1]]);
+      }
+    }
     ag.ret.push(G);
   }
   function greedyPath(ag) {
