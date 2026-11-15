@@ -157,3 +157,10 @@ so that box and demo stay adjacent, before the check. Act 2 lights the on-policy
 Q-learning slide, whose caption lost its second sentence to the note so the strip fits. Each act
 now follows one axis of the map: Act 1 the columns, Act 2 the on-policy row, Act 3 the off-policy
 row. Route slide, the GPI line and the revision-table note were updated to match.
+
+**Four slides marked optional (2026-11-15).** At eighty slides with five derivations and eleven
+stepped widgets the deck is long for one meeting. The ε-greedy improvement proof, the Watkins and
+Dayan convergence slide, the semi-gradient derivation and Double DQN carry "— if time allows" in
+their `sub` line, the convention Ch 1 already uses for an advanced derivation; each has a keypoint
+that states what the rest of the act needs, so skipping the slide loses the proof, not the result.
+The alternative discussed, splitting the deck between Acts 2 and 3, was not taken.

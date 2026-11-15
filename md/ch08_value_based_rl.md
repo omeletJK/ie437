@@ -491,7 +491,7 @@ Source p. 37: the two bar charts, epsilon/|A| on every action with the greedy ac
 :::
 
 ### Policy improvement still holds for soft policies
-{fill: top, math: compact}
+{fill: top, math: compact, sub: the proof — if time allows; the keypoint is what Act 2 needs}
 
 **$\varepsilon$-greedy improvement theorem** — Lecture 7's theorem extended to policies that keep exploring.\
 Let $\pi$ be any $\varepsilon$-soft policy and $\pi'$ the $\varepsilon$-greedy policy on $Q^\pi$.\
@@ -752,7 +752,7 @@ Source p. 74, Sutton and Barto's cliff walking. (The source's windy gridworld, p
 :::
 
 ### When does tabular Q-learning converge?
-{math: compact, sub: Watkins and Dayan, Q-learning · Machine Learning 1992}
+{math: compact, sub: Watkins and Dayan, Q-learning · Machine Learning 1992 — if time allows}
 
 ::: paper
 - Why it is here | The guarantee that Act 3's sampled max backup still reaches $Q^*$, and the two conditions it costs.
@@ -855,7 +855,7 @@ Source pp. 79–81. The tabular update is the special case phi(s, a) = a one-hot
 :::
 
 ### The semi-gradient, derived
-{fill: top, math: compact}
+{fill: top, math: compact, sub: the derivation — if time allows; the keypoint is what Act 4 needs}
 
 **Derivation of the function-approximation update** — one transition $(s,a,r,s')$, squared error, target held fixed:
 
@@ -1116,7 +1116,7 @@ Ask first: every action is worth 0 and the estimates are unbiased, so what does 
 :::
 
 ### Double DQN — select with one network, evaluate with the other
-{sub: van Hasselt, Guez and Silver, Deep reinforcement learning with double Q-learning · AAAI 2016}
+{sub: van Hasselt, Guez and Silver, Deep reinforcement learning with double Q-learning · AAAI 2016 — if time allows}
 
 ::: paper
 - Why it is here | The cure for the last slide: in DQN the same noisy estimate picks the action and scores it.
