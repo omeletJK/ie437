@@ -1,224 +1,173 @@
 /* ============================================================
-   widget: deadly-triad
-   Tsitsiklis & Van Roy's two-state counterexample, wired to the
-   three switches. Every reward is 0, so the true value is 0
-   everywhere. Turn on all three ingredients and the estimate
-   explodes; turn any ONE of them off and it shrinks back to 0.
-      s1 (phi = 1)  ->  s2 (phi = 2)  ->  s2 ... -> terminal
-
-   Two literal pictures, no log axis: the chain itself with the
-   one shared weight, and six bars of |V(s1)| after 0, 10, ... 50
-   updates on a linear axis. A bar taller than the axis is clipped
-   and says by how much it went off the chart.
-
-   Parameters. GAMMA = 0.99 and PHI = [1, 2] are the paper's. With
-   all three on, each update of the s1 -> s2 transition multiplies w
-   by 1 + ALPHA*(2*GAMMA - 1) = 1.0735 at ALPHA = 0.075, so |V(s1)|
-   doubles every ten updates (x2.03): 1, 2.0, 4.1, 8.4, 17, 35.
-   With the table (fa off) or the return as target (boot off) the
-   same ALPHA shrinks the estimate by 1 - ALPHA per update: 1,
-   0.46, 0.21, 0.10, 0.04, 0.02. On-policy, the chain is followed
-   and s2 -> terminal (prob PEND = 0.1) pulls w down by 1 - 4*ALPHA
-   each time it happens: 1, 0.79, 0.58, 0.43, 0.31, 0.30 with
-   seed 5. TOTAL = 50 updates, AXTOP = 10 on the bar axis.
+   widget: deadly-triad                                 (Chapter 8)
+   Tsitsiklis & Van Roy's two-state example, drawn as a chase.
+   One transition s1 -> s2 with reward 0 is all the data, so both
+   true values are 0. The same TD(0) update,
+       V(s1) <- V(s1) + alpha [ gamma V(s2) - V(s1) ],
+   is applied once per press, with V stored two ways side by side:
+     left   a table: V(s2) is its own cell and is never touched, so
+            the target gamma V(s2) stays at 0 and V(s1) halves each
+            press (alpha = 0.5): 1, .5, .25, .125, .0625.
+     right  one shared weight, V(s1) = w and V(s2) = 2w: raising w
+            to chase the target raises the target twice as much, so
+            w grows by 1 + alpha (2 gamma - 1) = 1.495 per press:
+            1, 1.50, 2.24, 3.34, 5.00; V(s2) ends at 9.99.
+   Each bar shows what the last press added (a light cap) or took
+   away (a dashed outline); the red line is the target and the red
+   bracket the gap to it. The three legs of the triad are the three
+   red labels on the picture. Steps: 4 presses = 4 updates.
+   Options: alpha (0.5), gamma (0.99), steps (4), axis (10).
    ============================================================ */
 IE437.widget('deadly-triad', function (host, opts) {
   var E = IE437.el;
-  var INK = '#16181D', BLUE = '#2563EB', RED = '#D64545', SLATE = '#64748B', PANEL2 = '#E7E7E1', LBLUE = '#E3ECFB';
+  var INK = '#16181D', BLUE = '#2563EB', RED = '#D64545', SLATE = '#64748B', LBLUE = '#E3ECFB';
   var MONO = 'IBM Plex Mono, monospace';
-  var GAMMA = 0.99, ALPHA = 0.075, PHI = [1, 2], PEND = 0.1, TOTAL = 50, EVERY = 10, AXTOP = 10;
-  var fa = true, boot = true, off = true;
-  var w, V, s, n, bars, rand, shown = 0, timers = [];
+  var ALPHA = +opts.alpha || 0.5, GAMMA = +opts.gamma || 0.99, N = +opts.steps || 4, AXTOP = +opts.axis || 10;
+  var k = 0;
 
   host.innerHTML =
-    '<div class="wbar"><span class="wt">Two states, zero rewards, true value = 0 &mdash; what could go wrong</span>' +
-    '<span class="wspacer"></span>' +
-    '<button class="wb" data-auto data-run>run ' + TOTAL + ' updates</button>' +
-    '</div>' +
-    '<div class="wbody" style="flex-direction:row;gap:18px;padding-top:10px;padding-bottom:10px">' +
-    '<div style="flex:.85;display:flex;flex-direction:column;gap:9px;justify-content:center;min-width:0">' +
-    '<label class="wtog on" data-t="fa"><i></i><span>function approximation<br>' +
-    '<span style="opacity:.65;font-weight:400">one shared w, not a table</span></span></label>' +
-    '<label class="wtog on" data-t="boot"><i></i><span>bootstrapping<br>' +
-    '<span style="opacity:.65;font-weight:400">target r + &gamma;V(s&prime;), not the return</span></span></label>' +
-    '<label class="wtog on" data-t="off"><i></i><span>off-policy distribution<br>' +
-    '<span style="opacity:.65;font-weight:400">update s&#8321;&rarr;s&#8322; only</span></span></label>' +
-    '<div data-verdict style="margin-top:6px;padding:9px 12px;border-radius:4px;text-align:center;' +
-    'font:600 12px/1.4 var(--mono);letter-spacing:.04em"></div>' +
-    '</div>' +
-    '<div style="flex:1.15;display:flex;flex-direction:column;align-items:center;min-width:0;gap:2px">' +
-    '<div class="wlabel">the problem &mdash; and how V is stored</div>' +
-    '<div data-p></div>' +
-    '<div class="wlabel" style="margin-top:6px">|V(s&#8321;)| after 0 &hellip; ' + TOTAL + ' updates &mdash; linear axis, dashed line = true value 0</div>' +
-    '<div data-c></div></div></div>';
-
-  var PW = 560, PH = 112, CW = 560, CH = 186;
-  var pic = IE437.svg(PW, PH), ch = IE437.svg(CW, CH);
-  host.querySelector('[data-p]').appendChild(pic);
-  host.querySelector('[data-c]').appendChild(ch);
+    '<div class="wbar"><span class="wt">one transition, reward 0 &mdash; the same update, V stored two ways</span>' +
+    '<span class="wspacer"></span><span class="wlabel">updates</span><span class="wnum" data-n>0</span></div>' +
+    '<div class="wbody" style="align-items:center;padding:8px 14px 6px"><div data-c></div></div>';
+  var W = 1060, H = 336, s = IE437.svg(W, H);
+  host.querySelector('[data-c]').appendChild(s);
   var uid = 'dt' + Math.floor(Math.random() * 1e9);
 
-  function value(st) { return fa ? w * PHI[st] : V[st]; }
-
-  function update() {
-    var st, nx, done;
-    if (off) { st = 0; nx = 1; done = false; }                 // always the s1 -> s2 transition
-    else {
-      st = s;
-      if (st === 0) { nx = 1; done = false; }
-      else { done = rand() < PEND; nx = 1; }
-      s = done ? 0 : nx;
-    }
-    var target = boot ? (done ? 0 : GAMMA * value(nx)) : 0;     // all rewards are zero
-    var delta = target - value(st);
-    if (fa) w += ALPHA * delta * PHI[st];
-    else V[st] += ALPHA * delta;
-    n++;
+  /* both runs precomputed: table[i] = [V(s1), V(s2)], shared[i] = [w, 2w] after i updates */
+  var table = [[1, 0]], shared = [[1, 2]];
+  for (var i = 1; i <= N; i++) {
+    var t = table[i - 1];
+    table.push([t[0] + ALPHA * (GAMMA * t[1] - t[0]), t[1]]);
+    var w = shared[i - 1][0];
+    w = w + ALPHA * (GAMMA * 2 * w - w);                 /* phi(s1) = 1 */
+    shared.push([w, 2 * w]);
   }
 
-  /* ---------- picture (a): the chain, the weight, the target ---------- */
-  function drawPic() {
-    while (pic.firstChild) pic.removeChild(pic.firstChild);
-    var d = E('defs', {}, pic);
-    [['k', INK], ['r', RED], ['s', SLATE]].forEach(function (c) {
+  function mono(x, y, text, attrs) {
+    var a = { x: x, y: y, 'font-family': MONO, 'font-size': 9.5, fill: SLATE, text: text };
+    for (var q in attrs) a[q] = attrs[q];
+    return E('text', a, s);
+  }
+  function tag(x, y, text, anchor) {              /* a leg of the triad: red, small caps */
+    return mono(x, y, text, { fill: RED, 'font-size': 8.5, 'font-weight': 700, 'letter-spacing': '.1em', 'text-anchor': anchor || 'start' });
+  }
+  function arrow(x1, y1, x2, y2, c, key, wd) {
+    E('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: c, 'stroke-width': wd || 1.4, 'marker-end': 'url(#' + uid + key + ')' }, s);
+  }
+  function fmt(v) { return v === 0 ? '0' : v < 0.1 ? v.toFixed(3) : v.toFixed(2); }
+
+  /* ---------- the top strip: the data and the update, shared by both panels ---------- */
+  function drawTop() {
+    var cy = 36, r = 16, X1 = 78, X2 = 218;
+    E('circle', { cx: X1, cy: cy, r: r, fill: '#fff', stroke: INK, 'stroke-width': 1.3 }, s);
+    E('circle', { cx: X2, cy: cy, r: r, fill: '#fff', stroke: INK, 'stroke-width': 1.3 }, s);
+    IE437.math(s, X1, cy + 5, 's_1', { 'text-anchor': 'middle', 'font-size': 15 });
+    IE437.math(s, X2, cy + 5, 's_2', { 'text-anchor': 'middle', 'font-size': 15 });
+    arrow(X1 + r + 3, cy, X2 - r - 4, cy, INK, 'k');
+    mono((X1 + X2) / 2, cy - 8, 'reward 0', { 'text-anchor': 'middle' });
+    mono(X1 - r, 68, 'THE ONLY TRANSITION IN THE DATA', { 'font-size': 8.5, 'letter-spacing': '.1em' });
+    tag(X2 + r + 10, cy - 2, 'OFF-POLICY');
+    mono(X2 + r + 10, cy + 10, 's₂ itself is never updated', { 'font-size': 9 });
+
+    mono(470, 20, 'TD(0) UPDATE, ACT 1 — APPLIED ONCE PER PRESS', { 'font-size': 8.5, 'letter-spacing': '.1em' });
+    IE437.math(s, 470, 46, 'V(s_1)\\;\\leftarrow\\;V(s_1) + \\alpha\\,[\\,\\red{\\gamma V(s_2)} - V(s_1)\\,]', { 'font-size': 17 });
+    tag(470, 66, 'BOOTSTRAPPING');
+    mono(576, 66, 'the target in red is built from the estimate V(s₂)', { 'font-size': 9 });
+    IE437.math(s, W - 8, 46, '\\alpha = ' + ALPHA + '\\text{, }\\gamma = ' + GAMMA, { 'font-size': 12, 'text-anchor': 'end', fill: SLATE });
+    mono(W - 8, 20, 'EVERY REWARD 0, SO BOTH TRUE VALUES ARE 0', { 'font-size': 8.5, 'letter-spacing': '.1em', 'text-anchor': 'end' });
+  }
+
+  /* ---------- one panel: how V is stored, then the two bars and the target ---------- */
+  function drawPanel(px, fa, run) {
+    var PY = 84, PW = 512, PH = H - PY - 4, cur = run[k], prev = k ? run[k - 1] : null;
+    E('rect', { x: px, y: PY, width: PW, height: PH, rx: 3, fill: 'none', stroke: 'currentColor', 'stroke-opacity': .18 }, s);
+    mono(px + 14, PY + 19, fa ? 'ONE SHARED WEIGHT' : 'A TABLE', { fill: INK, 'font-size': 10, 'font-weight': 700, 'letter-spacing': '.12em' });
+    mono(px + 14 + (fa ? 142 : 66), PY + 19, fa ? '— V(s₁) = w, V(s₂) = 2w' : '— V(s₁) and V(s₂) are separate cells', { 'font-size': 10 });
+
+    /* storage glyph */
+    var gx = px + 24, gy = PY + 40;
+    if (fa) {
+      E('rect', { x: gx + 44, y: gy, width: 44, height: 24, rx: 3, fill: LBLUE, stroke: BLUE, 'stroke-width': 1.2 }, s);
+      IE437.math(s, gx + 66, gy + 17, 'w', { 'text-anchor': 'middle', 'font-size': 15, fill: BLUE });
+      arrow(gx + 56, gy + 26, gx + 26, gy + 52, BLUE, 'b', 1.1);
+      arrow(gx + 76, gy + 26, gx + 106, gy + 52, BLUE, 'b', 1.1);
+      IE437.math(s, gx + 20, gy + 70, 'V(s_1) = 1\\cdot w', { 'text-anchor': 'middle', 'font-size': 11.5 });
+      IE437.math(s, gx + 112, gy + 70, 'V(s_2) = 2\\cdot w', { 'text-anchor': 'middle', 'font-size': 11.5 });
+      tag(gx + 66, gy + 90, 'FUNCTION APPROXIMATION', 'middle');
+      mono(gx + 66, gy + 103, 'one update moves both states', { 'text-anchor': 'middle', 'font-size': 9 });
+    } else {
+      [['V(s_1)', 0], ['V(s_2)', 1]].forEach(function (c) {
+        E('rect', { x: gx + 2 + c[1] * 70, y: gy + 18, width: 60, height: 24, rx: 3, fill: LBLUE, stroke: BLUE, 'stroke-width': 1.2 }, s);
+        IE437.math(s, gx + 32 + c[1] * 70, gy + 35, c[0], { 'text-anchor': 'middle', 'font-size': 12.5, fill: BLUE });
+      });
+      mono(gx + 66, gy + 70, 'TWO CELLS', { 'text-anchor': 'middle', 'font-size': 8.5, 'letter-spacing': '.1em', fill: BLUE, 'font-weight': 700 });
+      mono(gx + 66, gy + 84, 'one update moves one cell', { 'text-anchor': 'middle', 'font-size': 9 });
+    }
+
+    /* the gap and the verdict, under the glyph */
+    var tgt = GAMMA * cur[1], gap = Math.abs(tgt - cur[0]);
+    mono(gx + 66, PY + 172, 'GAP TO THE TARGET', { 'text-anchor': 'middle', 'font-size': 8.5, 'letter-spacing': '.1em' });
+    mono(gx + 66, PY + 194, fmt(gap), { 'text-anchor': 'middle', 'font-size': 17, 'font-weight': 700, fill: INK });
+    if (k >= 1) {
+      var grow = gap > Math.abs(GAMMA * prev[1] - prev[0]) + 1e-9;
+      mono(gx + 66, PY + 212, grow ? 'growing — runs away' : 'shrinking — settles at 0',
+        { 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: grow ? RED : BLUE });
+    } else {
+      mono(gx + 66, PY + 212, 'press → for one update', { 'text-anchor': 'middle', 'font-size': 10 });
+    }
+
+    /* bars */
+    var y0 = PY + 214, top = PY + 44, scale = (y0 - top) / AXTOP, ax = px + 196, bw = 56;
+    var C1 = px + 272, C2 = px + 428;
+    function Y(v) { return y0 - Math.min(v, AXTOP) * scale; }
+    [0, AXTOP / 2, AXTOP].forEach(function (t) {
+      E('line', { x1: ax, x2: px + PW - 14, y1: Y(t), y2: Y(t), stroke: 'currentColor', 'stroke-opacity': t ? .1 : .35 }, s);
+      mono(ax - 6, Y(t) + 3.5, String(t), { 'text-anchor': 'end', 'font-size': 9, fill: 'currentColor', 'fill-opacity': .5 });
+    });
+    function bar(cx, v, p, color, label) {
+      if (v > 0) E('rect', { x: cx - bw / 2, y: Y(v), width: bw, height: y0 - Y(v), fill: color, 'fill-opacity': .85 }, s);
+      if (p !== null && v > p + 1e-9)                 /* what this press added: a light cap */
+        E('rect', { x: cx - bw / 2, y: Y(v), width: bw, height: Y(p) - Y(v), fill: '#fff', 'fill-opacity': .45 }, s);
+      if (p !== null && v < p - 1e-9)                 /* what this press took away: a dashed outline */
+        E('rect', { x: cx - bw / 2, y: Y(p), width: bw, height: Y(v) - Y(p), fill: 'none', stroke: color, 'stroke-width': 1, 'stroke-dasharray': '3 2' }, s);
+      var ty = Y(p === null ? v : Math.max(v, p)) - 5;
+      mono(cx, ty, fmt(v), { 'text-anchor': 'middle', 'font-size': 10, 'font-weight': 700, fill: INK });
+      IE437.math(s, cx, y0 + 17, label, { 'text-anchor': 'middle', 'font-size': 13 });
+    }
+    bar(C1, cur[0], prev && prev[0], BLUE, 'V(s_1)');
+    bar(C2, cur[1], prev && prev[1], SLATE, 'V(s_2)');
+    /* the target: read off V(s2), carried across to the V(s1) column */
+    E('line', { x1: C1 - bw / 2 - 8, x2: C2 + bw / 2, y1: Y(tgt), y2: Y(tgt), stroke: RED, 'stroke-width': 1.1, 'stroke-dasharray': '4 3' }, s);
+    E('line', { x1: C1 - bw / 2 - 8, x2: C1 + bw / 2 + 8, y1: Y(tgt), y2: Y(tgt), stroke: RED, 'stroke-width': 2.2 }, s);
+    IE437.math(s, (C1 + C2) / 2, Y(tgt) - 5, '\\text{target } \\gamma V(s_2) = ' + fmt(tgt), { 'text-anchor': 'middle', 'font-size': 11, fill: RED });
+    /* the gap: a bracket beside the V(s1) bar */
+    if (Math.abs(Y(tgt) - Y(cur[0])) > 4) {
+      var bx = C1 - bw / 2 - 14, ya = Y(cur[0]), yb = Y(tgt);
+      E('line', { x1: bx, x2: bx, y1: ya, y2: yb, stroke: RED, 'stroke-width': 1.2 }, s);
+      E('line', { x1: bx - 3, x2: bx + 3, y1: ya, y2: ya, stroke: RED, 'stroke-width': 1.2 }, s);
+      E('line', { x1: bx - 3, x2: bx + 3, y1: yb, y2: yb, stroke: RED, 'stroke-width': 1.2 }, s);
+      mono(bx - 6, (ya + yb) / 2 + 3.5, 'gap', { 'text-anchor': 'end', fill: RED, 'font-weight': 700 });
+    }
+  }
+
+  function draw() {
+    while (s.firstChild) s.removeChild(s.firstChild);
+    var d = E('defs', {}, s);
+    [['k', INK], ['b', BLUE]].forEach(function (c) {
       var m = E('marker', { id: uid + c[0], viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: 'auto' }, d);
       E('path', { d: 'M0 0L10 5L0 10Z', fill: c[1] }, m);
     });
-    function arrow(x1, y1, x2, y2, c, key) {
-      E('line', { x1: x1, y1: y1, x2: x2, y2: y2, stroke: c, 'stroke-width': c === RED ? 2 : 1.4, 'marker-end': 'url(#' + uid + key + ')' }, pic);
-    }
-    var cy = 70, r = 17, X1 = 56, X2 = 236, XT = 376;
-    /* states and terminal */
-    E('circle', { cx: X1, cy: cy, r: r, fill: '#fff', stroke: INK, 'stroke-width': 1.3 }, pic);
-    E('circle', { cx: X2, cy: cy, r: r, fill: '#fff', stroke: INK, 'stroke-width': 1.3 }, pic);
-    IE437.math(pic, X1, cy + 5, 's_1', { 'text-anchor': 'middle', 'font-size': 15 });
-    IE437.math(pic, X2, cy + 5, 's_2', { 'text-anchor': 'middle', 'font-size': 15 });
-    E('rect', { x: XT - 15, y: cy - 15, width: 30, height: 30, fill: PANEL2, stroke: SLATE, 'stroke-width': 1.1 }, pic);
-    E('text', { x: XT, y: cy + 3, 'text-anchor': 'middle', 'font-size': 8, fill: SLATE, 'font-family': MONO, 'letter-spacing': '.06em', text: 'end' }, pic);
-    IE437.math(pic, X1, PH - 6, '\\phi(s_1)=1', { 'text-anchor': 'middle', 'font-size': 12.5 });
-    IE437.math(pic, X2, PH - 6, '\\phi(s_2)=2', { 'text-anchor': 'middle', 'font-size': 12.5 });
-    /* transitions: s1 -> s2 (the off-policy update), s2 self-loop, s2 -> end */
-    arrow(X1 + r + 3, cy, X2 - r - 4, cy, off ? RED : INK, off ? 'r' : 'k');
-    /* the self-loop sits at the top-right of s2, clear of the weight box above it */
-    E('path', { d: 'M' + (X2 + 3) + ' ' + (cy - r + 1) + ' C ' + (X2 + 6) + ' ' + (cy - r - 28) + ', ' + (X2 + r + 30) + ' ' + (cy - 14) + ', ' + (X2 + r - 2) + ' ' + (cy - 5),
-      fill: 'none', stroke: INK, 'stroke-width': 1.4, 'marker-end': 'url(#' + uid + 'k)' }, pic);
-    arrow(X2 + r + 3, cy, XT - 15 - 4, cy, INK, 'k');
-    E('text', { x: X2 + r + 10, y: cy - r - 10, 'font-size': 9.5, fill: SLATE, 'font-family': MONO, text: (1 - PEND).toFixed(1) }, pic);
-    E('text', { x: (X2 + XT) / 2, y: cy - 7, 'text-anchor': 'middle', 'font-size': 9.5, fill: SLATE, 'font-family': MONO, text: PEND.toFixed(1) }, pic);
-    E('text', { x: (X1 + X2) / 2, y: cy + 19, 'text-anchor': 'middle', 'font-size': 9.5, fill: off ? RED : SLATE, 'font-family': MONO,
-      'font-weight': off ? 700 : 500, 'letter-spacing': '.04em', text: off ? 'only this transition' : 'follow the chain' }, pic);
-    E('text', { x: PW - 4, y: 11, 'text-anchor': 'end', 'font-size': 8.5, fill: SLATE, 'font-family': MONO, 'letter-spacing': '.08em', text: 'EVERY REWARD 0' }, pic);
-    /* how V is stored: one shared weight, or one cell per state */
-    var fx = 436;
-    if (fa) {
-      var bx = (X1 + X2) / 2, by = 28;
-      E('rect', { x: bx - 20, y: by - 11, width: 40, height: 22, rx: 3, fill: LBLUE, stroke: BLUE, 'stroke-width': 1.2 }, pic);
-      IE437.math(pic, bx, by + 5, 'w', { 'text-anchor': 'middle', 'font-size': 14, fill: BLUE });
-      E('line', { x1: bx - 14, y1: by + 11, x2: X1 + 6, y2: cy - r - 1, stroke: BLUE, 'stroke-width': 1, 'stroke-dasharray': '3 2' }, pic);
-      E('line', { x1: bx + 14, y1: by + 11, x2: X2 - 8, y2: cy - r - 1, stroke: BLUE, 'stroke-width': 1, 'stroke-dasharray': '3 2' }, pic);
-      E('text', { x: bx, y: by - 15, 'text-anchor': 'middle', 'font-size': 8.5, fill: BLUE, 'font-family': MONO, 'letter-spacing': '.08em', text: 'ONE SHARED WEIGHT' }, pic);
-      IE437.math(pic, fx, 44, 'V(s) = w\\,\\phi(s)', { 'font-size': 15 });
-      IE437.math(pic, fx, 63, 'V(s_1) = w,\\; V(s_2) = 2w', { 'font-size': 11.5, fill: SLATE });
-    } else {
-      [[X1, 's_1'], [X2, 's_2']].forEach(function (p) {
-        E('rect', { x: p[0] - 24, y: 17, width: 48, height: 22, rx: 3, fill: LBLUE, stroke: BLUE, 'stroke-width': 1.2 }, pic);
-        IE437.math(pic, p[0], 33, 'V(' + p[1] + ')', { 'text-anchor': 'middle', 'font-size': 12.5, fill: BLUE });
-        E('line', { x1: p[0], y1: 39, x2: p[0], y2: cy - r - 1, stroke: BLUE, 'stroke-width': 1, 'stroke-dasharray': '3 2' }, pic);
-      });
-      E('text', { x: (X1 + X2) / 2, y: 11, 'text-anchor': 'middle', 'font-size': 8.5, fill: BLUE, 'font-family': MONO, 'letter-spacing': '.08em', text: 'A TABLE: ONE CELL EACH' }, pic);
-      IE437.math(pic, fx, 44, 'V(s) \\text{ is a table}', { 'font-size': 15 });
-      IE437.math(pic, fx, 63, '\\text{one cell per update}', { 'font-size': 11.5, fill: SLATE });
-    }
-    IE437.math(pic, fx, 90, boot ? '\\text{target } \\gamma V(s\')' : '\\text{target } G = 0', { 'font-size': 13 });
-    IE437.math(pic, fx, 106, boot ? '\\text{(bootstrap)}' : '\\text{(the return)}', { 'font-size': 11, fill: SLATE });
+    drawTop();
+    drawPanel(12, false, table);
+    drawPanel(536, true, shared);
+    host.querySelector('[data-n]').textContent = String(k);
   }
 
-  /* ---------- picture (b): six bars on a linear axis ---------- */
-  function drawBars() {
-    while (ch.firstChild) ch.removeChild(ch.firstChild);
-    var P = { l: 44, r: 14, t: 24, b: 28 };
-    var Y = function (v) { return CH - P.b - v / AXTOP * (CH - P.t - P.b); };
-    var k = bars.length, slot = (CW - P.l - P.r) / k, bw = Math.min(46, slot * 0.6);
-    [0, AXTOP / 2, AXTOP].forEach(function (t) {
-      E('line', { x1: P.l, x2: CW - P.r, y1: Y(t), y2: Y(t), stroke: 'currentColor', 'stroke-opacity': .12 }, ch);
-      E('text', { x: P.l - 6, y: Y(t) + 3.5, 'text-anchor': 'end', 'font-size': 9, fill: 'currentColor', 'fill-opacity': .5,
-        'font-family': MONO, text: String(t) }, ch);
-    });
-    E('line', { x1: P.l, x2: P.l, y1: P.t, y2: CH - P.b, stroke: 'currentColor', 'stroke-opacity': .28 }, ch);
-    E('line', { x1: P.l, x2: CW - P.r, y1: Y(0), y2: Y(0), stroke: RED, 'stroke-width': 1.2, 'stroke-dasharray': '4 3' }, ch);
-    E('text', { x: (P.l + CW - P.r) / 2, y: CH - 3, 'text-anchor': 'middle', 'font-size': 9, fill: 'currentColor',
-      'fill-opacity': .45, 'font-family': MONO, text: 'updates' }, ch);
-    for (var i = 0; i < k; i++) {
-      var cx = P.l + slot * (i + 0.5);
-      E('text', { x: cx, y: CH - P.b + 14, 'text-anchor': 'middle', 'font-size': 9, fill: 'currentColor', 'fill-opacity': .5,
-        'font-family': MONO, text: String(i * EVERY) }, ch);
-      if (i >= shown) continue;
-      var v = bars[i], over = v > AXTOP, top = Y(Math.min(v, AXTOP));
-      E('rect', { x: cx - bw / 2, y: top, width: bw, height: Y(0) - top, fill: BLUE, 'fill-opacity': over ? .55 : .85 }, ch);
-      if (over) {
-        /* clipped: a torn top edge and the multiple of the axis */
-        E('path', { d: 'M' + (cx - bw / 2 - 3) + ' ' + (P.t + 2) + ' l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4', fill: 'none', stroke: '#fff', 'stroke-width': 3 }, ch);
-        E('text', { x: cx, y: P.t - 12, 'text-anchor': 'middle', 'font-size': 9, 'font-weight': 700, fill: RED, 'font-family': MONO,
-          text: 'off the chart' }, ch);
-        E('text', { x: cx, y: P.t - 2, 'text-anchor': 'middle', 'font-size': 9.5, 'font-weight': 700, fill: RED, 'font-family': MONO,
-          text: '×' + (v / AXTOP).toFixed(1) }, ch);
-      } else {
-        E('text', { x: cx, y: top - 4, 'text-anchor': 'middle', 'font-size': 9.5, 'font-weight': 600, fill: INK, 'font-family': MONO,
-          text: v < 0.1 ? v.toFixed(3) : v < 10 ? v.toFixed(2) : v.toFixed(1) }, ch);
-      }
-    }
-  }
-
-  function verdict() {
-    var el = host.querySelector('[data-verdict]');
-    if (shown < bars.length) {
-      el.style.background = 'transparent'; el.style.color = 'var(--ink3)';
-      el.innerHTML = shown ? '&hellip;' : 'press run'; return;
-    }
-    var m = bars[bars.length - 1];
-    if (m >= AXTOP) {
-      el.style.background = 'rgba(214,69,69,.12)'; el.style.color = RED;
-      el.innerHTML = 'DIVERGING<br><span style="font-weight:400;font-size:11px">&times;' + Math.round(m / bars[0]) + ' in ' + TOTAL + ' updates</span>';
-    } else if (m <= 0.5) {
-      el.style.background = 'rgba(37,99,235,.12)'; el.style.color = BLUE;
-      el.innerHTML = 'SHRINKING TO 0<br><span style="font-weight:400;font-size:11px">|V(s&#8321;)| = ' + m.toFixed(3) + '</span>';
-    } else {
-      el.style.background = 'rgba(26,26,25,.05)'; el.style.color = 'var(--ink2)';
-      el.innerHTML = 'still settling<br><span style="font-weight:400;font-size:11px">|V(s&#8321;)| = ' + m.toFixed(3) + '</span>';
-    }
-  }
-
-  function draw() { drawBars(); verdict(); }
-
-  function stopTimers() { timers.forEach(clearTimeout); timers = []; }
-  function reset() {
-    stopTimers();
-    w = 1; V = [1, 0]; s = 0; n = 0; rand = IE437.rng(opts.seed || 5);
-    bars = [Math.abs(value(0))];
-    while (n < TOTAL) { update(); if (n % EVERY === 0) bars.push(Math.abs(value(0))); }
-    shown = 0;
-    drawPic(); draw();
-  }
-  /* run: the six bars appear left to right */
-  function run() {
-    stopTimers(); shown = 0; draw();
-    for (var i = 1; i <= bars.length; i++) (function (k) {
-      timers.push(setTimeout(function () { shown = k; draw(); }, 160 + 260 * (k - 1)));
-    })(i);
-  }
-  function finish() { stopTimers(); shown = bars.length; draw(); }
-
-  host.querySelectorAll('.wtog').forEach(function (el) {
-    el.onclick = function () {
-      var k = el.getAttribute('data-t');
-      if (k === 'fa') fa = !fa; else if (k === 'boot') boot = !boot; else off = !off;
-      el.classList.toggle('on');
-      reset(); run();
-    };
-  });
-  host.querySelector('[data-run]').onclick = run;
-  var __reset = reset;
-
-  reset();
-  return { reset: __reset, finish: finish };
+  draw();
+  return {
+    steps: N,
+    step: function (i) { k = Math.max(0, Math.min(N, i)); draw(); },
+    reset: function () { k = 0; draw(); },
+    finish: function () { k = N; draw(); }
+  };
 });

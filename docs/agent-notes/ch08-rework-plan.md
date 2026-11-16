@@ -164,3 +164,15 @@ Dayan convergence slide, the semi-gradient derivation and Double DQN carry "— 
 their `sub` line, the convention Ch 1 already uses for an advanced derivation; each has a keypoint
 that states what the rest of the act needs, so skipping the slide loses the proof, not the result.
 The alternative discussed, splitting the deck between Acts 2 and 3, was not taken.
+
+**The deadly-triad demo redrawn as a chase (2026-11-16).** The professor could not tell what the
+three-switch version was showing: a chain with probabilities, feature values, a shared weight, a
+verdict box and six bars clipped "off the chart" all at once. The widget now shows one thing. One
+transition s₁ → s₂ with reward 0 is the data, the TD(0) update is written once at the top, and the
+same update runs on two panels side by side, one press per update: a table on the left, where
+V(s₂) is never touched and V(s₁) halves towards a target that stays at 0, and one shared weight on
+the right, where V(s₁) = w and V(s₂) = 2w, so chasing the target raises the target twice as much and
+the gap grows (α = 0.5, γ = 0.99, four presses: 1, 1.50, 2.24, 3.34, 5.00). The three legs are the
+three red labels on the picture — off-policy on the chain, bootstrapping on the target, function
+approximation on the shared weight — and the on-policy and Monte Carlo cases are one caption line
+and the note, not switches. No run button, no toggles, no derived statistic.

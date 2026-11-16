@@ -973,15 +973,17 @@ The moving target is the first two legs meeting; replay is allowed only because 
 Sutton and Barto's name for the combination; Tsitsiklis and Van Roy's 1997 counterexample is the next slide. Their absence is not a universal guarantee for arbitrary algorithms or step sizes; their presence is a known source of instability.
 :::
 
-### The triad, switched on and off
-::: widget deadly-triad {"seed":5}
-Two states, every reward $0$, so the true value is $0$ everywhere; one shared weight values $s_1$ at $w$ and $s_2$ at $2w$.
-Updating $s_1$ towards $\gamma\cdot 2w$ has error $(2\gamma-1)\,w$, the same sign as $w$ once $\gamma>\tfrac12$, so ==every update pushes $w$ further from $0$.==
-Turn any one switch off and the same update sits at $0$.
+### The three together — a chase that never ends
+{sub: the same update on the same data, with V stored two ways — each press is one update}
+::: widget deadly-triad {}
+One transition $s_1\to s_2$ with reward $0$ is all the data, so both true values are $0$ and the update pulls $V(s_1)$ towards its target $\gamma V(s_2)$.
+With a table $V(s_2)$ is never touched, so the target stays at $0$ and $V(s_1)$ settles there.
+With one shared weight, raising $V(s_1)$ raises $V(s_2)$ twice as much, so ==the target runs away faster than $V(s_1)$ chases it.==
+Take away any leg and the chase stops: separate cells, a return as the target, or data that also visit $s_2$.
 :::
 
 ::: note
-Tsitsiklis and Van Roy, 1997. s_1 has feature 1, s_2 has feature 2, both values are w times the feature; the update is made on the s_1 to s_2 transition only, off-policy, with the bootstrapped target gamma times 2w; the error is (2 gamma minus 1) w, positive for gamma above one half, so w grows geometrically. A table has two separate numbers and the coupling disappears; a Monte Carlo target is zero; on-policy updating visits s_2 as often and pulls w back.
+Tsitsiklis and Van Roy, 1997, in the form Sutton and Barto give it. Features phi(s_1) = 1 and phi(s_2) = 2, so V(s_1) = w and V(s_2) = 2w; alpha = 0.5, gamma = 0.99. The error on the s_1 to s_2 transition is gamma 2w minus w = (2 gamma minus 1) w, the same sign as w, so each press multiplies w by 1 + alpha (2 gamma minus 1) = 1.495: V(s_1) runs 1, 1.50, 2.24, 3.34, 5.00, V(s_2) twice that, and the gap to the target is 0.98 w, growing with it. With a table the same update halves V(s_1) each press: 1, 0.5, 0.25, 0.125, 0.0625, and the gap halves with it. The three red labels on the picture are the three legs: the shared weight, the target built from the estimate, and data that never update s_2. A Monte Carlo target is 0 and shrinks w the same way as the table; on-policy data visit s_2, whose own update towards gamma V(end) = 0 pulls w down.
 :::
 
 ### Problem 2 — correlated samples, and experience replay
