@@ -973,17 +973,16 @@ The moving target is the first two legs meeting; replay is allowed only because 
 Sutton and Barto's name for the combination; Tsitsiklis and Van Roy's 1997 counterexample is the next slide. Their absence is not a universal guarantee for arbitrary algorithms or step sizes; their presence is a known source of instability.
 :::
 
-### The three together — a chase that never ends
-{sub: the same update on the same data, with V stored two ways — each press is one update}
+### The three together — a target that runs away
+{sub: one shared weight, one update per press}
 ::: widget deadly-triad {}
-One transition $s_1\to s_2$ with reward $0$ is all the data, so both true values are $0$ and the update pulls $V(s_1)$ towards its target $\gamma V(s_2)$.
-With a table $V(s_2)$ is never touched, so the target stays at $0$ and $V(s_1)$ settles there.
-With one shared weight, raising $V(s_1)$ raises $V(s_2)$ twice as much, so ==the target runs away faster than $V(s_1)$ chases it.==
-Take away any leg and the chase stops: separate cells, a return as the target, or data that also visit $s_2$.
+One transition $s_1\to s_2$ with reward $0$, so both true values are $0$ and the update pulls $V(s_1)$ towards the target $\gamma V(s_2)$.
+One shared weight makes $V(s_2)=2V(s_1)$, so ==every step towards the target moves the target twice as far.==
+Take away any one leg and the target stops moving: a table keeps $V(s_2)$ at $0$, a return is $0$, data that visit $s_2$ pull $w$ down.
 :::
 
 ::: note
-Tsitsiklis and Van Roy, 1997, in the form Sutton and Barto give it. Features phi(s_1) = 1 and phi(s_2) = 2, so V(s_1) = w and V(s_2) = 2w; alpha = 0.5, gamma = 0.99. The error on the s_1 to s_2 transition is gamma 2w minus w = (2 gamma minus 1) w, the same sign as w, so each press multiplies w by 1 + alpha (2 gamma minus 1) = 1.495: V(s_1) runs 1, 1.50, 2.24, 3.34, 5.00, V(s_2) twice that, and the gap to the target is 0.98 w, growing with it. With a table the same update halves V(s_1) each press: 1, 0.5, 0.25, 0.125, 0.0625, and the gap halves with it. The three red labels on the picture are the three legs: the shared weight, the target built from the estimate, and data that never update s_2. A Monte Carlo target is 0 and shrinks w the same way as the table; on-policy data visit s_2, whose own update towards gamma V(end) = 0 pulls w down.
+Tsitsiklis and Van Roy, 1997, in the form Sutton and Barto give it. Features phi(s_1) = 1 and phi(s_2) = 2, so V(s_1) = w and V(s_2) = 2w; alpha = 0.5, gamma = 0.99. The error on the s_1 to s_2 transition is gamma 2w minus w = (2 gamma minus 1) w, the same sign as w, so each press multiplies w by 1 + alpha (2 gamma minus 1) = 1.495: the estimate runs 1, 1.50, 2.24, 3.34, 5.00, the target 1.98, 2.96, 4.43, 6.62, 9.89, and the gap 0.98, 1.47, 2.19, 3.27, 4.90. Say it as a chase: each press closes half the gap, but the target is twice the estimate, so it moves twice as far and the gap grows. With a table the same update halves V(s_1) each press towards a target fixed at 0: 1, 0.5, 0.25, 0.125. A Monte Carlo target is 0 and shrinks w the same way; on-policy data visit s_2, whose own update towards gamma V(end) = 0 pulls w down.
 :::
 
 ### Problem 2 — correlated samples, and experience replay

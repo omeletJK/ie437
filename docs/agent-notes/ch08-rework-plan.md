@@ -166,13 +166,12 @@ that states what the rest of the act needs, so skipping the slide loses the proo
 The alternative discussed, splitting the deck between Acts 2 and 3, was not taken.
 
 **The deadly-triad demo redrawn as a chase (2026-11-16).** The professor could not tell what the
-three-switch version was showing: a chain with probabilities, feature values, a shared weight, a
-verdict box and six bars clipped "off the chart" all at once. The widget now shows one thing. One
-transition s₁ → s₂ with reward 0 is the data, the TD(0) update is written once at the top, and the
-same update runs on two panels side by side, one press per update: a table on the left, where
-V(s₂) is never touched and V(s₁) halves towards a target that stays at 0, and one shared weight on
-the right, where V(s₁) = w and V(s₂) = 2w, so chasing the target raises the target twice as much and
-the gap grows (α = 0.5, γ = 0.99, four presses: 1, 1.50, 2.24, 3.34, 5.00). The three legs are the
-three red labels on the picture — off-policy on the chain, bootstrapping on the target, function
-approximation on the shared weight — and the on-policy and Monte Carlo cases are one caption line
-and the note, not switches. No run button, no toggles, no derived statistic.
+three-switch version was showing, and a first redraw with two panels (a table beside one shared
+weight, three red labels for the three legs) was still "too complex". The widget now shows one
+thing: two bars, the estimate V(s₁) and its target γV(s₂), with the set-up in three short lines on
+the left (one transition with reward 0, one shared weight V(s₁) = w and V(s₂) = 2w, the TD(0)
+update). Each press is one update; the light cap on each bar and a "+" number say how far each
+moved, and the gap between them grows because the target is twice the estimate (α = 0.5, γ = 0.99,
+four presses: 1, 1.50, 2.24, 3.34, 5.00). The table, Monte Carlo and on-policy cases are one caption
+line and the note. No toggles, no run button, no second panel. The lesson: a demo shows one
+mechanism; even a comparison beside it was one thing too many here.
