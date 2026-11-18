@@ -225,3 +225,16 @@ notation). 56 → 57 slides, walk clean, no overflow, no console errors.
 - *"If time allows"* on the verification proof and the Euler–Lagrange derivation, as Ch 8 marks
   its proofs.
 - *A prediction cue* in the note of the three-controls demo.
+
+## Feedback picture redrawn (2026-11-18, after the lecture-prep review)
+
+The professor could not read the "Feedback — a rule, not a plan" picture: it drew the rule
+u* = −x/2 as a line with three points clustered 0.25 apart near it, and the plan-against-feedback
+story is a story about time, not about the state-to-action map. The `heater-pictures` mode
+`feedback` now plots the error x_k over stages k = 0, 1, 2 from the previous slide's x₀ = 2: the
+plan's predicted path in slate dashes with its precomputed command named, the measured error +1.5
+landing off the path, then two branches from it, red dashes for the plan reusing −0.5 (lands at
++1.0) and blue for the rule recomputing −0.75 (lands at +0.75). The one-step slide's keypoint now
+carries the rule's derivation in one line (dJ/du = 2u + 2(x₀ + u) = 0), which had lived only in the
+note. Numbers in the presenter note follow the model x_{k+1} = x_k + u_k, so the prediction is +1,
+not the −1 the old note said.

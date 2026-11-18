@@ -19,12 +19,15 @@
                     plot one stacked bar per tried control splitting
                     the cost into effort u² (amber) and final state
                     (2+u)² (slate): 4 = 0 + 4, 2 = 1 + 1, 4 = 4 + 0.
-   mode "feedback"  stepped (2) — the rule u*(x) = −x/2 over x ∈ [−3, 3]
-                    as a blue line; step 1 the planned point (−1, 0.5)
-                    as a hollow ink circle; step 2 the measured state
-                    −1.5 read off the line (0.75, a filled blue dot)
-                    against the reused command 0.5 (a red hollow point),
-                    a thin red gap between the two.
+   mode "feedback"  stepped (2) — the error x_k over stages k = 0, 1, 2
+                    from x₀ = 2. Step 0 the plan's predicted path in
+                    slate dashes (u = −1 then −0.5: 2 → 1 → 0.5), the
+                    prediction at k = 1 a hollow dot with its
+                    precomputed command named; step 1 the measured
+                    error +1.5 at k = 1, a blue dot off the path;
+                    step 2 two branches from it: red dashes for the
+                    plan reusing −0.5 (lands at +1.0), blue solid for
+                    the rule −x/2 recomputing −0.75 (lands at +0.75).
    mode "decay"     stepped (3) — left x(t) on [0, 4] from x₀ = 2 under
                     u = −x (blue, 2e^{−t}), u = 0 (slate, flat at 2),
                     u = −2x (amber, 2e^{−2t}), one curve per press;
@@ -144,32 +147,42 @@ IE437.widget('heater-pictures', function (host, opts) {
   }
 
   /* ============================================================
-     feedback — the rule u*(x) = −x/2 as a line; a point planned at
-     x = −1, then the state measured at −1.5
+     feedback — the error over stages: a predicted path, a measured
+     point that lands elsewhere, then two branches from it
      ============================================================ */
   function drawFeedback(k) {
     var s = canvas();
-    var pw = 680, pl = panel(s, 110, 0, pw, H), P = { l: 54, r: 24, t: 22, b: 36 };
-    var m = IE437.plot(pl, { w: pw, h: H, pad: P, xdom: [-3.3, 3.3], ydom: [-2, 2],
-      xticks: [-3, -2, -1, 0, 1, 2, 3], yticks: [-2, -1, 0, 1, 2],
-      yfmt: function (t) { return t > 0 ? '+' + t : String(t); },
-      series: [{ pts: [[-3, 1.5], [3, -1.5]], color: BLUE, w: 2.2 }] });
-    E('line', { x1: P.l, x2: pw - P.r, y1: m.Y(0), y2: m.Y(0), stroke: INK, 'stroke-opacity': .3 }, pl);
-    mt(pl, pw - P.r + 6, m.Y(0) + 5, 'x', { fill: SLATE, 'font-size': 14 });
-    mt(pl, P.l + 6, P.t - 6, 'u', { fill: SLATE, 'font-size': 14 });
-    mt(pl, m.X(-2.9) + 10, m.Y(1.45) - 12, 'u^*(x) = -x/2', { fill: BLUE });
+    var pw = 760, pl = panel(s, 70, 0, pw, H), P = { l: 54, r: 24, t: 22, b: 36 };
+    var pred = [[0, 2], [1, 1], [2, 0.5]];                 /* the plan's model: x₀ = 2, u = −1, then −0.5 */
+    var meas = [[0, 2], [1, 1.5]];                         /* a disturbance: the error lands at +1.5 */
+    var series = [{ pts: pred, color: SLATE, w: 1.6, dash: '6 5' }];
+    if (k >= 1) series.push({ pts: meas, color: BLUE, w: 2.2 });
+    if (k >= 2) {
+      series.push({ pts: [[1, 1.5], [2, 1.0]], color: RED, w: 1.8, dash: '6 5' });   /* reuses −0.5 */
+      series.push({ pts: [[1, 1.5], [2, 0.75]], color: BLUE, w: 2.2 });             /* recomputes −0.75 */
+    }
+    var m = IE437.plot(pl, { w: pw, h: H, pad: P, xdom: [-0.2, 2.95], ydom: [0, 2.35],
+      xticks: [0, 1, 2], yticks: [0, 1, 2], series: series });
+    mt(pl, pw - P.r + 6, m.Y(0) + 5, 'k', { fill: SLATE, 'font-size': 14 });
+    mt(pl, P.l + 6, P.t - 6, 'x_k', { fill: SLATE, 'font-size': 14 });
+    dot(pl, m.X(0), m.Y(2), 5, INK, false);
+    mt(pl, m.X(0) + 12, m.Y(2) - 12, 'x_0 = 2', { fill: INK, 'font-size': 14 });
+    /* the prediction and the command precomputed for it */
+    dot(pl, m.X(1), m.Y(1), 5, SLATE, true);
+    dot(pl, m.X(2), m.Y(0.5), 4, SLATE, true);
+    word(pl, m.X(1) - 12, m.Y(1) + 14, 'predicted +1', { fill: SLATE, 'text-anchor': 'end', 'font-size': 12.5 });
+    word(pl, m.X(1) - 12, m.Y(1) + 30, 'command −0.5 precomputed', { fill: SLATE, 'text-anchor': 'end', 'font-size': 12.5 });
     if (k >= 1) {
-      drop(pl, m, -1, 0.5, INK);
-      dot(pl, m.X(-1), m.Y(0.5), 5.5, INK, true);
-      word(pl, m.X(-1) + 11, m.Y(0.5) - 7, 'planned', { fill: INK, 'font-size': 12.5 });
+      dot(pl, m.X(1), m.Y(1.5), 5.5, BLUE, false);
+      word(pl, m.X(1) + 12, m.Y(1.5) - 10, 'measured +1.5', { fill: BLUE, 'font-size': 12.5 });
     }
     if (k >= 2) {
-      drop(pl, m, -1.5, 0.75, BLUE);
-      E('line', { x1: m.X(-1.5), x2: m.X(-1.5), y1: m.Y(0.75) + 6, y2: m.Y(0.5) - 6, stroke: RED, 'stroke-width': 1.2 }, pl);
-      dot(pl, m.X(-1.5), m.Y(0.75), 5.5, BLUE, false);
-      word(pl, m.X(-1.5) - 9, m.Y(0.75) - 25, 'measured', { fill: BLUE, 'text-anchor': 'end', 'font-size': 12.5 });
-      dot(pl, m.X(-1.5), m.Y(0.5), 5.5, RED, true);
-      word(pl, m.X(-1.5) - 11, m.Y(0.5) + 16, 'reused 0.5', { fill: RED, 'text-anchor': 'end', 'font-size': 12.5 });
+      dot(pl, m.X(2), m.Y(1.0), 5.5, RED, true);
+      word(pl, m.X(2) + 12, m.Y(1.0) - 8, 'plan: reuses −0.5', { fill: RED, 'font-size': 12.5 });
+      word(pl, m.X(2) + 12, m.Y(1.0) + 8, 'lands at +1.0', { fill: RED, 'font-size': 12.5 });
+      dot(pl, m.X(2), m.Y(0.75), 5.5, BLUE, false);
+      word(pl, m.X(2) + 12, m.Y(0.75) + 6, 'rule: −1.5/2 = −0.75', { fill: BLUE, 'font-size': 12.5 });
+      word(pl, m.X(2) + 12, m.Y(0.75) + 22, 'lands at +0.75', { fill: BLUE, 'font-size': 12.5 });
     }
   }
 

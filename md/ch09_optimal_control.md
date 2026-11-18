@@ -181,7 +181,7 @@ Three tried controls, then the whole curve: ==the minimum is in between.==
 ::: reveal
 ::: keypoint
 Reaching zero at once costs too much effort; doing nothing costs too much error.
-For any $x_0$ the same calculation gives the rule ==$u^*(x)=-x/2$==.
+For any $x_0$, $J(u)=u^2+(x_0+u)^2$ and $dJ/du=2u+2(x_0+u)=0$ give the rule ==$u^*(x)=-x/2$==.
 :::
 :::
 
@@ -191,8 +191,8 @@ The numbers, for the board: u = 0 gives 0 + 4 = 4; u = −1 gives 1 + 1 = 2; u =
 
 ### Feedback — a rule, not a plan
 ::: widget heater-pictures {"mode":"feedback"}
-The rule $u^*(x)=-x/2$ over every error $x$.
-A plan fixed the command from a predicted error; ==the rule recomputes it from the measured one.==
+The error over stages: the plan predicted $+1$ and fixed its command; the measurement says $+1.5$.
+The plan keeps the command it computed; ==the rule $u^*(x)=-x/2$ recomputes it from the measured error.==
 :::
 
 ::: reveal
@@ -203,7 +203,7 @@ It does not require the previous prediction to have been correct.
 :::
 
 ::: note
-Temperature thread. A prediction said the next error would be −1, so a command of 0.5 was precomputed; the measurement gives −1.5, and the rule says 0.75. Reusing 0.5 ignores the new state. Ask the class to compute 0.75 before revealing the second press. Distinguish an action sequence computed once from a state-to-action rule used after each measurement: that is the plan-against-policy distinction of Lecture 7, and in Act 4 it becomes open-loop against feedback.
+Temperature thread, continuing the previous slide: from x₀ = 2 the plan applies u = −1 and predicts x₁ = +1, so it precomputes u₁ = −0.5 for that error. A disturbance lands the heater at x₁ = +1.5 instead. Reusing −0.5 ignores the new state and lands at +1.0; the rule reads −1.5/2 = −0.75 from the measured error and lands at +0.75. Ask the class to compute −0.75 before revealing the second press. Distinguish an action sequence computed once from a state-to-action rule used after each measurement: that is the plan-against-policy distinction of Lecture 7, and in Act 4 it becomes open-loop against feedback.
 :::
 
 ### Check — the same problem, other clothes
