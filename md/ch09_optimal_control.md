@@ -516,10 +516,11 @@ Source p. 19: the theorem and equation (10), u*(t) = argmin of the bracket. "Sta
 **The only optimality proof of this lecture** — any admissible $\gamma$ (trajectory $x$) against the minimising $\gamma^*$ (trajectory $x^*$):
 
 $$\begin{aligned}
-g(t,x,u)+\partial_xV\,f(t,x,u)+\partial_tV&\;\ge\;0,\qquad g(t,x^*,u^*)+\partial_xV\,f(t,x^*,u^*)+\partial_tV\;\equiv\;0 &&\red{\scriptstyle\text{any } u \text{ does no better; } u^* \text{ attains it}}\\
-\step{1}{\int_0^T g\,dt+V(T,x(T))-V(0,x_0)}&\step{1}{\;\ge\;0,\qquad \int_0^T g^*\,dt+V(T,x^*(T))-V(0,x_0)\;=\;0} &&\step{1}{\red{\scriptstyle\text{integrate: the last two terms are } \tfrac{d}{dt}V(t,x(t))}}\\
-\step{2}{\int_0^T g\,dt+q(T,x(T))}&\step{2}{\;\ge\;\int_0^T g^*\,dt+q(T,x^*(T))} &&\step{2}{\red{\scriptstyle\text{eliminate } V(0,x_0)\text{; apply } V(T,x)=q(T,x)}}\\
-\step{3}{L(u)}&\step{3}{\;\ge\;L(u^*)\qquad\blacksquare} &&\step{3}{\red{\scriptstyle\text{from any initial state}}}
+\min_{u}\big\{\,g(t,x,u)+\partial_xV\,f(t,x,u)+\partial_tV\,\big\}&\;=\;0\quad\text{at every }(t,x) &&\red{\scriptstyle\text{HJB, with } \partial_tV \text{ inside the min}}\\
+\step{1}{g(t,x,u)+\partial_xV\,f(t,x,u)+\partial_tV}&\step{1}{\;\ge\;0,\qquad g(t,x^*,u^*)+\partial_xV\,f(t,x^*,u^*)+\partial_tV\;\equiv\;0} &&\step{1}{\red{\scriptstyle\text{any } u\text{: at least the min; the argmin } u^* \text{ attains it}}}\\
+\step{2}{\int_0^T g\,dt+V(T,x(T))-V(0,x_0)}&\step{2}{\;\ge\;0,\qquad \int_0^T g^*\,dt+V(T,x^*(T))-V(0,x_0)\;=\;0} &&\step{2}{\red{\scriptstyle\text{integrate: the last two terms are } \tfrac{d}{dt}V(t,x(t))}}\\
+\step{3}{\int_0^T g\,dt+q(T,x(T))}&\step{3}{\;\ge\;\int_0^T g^*\,dt+q(T,x^*(T))} &&\step{3}{\red{\scriptstyle\text{eliminate } V(0,x_0)\text{; apply } V(T,x)=q(T,x)}}\\
+\step{4}{L(u)}&\step{4}{\;\ge\;L(u^*)\qquad\blacksquare} &&\step{4}{\red{\scriptstyle\text{from any initial state}}}
 \end{aligned}$$
 
 ::: reveal
@@ -530,7 +531,7 @@ Pontryagin's conditions in Act 4 will not give this; they are stationarity condi
 :::
 
 ::: note
-Source p. 20, the proof the tex compressed to the word "sufficient". Four lines: inequality along any trajectory, identity along the optimum, integrate both, subtract. It is the exact reason HJB is sufficient while the minimum principle is only necessary, which Act 4's comparison table asserts.
+Source p. 20, the proof the tex compressed to the word "sufficient". Line 0 is the hypothesis: V solves HJB, −∂_tV = min_u {g + ∂_xV f}; since ∂_tV does not depend on u it moves inside the min, and the bracket's minimum over u is exactly 0 at every (t,x). Line 1 reads that twice. Any u gives the bracket a value at least its minimum, so ≥ 0 at every point and hence along any trajectory. The argmin u* = γ*(t,x) gives the minimum itself, 0; the optimal trajectory uses the argmin of its own current state at every instant, so the identity holds at every t along x*(t), which is what ≡ says. Nothing new is proved on line 1: it is the HJB equation read at (t,x,u) and at (t,x*,u*). What 0 means: by the chain rule d/dt V(t,x*(t)) = ∂_tV + ∂_xV f(t,x*,u*), so the identity says g* + d/dt V(t,x*(t)) = 0, the running cost is paid exactly by the drop in V, which is V's meaning as the cost-to-go; a suboptimal u accumulates cost faster than V drops, and integrating that gap is the rest of the proof. The same two readings of Bellman's equation hold in discrete time, g + V_{k+1}(f(x,u)) − V_k(x) ≥ 0 with equality at u*; the continuous version replaces the difference by ∂_tV + ∂_xV f, the Taylor step of the HJB derivation slide. One hypothesis hides in "attains": the minimum must be achieved by some u; with only an infimum the identity weakens to ε-optimality. It is the exact reason HJB is sufficient while the minimum principle is only necessary, which Act 4's comparison table asserts.
 :::
 
 ### The field — a rule at every state
