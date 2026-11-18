@@ -238,3 +238,17 @@ landing off the path, then two branches from it, red dashes for the plan reusing
 carries the rule's derivation in one line (dJ/du = 2u + 2(x₀ + u) = 0), which had lived only in the
 note. Numbers in the presenter note follow the model x_{k+1} = x_k + u_k, so the prediction is +1,
 not the −1 the old note said.
+
+## Euler–Lagrange derivation split in two (2026-11-18)
+
+The four-line derivation of the minimum principle compressed three moves per press (adjoin,
+name H and integrate by parts on one line; perturb, chain-rule and collect on another), and the
+professor asked for it step by step. It is now two slides of five lines each, under the same
+"if time allows" marking. Part 1, *adjoin the dynamics*: the problem; the multiplier adjoined with
+f − ẋ; the Hamiltonian named; the integration by parts with its boundary terms written out; the
+rewritten cost with no ẋ left and the keypoint that nothing has been optimised yet. Part 2,
+*perturb the control*: u → u + εp with x → x + εξ, ξ(0) = 0; the chain rule term by term; the ξ and
+ξ(T) terms collected; λ chosen to kill both; the integral against p that must vanish for every p,
+hence ∂_uH = 0. The three conditions are read off three places (the integrand of ξ, the boundary
+of ξ, the integrand of p), which the note says in those words. The interior-stationarity keypoint
+stays on part 2; the conserved-H remark stays in its note.

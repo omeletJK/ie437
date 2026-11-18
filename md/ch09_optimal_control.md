@@ -712,16 +712,41 @@ The last condition is the familiar move again.
 "Normal" minimum principle: the abnormal multiplier is taken as one. Transversality: with the terminal state free, lambda(T) is the gradient of the terminal cost; with no terminal cost, lambda(T) = 0, which is the condition the shooting demo aims at.
 :::
 
-### From Euler–Lagrange to the minimum principle — one line per press
-{fill: top, math: compact, sub: the derivation — if time allows; the keypoint is what the shooting demo needs}
+### From Euler–Lagrange to the minimum principle — adjoin the dynamics
+{fill: top, math: compact, sub: the derivation, part 1 — if time allows; the keypoint two slides on is what the shooting demo needs}
 
-**Where the conditions come from** — adjoin the dynamics, perturb the control, integrate by parts:
+**Where the conditions come from** — the dynamics adjoined at every instant, then the derivative moved off $x$:
 
 $$\begin{aligned}
-\bar J&=\int_0^T\big[\,H(t,x,u,\lambda)-\lambda^\top\dot x\,\big]\,dt+q\big(x(T)\big) &&\red{\scriptstyle\text{on a feasible trajectory } \bar J=L\text{, for any } \lambda(\cdot)}\\
-\step{1}{-\int_0^T\lambda^\top\dot x\,dt}&\step{1}{=-\lambda^\top x\Big|_0^T+\int_0^T\dot\lambda^\top x\,dt} &&\step{1}{\red{\scriptstyle\text{integrate by parts}}}\\
-\step{2}{\frac{d\bar J}{d\epsilon}\Big|_0}&\step{2}{=\int_0^T\Big[\big(\partial_xH+\dot\lambda\big)^\top\xi+\partial_uH^\top p\Big]dt+\big(\partial_xq-\lambda(T)\big)^\top\xi(T)} &&\step{2}{\red{\scriptstyle u\to u+\epsilon p\text{, } x\to x+\epsilon\xi\text{, } \xi(0)=0}}\\
-\step{3}{\dot\lambda}&\step{3}{=-\partial_xH,\qquad \lambda(T)=\partial_xq,\qquad \partial_uH=0} &&\step{3}{\red{\scriptstyle\text{choose } \lambda \text{ to kill } \xi\text{; what is left must vanish for every } p}}
+L(u)&=\int_0^T g(t,x,u)\,dt+q\big(x(T)\big),\qquad \dot x=f(t,x,u),\quad x(0)=x_0 &&\red{\scriptstyle\text{the cost to minimise; the dynamics constrain it at every instant}}\\
+\step{1}{\bar J}&\step{1}{=\int_0^T\Big[\,g(t,x,u)+\lambda^\top\big(f(t,x,u)-\dot x\big)\Big]\,dt+q\big(x(T)\big)} &&\step{1}{\red{\scriptstyle\text{adjoin: } f-\dot x=0 \text{ when feasible, so } \bar J=L \text{ for any } \lambda(\cdot)}}\\
+\step{2}{\bar J}&\step{2}{=\int_0^T\big[\,H(t,x,u,\lambda)-\lambda^\top\dot x\,\big]\,dt+q\big(x(T)\big)} &&\step{2}{\red{\scriptstyle H=g+\lambda^\top f \text{ collects everything without } \dot x}}\\
+\step{3}{-\int_0^T\lambda^\top\dot x\,dt}&\step{3}{=-\lambda(T)^\top x(T)+\lambda(0)^\top x_0+\int_0^T\dot\lambda^\top x\,dt} &&\step{3}{\red{\scriptstyle\text{integrate by parts: the derivative moves from } x \text{ onto } \lambda}}\\
+\step{4}{\bar J}&\step{4}{=\int_0^T\big[\,H+\dot\lambda^\top x\,\big]\,dt+q\big(x(T)\big)-\lambda(T)^\top x(T)+\lambda(0)^\top x_0} &&\step{4}{\red{\scriptstyle\text{no } \dot x \text{ left; } x_0 \text{ is fixed, so the last term cannot move}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+Nothing has been optimised yet.
+The cost is only rewritten, so that a change of the control will show up term by term.
+:::
+:::
+
+::: note
+No source pages; the standard calculus-of-variations route, written out so that each move is one press. Line 0 is Act 3's problem again, with the dynamics now treated as Lecture 1 treated a constraint. Line 1 is the Lagrangian move: a multiplier λ(t) for the constraint ẋ = f at each instant, hence a function λ(·); on any trajectory that obeys the dynamics the bracket f − ẋ is identically zero, so J̄ and L agree whatever λ is, and λ can be chosen later for convenience. Line 2 only names the part without ẋ: the Hamiltonian of the previous slide. Line 3 is the one computation: d/dt(λᵀx) = λ̇ᵀx + λᵀẋ, integrated from 0 to T, gives the boundary term and moves the derivative onto λ, which is why the costate will obey a differential equation of its own. Line 4 substitutes it back; x(0) = x₀ is given, so λ(0)ᵀx₀ is a constant that no perturbation can change. The name: the conditions on the next slide are the Euler–Lagrange equations of this augmented functional.
+:::
+
+### From Euler–Lagrange to the minimum principle — perturb the control
+{fill: top, math: compact, sub: the derivation, part 2 — if time allows; the keypoint is what the shooting demo needs}
+
+**A first-order variation** — nudge the control, let the trajectory follow, and ask that the cost cannot fall:
+
+$$\begin{aligned}
+u&\to u+\epsilon p,\qquad x\to x+\epsilon\xi,\qquad \xi(0)=0 &&\red{\scriptstyle p(\cdot) \text{ nudges the control; the trajectory follows by } \xi(\cdot)\text{; the start is fixed}}\\
+\step{1}{\frac{d\bar J}{d\epsilon}\Big|_0}&\step{1}{=\int_0^T\Big[\,\partial_xH^\top\xi+\partial_uH^\top p+\dot\lambda^\top\xi\,\Big]dt+\partial_xq^\top\xi(T)-\lambda(T)^\top\xi(T)} &&\step{1}{\red{\scriptstyle\text{chain rule, term by term; } \lambda(0)^\top\xi(0)=0}}\\
+\step{2}{}&\step{2}{=\int_0^T\Big[\big(\partial_xH+\dot\lambda\big)^\top\xi+\partial_uH^\top p\Big]dt+\big(\partial_xq-\lambda(T)\big)^\top\xi(T)} &&\step{2}{\red{\scriptstyle\text{collect the } \xi \text{ terms and the } \xi(T) \text{ terms}}}\\
+\step{3}{\dot\lambda}&\step{3}{=-\partial_xH,\qquad \lambda(T)=\partial_xq} &&\step{3}{\red{\scriptstyle\lambda \text{ was free: choose it so that both } \xi \text{ brackets vanish}}}\\
+\step{4}{\frac{d\bar J}{d\epsilon}\Big|_0}&\step{4}{=\int_0^T\partial_uH^\top p\,dt=0\ \text{ for every } p\qquad\Longrightarrow\qquad \partial_uH=0} &&\step{4}{\red{\scriptstyle\text{no } p \text{ may lower the cost; zero against every } p \text{ forces a zero integrand}}}
 \end{aligned}$$
 
 ::: reveal
@@ -732,6 +757,8 @@ Pontryagin replaces it by ==$u^*=\argmin_{u\in U}H$==, which holds on the bounda
 :::
 
 ::: note
+Line 0: the control is the free variable; the state is not, it is whatever the dynamics produce, so a control change εp(t) drags the trajectory by εξ(t), with ξ(0) = 0 because x(0) = x₀ is given; ξ obeys the linearised dynamics ξ̇ = ∂_x f ξ + ∂_u f p, but that fact is never needed. Line 1 differentiates the previous slide's last line at ε = 0: H depends on x and u, so its change is ∂_xHᵀξ + ∂_uHᵀp; the λ̇ᵀx term gives λ̇ᵀξ; the two boundary terms give ∂_xqᵀξ(T) and −λ(T)ᵀξ(T); λ(0)ᵀx₀ gives nothing. Line 2 is bookkeeping. Line 3 is the whole trick: ξ is awkward, it depends on p through a differential equation, but λ was never pinned down, so choose it to make every coefficient of ξ zero: the costate equation and the transversality condition, which is why they come as a backward problem with a terminal condition. Line 4: with ξ gone the first-order change is a plain integral against p; at a minimum it cannot be negative for any p, and it changes sign with p, so it is zero for every p, and the fundamental lemma of the calculus of variations gives ∂_uH = 0 at almost every t. Three conditions, read off from three places: the integrand of ξ, the boundary of ξ, the integrand of p.
+
 A conserved quantity: along a trajectory dH/dt = ∂_u H · u̇ + ∂_t H; for a time-invariant problem the second term vanishes and along a smooth interior extremal the first vanishes because ∂_u H = 0, so H is constant there. Constancy alone proves neither optimality nor the minimum principle; it is the invariant the shooting demo plots. The minimum principle is also the standard way to state equilibrium conditions for dynamic games, which is how IE579 uses it.
 :::
 
