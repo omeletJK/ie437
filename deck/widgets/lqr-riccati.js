@@ -23,10 +23,34 @@
      q=0.1 r=1     K = [0.31623,  1.27768]
    and the optimal cost from x0 = [1,0] is x0'Px0 = p1, which the
    simulated trajectory's running cost reproduces.
+
+   mode: "recursion"  (Chapter 9, the Riccati recursion as plates)
+   The discrete-time recursion run backwards from the one-step problem,
+   one plate per sweep, the digits that changed since the previous
+   plate in red, and under the plates the gain K_k against k so the
+   class watches it stop moving.  Options:
+     system  "heater" (default)  x+ = x + u, cost SUM(x^2 + u^2):
+                                 A = B = Q = R = 1, so
+                                 P_{k+1} = 1 + P_k/(1 + P_k),  K_k = P_k/(1 + P_k)
+             "double"            the double integrator sampled at h = 0.5:
+                                 A = [[1,h],[0,1]]  B = [h^2/2, h]'  Q = I  R = 1
+     n       plates to draw (default 6); steps = n, step 0 shows plate 1,
+             each press adds one plate, the last press draws the limit
+   with P_1 = Q and  P_{k+1} = Q + A'P_k A - A'P_k B (R + B'P_k B)^-1 B'P_k A,
+   K_k = (R + B'P_k B)^-1 B'P_k A,  u = -K x.  Verified in node:
+     heater  P = 1.0000 1.5000 1.6000 1.6154 1.6176 1.6180 -> (1+sqrt5)/2 = 1.618034
+             K = 0.5000 0.6000 0.6154 0.6176 0.6180 0.6180 -> (sqrt5-1)/2 = 0.618034
+     double  K_1 = [0.0988, 0.4444]  K_6 = [0.6349, 1.2929]
+             K_60 = [0.651402, 1.314202],  P_60 = [[4.0350, 2.0616],[2.0616, 4.1438]]
+             (the 60th iterate is stable to 6 dp; the 6th is still 0.02 short,
+              so six plates show the approach rather than the arrival)
+   Without mode the widget is the dial figure above, unchanged.
    ============================================================ */
 IE437.widget('lqr-riccati', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', SLATE = '#64748B',
-      AMBER = '#D97706', GREEN = '#16A34A';
+      AMBER = '#D97706', GREEN = '#16A34A', RED = '#D64545', PANEL = '#F1F1ED', PANEL2 = '#E7E7E1';
+  if (opts.mode === 'recursion') return recursion();
+
   var QL = [0.1, 0.3, 1, 3, 10], RL = [0.01, 0.1, 1, 10, 100];
   var qi = QL.indexOf(opts.q === undefined ? 1 : opts.q); if (qi < 0) qi = 2;
   var ri = RL.indexOf(opts.r === undefined ? 1 : opts.r); if (ri < 0) ri = 2;
@@ -214,4 +238,142 @@ IE437.widget('lqr-riccati', function (host, opts) {
 
   draw();
   return { finish: function () { draw(); } };
+
+  /* ================= mode: recursion ================= */
+  function recursion() {
+    var SYS = opts.system === 'double' ? 'double' : 'heater';
+    var N = Math.max(1, Math.min(12, Math.round(+opts.n || 6)));
+    var FS = 13.5;                                   /* maths size inside a plate */
+
+    /* ---- the recursion itself, on 2x2 matrices (the heater is the 1x1 case) ---- */
+    var A, B, Q, R, D;                               /* D: state dimension */
+    if (SYS === 'double') {
+      var h = 0.5;
+      A = [[1, h], [0, 1]]; B = [h * h / 2, h]; Q = [[1, 0], [0, 1]]; R = 1; D = 2;
+    } else {
+      A = [[1]]; B = [1]; Q = [[1]]; R = 1; D = 1;
+    }
+    function mul(X, Y) {                             /* DxD times DxD */
+      var Z = [], i, j, k;
+      for (i = 0; i < D; i++) { Z.push([]); for (j = 0; j < D; j++) { var acc = 0; for (k = 0; k < D; k++) acc += X[i][k] * Y[k][j]; Z[i].push(acc); } }
+      return Z;
+    }
+    function tr(X) { var Z = [], i, j; for (i = 0; i < D; i++) { Z.push([]); for (j = 0; j < D; j++) Z[i].push(X[j][i]); } return Z; }
+    function sweep(P) {                              /* one backward sweep: {K, Pnext} */
+      var PA = mul(P, A), APA = mul(tr(A), PA), i, j;
+      var BPA = [], BPB = 0;
+      for (j = 0; j < D; j++) { var acc = 0; for (i = 0; i < D; i++) acc += B[i] * PA[i][j]; BPA.push(acc); }
+      for (i = 0; i < D; i++) for (j = 0; j < D; j++) BPB += B[i] * P[i][j] * B[j];
+      var K = BPA.map(function (v) { return v / (R + BPB); });
+      var Pn = [];
+      for (i = 0; i < D; i++) { Pn.push([]); for (j = 0; j < D; j++) Pn[i].push(Q[i][j] + APA[i][j] - BPA[i] * K[j]); }
+      return { K: K, P: Pn };
+    }
+    var SEQ = [], P = Q, k, r;                       /* SEQ[k-1] = {P: P_k, K: K_k} */
+    for (k = 1; k <= 60; k++) { r = sweep(P); SEQ.push({ P: P, K: r.K }); P = r.P; }
+    var LIM = SEQ[59].K;                             /* the gain the recursion settles on */
+
+    /* ---- digits: red where the previous plate had a different digit ---- */
+    function f4(v) { return v.toFixed(4); }
+    function diffTex(cur, prev) {
+      var a = f4(cur), b = prev == null ? a : f4(prev), out = '', run = '', red = false, i;
+      function flush() { if (run) out += red ? '\\red{' + run + '}' : run; run = ''; }
+      for (i = 0; i < a.length; i++) {
+        var isRed = a[i] !== b[i];
+        if (isRed !== red) { flush(); red = isRed; }
+        run += a[i];
+      }
+      flush();
+      return out;
+    }
+
+    host.innerHTML = '<div class="wbody" style="align-items:center;justify-content:center;padding:8px 12px 4px"><div data-c></div></div>';
+    var mount = host.querySelector('[data-c]');
+    var W = 1000, H = SYS === 'double' ? 340 : 320;
+    var svg = IE437.svg(W, H); mount.appendChild(svg);
+
+    /* geometry: a row of plates, the plot under them */
+    var PX = 10, GAP = 10, PW = Math.min(170, Math.floor((W - 2 * PX - GAP * (N - 1)) / N));
+    var PY = 30, PH = SYS === 'double' ? 88 : 62, ROWS = SYS === 'double' ? 2 : 1;
+    var PLOT_T = PY + PH + 34, PLOT_R = W - 200, PLOT_L = 60;
+
+    function lbl(x, y, str, a) {
+      var at = { x: x, y: y, 'font-size': 11.5, fill: SLATE, 'font-family': 'var(--sans)', text: str };
+      for (var q in a || {}) at[q] = a[q];
+      return E('text', at, svg);
+    }
+    /* a bracketed block of numbers, right-aligned columns; rows = [[tex, tex], ...] */
+    function matrix(x, y, rows, colW, rowH) {
+      var cols = rows[0].length, innerW = cols * colW + (cols - 1) * 8, hgt = rows.length * rowH;
+      var top = y - rowH + 4, bot = top + hgt + 2, i, j;
+      var bl = x, br = x + 5 + innerW + 5;
+      E('path', { d: 'M' + (bl + 4) + ' ' + top + ' H' + bl + ' V' + bot + ' H' + (bl + 4), fill: 'none', stroke: INK, 'stroke-width': 1.1 }, svg);
+      E('path', { d: 'M' + (br - 4) + ' ' + top + ' H' + br + ' V' + bot + ' H' + (br - 4), fill: 'none', stroke: INK, 'stroke-width': 1.1 }, svg);
+      for (i = 0; i < rows.length; i++) for (j = 0; j < cols; j++)
+        IE437.math(svg, bl + 5 + (j + 1) * colW + j * 8, y + i * rowH, rows[i][j], { 'font-size': FS, 'text-anchor': 'end' });
+      return br;
+    }
+
+    function nice(v) { var e = Math.pow(10, Math.floor(Math.log10(v))), m = v / e; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * e; }
+    function ticks(lo, hi, n) {
+      var st = nice((hi - lo) / n), out = [], t = Math.ceil(lo / st) * st;
+      for (; t <= hi + 1e-9; t += st) out.push(Math.abs(t) < 1e-12 ? 0 : t);
+      return out;
+    }
+
+    function draw(st) {
+      var m = Math.min(N, st + 1), limit = st >= N, i, j;
+      /* ---- the plot first: IE437.plot clears the svg ---- */
+      var top = 0; for (i = 0; i < N; i++) for (j = 0; j < D; j++) top = Math.max(top, SEQ[i].K[j]);
+      for (j = 0; j < D; j++) top = Math.max(top, LIM[j]);
+      var ymax = nice(top * 1.25), series = [], COL = [BLUE, GREEN];
+      if (limit) for (j = 0; j < D; j++) series.push({ pts: [[0.5, LIM[j]], [N + 0.5, LIM[j]]], color: INK, w: 1.3, dash: '5 4' });
+      for (j = 0; j < D; j++) series.push({ pts: SEQ.slice(0, m).map(function (q, idx) { return [idx + 1, q.K[j]]; }), color: COL[j], w: 2, dots: true });
+      var xt = []; for (i = 1; i <= N; i++) xt.push(i);
+      var ax = IE437.plot(svg, {
+        w: W, h: H, pad: { l: PLOT_L, r: W - PLOT_R, t: PLOT_T, b: 28 },
+        xdom: [0.5, N + 0.5], ydom: [0, ymax], xticks: xt, yticks: ticks(0, ymax, 4),
+        xlabel: 'sweep k', ylabel: D > 1 ? 'gain entries' : 'gain K',
+        xfmt: function (v) { return String(v); }, yfmt: function (v) { return v.toFixed(ymax >= 3 ? 1 : 2); },
+        series: series
+      });
+      if (D > 1) {                                   /* which line is which entry: in the gap left of the first dot */
+        IE437.math(svg, ax.X(1) - 9, ax.Y(SEQ[0].K[0]) + 3, 'k_1', { 'font-size': 12.5, fill: BLUE, 'font-weight': 700, 'text-anchor': 'end' });
+        IE437.math(svg, ax.X(1) - 9, ax.Y(SEQ[0].K[1]) + 3, 'k_2', { 'font-size': 12.5, fill: GREEN, 'font-weight': 700, 'text-anchor': 'end' });
+      }
+      if (limit) {
+        var lx = PLOT_R + 10;
+        if (D > 1) {
+          IE437.math(svg, lx, ax.Y(LIM[0]) + 4, 'K_{\\infty,1} = ' + LIM[0].toFixed(3), { 'font-size': 13.5, fill: BLUE });
+          IE437.math(svg, lx, ax.Y(LIM[1]) + 4, 'K_{\\infty,2} = ' + LIM[1].toFixed(3), { 'font-size': 13.5, fill: GREEN });
+          lbl(lx, ax.Y(LIM[1]) - 16, 'the gain stops moving');
+        } else {
+          IE437.math(svg, lx, ax.Y(LIM[0]) + 4, 'K_\\infty = ' + LIM[0].toFixed(3), { 'font-size': 13.5 });
+          lbl(lx, ax.Y(LIM[0]) - 14, 'the gain stops moving');
+        }
+      }
+      /* ---- the plates ---- */
+      for (i = 0; i < m; i++) {
+        var x = PX + i * (PW + GAP), cur = SEQ[i], prev = i > 0 ? SEQ[i - 1] : null, lit = i === m - 1;
+        lbl(x, PY - 8, 'sweep ' + (i + 1), { fill: RED, 'font-weight': 700, 'font-size': 12 });
+        E('rect', { x: x, y: PY, width: PW, height: PH, rx: 6, fill: PANEL, stroke: lit ? BLUE : PANEL2, 'stroke-width': lit ? 1.8 : 1 }, svg);
+        if (i === 0) lbl(x, PY + PH + 15, '= the one-step problem');
+        var sub = String(i + 1);
+        if (D === 1) {
+          IE437.math(svg, x + 12, PY + 24, 'P_{' + sub + '} = ' + diffTex(cur.P[0][0], prev && prev.P[0][0]), { 'font-size': FS });
+          IE437.math(svg, x + 12, PY + 48, 'K_{' + sub + '} = ' + diffTex(cur.K[0], prev && prev.K[0]), { 'font-size': FS });
+        } else {
+          var rowsP = cur.P.map(function (row, a) { return row.map(function (v, b) { return diffTex(v, prev && prev.P[a][b]); }); });
+          var rowK = [cur.K.map(function (v, b) { return diffTex(v, prev && prev.K[b]); })];
+          IE437.math(svg, x + 10, PY + 24, 'P_{' + sub + '} =', { 'font-size': FS });
+          matrix(x + 44, PY + 24, rowsP, 40, 20);
+          IE437.math(svg, x + 10, PY + 70, 'K_{' + sub + '} =', { 'font-size': FS });
+          matrix(x + 44, PY + 70, rowK, 40, 20);
+        }
+      }
+    }
+
+    draw(0);
+    return { steps: N, step: draw, reset: function () { draw(0); }, finish: function () { draw(N); } };
+  }
 });

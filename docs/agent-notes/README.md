@@ -34,6 +34,7 @@ note in the same commit as the change, so a clone always carries the current rul
 - [Ch 5/6: streams with representative papers](ch05-ch06-streams.md) — Ch 5 conservatism / uncertainty / system knowledge; Ch 6 four intervention points G1–G4; both rewritten and committed 2026-10-13
 - [Ch 7: rebuilt around the source deck's diagrams](ch07-source-pictures.md) — backup-tree and mdp-pictures widgets redraw the original PowerPoint figures; arithmetic to the appendix (2026-11-09); the `ladder` mode is the p. 53 summary
 - [Ch 8 rework plan — four reviews, consolidated](ch08-rework-plan.md) — what Ch 8 needed to meet the Ch 7 rules and what was done on 2026-11-11: sampled backup-tree modes, roadmap tracker, six rooms, DQN pictures, bandit, the six-rung ladder
+- [Ch 9 rework plan — the Ch 7 and Ch 8 rules applied](ch09-rework-plan.md) — approved and applied 2026-11-15: discrete-time LQR derived from Act 1, the Riccati recursion as value iteration on the heater, one running system, four algorithm boxes, a five-rung ladder, the control grid as tracker, the field-against-trajectory picture, the appendix dissolved
 - [Midterm project — a two-week take-home in the Assignment 1 form](midterm-project.md) — what it asks, the decisions behind v2.0–2.2, due 2026-11-02 10:00 KST, and the rules for editing it before the deadline
 
 The agent brief for building a whole chapter is `md/_AGENT_BRIEF.md`; the handoff chain is

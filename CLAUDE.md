@@ -121,7 +121,11 @@ against an installed Google Chrome. See `docs/agent-notes/qa-visual-pass.md`.
   Ch 8 followed on 2026-11-11 with the same recipe (`docs/agent-notes/ch08-rework-plan.md`): the
   backup tree continued into sampled modes, algorithm boxes before every demo, derivations one
   line per press, the map as a tracker, DQN's pictures, and the ladder extended to six rungs.
-  Other chapters are still figure-free; re-authoring them from their source decks needs the original
+  Ch 9 followed on 2026-11-15 (`docs/agent-notes/ch09-rework-plan.md`): discrete-time LQR derived
+  from Act 1 with the Riccati recursion as value iteration on the heater, HJB and the verification
+  proof one line per press, the field-against-trajectory picture for Pontryagin, four algorithm
+  boxes, a five-rung ladder, and the control grid as the act tracker.
+  Ch 10–12 are still figure-free; re-authoring them from their source decks needs the original
   PDFs, which are not in the repository.
 - Assignment 1 (Movie Programming, due 2026-10-09) is closed and graded. Nothing of the grading
   is here; do not look for it.

@@ -14,16 +14,48 @@
    columns at once: 7 -> 8 on the left, 9 -> 10 on the right.
    The empty continuous-time row of the model-free layer is the
    source deck's own, and it is honest: this course does not go there.
+
+   Options — so the same figure can open every act with the current
+   cell marked, as rl-roadmap does for Chapter 8. All optional; with
+   none given the figure is the one above: both Lecture 9 cells lit,
+   the continuous-time MDP cell dim with its tag.
+     cell   one key, or
+     cells  an array of keys, from
+              "mdp"    Discrete-time MDP               (Lecture 7)
+              "dts"    Discrete-time dynamic system     (Lecture 9)
+              "ctmdp"  Continuous-time MDP              (not in this course)
+              "cts"    Continuous-time dynamic system   (Lecture 9)
+              "vrl"    Value-based RL                   (Lecture 8)
+              "prl"    Policy-based RL                  (Lecture 10)
+            the named cells are drawn as "here" (blue fill, blue
+            border, bold blue text); every other cell in the plain style
+     dim    true greys the text of every cell that is not lit; only
+            meaningful with cell/cells, and the ctmdp cell keeps its own
+            dim style
+     arrow  "f" | "pr" | "both" — the "delete f" and/or "delete P, R"
+            arrow is emphasised: blue, heavier, label at full strength
+     outer  "dim" draws the left-hand cube cell at reduced opacity so
+            the right-hand grid is the picture
+   No steps; the figure is static.  SVG 1064 x 322.
    ============================================================ */
 IE437.widget('control-grid', function (host, opts) {
   var E = IE437.el;
-  var INK = '#16181D', BLUE = '#2563EB', SLATE = '#64748B', PANEL2 = '#E7E7E1';
+  var INK = '#16181D', BLUE = '#2563EB', SLATE = '#64748B', PANEL2 = '#E7E7E1', DIM = '#A1A8B3';
   var W = 1064, H = 322;
+  opts = opts || {};
+
+  /* which cells are "here": the named ones, or today's default when none is named */
+  var on = {};
+  (Array.isArray(opts.cells) ? opts.cells : opts.cell ? [opts.cell] : []).forEach(function (k) { on[k] = true; });
+  var any = Object.keys(on).length > 0, dim = !!opts.dim && any;
+  function here(key, dflt) { return any ? !!on[key] : !!dflt; }
+  var arrowOn = { f: opts.arrow === 'f' || opts.arrow === 'both', pr: opts.arrow === 'pr' || opts.arrow === 'both' };
 
   host.innerHTML =
     '<div class="wbody" style="padding:10px 12px 8px;align-items:center"><div data-c></div></div>';
   var sv = IE437.svg(W, H);
   host.querySelector('[data-c]').appendChild(sv);
+  var P = sv;                                      /* current parent for txt/box */
 
   function txt(x, y, s, o) {
     o = o || {};
@@ -31,7 +63,7 @@ IE437.widget('control-grid', function (host, opts) {
       x: x, y: y, 'text-anchor': o.anchor || 'middle', 'font-size': o.size || 11,
       'font-weight': o.weight || 400, fill: o.fill || INK,
       'fill-opacity': o.op === undefined ? 1 : o.op, text: s
-    }, sv);
+    }, P);
     if (o.mono) n.setAttribute('font-family', 'IBM Plex Mono, monospace');
     if (o.italic) n.setAttribute('font-style', 'italic');
     if (o.rot) n.setAttribute('transform', o.rot);
@@ -44,13 +76,14 @@ IE437.widget('control-grid', function (host, opts) {
       'fill-opacity': o.fo === undefined ? 1 : o.fo,
       stroke: o.stroke || INK, 'stroke-opacity': o.so === undefined ? 0.26 : o.so,
       'stroke-width': o.sw || 1
-    }, sv);
+    }, P);
   }
 
   /* ================= left — the outer 2x2 of the source deck ============ */
   var LX = 2, LW = 72, CW = 92, LY = 92, HH = 28, RH = 50;
   var LR = LX + LW + 2 * CW;                       /* right edge = 258 */
   (function () {
+    if (opts.outer === 'dim') P = E('g', { opacity: 0.45 }, sv);
     txt(LX + LW + CW, LY - 14, 'the cube — one cell of it', { size: 10, mono: true, op: .42 });
     box(LX + LW, LY, CW, HH, { fill: PANEL2, fo: .9 });
     box(LX + LW + CW, LY, CW, HH, { fill: PANEL2, fo: .9 });
@@ -69,6 +102,7 @@ IE437.widget('control-grid', function (host, opts) {
       txt(LX + LW + CW * 1.5, y + RH / 2 - 2, r[3], { size: 10, op: .32 });
       txt(LX + LW + CW * 1.5, y + RH / 2 + 11, r[4], { size: 10, op: .32 });
     });
+    P = sv;
   })();
 
   /* ================= the zoom wedge ==================================== */
@@ -114,30 +148,33 @@ IE437.widget('control-grid', function (host, opts) {
     txt(TC + TCW / 2, t[0] + t[1] / 2 + 4, t[2], { size: 10, weight: 600, op: .68 });
   });
 
+  /* o.key names the cell; o.here is its default when no cell option is given;
+     o.dim is the cell's own grey (the continuous-time MDP), kept whatever the options say */
   function cell(cx, y, w, h, o) {
-    box(cx, y, w, h, o.here
+    var lit = here(o.key, o.here);
+    box(cx, y, w, h, lit
       ? { fill: BLUE, fo: .12, stroke: BLUE, so: .9, sw: 1.7 }
       : (o.dim ? { so: .16 } : { fill: SLATE, fo: .075 }));
-    var op = o.dim ? .36 : 1;
+    var op = lit ? 1 : o.dim ? .36 : 1;
+    var ink = lit ? BLUE : (dim && !o.dim) ? DIM : INK;
     txt(cx + w / 2, y + 20, o.t1, {
-      size: 11.5, weight: o.here ? 700 : 600, op: op * (o.here ? 1 : .8),
-      fill: o.here ? BLUE : INK
+      size: 11.5, weight: lit ? 700 : 600, op: op * (lit ? 1 : .8), fill: ink
     });
-    if (o.t2) txt(cx + w / 2, y + 34, o.t2, { size: 10.5, mono: true, op: op * .55 });
+    if (o.t2) txt(cx + w / 2, y + 34, o.t2, { size: 10.5, mono: true, op: op * .55, fill: lit ? INK : ink });
     if (o.tag) txt(cx + w / 2, y + h - 8, o.tag, {
-      size: 9, mono: true, weight: 700, op: op * .85, fill: o.here ? BLUE : INK
+      size: 9, mono: true, weight: 700, op: op * .85, fill: ink
     });
   }
 
-  cell(D0, yA, COL, R1, { t1: 'Discrete-time MDP', t2: 'P(s′ | s, a)', tag: 'LECTURE 7' });
+  cell(D0, yA, COL, R1, { key: 'mdp', t1: 'Discrete-time MDP', t2: 'P(s′ | s, a)', tag: 'LECTURE 7' });
   cell(D0 + COL, yA, COL, R1, {
-    t1: 'Discrete-time dynamic system', t2: 'x(k+1) = f(x, u)', tag: 'LECTURE 9', here: true
+    key: 'dts', t1: 'Discrete-time dynamic system', t2: 'x(k+1) = f(x, u)', tag: 'LECTURE 9', here: true
   });
   cell(D0, yA + R1, COL, R1, {
-    t1: 'Continuous-time MDP', t2: 'P(s(t+h) | s, a)', tag: 'not in this course', dim: true
+    key: 'ctmdp', t1: 'Continuous-time MDP', t2: 'P(s(t+h) | s, a)', tag: 'not in this course', dim: true
   });
   cell(D0 + COL, yA + R1, COL, R1, {
-    t1: 'Continuous-time dynamic system', t2: 'dx/dt = f(x, u)', tag: 'LECTURE 9', here: true
+    key: 'cts', t1: 'Continuous-time dynamic system', t2: 'dx/dt = f(x, u)', tag: 'LECTURE 9', here: true
   });
 
   /* ---- the arrow band: delete the model ---- */
@@ -146,18 +183,18 @@ IE437.widget('control-grid', function (host, opts) {
     x1: LC, y1: ay + 1, x2: 1062, y2: ay + 1,
     stroke: INK, 'stroke-opacity': .2, 'stroke-dasharray': '5 4'
   }, sv);
-  [[COL / 2, 'delete P, R'], [COL * 1.5, 'delete f']].forEach(function (d) {
-    var cx = D0 + d[0];
-    E('path', { d: 'M' + cx + ' ' + (ay + 6) + 'L' + cx + ' ' + (ay + SEP - 9), stroke: SLATE, 'stroke-width': 1.7 }, sv);
+  [[COL / 2, 'delete P, R', 'pr'], [COL * 1.5, 'delete f', 'f']].forEach(function (d) {
+    var cx = D0 + d[0], hot = arrowOn[d[2]], c = hot ? BLUE : SLATE;
+    E('path', { d: 'M' + cx + ' ' + (ay + 6) + 'L' + cx + ' ' + (ay + SEP - 9), stroke: c, 'stroke-width': hot ? 2.4 : 1.7 }, sv);
     E('path', {
       d: 'M' + (cx - 4.5) + ' ' + (ay + SEP - 12) + 'L' + cx + ' ' + (ay + SEP - 3) +
-         'L' + (cx + 4.5) + ' ' + (ay + SEP - 12) + 'Z', fill: SLATE
+         'L' + (cx + 4.5) + ' ' + (ay + SEP - 12) + 'Z', fill: c
     }, sv);
-    txt(cx + 54, ay + SEP / 2 + 4, d[1], { size: 9.5, mono: true, weight: 600, op: .6, fill: SLATE });
+    txt(cx + 54, ay + SEP / 2 + 4, d[1], { size: 9.5, mono: true, weight: 600, op: hot ? 1 : .6, fill: c });
   });
 
-  cell(D0, yB, COL, R2, { t1: 'Value-based RL', tag: 'LECTURE 8' });
-  cell(D0 + COL, yB, COL, R2, { t1: 'Policy-based RL', tag: 'LECTURE 10' });
+  cell(D0, yB, COL, R2, { key: 'vrl', t1: 'Value-based RL', tag: 'LECTURE 8' });
+  cell(D0 + COL, yB, COL, R2, { key: 'prl', t1: 'Policy-based RL', tag: 'LECTURE 10' });
 
   txt(D0 + COL, yB + R2 + 16,
     'the model-free continuous-time row is empty in the source deck — and stays empty here',

@@ -4,10 +4,13 @@
    time step taken to zero. This checks it, on a problem whose HJB
    solution is known exactly.
 
-     plant   xdot = a x + b u          a = b = 1
+     plant   xdot = a x + b u          a = 0, b = 1  (the chapter's heater)
      cost    int_0^T (q x^2 + r u^2)   q = r = 1, T = 2, no terminal cost
      HJB     V(t,x) = P(t) x^2  with  -Pdot = 2aP - P^2 b^2/r + q, P(T)=0
-             integrated backwards by RK4 at 4000 steps -> P(0) = 2.35777165
+             which for a = 0 is -Pdot = 1 - P^2, so P(t) = tanh(2 - t) in
+             closed form. Integrated backwards by RK4 at 4000 steps the
+             widget gets P(0) = 0.964027580076 against tanh 2 = 0.964027580076
+             (difference 1e-15; the whole curve agrees to 2.3e-15).
 
    The DISCRETE backup of Act 1 is then run on the Euler-discretised
    system at step h:  V(k,x) = min_u {(q x^2 + r u^2) h + P_{k+1}(x + (ax+bu)h)^2}
@@ -17,19 +20,21 @@
    A = 1+ah, B = bh, Q = qh, R = rh — checked to 12 digits offline.
 
    Verified in node before shipping: the error |P_h(0) - P(0)| is
-     h=0.5      5.747e-1
-     h=0.25     3.328e-1   ratio 1.727
-     h=0.125    1.746e-1   ratio 1.907
-     h=0.0625   8.890e-2   ratio 1.963
-     h=0.03125  4.481e-2   ratio 1.984
-     h=0.015625 2.249e-2   ratio 1.993
-     h=0.0078125 1.126e-2  ratio 1.997
-   i.e. first order, exactly as one Euler step should be. The claim on
-   the slide is that halving dt halves the error, and it does.
+     h=0.5       2.542e-1   (P_h(0) = 1.2182)
+     h=0.25      1.220e-1   ratio 2.084
+     h=0.125     5.958e-2   ratio 2.048
+     h=0.0625    2.942e-2   ratio 2.025
+     h=0.03125   1.462e-2   ratio 2.013
+     h=0.015625  7.284e-3   ratio 2.006
+     h=0.0078125 3.636e-3   ratio 2.003
+   i.e. first order, exactly as one Euler step should be: the ratio
+   tends to 2 (from above now that a = 0; it approached from below when
+   a = 1). The claim on the slide is that halving dt halves the error,
+   and it does.
    ============================================================ */
 IE437.widget('dt-to-hjb', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', SLATE = '#64748B', AMBER = '#D97706';
-  var a = 1, b = 1, q = 1, r = 1, qf = 0, T = 2;
+  var a = 0, b = 1, q = 1, r = 1, qf = 0, T = 2;
   var LADDER = [0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.0078125];
   var li = 0;
 
@@ -86,9 +91,9 @@ IE437.widget('dt-to-hjb', function (host, opts) {
     /* ---------- left: P(t) ---------- */
     var ax = IE437.plot(sv1, {
       w: W1, h: HH, pad: { l: 40, r: 12, t: 12, b: 30 },
-      xdom: [0, T], ydom: [0, 3], yticks: [0, 1, 2, 3], xticks: [0, 0.5, 1, 1.5, 2],
+      xdom: [0, T], ydom: [0, 1.3], yticks: [0, 0.5, 1], xticks: [0, 0.5, 1, 1.5, 2],
       xlabel: 'time t', ylabel: 'P(t)',
-      yfmt: function (v) { return v.toFixed(0); }, xfmt: function (v) { return v.toFixed(1); },
+      yfmt: function (v) { return v.toFixed(1); }, xfmt: function (v) { return v.toFixed(1); },
       series: [
         { pts: RUNS[0].tr, color: SLATE, w: 1.2, dash: '4 3' },
         { pts: RUNS[1].tr, color: SLATE, w: 1.2, dash: '4 3' },
@@ -98,15 +103,15 @@ IE437.widget('dt-to-hjb', function (host, opts) {
       ]
     });
     E('text', {
-      x: W1 - 18, y: ax.Y(2.62), 'text-anchor': 'end', 'font-size': 10.5, fill: INK,
+      x: W1 - 18, y: ax.Y(1.22), 'text-anchor': 'end', 'font-size': 10.5, fill: INK,
       'fill-opacity': .72, text: 'exact HJB (Riccati ODE)'
     }, sv1);
     E('text', {
-      x: W1 - 18, y: ax.Y(2.62) + 30, 'text-anchor': 'end', 'font-size': 10, fill: SLATE,
+      x: W1 - 18, y: ax.Y(1.22) + 30, 'text-anchor': 'end', 'font-size': 10, fill: SLATE,
       'fill-opacity': .8, text: 'grey: the coarser steps already tried'
     }, sv1);
     E('text', {
-      x: W1 - 18, y: ax.Y(2.62) + 15, 'text-anchor': 'end', 'font-size': 10.5, fill: BLUE,
+      x: W1 - 18, y: ax.Y(1.22) + 15, 'text-anchor': 'end', 'font-size': 10.5, fill: BLUE,
       'font-weight': 700, text: 'discrete backup, Δt = ' + h
     }, sv1);
     /* the quantity the right panel measures */
@@ -123,8 +128,8 @@ IE437.widget('dt-to-hjb', function (host, opts) {
     var guide = [[-2.25, g0[1] + (-2.25 - g0[0])], [-0.15, g0[1] + (-0.15 - g0[0])]];  /* slope exactly 1 */
     var bx = IE437.plot(sv2, {
       w: W2, h: HH, pad: { l: 44, r: 14, t: 12, b: 30 },
-      xdom: [-2.25, -0.15], ydom: [-2.2, 0.1],
-      yticks: [-2, -1.5, -1, -0.5, 0], xticks: [-2, -1.5, -1, -0.5],
+      xdom: [-2.25, -0.15], ydom: [-2.7, -0.3],
+      yticks: [-2.5, -2, -1.5, -1, -0.5], xticks: [-2, -1.5, -1, -0.5],
       xlabel: 'log10 Δt', ylabel: 'log10 error',
       yfmt: function (v) { return v.toFixed(1); }, xfmt: function (v) { return v.toFixed(1); },
       series: [
@@ -136,9 +141,10 @@ IE437.widget('dt-to-hjb', function (host, opts) {
       cx: bx.X(pts[li][0]), cy: bx.Y(pts[li][1]), r: 6.4, fill: 'none',
       stroke: BLUE, 'stroke-width': 2.4
     }, sv2);
+    /* the guide's own label, set just under the line where no point sits */
     E('text', {
-      x: bx.X(-1.62), y: bx.Y(-1.05), 'font-size': 10.5, fill: SLATE, 'font-weight': 700,
-      'text-anchor': 'middle', text: 'slope 1'
+      x: bx.X(-0.85), y: bx.Y(g0[1] + (-0.85 - g0[0]) - 0.45), 'font-size': 10.5, fill: SLATE,
+      'font-weight': 700, 'text-anchor': 'middle', text: 'slope 1'
     }, sv2);
 
     /* ---------- numbers ---------- */

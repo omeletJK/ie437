@@ -455,7 +455,7 @@ The actor follows the **critic's slope**, without differentiating the environmen
 
 ### $\mu_\theta(s)$ and $K$ — compare their feedback role
 ::: lede
-Put Lecture 9's Act 3 and this act side by side. Both produce feedback, using different assumptions and procedures.
+Put Lecture 9's Act 2 and this act side by side. Both produce feedback, using different assumptions and procedures.
 :::
 
 ::: table center

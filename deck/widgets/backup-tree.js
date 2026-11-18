@@ -90,6 +90,17 @@
    their label shrinks to fit. names.actions with TWO entries draws two
    root actions (the chosen one is the second) and the same two at s^1,
    matching a two-entry qnext.
+   Chapter 9 takes the V* picture to control.
+   mode "continuum" Ch 9 Act 1 — step 0 is the "opt" tree at its last
+                   step relabelled x, u_1..u_3, x′ (one function draws
+                   both). Step 1 melts the three decision edges into one
+                   blue wedge u ∈ U (a continuum) and collapses every
+                   chance node: four sampled rays each leave the wedge
+                   as one green edge to one successor x′ = f(x,u)
+                   (deterministic); the red arc now reads min over
+                   u ∈ U. Step 2 writes V(k,x) = min_u { g + V(k+1,f) }
+                   under it, the min red, "an optimisation, not a loop"
+                   beside it in slate. Stepped (2). No options.
    Written lines: a negative number after an operator is parenthesised,
    0.9·(−1) − (−4); the red side note goes inline after a short line and
    on its own right-aligned row under a long one (names); the rows are
@@ -354,33 +365,107 @@ IE437.widget('backup-tree', function (host, opts) {
 
   /* ============================================================
      opt — Bellman optimality for V* (p. 30)
+     The picture is shared with Ch 9's "continuum" mode, whose step 0
+     is this tree relabelled for control: L names the labels, G places
+     the nodes, so the geometry is drawn by one function.
      ============================================================ */
-  function drawOpt(k) {
-    var W = 580, H = 316, s = svg(W, H);
-    var S = [70, 165], RS = 18, RC = 14, RL = 11;
-    var ch = [[250, 70], [250, 165], [250, 260]];
-    var succ = [[[400, 40], [400, 100]], [[400, 140], [400, 190]], [[400, 230], [400, 290]]];
+  var OPT_G = { S: [70, 165], RS: 18, RC: 14, RL: 11, ch: [[250, 70], [250, 165], [250, 260]],
+    succ: [[[400, 40], [400, 100]], [[400, 140], [400, 190]], [[400, 230], [400, 290]]], maxAt: [118, 220] };
+  var OPT_L = { value: 'V^*(s)', root: 's', act: function (i) { return 'a_' + (i + 1); },
+    node: function (i) { return 'Q^{π*}(s,a_' + (i + 1) + ')'; }, succ: function (j) { return 's_' + (j + 1); },
+    cone: function (j) { return 'V^*(s′=s_' + (j + 1) + ')'; }, max: '\\max' };
+  function optTree(s, k, L, G) {
+    var S = G.S, RS = G.RS, RC = G.RC, RL = G.RL, ch = G.ch, succ = G.succ;
     var gS = layer(s);
-    tx(gS, 30, 133, 'V^*(s)', { fill: BLUE, 'font-size': 12 });
-    state(gS, S[0], S[1], RS, 's');
+    tx(gS, S[0] - 40, S[1] - 32, L.value, { fill: BLUE, 'font-size': 12 });
+    state(gS, S[0], S[1], RS, L.root);
     ch.forEach(function (c, i) {
       var chosen = k >= 1 && i === 0, faded = k >= 1 && i !== 0;
       var g = layer(s, faded ? FADE : null);
       edge(g, S[0], S[1], RS, c[0], c[1], RC, BLUE, chosen ? { 'stroke-width': 2.6 } : {});
-      elab(g, S[0], S[1], c[0], c[1], ['a_' + (i + 1)], i === 2 ? -1 : 1, { t: .62, d: 10, fill: chosen ? BLUE : SLATE });
+      elab(g, S[0], S[1], c[0], c[1], [L.act(i)], i === 2 ? -1 : 1, { t: .62, d: 10, fill: chosen ? BLUE : SLATE });
       chance(g, c[0], c[1], RC, '', 'above');
-      tx(g, c[0], c[1] - RC - 7, 'Q^{π*}(s,a_' + (i + 1) + ')', { fill: GREEN, 'text-anchor': 'middle', 'font-size': 11 });
+      tx(g, c[0], c[1] - RC - 7, L.node(i), { fill: GREEN, 'text-anchor': 'middle', 'font-size': 11 });
       succ[i].forEach(function (p, j) {
         edge(g, c[0], c[1], RC, p[0], p[1], RL, GREEN, chosen ? { 'stroke-width': 2.6 } : {});
-        state(g, p[0], p[1], RL, 's_' + (j + 1), 10.5);
-        if (i === 0) cone(g, p[0], p[1], RL, 'V^*(s′=s_' + (j + 1) + ')');
+        state(g, p[0], p[1], RL, L.succ(j), 10.5);
+        if (i === 0) cone(g, p[0], p[1], RL, L.cone(j));
       });
     });
     if (k >= 1) {
       var gm = layer(s);
       var a0 = deg(S[0], S[1], ch[0][0], ch[0][1]), a1 = deg(S[0], S[1], ch[2][0], ch[2][1]);
       maxArc(gm, S[0], S[1], 58, a0 - 7, a1 + 7);
-      tx(gm, 118, 220, '\\max', { fill: RED, 'font-size': 12, 'text-anchor': 'middle' });
+      tx(gm, G.maxAt[0], G.maxAt[1], L.max, { fill: RED, 'font-size': 12, 'text-anchor': 'middle' });
+    }
+  }
+  function drawOpt(k) { optTree(svg(580, 316), k, OPT_L, OPT_G); }
+
+  /* ============================================================
+     continuum — Ch 9 Act 1: the same backup with a continuum of
+     controls and deterministic dynamics. Step 0 is the V* tree at its
+     last step, relabelled x, u_1..u_3, x′. Step 1 melts the three
+     decision edges into one blue wedge u ∈ U, and every chance node
+     collapses: a sampled ray leaves the wedge as one green edge to
+     one successor x′ = f(x,u); the max arc becomes min over u ∈ U.
+     Step 2 writes the backup under the picture, the changed token
+     red, "an optimisation, not a loop" beside it. Stepped (2).
+     ============================================================ */
+  var CON_G = { S: [70, 140], RS: 18, RC: 14, RL: 11, ch: [[250, 55], [250, 140], [250, 225]],
+    succ: [[[400, 25], [400, 85]], [[400, 115], [400, 165]], [[400, 195], [400, 255]]], maxAt: [118, 195] };
+  var CON_L = { value: 'V(k,x)', root: 'x', act: function (i) { return 'u_' + (i + 1); },
+    node: function (i) { return 'x,u_' + (i + 1); }, succ: function () { return 'x′'; },
+    cone: function () { return 'V(k+1,x′)'; }, max: '\\max' };
+  function drawContinuum(k) {
+    var W = 760, H = 330, s = svg(W, H);
+    if (k === 0) { optTree(s, 1, CON_L, CON_G); return; }
+    var G = CON_G, S = G.S, RS = G.RS, RL = G.RL;
+    var a0 = deg(S[0], S[1], G.ch[0][0], G.ch[0][1]), a1 = deg(S[0], S[1], G.ch[2][0], G.ch[2][1]);
+    var RW = Math.hypot(G.ch[1][0] - S[0], G.ch[1][1] - S[1]), RX = Math.hypot(G.succ[1][0][0] - S[0], 140);
+    function at(R, a) { var r = a * Math.PI / 180; return [S[0] + R * Math.cos(r), S[1] + R * Math.sin(r)]; }
+    function ang(t) { return a0 + (a1 - a0) * t; }
+    var gS = layer(s);
+    tx(gS, S[0] - 40, S[1] - 32, CON_L.value, { fill: BLUE, 'font-size': 12 });
+    /* the wedge: a filled sector, two blue bounding edges, thin rays inside */
+    var p0 = at(RW, a0), p1 = at(RW, a1), q0 = at(RS + 2, a0), q1 = at(RS + 2, a1);
+    E('path', { d: 'M' + q0[0].toFixed(1) + ' ' + q0[1].toFixed(1) + 'L' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) +
+      'A' + RW + ' ' + RW + ' 0 0 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + 'L' + q1[0].toFixed(1) + ' ' + q1[1].toFixed(1) +
+      'A' + (RS + 2) + ' ' + (RS + 2) + ' 0 0 0 ' + q0[0].toFixed(1) + ' ' + q0[1].toFixed(1) + 'Z', fill: BLUE, opacity: .1 }, gS);
+    E('path', { d: 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + 'A' + RW + ' ' + RW + ' 0 0 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1),
+      fill: 'none', stroke: BLUE, 'stroke-width': 1, opacity: .45 }, gS);
+    /* a plain ray from the root's rim to the arc, at fraction t of the wedge's angle */
+    function ray(t, extra) {
+      var a = at(RS + 2, ang(t)), e = at(RW, ang(t));
+      var o = { x1: a[0], y1: a[1], x2: e[0], y2: e[1], stroke: BLUE, 'stroke-width': .7, opacity: .35 };
+      for (var q in extra || {}) o[q] = extra[q];
+      return E('line', o, gS);
+    }
+    [0, 1].forEach(function (t) { var e = at(RW, ang(t)); edge(gS, S[0], S[1], RS, e[0], e[1], -3, BLUE, { 'stroke-width': 1.7 }); });
+    [.25, .5, .75].forEach(function (t) { ray(t); });
+    /* four sampled rays: each leaves the wedge as one green edge to one successor x′ = f(x,u) */
+    [.125, .375, .625, .875].forEach(function (t) {
+      var e = at(RW, ang(t)), x1 = at(RX, ang(t));
+      ray(t, { 'stroke-width': 1.2, opacity: .7 });
+      E('circle', { cx: e[0], cy: e[1], r: 3, fill: GREEN }, gS);
+      edge(gS, e[0], e[1], 1, x1[0], x1[1], RL, GREEN, { 'stroke-width': 2 });
+      state(gS, x1[0], x1[1], RL, CON_L.succ(), 10.5);
+    });
+    state(gS, S[0], S[1], RS, CON_L.root);
+    var top = at(RX, ang(.125));
+    tx(gS, top[0] + RL + 8, top[1] + 4, 'x′ = f(x,u)', { fill: SLATE, 'font-size': 11 });
+    tx(gS, top[0] + RL + 8, top[1] + 18, 'deterministic', { fill: SLATE, 'font-size': 10.5 });
+    tx(gS, 178, 62, 'a continuum', { fill: SLATE, 'font-size': 10.5, 'text-anchor': 'middle' });
+    IE437.math(gS, 178, 79, 'u ∈ U', { fill: SLATE, 'font-size': 14, 'text-anchor': 'middle' });
+    /* the comparison: a red min arc across the wedge */
+    var gm = layer(s);
+    maxArc(gm, S[0], S[1], 58, a0 - 7, a1 + 7);
+    tx(gm, G.maxAt[0], G.maxAt[1], '\\min_{u ∈ U}', { fill: RED, 'font-size': 12, 'text-anchor': 'middle' });
+    if (k >= 2) {
+      var g2 = layer(s), y = H - 14;
+      var t = line(g2, 40, y, 'V(k,x) = \\red{\\min_{u ∈ U}}\\{\\, g(x,u) + V(k+1, f(x,u)) \\,\\}');
+      var w = 0; try { w = t.getComputedTextLength(); } catch (e) { }
+      if (!w) w = 400;
+      tx(g2, parseFloat(t.getAttribute('x')) + w + 18, y, 'an optimisation, not a loop', { fill: SLATE, 'font-size': 11.5 });
     }
   }
 
@@ -810,9 +895,9 @@ IE437.widget('backup-tree', function (host, opts) {
 
   /* ---------- dispatch ---------- */
   var DRAW = { tree: drawTree, eval: drawEval, opt: drawOpt, qopt: drawQopt, improve: drawImprove,
-    'return': drawReturn, sample: drawSample, sarsa: drawSarsa, qlearn: drawQlearn };
+    'return': drawReturn, sample: drawSample, sarsa: drawSarsa, qlearn: drawQlearn, continuum: drawContinuum };
   var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 2,
-    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 5 : 4, qlearn: NUMS ? 5 : 4 };
+    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 5 : 4, qlearn: NUMS ? 5 : 4, continuum: 2 };
   var draw = DRAW[MODE] || drawEval, n = STEPS[MODE] == null ? 2 : STEPS[MODE];
 
   function render(i) {

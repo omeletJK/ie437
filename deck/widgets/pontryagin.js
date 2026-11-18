@@ -3,29 +3,39 @@
    The same problem the Act 2 widget solved with HJB, now solved from
    the other side — so the two answers can be put next to each other.
 
-     plant  xdot = x + u,  x(0) = 1
+     plant  xdot = u  (the chapter's heater, a = 0, b = 1),  x(0) = 1
      cost   int_0^2 (x^2 + u^2) dt,  no terminal cost
-     H      = x^2 + u^2 + lambda (x + u)
+     H      = x^2 + u^2 + lambda u
      dH/du  = 2u + lambda = 0        ->  u* = -lambda/2
-     xdot   =  x + u*,   lambdadot = -(2x + lambda),  lambda(2) = 0
+     xdot   = -lambda/2,   lambdadot = -2x,   lambda(2) = 0
+
+   Closed forms, since P(t) = tanh(2 - t) solves the Riccati ODE here:
+     x*(t)      = cosh(2 - t) / cosh 2
+     lambda*(t) = 2 P(t) x*(t) = 2 sinh(2 - t) / cosh 2
+   The RK4 trajectory at 900 steps matches both to 1.7e-13 and 1.4e-13.
 
    Two things are checked on the page, both computed live:
 
    1. SHOOTING. lambda(0) is a free guess; bisection on the terminal
       residual lambda(2) finds the one value that satisfies the
       transversality condition. It comes out
-          lambda*(0) = 4.7155433066
-      and the HJB solution of Act 2, integrated independently by RK4
-      on the Riccati ODE, gives
-          2 P(0) x0 = 4.7155433066     (relative difference 7.5e-16)
+          lambda*(0) = 1.9280551602
+      which is 2 tanh 2 to 9e-14, and the HJB solution of Act 2,
+      integrated independently by RK4 on the Riccati ODE, gives
+          2 P(0) x0 = 1.9280551602     (relative difference 4.8e-14)
       i.e. the costate IS the value gradient. Two methods, one optimum.
 
    2. THE HAMILTONIAN. dH/dt = (dH/du) u-dot for a time-invariant
       problem, so H is constant exactly when u minimises H pointwise —
       which is the minimum principle itself, not a free lunch. Along
-      the canonical trajectory H is conserved to 1.2e-14; along the
-      same costate with u scaled to 0.5 u* (a control that does not
-      minimise H) it drifts by 1.39. Both verified in node.
+      the canonical trajectory H = 1 - lambda*(0)^2/4 = 0.0707 is
+      conserved to 1.4e-15; along the same costate with u scaled to
+      0.5 u* (a control that does not minimise H) it drifts by 0.232,
+      from 0.303 to 0.535. Both verified in node.
+
+   The guess ladder runs 1.2 .. 2.7 around lambda*(0) at index 3; the
+   wrong guesses land lambda(2) between -2.74 and +2.90 and x(2) between
+   1.59 and -1.13, which is what the panels' y-domains are cut for.
 
    Note the honest scope: H is conserved for EVERY lambda(0) guess,
    not only the right one, because every guess still integrates the
@@ -35,7 +45,7 @@
 IE437.widget('pontryagin', function (host, opts) {
   var E = IE437.el, INK = '#16181D', BLUE = '#2563EB', AMBER = '#D97706',
       SLATE = '#64748B', GREEN = '#16A34A', RED = '#D64545';
-  var a = 1, b = 1, q = 1, r = 1, T = 2, x0 = 1;
+  var a = 0, b = 1, q = 1, r = 1, T = 2, x0 = 1;
 
   /* ---- HJB side: P(t) by RK4 on the Riccati ODE, for the cross-check ---- */
   function P0exact(n) {
@@ -80,7 +90,7 @@ IE437.widget('pontryagin', function (host, opts) {
     return (lo + hi) / 2;
   })();
 
-  var LAD = [3.9, 4.2, 4.45, LAM_SHOOT, 4.95, 5.2, 5.5];
+  var LAD = [1.2, 1.5, 1.72, LAM_SHOOT, 2.15, 2.4, 2.7];
   var STAR = 3, li = 0;
 
   host.innerHTML =
@@ -109,7 +119,7 @@ IE437.widget('pontryagin', function (host, opts) {
     /* ---------- state and costate ---------- */
     var ax = IE437.plot(sv1, {
       w: W1, h: HH, pad: { l: 42, r: 16, t: 12, b: 30 },
-      xdom: [0, T], ydom: [-2.6, 5.9], yticks: [-2, 0, 2, 4],
+      xdom: [0, T], ydom: [-3.2, 3.6], yticks: [-2, 0, 2],
       xticks: [0, 0.5, 1, 1.5, 2], xlabel: 'time t',
       yfmt: function (v) { return v.toFixed(0); }, xfmt: function (v) { return v.toFixed(1); },
       series: [
@@ -118,13 +128,15 @@ IE437.widget('pontryagin', function (host, opts) {
         { pts: S.xs, color: BLUE, w: 2.2 }
       ]
     });
-    E('text', { x: ax.X(0.06), y: ax.Y(5.3), 'font-size': 10.5, fill: AMBER, 'font-weight': 700,
+    /* legends in the top-left corner, above the highest guess (2.7) */
+    E('text', { x: ax.X(0.06), y: ax.Y(3.25), 'font-size': 10.5, fill: AMBER, 'font-weight': 700,
       text: 'costate λ(t)' }, sv1);
-    E('text', { x: ax.X(0.06), y: ax.Y(5.3) + 15, 'font-size': 10.5, fill: BLUE, 'font-weight': 700,
+    E('text', { x: ax.X(0.06), y: ax.Y(3.25) + 15, 'font-size': 10.5, fill: BLUE, 'font-weight': 700,
       text: 'state x(t)' }, sv1);
     /* the terminal condition: lambda(T) must be 0 */
     E('circle', { cx: ax.X(T), cy: ax.Y(0), r: 7, fill: 'none', stroke: INK, 'stroke-width': 2 }, sv1);
-    E('text', { x: ax.X(T) - 12, y: ax.Y(0) + 22, 'text-anchor': 'end', 'font-size': 10, fill: INK,
+    /* the bottom-right corner is the one band no ladder entry crosses */
+    E('text', { x: ax.X(T) - 12, y: ax.Y(-2.95), 'text-anchor': 'end', 'font-size': 10, fill: INK,
       'fill-opacity': .6, 'font-family': 'IBM Plex Mono, monospace', text: 'λ(T) must be 0' }, sv1);
     if (!onTarget) {
       E('line', { x1: ax.X(T), y1: ax.Y(0), x2: ax.X(T), y2: ax.Y(S.lamT),
@@ -137,20 +149,22 @@ IE437.widget('pontryagin', function (host, opts) {
     /* ---------- the Hamiltonian ---------- */
     var bx = IE437.plot(sv2, {
       w: W2, h: HH, pad: { l: 42, r: 14, t: 12, b: 30 },
-      xdom: [0, T], ydom: [-1.8, 3.6], yticks: [-1, 0, 1, 2, 3],
+      xdom: [0, T], ydom: [-1.25, 1.2], yticks: [-1, -0.5, 0, 0.5, 1],
       xticks: [0, 1, 2], xlabel: 'time t', ylabel: 'H',
-      yfmt: function (v) { return v.toFixed(0); }, xfmt: function (v) { return v.toFixed(0); },
+      yfmt: function (v) { return v.toFixed(1); }, xfmt: function (v) { return v.toFixed(0); },
       series: [
         { pts: [[0, 0], [T, 0]], color: INK, w: 1, dash: '3 3' },
         { pts: S2.Hs, color: SLATE, w: 1.8, dash: '5 4' },
         { pts: S.Hs, color: BLUE, w: 2.4 }
       ]
     });
-    E('text', { x: bx.X(0.08), y: bx.Y(S.Hs[0][1]) - 9, 'font-size': 10.5, fill: BLUE,
+    /* the dashed curve starts above the flat one for every guess (by lambda0^2/16),
+       so the flat line is labelled underneath and the dashed one above its peak */
+    E('text', { x: bx.X(0.08), y: bx.Y(S.Hs[0][1]) + 24, 'font-size': 10.5, fill: BLUE,
       'font-weight': 700, text: 'u = argmin H' }, sv2);
     var pk = S2.Hs.reduce(function (m, p) { return p[1] > m[1] ? p : m; }, S2.Hs[0]);
-    E('text', { x: bx.X(pk[0]), y: bx.Y(pk[1]) - 10, 'text-anchor': 'middle', 'font-size': 10.5,
-      fill: SLATE, 'font-weight': 700, text: 'u ≠ argmin H' }, sv2);
+    E('text', { x: Math.min(bx.X(pk[0]), bx.X(T) - 44), y: bx.Y(pk[1]) - 10, 'text-anchor': 'middle',
+      'font-size': 10.5, fill: SLATE, 'font-weight': 700, text: 'u ≠ argmin H' }, sv2);
 
     var hs = S.Hs.map(function (p) { return p[1]; });
     var h2 = S2.Hs.map(function (p) { return p[1]; });
@@ -172,7 +186,7 @@ IE437.widget('pontryagin', function (host, opts) {
           'independently, says λ*(0) = 2P(0)x₀ = <b style="font-family:var(--mono)">' +
           LAM_HJB.toFixed(6) + '</b> &mdash; agreeing to <b>' +
           Math.max(1, Math.round(-Math.log10(Math.abs(lam0 - LAM_HJB) / LAM_HJB))) + '</b> digits.'
-        : 'the trajectory overshoots its terminal condition. HJB says the answer is ' +
+        : 'the trajectory misses its terminal condition.<br>HJB says the answer is ' +
           '<b style="font-family:var(--mono)">' + LAM_HJB.toFixed(4) + '</b>.') +
       '</div>' +
       '<div style="margin-top:9px;font-size:11px;color:var(--ink3)">H varies by ' +
