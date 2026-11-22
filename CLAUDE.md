@@ -125,7 +125,13 @@ against an installed Google Chrome. See `docs/agent-notes/qa-visual-pass.md`.
   from Act 1 with the Riccati recursion as value iteration on the heater, HJB and the verification
   proof one line per press, the field-against-trajectory picture for Pontryagin, four algorithm
   boxes, a five-rung ladder, and the control grid as the act tracker.
-  Ch 10–12 are still figure-free; re-authoring them from their source decks needs the original
+  Ch 10 followed on 2026-11-21 (`docs/agent-notes/ch10-rework-plan.md`): the policy gradient
+  theorem derived twice in Lecture 9's order, through the backup (Route 1, on the `backup-tree`)
+  and along one trajectory (Route 2, on the new `pg-trajectory` figure family), the Ψ_t ladder of
+  Act 2 with every rung derived in the body, DPG on the collapsed backup, four algorithm boxes,
+  eight paper cards, the heater through all four acts (`ddpg-gain`, `ppo-gain`), the appendix
+  dissolved; 73 slides, walk clean.
+  Ch 11–12 are still figure-free; re-authoring them from their source decks needs the original
   PDFs, which are not in the repository.
 - Assignment 1 (Movie Programming, due 2026-10-09) is closed and graded. Nothing of the grading
   is here; do not look for it.

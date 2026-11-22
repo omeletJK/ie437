@@ -110,8 +110,8 @@ IE437.widget('policy-gradient', function (host, opts) {
     '<div data-num style="font:400 12px/1.9 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 11.5px/1.55 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.075);padding-top:10px">' +
-    'The grey bowl and the dashed line are drawn from A and B. ' +
-    'The agent sees neither &mdash; only twelve rewards per episode.</div></div></div>';
+    'The grey bowl and the dashed line are drawn from A and B.<br>' +
+    'The agent sees only twelve rewards per episode.</div></div></div>';
 
   var CW = 470, CH = 256;
   var sv = IE437.svg(CW, CH);

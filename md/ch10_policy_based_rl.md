@@ -2,11 +2,13 @@
 ch: 10
 title: Policy-Based Reinforcement Learning
 subtitle: Optimal control with the dynamics replaced by data
-tagline: Lecture 9 derived feedback from a model; this lecture learns a feedback policy from experience.
+tagline: Lecture 9 derived feedback from a model; *this lecture learns a feedback policy from experience.*
 blurb: >-
-  Lecture 9 with the dynamics replaced by data. Optimise the policy directly by gradient ascent,
-  cut the variance with a baseline, and control the size of policy updates — the machinery
-  that PPO is built from.
+  Lecture 9 with the dynamics replaced by data. One theorem, the policy gradient, derived twice
+  in Lecture 9's order: through the backup over states, then along one sampled trajectory. The
+  variance ladder from REINFORCE to the advantage, the deterministic actor that lets a critic be
+  learned off-policy, and the clipped step that keeps the policy inside the region its own data
+  describes. The heater of Lecture 9 runs through all four acts.
 course: IE437 · Data-Driven Decision Making and Control
 author: Jinkyoo Park
 institute: KAIST
@@ -20,7 +22,7 @@ crossing: model
 cube_from:
   model: model-based
 inherits: optimal control, with the dynamics f still given (Lecture 9)
-handoff: the trust-region machinery (Lecture 11)
+handoff: the trust-region machinery and the model put back (Lecture 11)
 questions:
   - Gradient?
   - Variance?
@@ -31,660 +33,1201 @@ questions:
 ### Policy-Based Reinforcement Learning
 {layout: title}
 
-### Where we are — the control lineage, made data-driven
-| Previous step | This chapter's question |
-|---|---|
-| Lecture 9 computed feedback from a specified dynamics model. | Now improve a parameterized policy using experience. |
-
-Values and policies work together in actor–critic methods. A learned actor supplies actions; its training objective and data determine how it improves.
-
-::: keypoint
-Compute a policy-gradient step, a TD3 target and an entropy-regularized choice.
+### Where we are — the right-hand column, one level down
+::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
+Lecture 9's column of the grid, with the model gone.
+==Lecture 8 deleted $P$ and $R$ from the left column; today deletes $f$ from the right.==
 :::
 
-### Learning route — make a good action more likely
-**Bring:** Log derivatives, expectations, Bellman targets and feedback.
-
-| First pass | What to do |
-|---|---|
-| **Follow the idea** | REINFORCE → baseline/critic → DDPG/TD3 → SAC → compare PPO |
-| **Work without the solution** | Compute a policy-gradient step, a TD3 target and an entropy-regularized choice. |
-| **Return later** | Full policy-gradient/Fisher derivations, GAE details and multi-agent extensions are references. |
-
+::: reveal
 ::: keypoint
-For the temperature thread: **predict → calculate → reveal and check → change one condition**. Complete the core calculation before reading the research extensions.
+The same deletion, made twice, one lecture apart.
+Delete $f$ and the backup can no longer be computed; it has to be estimated from experience.
+:::
 :::
 
-## Act 1 — a gradient without the model
+::: note
+Source pp. 23–24, the professor's own overview figure: the cell is model-free, discrete time, infinite action space, policy-based RL. The vertical arrow in the infinite column is this chapter. The empty continuous-time row of the model-free layer is the source deck's own and stays empty.
+:::
+
+### The debt Lecture 8 left, and the hand Lecture 9 held out
+::: block Lecture 8's wall | the source deck's one sentence of motivation, p. 28
+*"Although DQN solves problems with high-dimensional observation spaces, it can only handle discrete and low-dimensional action spaces."*
+:::
+
+::: reveal
+::: block Lecture 9's last sentence | what today has to deliver
+*"Lecture 10's answer is a network that outputs the minimiser, and it is a descendant of the third."*
+:::
+:::
+
+::: reveal
+::: keypoint
+Two debts, one lecture.
+A policy that outputs the action pays the first; a gradient that needs no model pays the second.
+:::
+:::
+
+::: note
+The first quotation is p. 28 of the source deck, verbatim. The second is the closing line of Lecture 9: the third answer to the continuous minimisation was Pontryagin's view along one trajectory, and Act 1 derives today's gradient along one trajectory too. DDPG's actor in Act 3 is the network that outputs the minimiser.
+:::
+
+### Learning route — one theorem, then three ways of using it
+::: flow
+- **Act 1 · the gradient** | one theorem, two routes: the backup, then the trajectory
+- **Act 2 · the variance** | better estimates of the weight on the score
+- **Act 3 · continuous actions** | a deterministic actor climbs a learned critic
+- **Act 4 · the safe step** | stay where the batch is evidence
+:::
+
+::: small
+**Bring from Lecture 9:** the backup, the value field, the view along one trajectory.
+**Bring from Lecture 8:** the TD error, the replay buffer, the target network.
+**Bring from Lecture 2:** the gradient of a log-likelihood.
+:::
+
+::: reveal
+::: keypoint
+The heater of Lecture 9 runs through all four acts: $x_{t+1}=x_t+u_t$, cost $x^2+u^2$, policy $u=-kx$.
+Every demo learns the gain $k$ and is read against the Riccati gain.
+:::
+:::
+
+::: note
+First pass: Act 1 derives the policy gradient theorem twice, through the Bellman equation first and along a sampled trajectory second, and ends on REINFORCE. Act 2 is the ladder of better weights on the score: reward to go, baseline, advantage, critic, n-step, GAE. Act 3 makes the actor deterministic and learns the critic off-policy: DPG, DDPG, TD3, SAC. Act 4 bounds the step in behaviour space: TRPO and PPO. Derivations are in the body, one line per press, right after the idea they support.
+:::
+
+### One honest detour — why not identify the system?
+**System identification** — the rhyme of Lecture 8's detour: estimate the dynamics, then run Lecture 9 unchanged.
+
+$$(\hat A,\hat B)=\argmin_{A,B}\sum_t\big\lVert x_{t+1}-Ax_t-Bu_t\big\rVert^2\quad\Longrightarrow\quad\text{the Riccati recursion gives }\hat K$$
+
+::: reveal
+::: small
+It is the oldest idea in adaptive control, and it is valid.
+But to act we only need the controller, and here a whole dynamics model is estimated first and then trusted as if it were true.
+:::
+:::
+
+::: reveal
+::: keypoint
+Lecture 8 asked why estimate $P$ and $R$ when $Q^*$ is what acts.
+Today asks why estimate $f$ when ==the controller can be estimated directly.==
+:::
+:::
+
+::: note
+Neither source has this slide; it is the course rhyme with Ch 8's "why not learn the model" detour, kept as the opening foil. The model comes back, deliberately and learned, in Lecture 11.
+:::
+
+## Act 1 — one theorem, two routes
 {short: ACT 1, num: Act 1}
 
-**Q1.** The thing we must differentiate is an expectation over trajectories, and the dynamics are inside it.
+**Q1.** The objective is an expectation over trajectories, and the dynamics sit inside it.\
+How can its gradient be taken without them?
 
-### The objective, and a gradient we cannot see
+### Act 1 on the map
 {q: 1}
 
 ::: qstrip
 :::
 
-Parameterise a stochastic policy $\pi_\theta(a\mid s)$ and maximise the expected return:
-
-$$J(\theta) = \E_{\tau\sim\pi_\theta}\big[R(\tau)\big], \qquad \theta \leftarrow \theta + \alpha\,\nabla_\theta J(\theta)$$
-
-The trouble is where the parameter lives. It is not in the integrand; it is in the ==distribution being integrated against==, and that distribution contains the dynamics:
-
-$$p_\theta(\tau) = \mu(s_0)\prod_{t=0}^{T-1} \pi_\theta(a_t\mid s_t)\,\hl{P(s_{t+1}\mid s_t,a_t)}$$
-
-::: reveal
-::: block The naive answer, and why it is not enough | the source deck's own first attempt
-Perturb one coordinate at a time and difference: $\;\partial J/\partial\theta_k \approx \big(J(\theta+\epsilon u_k)-J(\theta)\big)/\epsilon$. It can estimate local changes even without an analytic derivative — and it costs ==one full batch of rollouts per parameter==. For a large network, coordinatewise finite differences are prohibitively expensive; random-direction methods offer a different trade-off.
-:::
+::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
+The model-free cell of the infinite-action column.
+==The object to learn is the controller itself, a parameterised policy $\pi_\theta$.==
 :::
 
-### The score-function trick — the dynamics vanish
-One identity does all the work: $\;\nabla p = p\,\nabla \log p$. It turns the gradient of an expectation into an expectation of a gradient:
+::: note
+The same figure returns at the start of every act, as Lecture 9's did. All four acts stay in this one cell; what changes is how the gradient is estimated and how far along it the policy is moved.
+:::
 
-$$\nabla_\theta \E_{\tau\sim p_\theta}[R(\tau)] = \int \nabla_\theta p_\theta(\tau)R(\tau)\,d\tau = \int p_\theta(\tau)\,\nabla_\theta \log p_\theta(\tau)\,R(\tau)\,d\tau = \E_{\tau\sim p_\theta}\big[\nabla_\theta\log p_\theta(\tau)\,R(\tau)\big]$$
+### The objective, in Lecture 7's objects
+**The policy-gradient objective** — a parameterised policy $\pi_\theta(a\mid s)$, scored by the value of the states it visits:
+
+$$J(\theta)=\sum_{s}d^\pi(s)\,V^\pi(s)=\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,Q^\pi(s,a),\qquad d^\pi(s)=\lim_{t\to\infty}P(s_t=s\mid s_0,\pi_\theta)$$
 
 ::: reveal
-Now expand that log. The product becomes a sum, and every term without $\theta$ differentiates to zero:
+**What is sought** — the best parameter, by gradient ascent:
 
-$$\nabla_\theta\log p_\theta(\tau) = \underbrace{\nabla_\theta\log\mu(s_0)}_{=\,0} + \sum_t \nabla_\theta\log\pi_\theta(a_t\mid s_t) + \underbrace{\sum_t\nabla_\theta\log \hl{P(s_{t+1}\mid s_t,a_t)}}_{=\,0} \;=\; \sum_{t}\nabla_\theta\log\pi_\theta(a_t\mid s_t)$$
+$$\theta^*=\argmax_\theta J(\theta),\qquad\theta\leftarrow\theta+\alpha\,\nabla_\theta J(\theta)$$
 :::
 
 ::: reveal
 ::: keypoint
-Their **log-density derivatives** are zero when they do not directly depend on $\theta$. They still affect which trajectories occur and therefore the expected gradient.
+Nothing here is new: $V^\pi$, $Q^\pi$ and the on-policy state distribution are Lecture 7's objects.
+What is new is where the parameter lives: ==inside the distribution being averaged over.==
+:::
 :::
 
+::: note
+Source p. 29, verbatim in re-typed form. d^π is the stationary distribution of the Markov chain the policy induces, the on-policy state distribution; the source's closing bullets say why a policy is learned directly: there are infinitely many actions to value, and argmax_a Q needs a full scan of the action space. Gradient ascent, because J is a return; Lecture 9 minimised a cost.
+:::
+
+### The naive gradient — perturb one parameter at a time
+**Finite differences** — the source deck's own first attempt, p. 30:
+
+$$\frac{\partial J(\theta)}{\partial\theta_k}\approx\frac{J(\theta+\epsilon u_k)-J(\theta)}{\epsilon}$$
+
+::: reveal
 ::: small
-This is the precise sense in which $f$ is "deleted": we never needed it. Where Lecture 9 *solved* the dynamics, here they simply drop out of the algebra — the policy's own log-probability is all that is left. We still *live* in the dynamics; we just never differentiate through them.
+It works even when $J$ is not differentiable, and it needs no model.
+It costs one full batch of rollouts per parameter: a million parameters, a million batches, for one step.
 :::
-:::
-
-### Reading the estimator — it is weighted maximum likelihood
-Put the two halves together and the whole of Act 1 is one line:
-
-$$\nabla_\theta J(\theta) = \E_{\tau\sim\pi_\theta}\Big[\underbrace{\Big(\textstyle\sum_t \nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)}_{\hl{\nabla_\theta J_{\mathrm{ML}}(\theta)} \;-\; \text{make this trajectory likelier}}\ \underbrace{\Big(\textstyle\sum_t r_{t+1}\Big)}_{\text{how good it was}}\Big]$$
-
-::: reveal
-The first factor, alone, is the gradient of the log-likelihood of the trajectory — ==the maximum-likelihood gradient of Lecture 2==, the direction that would make *this* trajectory more probable. The return simply weights it.
-
-- **Increase** the likelihood of trajectories with large accumulated reward;
-- **decrease** likelihood for negative weights. A small positive return still has a positive weight; a baseline lets us compare with typical performance.
 :::
 
 ::: reveal
 ::: keypoint
-Policy gradient is ==imitation of your own better moments==, reweighted by how well they went.
+This is Lecture 1's "you could always just search", applied to a policy.
+The theorem that follows turns one batch of rollouts into the whole gradient.
+:::
 :::
 
+::: note
+Source p. 30: "it works even when J(θ) is not differentiable, but very slow. Is there a more efficient method?" Random-direction methods trade the coordinate loop for noise; they are the honest alternative that makes the score-function trick an achievement rather than a definition.
+:::
+
+### Route 1 — the backup, drawn: where the parameter lives
+::: widget backup-tree {"mode":"score"}
+Lecture 7's expectation backup for $V^\pi(s)$, every action weighted by $\pi_\theta(a\mid s)$.
+==The parameter lives on the blue edges only; the green edges are the model, and they carry no $\theta$.==
+:::
+
+::: reveal
+::: keypoint
+Differentiate the backup and the gradient obeys a backup of its own.
+$P$ routes the gradient from $s'$ back to $s$ and is never differentiated.
+:::
+:::
+
+::: note
+Source pp. 31–32 drawn on the Ch 7 tree. Press one tags the decision edges with θ and marks the chance edges "no θ"; press two writes the differentiated backup with the P factor in slate. The whole of Route 1 is this picture: ∇Q^π(s,a) = Σ_{s'} P(s'|s,a) ∇V^π(s'), the gradient passing through the chance node untouched. Lecture 9 read the same tree with a continuum of controls; today's tree has a continuum of parameters behind each blue edge.
+:::
+
+### Route 1 — the derivation, one line per press
+{fill: top, math: compact}
+
+**From the Bellman equation to the policy gradient theorem** — the backup differentiated, then unrolled:
+
+$$\begin{aligned}
+V^\pi(s)&=\sum_a\pi_\theta(a\mid s)\,Q^\pi(s,a) &&\red{\scriptstyle\text{Lecture 7's expectation backup}}\\
+\step{1}{\nabla_\theta V^\pi(s)}&\step{1}{=\sum_a\Big[\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\,\nabla_\theta Q^\pi(s,a)\Big]} &&\step{1}{\red{\scriptstyle\text{the product rule}}}\\
+\step{2}{\nabla_\theta Q^\pi(s,a)}&\step{2}{=\nabla_\theta\sum_{s'}P(s'\mid s,a)\big[r+V^\pi(s')\big]=\sum_{s'}\hl{P(s'\mid s,a)}\,\nabla_\theta V^\pi(s')} &&\step{2}{\red{\scriptstyle P \text{ carries no } \theta\text{: pass through}}}\\
+\step{3}{\nabla_\theta V^\pi(s)}&\step{3}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\nabla_\theta V^\pi(s'),\quad \phi(s):=\sum_a\nabla_\theta\pi_\theta\,Q^\pi,\ \ \rho^\pi(s\to s',1):=\sum_a\pi_\theta P} &&\step{3}{\red{\scriptstyle\text{a Bellman equation for the gradient}}}\\
+\step{4}{\nabla_\theta V^\pi(s)}&\step{4}{=\sum_{x}\sum_{k=0}^{\infty}\rho^\pi(s\to x,k)\,\phi(x)} &&\step{4}{\red{\scriptstyle\text{unroll}}}\\
+\step{5}{\nabla_\theta J(\theta)}&\step{5}{=\sum_s\eta(s)\,\phi(s)\;\propto\;\sum_s d^\pi(s)\sum_a\pi_\theta(a\mid s)\,\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)} &&\step{5}{\red{\scriptstyle\text{normalise; } \nabla\pi=\pi\nabla\log\pi}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+The dynamics appear once, on line 2, and only as a weight: ==every $\theta$ in the gradient sits inside $\log\pi_\theta$.==
+:::
+:::
+
+::: note
+Source pp. 31–34, line for line. Line 0 is the Bellman expectation equation. Line 1 is the product rule. Line 2 extends Q^π one step with the next state value; P is not a function of θ, so ∇ passes through it, which the source annotates "gradient does not depend on ∇θ of the dynamics". Line 3 names φ(s), the one-step contribution, and ρ^π(s→s',1) = Σ_a π_θ(a|s)P(s'|s,a), the one-step visitation; the equation has the form of a Bellman equation with φ in place of the reward. Line 4 unrolls it with ρ^π(s→x,k) the k-step visitation, so the gradient at s is the sum of φ over every state reachable from s, weighted by how often it is reached. Line 5 sets η(s) = Σ_k ρ^π(s_0→s,k), the unnormalised visitation, and divides by Σ_s η(s) to get d^π; the constant is absorbed into the learning rate, and the proportionality sign is the source's own. The last move is ∇π = π ∇log π, which turns the sum over a into an expectation under π_θ. Discounted version: γ enters ρ and the constant becomes 1/(1−γ).
+:::
+
+### The policy gradient theorem
+::: block Theorem | the policy gradient, Sutton et al. (2000), the source's p. 31
+$$\nabla_\theta J(\theta)\;\propto\;\E_{s\sim d^\pi,\ a\sim\pi_\theta}\Big[\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)\Big]$$
+:::
+
+::: reveal
+**What it says** — make an action likelier in proportion to how good it is, averaged over the states visited.\
+**What it needs** — samples of $s$ and $a$ from running the policy, and an estimate of $Q^\pi(s,a)$.\
+**What it does not need** — the dynamics $P$, anywhere.
+:::
+
+::: reveal
+::: keypoint
+Route 1 says ==what to estimate==: a score, weighted by a value, under the on-policy distribution.
+It does not yet say how to estimate $Q^\pi$ from experience; Route 2 does.
+:::
+:::
+
+::: note
+The theorem's expectation is on-policy: s from d^π and a from π_θ, as the source notes under p. 31. The name "score" is Lecture 2's: ∇_θ log π_θ(a|s) is the score function of the policy as a likelihood. Williams's REINFORCE (1992) is the sampled form of this expression; the theorem in this form is Sutton, McAllester, Singh and Mansour (2000), cited in the reading guide and not given a card because the step it carries is Route 1 itself.
+:::
+
+### Route 2 — one trajectory, and its law
+::: widget pg-trajectory {"mode":"law"}
+One episode of the heater, five sampled $(s_t,a_t)$ marked.
+==The policy's factors sit on the points, the world's factors on the edges==; the law is their product.
+:::
+
+::: reveal
+::: keypoint
+The dynamics enter the law of a trajectory and leave its log-gradient.
+This is Lecture 9's Pontryagin move with the model deleted: conditions along one trajectory, with no $f$ to differentiate.
+:::
+:::
+
+::: note
+Source p. 81, "the single most important line in the chapter": p(τ) = μ(s_0) Π π_θ(a_t|s_t) P(s_{t+1}|s_t,a_t), and ∇ log p(τ) = Σ ∇ log π_θ(a_t|s_t) because log P carries no θ. The source says why the theorem is derived a second time (p. 80): the first derivation used the state value and the recursion of dynamic programming; this one uses only episodes the agent engages in. Lecture 9 taught the same pair, a value field over states and then conditions along one trajectory.
+:::
+
+### Route 2 — the derivation, one line per press
+{fill: top, math: compact}
+
+**The log-derivative trick** — the gradient of an expectation turned into an expectation of a gradient, source p. 82:
+
+$$\begin{aligned}
+\nabla_\theta\,\E_{\tau\sim p_\theta}\big[R(\tau)\big]&=\nabla_\theta\int p_\theta(\tau)\,R(\tau)\,d\tau &&\red{\scriptstyle R(\tau)=\sum_t r_t\text{; } \theta \text{ is in the density}}\\
+\step{1}{}&\step{1}{=\int\frac{p_\theta(\tau)}{p_\theta(\tau)}\,\nabla_\theta p_\theta(\tau)\,R(\tau)\,d\tau=\int p_\theta(\tau)\,\nabla_\theta\log p_\theta(\tau)\,R(\tau)\,d\tau} &&\step{1}{\red{\scriptstyle\nabla p=p\,\nabla\log p}}\\
+\step{2}{}&\step{2}{=\E_{\tau\sim p_\theta}\Big[\nabla_\theta\log p_\theta(\tau)\,R(\tau)\Big]} &&\step{2}{\red{\scriptstyle\text{an expectation of a gradient}}}\\
+\step{3}{\nabla_\theta\log p_\theta(\tau)}&\step{3}{=\underbrace{\nabla_\theta\log\mu(s_0)}_{0}+\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)+\underbrace{\sum_t\nabla_\theta\log\hl{P(s_{t+1}\mid s_t,a_t)}}_{0}} &&\step{3}{\red{\scriptstyle\text{the law: the } P \text{ terms vanish}}}\\
+\step{4}{\nabla_\theta J(\theta)}&\step{4}{=\E_{\tau\sim\pi_\theta}\Big[\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_t\Big)\Big]} &&\step{4}{\red{\scriptstyle\text{substitute}}}\\
+\step{5}{}&\step{5}{\approx\frac1N\sum_{i=1}^{N}\Big(\sum_t\nabla_\theta\log\pi_\theta(a^{(i)}_t\mid s^{(i)}_t)\Big)\Big(\sum_t r^{(i)}_t\Big)} &&\step{5}{\red{\scriptstyle\text{sample } N \text{ episodes: the estimator}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+Route 2 says ==how to estimate==: run the policy, score every action it took, weight the scores by the return.
+No value function, no model, nothing but episodes.
+:::
+:::
+
+::: note
+Source pp. 82–83, line for line. Line 1 is the only trick: multiply and divide by p_θ(τ), so that ∇p = p ∇log p turns the integrand back into a density times something. Line 3 substitutes the law of the trajectory; the initial distribution and the dynamics carry no θ and their log-derivatives are zero, though they still decide which trajectories occur and therefore what the expectation averages over. Line 4 is the empirical estimator with the source's caveat: "too slow and unreliable due to high variance", which is Act 2.
+:::
+
+### Reading the estimator — weighted maximum likelihood
+**The estimator, read factor by factor** — source p. 84:
+
+$$\nabla_\theta J(\theta)=\E_{\tau\sim\pi_\theta}\Big[\underbrace{\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)}_{\hl{\nabla_\theta J_{\mathrm{ML}}(\theta)}\text{: make this trajectory likelier}}\ \ \underbrace{R(\tau)}_{\text{how good it was}}\Big]$$
+
+::: reveal
 ::: small
-There is no $\argmax$ anywhere in that sentence, and no model. It is also, exactly, Lecture 6's move — a generative model trained to emit the *good* samples — one axis over.
+The first factor alone is the gradient of the log-likelihood of the trajectory, Lecture 2's maximum-likelihood gradient.
+The return weights it: increase the likelihood of trajectories with a large return, decrease it for those with a small one.
 :::
 :::
 
-### The policy gradient theorem, and REINFORCE
-For $J(\theta)=\E[\sum_{t=0}^{T-1}\gamma^t r_{t+1}]$, define $G_t=\sum_{k=t}^{T-1}\gamma^{k-t}r_{k+1}$. Then
-
-$$\nabla_\theta J=\E\Big[\sum_{t=0}^{T-1}\gamma^t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t\Big].$$
-
-**REINFORCE:** sample complete episodes under the current policy, average this expression, and take a gradient-ascent step. The full-return estimator is unbiased under the usual differentiation and integrability assumptions.
-
+::: reveal
 ::: keypoint
-Use **one score × its future return per action**. For the undiscounted episodic examples below, $\gamma=1$. Dropping $\gamma^t$ while claiming the same discounted objective is generally incorrect.
+Policy gradient is ==maximum likelihood on your own trajectories, weighted by how well they went.==
+It is Lecture 6's move one axis over: a generative model trained to emit the good samples.
+:::
 :::
 
-The equivalent $Q^\pi$ theorem averages over the policy's state visitation weights. The appendix makes those weights explicit.
+::: note
+Source p. 84: the first factor labelled "probability of trajectory" and identified as ∇_θ J_ML(θ), the second "reward of trajectory", then the two bullets, increase the likelihood for large accumulated reward, decrease it for small. A small positive return still has a positive weight; Act 2's baseline is what lets the weight compare with typical performance.
+:::
 
-### One policy parameter — see the update direction
-A one-step problem has actions A and B. Let $\pi_\theta(A)=p=\operatorname{sigmoid}(\theta)=0.5$. Then the log-probability derivatives are **$1-p=0.5$** for A and **$-p=-0.5$** for B.
+### One theorem, two views
+::: table center
+| | Route 1 · the backup | Route 2 · the trajectory |
+|---|---|---|
+| Lecture 9's twin | the value field and its rule everywhere | the conditions along one trajectory |
+| starts from | $V^\pi=\sum_a\pi_\theta Q^\pi$, the Bellman equation | $p_\theta(\tau)$, the law of an episode |
+| where the model goes | a weight the gradient passes through | a factor whose log-gradient is zero |
+| what it gives | $\E_{d^\pi,\pi_\theta}[\nabla\log\pi_\theta\,Q^\pi]$: ==what to estimate== | $\E_\tau[\sum_t\nabla\log\pi_\theta\,R(\tau)]$: ==how to estimate it== |
+:::
 
-With step size 0.1 and baseline 2:
-
-| observed action | reward | advantage | gradient contribution | parameter change |
-|---|---|---|---|---|
-| A | 3 | 1 | $0.5(1)=0.5$ | +0.05 |
-| B | 1 | −1 | $(-0.5)(-1)=0.5$ | +0.05 |
-
+::: reveal
 ::: keypoint
-Both observations increase the probability of A: A performed above the baseline; B performed below it. **The sign comes from both the score and the advantage.**
+REINFORCE is Route 2 sampling Route 1's $Q^\pi(s_t,a_t)$ with the return that followed, $G_t$.
+Everything in Act 2 is a better sample of that $Q^\pi$.
+:::
 :::
 
-### REINFORCE, run — and what it converges to
-{sub: a scalar linear system, learned blind}
+::: note
+The two agree because Q^π(s,a) = E[G_t | s_t = s, a_t = a] (source p. 36); summing Route 1's expectation over the steps of an episode gives Route 2's. Lecture 9's "three views, one answer" table is the model for this slide; there the views were HJB, Riccati and Pontryagin, here the two routes to one theorem.
+:::
 
+### REINFORCE — the Monte Carlo policy gradient
+{sub: Williams, "Simple statistical gradient-following algorithms for connectionist reinforcement learning" · Machine Learning 1992}
+
+::: paper
+- Why it is here | The first algorithm of the lecture: the theorem sampled with one return per action.
+- What it is | A machine-learning paper: the score-times-reward update follows the gradient of the expected return.
+- Why it matters | Every policy-gradient method since changes only its weight on the score.
+:::
+
+**The update** — the theorem with $Q^\pi(s_t,a_t)$ replaced by the return that actually followed, $G_t=\sum_{k\ge t}\gamma^{k-t}r_{k+1}$:
+
+$$\begin{aligned}\nabla_\theta J(\theta)&=\E_\pi\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t\big]&&\red{\scriptstyle\text{since } Q^\pi(s,a)=\E_\pi[G_t\mid s_t=s,a_t=a]}\\ \theta&\leftarrow\theta+\alpha\sum_t\gamma^t\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t&&\red{\scriptstyle\text{the update, per episode}}\end{aligned}$$
+
+::: reveal
+::: keypoint
+It relies on a full episode, which is why it is a Monte Carlo method.
+The factor $\gamma^t$ belongs to the discounted objective; the undiscounted heater below has $\gamma=1$, and it is dropped from here on.
+:::
+:::
+
+::: note
+Source pp. 36–37: Q^π(s,a) = E_π[G_t | S_t, A_t], so G_t measured from real sample trajectories stands in for Q^π. The three update granularities of p. 37, per action, per episode, per episode and batch, are the three places the sum can stop; the algorithm box uses the batch form. The γ^t factor is written once here and then dropped, as the source does from p. 38 on; dropping it while claiming the same discounted objective is a known approximation. REINFORCE: REward Increment = Nonnegative Factor × Offset Reinforcement × Characteristic Eligibility.
+:::
+
+### Algorithm — REINFORCE
+::: algorithm REINFORCE | input a policy class $\pi_\theta$, step size $\alpha$, batch size $N$; output $\theta$
+[initialise] $\theta$ at random
+[repeat]
+  [for each] episode $i=1,\dots,N$
+    [run $\pi_\theta$] $s_0,a_0,r_1,\dots,r_T,s_T$ // act to the end; no update yet
+    [for each] step $t$
+      [return] $G_t\leftarrow r_{t+1}+r_{t+2}+\cdots+r_T$ // what actually followed $a_t$
+  ! [learn] $\theta\leftarrow\theta+\alpha\,\frac1N\sum_i\sum_t\nabla_\theta\log\pi_\theta(a_t^{(i)}\mid s_t^{(i)})\,\red{G_t^{(i)}}$ // the only line the ladder changes
+[until] $J$ stops improving
+---
+the returns come from one backward pass per episode, $G\leftarrow r_{t+1}+\gamma G$, as in Lecture 8's Monte Carlo box; the lit line is Route 2's estimator
+:::
+
+::: note
+The box the demo two slides on runs, with the heater's gain as the one parameter. Compare Lecture 8's Monte Carlo prediction box: the same run-to-the-end, the same returns, and the learn line writes into θ instead of into V(s). Act 2 changes the red token and nothing else.
+:::
+
+### The scored trajectory — update only after the episode ends
+::: widget pg-trajectory {"mode":"return"}
+The same episode: from every sampled point a line runs to the end, where the returns $G_t$ stack.
+==Every score is weighted by a return that shares the same tail==, and nothing can be updated before $T$.
+:::
+
+::: reveal
+::: keypoint
+This drawing carries the whole of Act 2.
+The lines to the end are the variance; where they start and where they stop is what the ladder changes.
+:::
+:::
+
+::: note
+Source p. 37's figure, redrawn: a trajectory with five sampled (S_t, A_t), a dashed line from each to the episode's end where G_1 … G_5 stack, each point labelled ∇ ln π(A_t|S_t) G_t, and the green annotation on the span, "can be updated only after an episode is finished". The same figure returns in Act 2 with the lines cut at t (reward to go), a bar subtracted at the end (baseline) and the lines stopped at t+n (bootstrap).
+:::
+
+### One parameter — both observations push the same way
+::: widget pg-pictures {"mode":"scores"}
+One state, two actions, $\pi_\theta(A)=\sigma(\theta)$ at $\theta=0$: the two scores point opposite ways.
+Multiply by the advantages, $+1$ for A and $-1$ for B, and ==both contributions move $\theta$ to the right.==
+:::
+
+::: reveal
+::: keypoint
+The sign of an update comes from the score and the weight together.
+An action that did worse than expected pushes the probability away from itself, which is the same direction.
+:::
+:::
+
+::: note
+The numbers, for the board: p = σ(0) = 0.5, so ∇_θ log π(A) = 1 − p = 0.5 and ∇_θ log π(B) = −p = −0.5. Rewards 3 for A and 1 for B against a baseline of 2 give advantages +1 and −1. Contributions: 0.5 × 1 = 0.5 and (−0.5) × (−1) = 0.5; with step 0.1 each moves θ by +0.05. Both increase the probability of A: A performed above the baseline, B below it.
+:::
+
+### REINFORCE, run — the gain, learned blind
 ::: widget policy-gradient {"seed":4}
-$x_{t+1}=x_t+u_t$ with cost $\sum(x^2+u^2)$ — Lecture 9's problem, scalar. The policy is $u=-kx+\sigma\varepsilon$ and the only parameter is the gain $k$. REINFORCE never sees $A$ or $B$; it only samples. The grey bowl $J(k)$ and the dashed line ==$k^\star = 0.618$, the Riccati gain==, are drawn for *us*, not for the agent — and that is where the gain walks to. Read the two numbers on the right: the estimate scatters *around* the true gradient, never away from it, and its spread falls like $1/\sqrt{N}$. Then set the batch to 8 and watch the gain stop settling — ==that residual wander is Act 2's subject.==
+The heater, $x_{t+1}=x_t+u_t$, cost $\sum(x^2+u^2)$, policy $u=-kx+\sigma\varepsilon$: the only parameter is the gain $k$.
+REINFORCE never sees $A$ or $B$, and the gain walks to ==the Riccati gain $0.618$== of Lecture 9.
 :::
 
-### Check — why differentiate the policy at all
+::: reveal
+::: keypoint
+The estimate scatters around the true gradient, never away from it, and its spread falls like $1/\sqrt N$.
+Set the batch to 8 and watch the gain stop settling: ==that wander is Act 2's subject.==
+:::
+:::
+
+::: note
+The grey bowl J(k) and the dashed line are drawn from A and B for us; the agent sees twelve rewards per episode. Reward to go without a baseline, so it is exactly the Act 1 estimator. Verified in node: unbiased at three gains, convergence to 0.6086 at seed 4 with N = 32, spread halving as N quadruples. Lecture 9's Act 2 demo showed 0.618 being reached by the Riccati recursion; this is the same number reached without the model.
+:::
+
+### Check — where the dynamics went
 {q: 1}
 
-::: quiz Value-based RL picks actions by $\argmax_a Q(s,a)$. Why does that break down in continuous control?
-- =Because the $\argmax$ is itself an optimisation over a continuous space, solved afresh at every single step
-- Because $Q$ cannot be represented for continuous actions
-- Because the Bellman equation does not hold in continuous action spaces
-- Because rewards become unbounded
-A table lookup over four actions is free; a maximisation over a continuous vector is an inner optimisation problem, and it recurs at every timestep of every episode. Policy-based methods sidestep it by **storing the answer**: a parameterised $\pi_\theta(s)$ that outputs the action directly. That is the same forward/inverse move as Lectures 5 and 6, now in a sequential setting.
+::: quiz Route 2 differentiates $\log p_\theta(\tau)$, and the dynamics $P(s_{t+1}\mid s_t,a_t)$ are a factor of $p_\theta(\tau)$.<br>Why do they not appear in the gradient?
+- Because the dynamics are deterministic in control problems
+- =Because $P$ carries no $\theta$: its log-derivative is zero, though it still decides which trajectories occur
+- Because the policy gradient theorem assumes the model is known
+- Because the return $R(\tau)$ does not depend on the states
+The log of a product is a sum, and the P terms differentiate to zero because the parameter is not in them. They have not disappeared from the problem: they decide which trajectories are sampled, so they shape the expectation. That is the precise sense in which f is deleted: Lecture 9 solved the dynamics, Lecture 10 lives in them and never differentiates through them. Route 1 says the same thing in one picture: the gradient passes through the green edges.
 :::
 
-## Act 2 — taming variance with a critic
+## Act 2 — the weight on the score
 {short: ACT 2, num: Act 2}
 
-**Q2.** How can we reduce noise? Reward-to-go and action-independent baselines preserve the expected gradient; bootstrapping with an approximate critic can introduce bias.
+**Q2.** The estimate is unbiased and very noisy.\
+What can replace the return without moving the mean?
 
-### Why the estimate is so noisy
+### Act 2 on the map
 {q: 2}
 
 ::: qstrip
 :::
 
-Look again at what one episode contributes:
-
-$$\hat g^{(i)} = \Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1} r_{t+1}\Big)$$
-
-Every score term is multiplied by the ==same== scalar — the whole episode's return. One unlucky tail rescales all $T$ of them together. And the return itself is a sum of $T$ random rewards along a random trajectory.
-
-::: reveal
-Worse, it is *credit assignment by superstition*: an action at $t=40$ is given credit for a reward already received at $t=1$, which it could not have caused.
-
-::: keypoint
-Three corrections follow, and ==the first two preserve the mean; a bootstrapped critic adds an accuracy–variance trade-off.==
+::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
+The same cell, the same theorem.
+==Only the weight on the score changes, rung by rung.==
 :::
+
+::: note
+The spine sentence of the source, p. 35: "This vanilla policy gradient update has no bias but high variance. Many following algorithms were proposed to reduce the variance while keeping the bias unchanged." Everything after REINFORCE is variance control or step control.
 :::
+
+### Why the estimate is so noisy
+**One episode's contribution** — every score multiplied by the same scalar, the whole episode's return:
+
+$$\hat g^{(i)}=\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_t\Big)$$
 
 ::: reveal
 ::: small
-Keep the distinction clear: subtracting a fixed state baseline from a Monte Carlo return is not the same operation as replacing the return with a learned TD target.
+One unlucky tail rescales all $T$ scores together, and the return is itself a sum of $T$ random rewards along a random path.
+An action at $t=40$ is credited with a reward paid at $t=1$, which it could not have caused.
 :::
-:::
-
-### Fix 1 — causality: half the terms were pure noise
-An action at time $t$ cannot affect a reward at time $t' < t$. So those cross-terms have mean zero and contribute ==nothing but variance==. Drop them:
-
-$$\nabla_\theta J = \E\Big[\sum_{t}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\ \hl{\sum_{k=t}^{T-1}r_{k+1}}\Big] \;=\; \E\Big[\sum_t \nabla_\theta\log\pi_\theta(a_t\mid s_t)\;\hat Q_t\Big]$$
-
-::: reveal
-For an on-policy rollout continued to termination (or including the full discounted future), the inner sum is the **reward-to-go** $\hat Q_t$, an unbiased sample of $Q^\pi(s_t,a_t)$. A truncated or bootstrapped return needs a separate bias analysis.
-
-::: small
-The cost of this fix is one index. It is the cheapest variance reduction in reinforcement learning, and in the numbers of the Act 1 widget it removes about half.
-:::
-:::
-
-### Fix 2 — a baseline: subtract anything action-independent
-Subtract from each reward-to-go a quantity $b(s_t)$ that does not depend on the action taken:
-
-$$\nabla_\theta J = \E\Big[\sum_t \nabla_\theta\log\pi_\theta(a_t\mid s_t)\big(\hat Q_t - b(s_t)\big)\Big]$$
-
-::: block The baseline is free | it adds *exactly zero* bias
-$$\E_{a\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a\mid s)\,b(s)\big] = b(s)\int \frac{\nabla_\theta \pi_\theta(a\mid s)}{\pi_\theta(a\mid s)}\pi_\theta(a\mid s)\,da = b(s)\,\nabla_\theta\!\int\!\pi_\theta(a\mid s)\,da = b(s)\,\nabla_\theta 1 = 0$$
 :::
 
 ::: reveal
-A useful baseline is $b(s)=V^\pi(s)=\E[G_t\mid s_t=s]$. It predicts the return typical of this state, so $G_t-b(s)$ asks whether the action did better than expected.
-
 ::: keypoint
-The value baseline is practical, but not always the exact minimum-variance baseline: the latter also weights by the squared score magnitude. A poorly chosen baseline can increase variance.
-:::
-
-::: small
-Treat the baseline as fixed in the actor gradient. Training it on independent or previously collected data avoids the extra dependence created by fitting and evaluating on the same action sample. The exact weighted formula is in Backup 3.
+Write the weight as $\Psi_t$: $\;\nabla_\theta J=\E\big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\Psi_t\big]$.
+==The problem of policy gradient reduces to finding good estimates $\Psi_t$==, and the mean must not move.
 :::
 :::
 
-### Temperature thread — make the better heater action more likely
-{sub: shared teaching example · predict before revealing the calculation}
+::: note
+Source p. 89's closing sentence, promoted to the act's thesis: "the problem of policy gradient reduces to finding good estimates Ψ_t". The rungs: R(τ), the reward to go, minus a baseline, the advantage, the TD error, GAE. The first two preserve the mean exactly; a bootstrapped critic adds a bias for a large drop in variance.
+:::
 
-For two actions, let $Q(\mathrm{off})=-6.7$ and $Q(\mathrm{heat})=-2.9$. The policy heats with $p=\sigma(\theta)$. At θ = 0, p = 0.5 and $dp/d\theta=0.25$. Treat the Q estimates as fixed for this actor step.
-
-**Predict:** Which way should θ move? Does the fact that both action values are negative change the preferred direction?
+### Rung 1 — causality: half the terms were pure noise
+::: widget pg-trajectory {"mode":"causal"}
+The lines now start at $t$: an action at $t$ cannot affect a reward paid before it.
+==The grey cells of the triangle have mean zero== and contributed nothing but variance.
+:::
 
 ::: reveal
-**Calculate and check.** $J=(1-p)(-6.7)+p(-2.9)$, so $dJ/d\theta=0.25[-2.9-(-6.7)]=\mathbf{0.95}$. Gradient ascent raises θ and makes heating more likely. The current value baseline is **−4.8**.
-:::
-
 ::: keypoint
-Relative action quality determines this update. A useful action can have a negative return when every outcome has a cost.
+The weight becomes the ==reward to go==, $\hat Q_t=\sum_{t'\ge t}r_{t'}$, an unbiased sample of $Q^\pi(s_t,a_t)$.
+The cost of this rung is one index; in the Act 1 demo it removes about half the variance.
+:::
 :::
 
-### Try it — both action values shift down by 100
-{sub: work independently · reveal only after writing an answer}
+::: note
+Source p. 85 with its margin picture: (f_0 + ⋯ + f_T)(r_0 + ⋯ + r_T) expanded, every product f_t r_{t'} with t' < t has mean zero because E[f_t | s_t] = 0 and the earlier reward is already fixed. The source labels Σ_{t'≥t} r_{t'} "reward to go" and writes it Q̂_t. For an on-policy rollout continued to termination the reward to go is an unbiased sample of Q^π; a truncated return is not, which is rung 5.
+:::
 
-Change the fixed Q estimates to −106.7 and −102.9. Keep the same policy parameter. Recalculate the actor gradient and the value baseline.
+### Rung 2 — a baseline: subtract anything that does not depend on the action
+{fill: top, math: compact}
+
+**The baseline, and the proof that it is free** — source pp. 86–87, one line per press:
+
+$$\begin{aligned}
+\nabla_\theta J&=\E_{\tau\sim\pi_\theta}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big(\sum_{t'\ge t}r_{t'}-\hl{b(s_t)}\Big)\Big] &&\red{\scriptstyle\text{the claim: any } b(s_t)}\\
+\step{1}{\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]}&\step{1}{=\E_{s_{0:t},a_{0:t-1}}\Big[b(s_t)\;\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]\Big]} &&\step{1}{\red{\scriptstyle\text{split at } t\text{; } b(s_t) \text{ fixed given } s_t}}\\
+\step{2}{\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]}&\step{2}{=\int\frac{\nabla_\theta\pi_\theta(a_t\mid s_t)}{\pi_\theta(a_t\mid s_t)}\,\pi_\theta(a_t\mid s_t)\,da_t=\nabla_\theta\int\pi_\theta(a_t\mid s_t)\,da_t} &&\step{2}{\red{\scriptstyle\nabla\log\pi=\nabla\pi/\pi}}\\
+\step{3}{}&\step{3}{=\nabla_\theta 1=0\qquad\Longrightarrow\qquad\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]=\E\big[b(s_t)\cdot0\big]=0} &&\step{3}{\red{\scriptstyle\text{the density integrates to one: zero bias}}}
+\end{aligned}$$
 
 ::: reveal
-**Check your answer.** The difference remains 3.8, so the gradient remains **0.95**. The baseline becomes **−104.8**. Subtracting that state-only baseline leaves the advantages unchanged.
+::: keypoint
+The expected score is zero, so anything that does not depend on the action rides on it for free.
+Two things to check, and the source checks both: ==the mean does not move; the variance does.==
+:::
 :::
 
+::: note
+Source pp. 86–87, line for line: "we need to verify two things: inserting a baseline does not make the gradient estimate biased, and the baseline actually reduces variance". The proof splits the expectation over the trajectory at time t; conditional on s_t the baseline is a constant, and the inner expectation of the score is the derivative of a total probability, which is zero. The same identity is Lecture 2's: the expected score of a likelihood is zero. The next slide answers the second question.
+:::
+
+### Which baseline — the critic as a least-squares solution
+{fill: top, math: compact}
+
+**The variance-minimising baseline** — source p. 88, three lines per press:
+
+$$\begin{aligned}
+\mathrm{Var}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big(R_t-b(s_t)\big)\Big]&\approx\sum_t\E\big[\lVert\nabla_\theta\log\pi_\theta(a_t\mid s_t)\rVert^2\big]\;\E\big[(R_t-b(s_t))^2\big] &&\red{\scriptstyle\text{independent terms; score and return uncorrelated}}\\
+\step{1}{b^*(s_t)}&\step{1}{=\argmin_{b}\;\E\big[(R_t-b(s_t))^2\big]} &&\step{1}{\red{\scriptstyle\text{a least-squares problem in } b}}\\
+\step{2}{b^*(s_t)}&\step{2}{=\E_{\tau\sim\pi_\theta}\big[R_t\mid s_t\big]=V^\pi(s_t)} &&\step{2}{\red{\scriptstyle\text{the mean minimises a squared error}}}
+\end{aligned}$$
+
+::: reveal
 ::: keypoint
-A common offset changes the reported value but not this policy preference. Baseline invariance requires an action-independent subtraction.
+The critic is not a design choice.
+==It is the least-squares solution to a variance problem==, and it must be re-fitted as the policy moves, because $V^\pi$ moves with $\pi$.
+:::
+:::
+
+::: note
+Source p. 88, with its two approximations stated on the slide: the variance of a sum taken as the sum of variances, and E[AB] ≈ E[A]E[B] for the score and the return. Under them the best baseline is the expected return from the state, V^π(s_t), and the source's practical note is "have to re-fit the baseline estimate each time". The exact minimiser weights by the squared score, b* = E[‖∇log π‖² R | s] / E[‖∇log π‖² | s], and equals V^π when the two factors are uncorrelated; a value critic is a useful baseline, not a universal exact minimiser. Treat the baseline as fixed in the actor gradient; fitting and evaluating on the same sample adds a dependence, which the demo avoids by fitting on previous batches.
+:::
+
+### The baseline, drawn — better or worse than expected
+::: widget pg-trajectory {"mode":"baseline"}
+At the episode's end, the cost that followed each sampled point is a bar; every return here is a cost paid.
+Mark what was expected from that state and ==the sign of the difference says whether the action helped.==
+:::
+
+::: reveal
+::: keypoint
+Without the baseline every weight is negative and every action is pushed away from itself.
+With it the weight reads: did this action do better than this state usually does?
+:::
+:::
+
+::: note
+The bars are −G_t for the five sampled points of the episode drawn; the amber tick is the expected cost to go of the mean policy from the state actually reached, the closed form of the heater. Blue: less cost than expected, the action is made likelier; red: more, less likely. This is the picture the temperature thread of the old deck computed in a table: a common offset to every return changes the baseline and leaves every advantage where it was.
 :::
 
 ### The baseline, measured
 ::: widget baseline-variance {"seed":11}
-The same task, the same seed, the same starting gain, ten episodes per update — the only difference is whether $b(s_t)$ is subtracted. Left: the gain over 100 updates. Right: the variance of the per-episode gradient, on a log axis. The baseline changes ==the mean of the estimator not at all== and its spread by nearly ==twenty-fold==, which is the difference between a run that settles on $k^\star$ and one that keeps wandering past it.
-:::
-
-### Fix 3 — the advantage, and the actor–critic
-Put the two together. With $b(s)=V^\pi(s)$ and $\hat Q_t \to Q^\pi(s_t,a_t)$, what multiplies the score is the ==advantage==:
-
-$$A^\pi(s,a) = Q^\pi(s,a) - V^\pi(s) \qquad\text{— "how much better than average was this action?"}$$
-
-::: reveal
-And now we need a *learned* $V$. Learn both:
-
-::: flow trajectories
-- !**Actor** $\pi_\theta(a\mid s)$ | steps $\theta$ along $\nabla_\theta\log\pi_\theta\cdot\hat A$
-- **Critic** $V_w(s)$ | returns $\hat A = r + \gamma V_w(s') - V_w(s)$
-:::
+The same task, seed, starting gain and estimator, ten episodes per update; the only difference is whether $b(s_t)$ is subtracted.
+The baseline changes ==the mean of the estimator not at all== and its spread by nearly twenty-fold.
 :::
 
 ::: reveal
-::: small
-That $\hat A$ is a ==TD error== — Lecture 8's engine, running inside a policy update. An actor proposes actions and a critic estimates their consequences. Actor–critic methods combine policy optimization with value estimation; the course columns help explain the ingredients, not exclusive origins.
-:::
-:::
-
-### Baseline versus bootstrap — separate the two operations
-Suppose the observed full return is **4.6**, the baseline is **2**, and the next-state critic is **3**. With reward 1 and $\gamma=0.9$:
-
-| signal | calculation | what it relies on |
-|---|---|---|
-| MC minus baseline | $4.6-2=2.6$ | the observed return |
-| one-step TD advantage | $1+0.9(3)-2=1.7$ | a learned continuation value |
-
 ::: keypoint
-A fixed action-independent baseline cancels in expectation. An inaccurate continuation value generally does not. **Actor–critic can trade some bias for faster, less noisy updates.**
+Twenty-fold is the difference between a run that settles on $k^*$ and one that keeps wandering past it.
+:::
 :::
 
-At a true terminal state, continuation value is zero. GAE combines multiple TD errors to control this trade-off.
+::: note
+Left: the gain over 100 updates, amber without and blue with the baseline; right: the variance of the per-episode gradient on a log axis. Verified in node: at k = 0.66 the three estimators, no baseline, reward to go, reward to go minus baseline, have means −0.158, −0.119, −0.116 against the exact −0.117 and variances 4282, 1965, 224. Seed 11: variance ratio 19.5, rms |k − k*| from 0.174 to 0.038. The baseline is fitted on previous batches only, so it is exactly unbiased; a baseline fitted on the same batch is slightly biased.
+:::
 
-### Two dials on the same idea
-{sub: what the field does with the actor–critic once it has one}
+### Rung 3 — the advantage
+**The advantage** — put the two rungs together, $b(s)=V^\pi(s)$ and the reward to go standing in for $Q^\pi$:
 
-- **A3C / A2C** — run many actors in parallel on separate copies of the environment. Their rollouts provide more diverse recent experience without a large replay buffer. A2C synchronises updates; A3C permits parameter lag, so neither parallelism nor freshness means exact sample independence. {p}(Mnih et al., 2016)
-- **$n$-step returns** — bootstrap after $n$ steps rather than at the end: $\;R_t = \sum_{i=1}^{n}\gamma^{i-1}r_{t+i} + \gamma^{n}V(s_{t+n})$. A full Monte Carlo return continues to termination with zero bootstrap; one-step actor–critic uses $n=1$.
-- **GAE** — do not pick $n$; average all of them geometrically, $\;\hat A_t^{\mathrm{GAE}(\gamma,\lambda)} = \sum_{l\ge0}(\gamma\lambda)^l\,\delta^V_{t+l}$. {p}(Schulman et al., 2016)
+$$\Psi_t=Q^\pi(s_t,a_t)-V^\pi(s_t)=A^\pi(s_t,a_t)\qquad\text{how much better than this state's average was this action}$$
+
+::: reveal
+$$\nabla_\theta J=\E_\tau\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\big(Q^\pi(s_t,a_t)-V^\pi(s_t)\big)\Big]=\E_\tau\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,A^\pi(s_t,a_t)\Big]$$
+:::
 
 ::: reveal
 ::: keypoint
-GAE is ==TD($\lambda$) for the advantage== — Lecture 8's bias–variance dial, moved from the value to the thing that trains the policy.
+Three rungs, and the mean has not moved once.
+From here on $V^\pi$ has to be ==learned==, and that is the critic.
 :::
 :::
 
-### A3C and A2C — collect several short rollouts, then learn
-{sub: original policy-RL PDF pp. 44–47 · parallel collection, not arbitrary replay}
+::: note
+Source p. 89: substitute b(s_t) = V^π(s_t) and Σ_{t'≥t} r_{t'} → Q^π(s_t,a_t). The advantage is the natural weight: zero for an average action, positive for a better one. Nothing so far needed a learned function; the next rung does.
+:::
 
-Each worker interacts with its own environment copy and forms an $n$-step target. For the main lecture's undiscounted episodic convention,
+### Three families — the actor–critic is the intersection
+::: widget pg-pictures {"mode":"families"}
+The source deck's own map of the field: a value disc, a policy disc, and the lens where they overlap.
+==An actor–critic is not a compromise between Lectures 8 and 10; it is their intersection.==
+:::
 
-$$G_t^{(n)}=\sum_{j=0}^{n-1}r_{t+j+1}+V_w(s_{t+n}),\qquad \hat A_t=G_t^{(n)}-V_w(s_t).$$
-
-If an episode terminates within the window, stop the reward sum there and use zero continuation value. Discounted versions retain the corresponding powers of $\gamma$.
-
-| Method | Coordination |
-|---|---|
-| **A3C** | workers apply updates asynchronously; local parameters can lag behind the shared ones |
-| **A2C** | collect a batch from workers, then update synchronously |
-
+::: reveal
 ::: keypoint
-Parallel workers diversify recent experience. This does **not** make samples independent or justify uncorrected use of arbitrarily old off-policy data.
+The critic learns a value and weights the score; the actor learns the policy and takes the step.
+Lecture 8's engine, running inside a policy update.
+:::
 :::
 
-### Off-policy policy gradients — correct the distribution you sampled
-{sub: original policy-RL PDF pp. 39–40 · why reusing data needs care}
+::: note
+Source p. 27, two overlapping discs: Value function (value based), Policy (policy-based), the lens Actor Critic. Source p. 38: "it makes a lot of sense to learn the value function in addition to the policy, since knowing the value function can assist the policy update, such as by reducing gradient variance". Critic: the value parameters w, for Q_w or V_w; actor: the policy parameters θ, in the direction the critic suggests. On-policy, as the source annotates.
+:::
 
-At a fixed state, data from behaviour policy $\beta$ can estimate an expectation under $\pi_\theta$ using importance ratios:
+### Rung 4 — the critic's TD error as the weight
+**One-step actor–critic** — the advantage estimated from one transition and a learned $V_w$, Lecture 8's TD error:
 
-$$\mathbb E_{a\sim\pi_\theta}[h(s,a)]=\mathbb E_{a\sim\beta}\!\left[\frac{\pi_\theta(a\mid s)}{\beta(a\mid s)}h(s,a)\right].$$
+$$\hat A_t=\delta_t=r_{t+1}+\gamma V_w(s_{t+1})-V_w(s_t),\qquad\theta\leftarrow\theta+\alpha_\theta\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\delta_t,\qquad w\leftarrow w+\alpha_w\,\delta_t\,\nabla_wV_w(s_t)$$
 
-This requires $\beta(a\mid s)>0$ wherever the target policy assigns probability. If $\pi(A\mid s)=0.8$ but $\beta(A\mid s)=0.4$, observed A actions receive weight **2**.
+::: algorithm One-step actor–critic | input $\pi_\theta$, $V_w$, step sizes $\alpha_\theta,\alpha_w$; output $\theta$ and $w$
+[initialise] $\theta$, $w$
+[for each] episode
+  [start] $s\leftarrow s_0$
+  [for each] step, until $s$ is terminal
+    [act] $a\sim\pi_\theta(\cdot\mid s)$; take $a$, observe $r$, $s'$ // one transition, no waiting for $T$
+    [critic] $\delta\leftarrow r+\gamma V_w(s')-V_w(s)$; $\;w\leftarrow w+\alpha_w\,\delta\,\nabla_wV_w(s)$ // Lecture 8's TD(0) update
+  ! [learn] $\theta\leftarrow\theta+\alpha_\theta\,\nabla_\theta\log\pi_\theta(a\mid s)\,\red{\delta}$ // the TD error weights the score
+    [move] $s\leftarrow s'$
+---
+the critic is fitted on the same transitions the actor learns from, so its error is a bias in the actor's gradient; the price of not waiting for the episode's end
+:::
 
+::: note
+Source p. 60 writes the deterministic version of this box; the stochastic one is Sutton and Barto's one-step actor–critic. A fixed action-independent baseline cancels in expectation, an inaccurate continuation value does not: actor–critic trades some bias for faster, less noisy updates. At a terminal state the continuation value is zero. The subtraction of V_w(s) is the baseline; the bootstrap r + γV_w(s') is the new thing on this rung.
+:::
+
+### Rung 5 — stop after $n$ steps and bootstrap
+::: widget pg-trajectory {"mode":"nstep"}
+The same episode, the lines now stop at $t+n$ and read the rest off the critic.
+==The sampled part is short and noisy, the bootstrapped part is biased by whatever error $V$ carries.==
+:::
+
+::: reveal
 ::: keypoint
-That ratio corrects the **action distribution at this state**. It does not by itself correct which states the behaviour policy visits or give an exact gradient of the original on-policy return. Off-policy actor–critic methods need their own objective and assumptions.
+$n=1$ is the one-step actor–critic; $n=T$ is REINFORCE with a baseline.
+This is Lecture 8's Monte Carlo against TD dial, moved to the weight on the score.
+:::
+:::
+
+::: note
+Source p. 46's figure, the direct sequel to p. 37's: the same timeline, the dashed lines now stopping at t + n with the return accumulating backwards, R = V(s_{t+n}), then R ← r + γR. The n-step return R_t^{(n)} = Σ_{i=1}^{n} γ^{i−1} r_{t+i} + γ^n V(s_{t+n}); a full Monte Carlo return continues to termination with zero bootstrap. A3C's workers form exactly this target, p. 45.
+:::
+
+### Rung 6 — GAE: do not pick $n$, average all of them
+{fill: top, math: compact, sub: Schulman, Moritz, Levine, Jordan and Abbeel, "High-Dimensional Continuous Control Using Generalized Advantage Estimation" · ICLR 2016}
+
+::: paper
+- Why it is here | The last rung of the ladder: Lecture 8's bias–variance dial, built into the advantage.
+- What it is | A continuous-control paper: the λ-weighted advantage estimator, used inside TRPO.
+- Why it matters | The advantage estimator PPO uses in practice; λ and γ are its two dials.
+:::
+
+$$\begin{aligned}
+\hat A^{(k)}_t&=\sum_{l=0}^{k-1}\gamma^l\,\delta_{t+l}=-V(s_t)+r_{t+1}+\gamma r_{t+2}+\cdots+\gamma^{k-1}r_{t+k}+\gamma^kV(s_{t+k}) &&\red{\scriptstyle\text{the } k\text{-step advantage telescopes into a sum of TD errors}}\\
+\step{1}{\hat A^{\mathrm{GAE}(\gamma,\lambda)}_t}&\step{1}{=(1-\lambda)\big(\hat A^{(1)}_t+\lambda\hat A^{(2)}_t+\lambda^2\hat A^{(3)}_t+\cdots\big)} &&\step{1}{\red{\scriptstyle\text{average every } k \text{ with weight } \lambda^{k-1}}}\\
+\step{2}{}&\step{2}{=\sum_{l=0}^{\infty}(\gamma\lambda)^l\,\delta_{t+l}} &&\step{2}{\red{\scriptstyle\text{one running sum of TD errors; } \lambda=0 \text{ is rung 4, } \lambda=1 \text{ is rung 3}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+GAE is ==TD($\lambda$) for the advantage==: Lecture 8's dial, moved from the value to the thing that trains the policy.
+$\gamma$ does double duty here, as the problem's discount and as a second variance dial.
+:::
+:::
+
+::: note
+Source pp. 42–43, the paper's equations (11)–(19) re-typed from the screenshots. The telescoping on line 0: adjacent V terms cancel pairwise, leaving the first and the last. λ = 0 recovers the one-step TD advantage, low variance and biased by the critic's error; λ = 1 recovers the Monte Carlo advantage, unbiased and as noisy as REINFORCE. The paper's framing sentence: γ "allows us to reduce variance by downweighting rewards corresponding to delayed effects, at the cost of introducing bias". Lecture 8 drew the same dial for MC against TD.
+:::
+
+### Two more dials — parallel workers, and data from another policy
+::: cols
+::: col A3C and A2C · parallelism in place of replay (Mnih et al., 2016)
+Several workers run the environment in parallel.\
+Each forms an $n$-step target for the shared parameters.\
+A2C waits for every worker and makes one batched update.\
+A3C lets each worker update when it is ready.\
+Parallel workers diversify recent experience, as a buffer does.
+:::
+::: col.accent Off-policy gradient · the importance ratio (Degris et al., 2012)
+Data from a behaviour policy $\beta$ can estimate an expectation under $\pi_\theta$ at a fixed state:
+
+$$\E_{a\sim\pi_\theta}[h(s,a)]=\E_{a\sim\beta}\Big[\frac{\pi_\theta(a\mid s)}{\beta(a\mid s)}\,h(s,a)\Big]$$
+
+The ratio corrects the action distribution at this state.\
+It does not correct which states $\beta$ visits.
+:::
+:::
+
+::: reveal
+::: keypoint
+Hold on to the ratio $\pi_\theta/\beta$.
+==It is the object that returns in Act 4== as the size of a policy step.
+:::
+:::
+
+::: note
+Source pp. 44–47 for A3C: "parallelism decorrelates the agents' data into a more stationary process" and "stabilizes learning, playing a role of experience replay buffer"; the A2C against A3C schematic is an external figure. Source pp. 39–40 for the off-policy gradient: with d^β the behaviour policy's state distribution, the gradient is approximated by dropping the π_θ ∇Q^π term, and Degris, White and Sutton show the approximation still reaches a local optimum. The ratio requires β(a|s) > 0 wherever π_θ puts mass. Neither dial changes the ladder's weight; both change where the data come from.
+:::
+
+### The ladder so far — one gradient, the weight changed
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Reward to go","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_{t′ ≥ t} r_{t′}} ]","note":"only what the action could still cause","loop":"one episode per update"},{"title":"Baseline","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, ( \\sum_{t′ ≥ t} r_{t′} \\red{− b(s_t)} ) ]","note":"anything action-independent is free","loop":"refit b each update"},{"title":"Advantage","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{A^π(s_t,a_t)} ]","note":"Q − V: better than this state's average","loop":"needs a learned V"},{"title":"Actor–critic","line":"for each transition (s, a, r, s′):","formula":"∇_θ J ≈ \\text{E}[ ∇_θ \\log π_θ(a|s) \\, \\red{δ} ],\\quad δ = r + γ V_w(s′) − V_w(s)","note":"the TD error: one step sampled, the rest bootstrapped","loop":"one transition per update"},{"title":"GAE","line":"for each step t, with λ ∈ [0,1]:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD(λ) for the advantage","loop":"λ dials MC against TD"}]}
+Six rungs, one formula: ==the score never changes, the weight on it does==, in red.
+Lecture 8's ladder sampled the backup; this one samples the weight ever more locally.
+:::
+
+::: note
+Read it with Lecture 8's ladder in mind: there MC → TD → SARSA → Q-learning sampled the backup and moved the max; here every rung keeps ∇ log π_θ and changes Ψ_t. The first three rungs are exact, the mean does not move; the last two trade a bias for variance. The closing ladder adds two rungs that change a different token: DPG replaces the score, PPO wraps the weight.
 :::
 
 ### Check — what a baseline does
 {q: 2}
 
-::: quiz REINFORCE's gradient estimate is unbiased but very noisy. Subtracting a state-dependent baseline $b(s)$ from the return:
+::: quiz REINFORCE's gradient estimate is unbiased but very noisy.<br>Subtracting a state-dependent baseline $b(s_t)$ from the return:
 - Reduces variance but introduces bias, which must be corrected later
-- =Preserves the expected gradient; a well-chosen action-independent baseline can reduce variance
+- =Preserves the expected gradient; a well-chosen action-independent baseline reduces variance
 - Reduces bias but leaves variance unchanged
-- Has no effect on either — it only rescales the learning rate
-The score-function identity gives $\mathbb{E}[\nabla \log \pi \cdot b(s)] = 0$ for any $b$ that does not depend on the action, so subtracting it is **free**. Choosing $b(s) = V(s)$ turns the return into the advantage — "was this action better than average here?" — which is the signal you actually wanted, and is what makes the actor–critic architecture worth its second network.
+- Has no effect on either: it only rescales the learning rate
+The expected score is zero, so E[∇ log π · b(s)] = 0 for any b that does not depend on the action: subtracting it is free. Choosing b(s) = V(s) turns the return into the advantage, was this action better than average here, which is the signal wanted all along, and the least-squares argument says it is also the variance-minimising choice under mild approximations. A bootstrapped critic is a different operation: it replaces the return and does introduce bias.
 :::
 
-## Act 3 — continuous control: DDPG
+## Act 3 — continuous actions: the actor climbs the critic
 {short: ACT 3, num: Act 3}
 
-**Q3.** Lecture 8 handed over a wall. This is where it falls.
+**Q3.** Lecture 8 handed over a wall, a max over a continuum of actions.\
+This is where it falls.
 
-### The wall Lecture 8 left
+### Act 3 on the map
 {q: 3}
 
 ::: qstrip
 :::
 
-The source deck states the debt in one sentence: *"although DQN solves problems with high-dimensional observation spaces, it can only handle ==discrete and low-dimensional action spaces=="*. Consider two common choices for using a Q-network with continuous actions.
+::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
+The infinite-action cell, taken at its word: the action is a real vector, a motor torque.
+==The policy outputs it directly; nothing is maximised over at run time.==
+:::
 
+### The wall, argued twice — the source's facing pages
 ::: cols
 ::: col Option 1 — discretise the action
-One output head per action, as in DQN. Take $-1\le a\le 1$ and cut it into bins of width $\Delta a$.
-
-*What is a good $\Delta a$?* Coarse bins mean poor control resolution; fine bins mean $n^d$ heads for $d$ joints. And the optimum may lie ==between grid points==.
+One output head per action, as in DQN.\
+Cut $-1\le a\le1$ into bins and run Q-learning on the grid.\
+*How many bins?*\
+Few mean poor resolution; many mean $n^d$ heads for $d$ joints.\
+And the optimum may lie ==between grid points==.
 :::
 ::: col.accent Option 2 — feed the action in
-One network $Q_w(s,a)$ with the action as an input, so the action stays continuous.
-
-But the update needs $\max_{a'}Q_w(s',a')$, and $Q_w$ is ==non-convex in $a'$==. That is a global optimisation, at every transition, forever.
+One network $Q_w(s,a)$ with the action as an input.\
+The action stays continuous.\
+But the update needs $\max_{a'}Q_w(s',a')$.\
+$Q_w$ is ==non-convex in $a'$==.\
+A global optimisation at every transition, forever.
 :::
 :::
 
 ::: reveal
-::: small
-Discretization changes the action set; generic continuous maximization adds an inner numerical search. Structured critics can make that search easier. Here we pursue a different practical choice: **learn an actor that proposes the action**, then improve it using the critic.
+::: keypoint
+Option 1 keeps the update and breaks the action space; option 2 keeps the action space and breaks the update.
+==There is no third way that keeps Q-learning.==
 :::
+:::
+
+::: note
+Source pp. 51–52, both headed "Q-Learning on continuous action space?" with the note "Mujoco action = motor control input of each joint". The source's "too small Δa / too high Δa" refers to the number of bins; it is written here in terms of bins to avoid the ambiguity. Page 52 prints the Q-learning update at the top right for reference and concludes "we cannot perform the Q-learning update".
 :::
 
 ### The wall, measured
 ::: widget continuous-argmax {"seed":3}
-One state, one continuous action, and the critic's $Q(s,\cdot)$ across it. Nine bins already cost $9^6 = 531{,}441$ evaluations per transition on a six-joint arm — and still miss the peak by $0.16$. Twenty-one bins close the gap and cost ==85,766,121==. The actor emits its action in ==one forward pass== and refines it by following $\nabla_a Q$: cheap, and only ever *local* — move its start and watch it settle on the wrong hill, which exposes local optimization. TD3 addresses critic-related errors and SAC changes the objective; neither guarantees finding the best peak.
+One state, one continuous action, and the critic's $Q(s,\cdot)$ across it.
+Nine bins already cost $9^6$ evaluations per transition on a six-joint arm and still miss the peak; ==the actor emits its action in one forward pass== and refines it by following $\nabla_aQ$.
 :::
-
-### The deterministic fix — the actor climbs the critic
-Make the actor **deterministic**, $a = \mu_\theta(s)$, and let it ascend the critic's action-gradient: {p}(Silver et al., 2014)
-
-$$\nabla_\theta J(\mu_\theta) = \E_{s\sim\rho^\mu}\Big[\,\nabla_\theta \mu_\theta(s)\;\nabla_a Q(s,a)\big|_{a=\mu_\theta(s)}\Big]$$
 
 ::: reveal
 ::: keypoint
-This is how the intractable $\max_a Q$ is finally beaten: ==the actor follows $\nabla_a Q$ uphill instead of searching for its summit.==
+Following $\nabla_aQ$ is cheap and only ever local: move the start and it settles on the wrong hill.
+TD3 repairs the critic's errors and SAC changes the objective; neither finds the best peak for you.
 :::
+:::
+
+::: note
+Verified in node: true max Q = 0.9615 at a* = 0.416; 9 bins give Q = 0.797, a gap of 0.164, at 531,441 evaluations per transition on six joints; 21 bins close the gap to 0.007 at 85,766,121. Gradient ascent from four starts reaches the global peak from one of them. The honest shape of the resolution-against-cost trade-off is not monotone: 9 bins buy nothing over 5 here.
+:::
+
+### Why deterministic — the inner expectation disappears
+::: widget backup-tree {"mode":"deterministic"}
+The $Q$ backup with a stochastic policy: at each successor the next action is averaged over $\pi$.
+Make the policy deterministic, $a=\mu(s)$, and ==the fan collapses to one edge: only the environment is left inside the expectation.==
 :::
 
 ::: reveal
-Determinism is not a stylistic preference. Compare the Bellman expectation in the two cases:
-
-$$Q^\pi(s_t,a_t) = \E_{r,s'\sim E}\big[r + \gamma\,\hl{\E_{a'\sim\pi}}[Q^\pi(s',a')]\big] \qquad\text{versus}\qquad Q^\mu(s_t,a_t) = \E_{r,s'\sim E}\big[r + \gamma\,Q^\mu(s',\mu(s'))\big]$$
-
-::: small
-With a deterministic $\mu$ the **inner expectation disappears** and only the environment is left inside the expectation. Two consequences, both decisive: the critic can use **off-policy transitions with adequate coverage**, and the actor need not sample an action integral. Arbitrary unsupported data and inaccurate critics do not provide the theorem’s guarantee.
+::: keypoint
+Two consequences, both decisive, source p. 54.
+The critic can be trained ==off-policy==, from any transitions with adequate coverage, and there is no inner integral to sample.
 :::
 :::
 
-### DDPG — deterministic policy gradient, plus every DQN stabiliser
-{sub: Lillicrap et al., 2015 — DQN (2013) → DPG (2014) → DDPG (2016)}
+::: note
+Source p. 54, the cleanest argument in the DDPG half: with a stochastic π, "environment and policy determine Q^π"; with a deterministic μ, "the environment solely determines Q^μ". Consequences, numbered on the slide: off-policy training, and no inner expectation to estimate, so less variance. This is where the control lineage's determinism stops being a style and becomes a variance argument. REINFORCE cannot be off-policy because its expectation is over the policy's own trajectories; DDPG can because its critic's target contains only the environment.
+:::
+
+### The deterministic policy gradient — one line per press
+{fill: top, math: compact, sub: Silver, Lever, Heess, Degris, Wierstra and Riedmiller, "Deterministic Policy Gradient Algorithms" · ICML 2014}
+
+::: paper
+- Why it is here | The theorem that lets an actor be improved by the critic's slope rather than by returns.
+- What it is | A DeepMind theory paper: the deterministic policy gradient, and its proof as a limit of the stochastic one.
+- Why it matters | It made continuous control by actor–critic tractable; DDPG, TD3 and Lecture 12 build on it.
+:::
+
+$$\begin{aligned}
+J(\mu_\theta)&=\int_{\mathcal S}\rho^\mu(s)\,Q^\mu\big(s,\mu_\theta(s)\big)\,ds &&\red{\scriptstyle\text{one integral, over states only}}\\
+\step{1}{\nabla_\theta J(\mu_\theta)}&\step{1}{=\int_{\mathcal S}\rho^\mu(s)\,\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\,ds} &&\step{1}{\red{\scriptstyle\text{the chain rule through the action}}}\\
+\step{2}{}&\step{2}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\Big]} &&\step{2}{\red{\scriptstyle\text{the actor follows the critic uphill}}}\\
+\step{3}{J(\pi_\theta)}&\step{3}{=\int_{\mathcal S}\rho^{\pi}(s)\int_{\mathcal A}\pi_\theta(a\mid s)\,r(s,a)\,da\,ds} &&\step{3}{\red{\scriptstyle\text{the stochastic objective: two integrals}}}\\
+\step{4}{J(\mu_\theta)}&\step{4}{=\int_{\mathcal S}\rho^\mu(s)\,r\big(s,\mu_\theta(s)\big)\,ds} &&\step{4}{\red{\scriptstyle\text{one integral instead of two: the variance argument, as an absence}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+The intractable $\max_aQ$ is finally beaten: ==the actor follows $\nabla_aQ$ uphill instead of searching for its summit.==
+The deterministic gradient is the limit of the stochastic one as the policy's spread goes to zero.
+:::
+:::
+
+::: note
+Source pp. 56–59: ρ^μ is the discounted state distribution of p. 56; the theorem on p. 57 with its two remarks, the deterministic policy as the limiting case of the stochastic one when the action distribution collapses to a point mass, and "we expect the stochastic policy to require more samples as it integrates the data over the whole state and action space". Line 3 is p. 58's pair of objectives side by side. What it takes to implement, p. 59: a policy whose gradient in θ is easy, and a critic whose gradient in a is easy; in DDPG both are networks. Theorem 2 of the paper, quoted on p. 59 as a known fact: the deterministic gradient is the limit of the stochastic one.
+:::
+
+### Nobody implements the theorem — autograd does
+**The actor loss, in code** — source p. 68: write the critic's value of the actor's action and call `.backward()`:
+
+$$\texttt{pi\_loss}=-Q_w\big(s,\mu_\theta(s)\big),\qquad\frac{\partial Q_w(s,\mu_\theta(s))}{\partial\theta}=\frac{\partial Q_w}{\partial a}\Big|_{a=\mu_\theta(s)}\frac{\partial\mu_\theta(s)}{\partial\theta}=\nabla_\theta\mu_\theta(s)\,\nabla_aQ_w(s,a)\big|_{a=\mu_\theta(s)}$$
+
+::: reveal
+::: keypoint
+The chain rule autograd computes ==is== the deterministic policy gradient.
+The theorem's content is which expectation it stands under: states from the data, the critic's slope at the actor's action.
+:::
+:::
+
+::: note
+Source p. 68, a PyTorch snippet beside the maths: pi_loss = −Q(s, mu(s)); pi_loss.backward(). The theorem also specifies the value function and state distribution; replay-based DDPG uses approximations to both. One line of code, and the student sees what the theorem is actually saying.
+:::
+
+### DDPG — the deterministic gradient, plus every DQN stabiliser
+{sub: Lillicrap, Hunt, Pritzel, Heess, Erez, Tassa, Silver and Wierstra, "Continuous control with deep reinforcement learning" · ICLR 2016}
+
+::: paper
+- Why it is here | The algorithm of Act 3: a deterministic actor, a critic trained from replay, Lecture 8's stabilisers.
+- What it is | A DeepMind paper: the deterministic gradient with deep networks on twenty simulated tasks, some from pixels.
+- Why it matters | The reference continuous-control method of its time; its ablation: "target networks matter a lot".
+:::
 
 ::: cols
 ::: col The two losses
-**Critic**, by Bellman error on a replayed minibatch:
+**Critic**, by Bellman error on a replayed minibatch, with target copies $w^-$, $\theta^-$:
 
-$$\begin{aligned}
-y_i&=r_i+\gamma(1-d_i)\,Q_{w^-}(s_i\prime,\mu_{\theta^-}(s_i\prime)),\\
-L(w)&=\frac1N\sum_i\big(Q_w(s_i,a_i)-y_i\big)^2.
-\end{aligned}$$
+$$\begin{aligned}y_i&=r_i+\gamma\,Q_{w^-}\big(s_i',\mu_{\theta^-}(s_i')\big)\\ L(w)&=\tfrac1N\textstyle\sum_i\big(Q_w(s_i,a_i)-y_i\big)^2\end{aligned}$$
 
-Here $s_i\prime$ is the next state stored with sample $i$, and $d_i$ indicates true termination. **Actor**, by the deterministic policy gradient:
+**Actor**, by the deterministic policy gradient on the same states:
 
-$$\nabla_\theta J \approx \frac1N\sum_i \nabla_a Q_w(s_i,a)\big|_{a=\mu_\theta(s_i)}\nabla_\theta\mu_\theta(s_i)$$
+$$\nabla_\theta J\approx\frac1N\sum_i\nabla_\theta\mu_\theta(s_i)\,\nabla_aQ_w(s_i,a)\big|_{a=\mu_\theta(s_i)}$$
 :::
 ::: col.accent The stabilisers, returning
-- **replay buffer** — off-policy is now permitted, so use it;
-- **target networks** $w^-,\theta^-$, updated *softly* every step, $w^-\leftarrow\tau w + (1-\tau)w^-$, rather than copied every $C$ steps;
-- both are Lecture 8's deadly-triad fixes, unchanged. The paper's own verdict on ablating them: ==**"target networks matter a lot"**==.
+**Replay buffer**: off-policy is now permitted, so use it.\
+**Target networks** $w^-$, $\theta^-$, updated softly every step.\
+$w^-\leftarrow\tau w+(1-\tau)w^-$, not copied every $C$ steps.\
+**Exploration noise** added to $\mu_\theta(s)$ when acting.
 :::
+:::
+
+::: note
+Source pp. 48–50 and 66–67: the timeline DQN (2013) → DPG (ICML 2014) → DDPG (ICLR 2016); the architecture, a value network and a deterministic policy network, the action fed back into the critic, the OU process added to the action, "+ target network, + experience replay". Soft target updates with τ ≪ 1 every step rather than DQN's hard copy every C steps, a small real difference from Lecture 8. The source's critic loss on p. 66 is missing a bracket; the intended form is written here.
+:::
+
+### Algorithm — DDPG
+::: algorithm DDPG | input actor $\mu_\theta$, critic $Q_w$, noise process, step sizes; output $\theta$
+[initialise] $\theta$, $w$; targets $\theta^-\leftarrow\theta$, $w^-\leftarrow w$; an empty replay buffer $D$
+[for each] episode
+  [start] $s\leftarrow s_0$; reset the noise process
+  [for each] step
+    [act] $a\leftarrow\mu_\theta(s)+\epsilon_t$; take $a$, observe $r$, $s'$; store $(s,a,r,s')$ in $D$ // the behaviour policy is the actor plus noise
+    [sample] a minibatch of $N$ transitions from $D$ // off-policy: any past transition will do
+    [critic] $y_i\leftarrow r_i+\gamma Q_{w^-}(s_i',\mu_{\theta^-}(s_i'))$; $\;w\leftarrow w-\alpha_w\nabla_w\frac1N\sum_i(Q_w(s_i,a_i)-y_i)^2$ // Lecture 8's target, the max replaced by the target actor
+  ! [learn] $\theta\leftarrow\theta+\alpha_\theta\,\frac1N\sum_i\nabla_\theta\mu_\theta(s_i)\,\red{\nabla_aQ_w(s_i,a)\big|_{a=\mu_\theta(s_i)}}$ // the actor climbs the critic's slope
+    [move] $\theta^-\leftarrow\tau\theta+(1-\tau)\theta^-$, $\;w^-\leftarrow\tau w+(1-\tau)w^-$; $\;s\leftarrow s'$ // soft target updates
+---
+the source's p. 67 annotates the paper's box in three places: "for every transition" on the inner loop, "gradually changing target networks" on the soft updates, "approximate it using minibatch samples" on the actor's expectation
+:::
+
+::: note
+The box the next demo runs, on the heater: a quadratic critic, a one-parameter actor, Gaussian exploration noise in place of the OU process, two critic minibatches per actor step. Compare Lecture 8's DQN box: the same replay, the same target copy, and the lit line writes into the actor instead of reading a max. Act 2's actor–critic was on-policy and could not use a buffer; this one can, for the reason the deterministic slide gave.
+:::
+
+### DDPG, run on the heater — the actor climbs the critic
+::: widget ddpg-gain {"seed":2}
+A quadratic critic $Q_w(x,u)$ fitted by TD from a replay buffer, the actor $u=-kx$ climbing $\partial Q/\partial u$.
+Early on the critic is wrong and ==the actor follows it anyway==; then both settle, and the gain lands on the Riccati gain of the discounted problem.
 :::
 
 ::: reveal
-::: small
-**How the actor gradient appears in code.** In code the actor loss is written `pi_loss = -Q(s, mu(s))` and `.backward()` is called; autograd's chain rule $\partial_\theta Q(s,\mu_\theta(s)) = \partial_a Q\cdot\partial_\theta\mu_\theta$ implements the actor’s local chain-rule factor. The theorem also specifies the value function and state visitation distribution; replay-based DDPG uses approximations to them.
-:::
-:::
-
-### Follow a critic uphill — a scalar actor calculation
-At one state let $Q(a)=5-(a-2)^2$ and let the actor output $a=\theta$. Initially $\theta=0$.
-
-$$\frac{dQ}{da}=-2(a-2),\qquad\frac{da}{d\theta}=1.$$
-
-A step of size 0.1 gives $\theta_{\mathrm{new}}=0+0.1(4)=0.4$. The critic's score rises from **1** to **2.44**.
-
 ::: keypoint
-The actor follows the **critic's slope**, without differentiating the environment. If the critic is wrong around 0.4, an improved predicted value may still mean worse real performance.
+The dashed curve is the true critic of the current gain, which the agent never sees; the amber arrow is the slope the actor follows.
+:::
 :::
 
-### $\mu_\theta(s)$ and $K$ — compare their feedback role
-::: lede
-Put Lecture 9's Act 2 and this act side by side. Both produce feedback, using different assumptions and procedures.
+::: note
+γ = 0.9 here, so that a stationary critic exists under exploration noise; the discounted Riccati gain is 0.588, against 0.618 for the undiscounted problem of Acts 1 and 2. Verified in node: the true critic of any gain is exactly quadratic, w = (−1 − γP_k, −2γP_k, −1 − γP_k) with P_k = (1 + k²)/(1 − γ(1 − k)²); from k = 1.15 the gain falls to about 0.2 while the critic is still wrong, then returns and settles at 0.59 by update 300 with the critic's weights within 0.01 of the exact ones. Turning the target copies off changes nothing visible on this linear problem, so the widget has no such switch; "target networks matter" is the paper's finding on MuJoCo, not something this heater can show.
 :::
 
+### $\mu_\theta(s)$ and $K$ — the same role, a different procedure
 ::: table center
-|   | LQR *(Lecture 9)* | DDPG *(here)* |
+| | LQR *(Lecture 9, Act 2)* | DDPG *(here)* |
 |---|---|---|
-| the controller | $u = -Kx$ | $a = \mu_\theta(s)$ |
-| how it is obtained | solve the Riccati equation | ascend $\nabla_a Q$ from samples |
-| does it need the model? | yes — $A$, $B$, $Q$, $R$ | ==no== — sampled transitions |
+| the controller | $u=-Kx$ | $a=\mu_\theta(s)$ |
+| how it is obtained | solve the Riccati equation | ascend $\nabla_aQ$ from samples |
+| what it needs | the model $A$, $B$, $Q$, $R$ | ==sampled transitions, nothing else== |
 | what it is | an $m\times n$ matrix | a neural network |
-| optimality | global under LQR assumptions | no general guarantee of a local or global optimum |
+| what is guaranteed | the global optimum, under the LQ assumptions | no general guarantee of a local or global optimum |
 :::
 
 ::: reveal
 ::: keypoint
-Same **role** — a state-to-action feedback rule — but different learning procedures and optimality guarantees.
-:::
-
-::: small
-The Act 1 widget uses a simple LQ benchmark with a known Riccati answer to assess a learned gain. Success on this example illustrates the feedback role; it is not a general convergence guarantee for policy gradients or DDPG.
+Same role, a state-to-action feedback rule; different procedure, and different guarantees.
+On the heater the learned gain sits beside the Riccati gain, which is the one place the two can be compared.
 :::
 :::
 
-### A deterministic actor explores nothing
-A deterministic policy has no randomness to explore with, and the obvious repair — act uniformly at random — is a poor one. The source deck gives three reasons, and the third is unusual in this course:
+::: note
+This is Lecture 9's closing promise kept: "a learned actor μ_θ(s) is a more general policy class in the same place; it is not guaranteed to recover this optimum". The demo compares them on the one system where the optimum is known. Success on an LQ benchmark illustrates the feedback role; it is not a convergence guarantee for policy gradients or DDPG.
+:::
 
-- random actions drive the policy update into regions where the critic ==is not accurate== (Lecture 5's adversarial-optimiser hazard, in an RL costume);
-- exploring *unseen states* needs action that is **consistent along the episode**, not resampled each step;
-- and on real hardware, ==rapid random input changes can strain actuators==.
+### A deterministic actor explores nothing — and uniform noise is the wrong repair
+::: widget pg-pictures {"mode":"noise"}
+White noise against an Ornstein–Uhlenbeck path over one episode, and their running sums beneath.
+==A swing-up needs the sum to grow in one direction==; independent noise averages to nothing.
+:::
 
 ::: reveal
-::: block The pendulum argument | the source deck's own picture
-Swinging a pole upright takes a *sustained* push in one direction, then alternation near the top. Independent zero-mean noise often cancels across steps and may explore sustained maneuvers inefficiently, so a uniformly random policy might eventually find the swing-up — after enormously many samples.
-:::
-
 ::: small
-Hence the ==Ornstein–Uhlenbeck== process, $\,dx_t = -\kappa\,x_t\,dt + \sigma\,dW_t$, added to $\mu_\theta(s)$: noise that is *temporally correlated*, so exploration pushes rather than jitters.
+Random actions push the update to where the critic is not accurate: Lecture 5's hazard in an RL costume.
+Exploring unseen states needs action that is consistent along the episode, not resampled each step.
+On real hardware, rapid random input changes strain actuators.
 :::
 :::
 
-### TD3 — keep the deterministic actor, repair three critic-related failures
-{sub: Fujimoto, van Hoof & Meger · ICML 2018 · Addressing Function Approximation Error in Actor-Critic Methods}
-
-A DDPG actor can exploit an erroneously high critic value. TD3 changes **the target and update timing**. Here $d$ is the terminal indicator and $\epsilon$ is zero-mean Gaussian target noise.
-
-| Change | Operation | Purpose |
-|---|---|---|
-| Clipped double Q | use the smaller of two target-critic values | reduce overly optimistic bootstrap targets |
-| Delayed policy updates | update the actor less often than the critics | allow critic estimates to improve before the next actor step |
-| Target policy smoothing | add clipped noise to the target action | average over nearby actions instead of rewarding a narrow spurious peak |
-
-$$\begin{aligned}
-\tilde a'&=\operatorname{clip}\big(\mu_{\theta^-}(s')+\operatorname{clip}(\epsilon,-c,c),a_{\min},a_{\max}\big),\\
-y&=r+\gamma(1-d)\min_{i=1,2}Q_{w_i^-}(s',\tilde a').
-\end{aligned}$$
-
+::: reveal
 ::: keypoint
-The two critics each regress to this target. On delayed steps the actor climbs the **first** critic. Target smoothing noise is separate from exploration noise used to collect data. [TD3](https://proceedings.mlr.press/v80/fujimoto18a.html)
+Hence temporally correlated noise, $dx_t=-\kappa x_t\,dt+\sigma\,dW_t$, added to $\mu_\theta(s)$: exploration that pushes rather than jitters.
+:::
 :::
 
-### Calculate a TD3 target — and keep its guarantee in proportion
-Let $r=1$, $\gamma=0.9$, and $d=0$. A target actor proposes 0.5; the clipped target noise is 0.1, so the smoothed action is **0.6** within the bounds $[-1,1]$.
+::: note
+Source pp. 62–65. The three reasons of p. 63 are verbatim in substance; the third is the only place in the course where a physical constraint decides an algorithm. The pendulum of p. 64: push in a consistent direction until near upright, then alternate; a random behaviour policy "might find it, but only after consuming a lot of samples". The OU process of p. 65 is written with κ for the mean-reversion rate, because θ is the policy parameter everywhere else in this lecture. The demo on the heater used Gaussian noise, which is enough for a one-dimensional linear system.
+:::
 
-| Value at that same next action | Estimate |
-|---|---|
-| First target critic | $Q_{w_1^-}(s',0.6)=8$ |
-| Second target critic | $Q_{w_2^-}(s',0.6)=6$ |
+### TD3 — keep the actor, repair three failures of the critic
+{sub: Fujimoto, van Hoof and Meger, "Addressing Function Approximation Error in Actor-Critic Methods" · ICML 2018}
 
-$$y_{\rm TD3}=1+0.9\min(8,6)=6.4.$$
+::: paper
+- Why it is here | The repair of DDPG's critic that Lecture 12 starts from: an actor exploiting a high critic value.
+- What it is | Overestimation in actor–critic analysed, with three changes to the target and the timing.
+- Why it matters | The deterministic baseline since 2018; with behaviour cloning it is Lecture 12's method.
+:::
 
-Using the first estimate alone would give **8.2** at this action. If the transition were terminal, both targets would instead be **1**. An illustrative delay of two means two critic updates for each actor update.
+::: algorithm TD3, the lines that differ from DDPG | two critics $Q_{w_1},Q_{w_2}$, a delay $d$, target noise $\epsilon\sim\mathcal N(0,\sigma)$ clipped to $[-c,c]$
+[target action] $\tilde a'\leftarrow\operatorname{clip}\big(\mu_{\theta^-}(s')+\operatorname{clip}(\epsilon,-c,c),\,a_{\min},a_{\max}\big)$ // target policy smoothing: average over nearby actions, not a narrow peak
+[critics] $y\leftarrow r+\gamma\,\red{\min_{i=1,2}}Q_{w_i^-}(s',\tilde a')$ // clipped double Q: both critics regress to the smaller target
+! [learn] every $\red{d}$ critic updates only: DDPG's actor step, climbing $Q_{w_1}$ // delayed policy update: the critic settles first
+---
+everything else is the DDPG box; smoothing noise on the target is separate from the exploration noise used to collect data
+:::
 
+::: reveal
 ::: keypoint
-A smaller target addresses one error mechanism; it is not a certified lower bound on the true return. Critics can share errors. Lecture 12 keeps these TD3 mechanics and adds a behaviour-cloning term for fixed-data learning.
+A smaller target addresses one error mechanism; it is not a certified lower bound on the true return.
+Critics can share errors, which is where Lecture 12 begins.
+:::
 :::
 
-### SAC — reward good actions while preserving policy entropy
-{sub: Haarnoja et al. · ICML 2018 · an entropy-regularized objective}
+::: note
+As Lecture 8 set SARSA against Q-learning by the one line that differs, this box lists only TD3's three changed lines; the rest is DDPG's. Numbers for the board, if asked: r = 1, γ = 0.9, target action 0.6 after smoothing, critics 8 and 6 at that action: y = 1 + 0.9 × 6 = 6.4 against 8.2 from the first critic alone; a terminal transition gives y = 1. The two critics each regress to this target, and on delayed steps the actor climbs the first critic.
+:::
 
-SAC trains a **stochastic actor** from replay. Its discounted episodic objective includes policy entropy:
+### SAC — a stochastic actor, trained from replay, rewarded for entropy
+{sub: Haarnoja, Zhou, Abbeel and Levine, "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor" · ICML 2018}
 
-$$J(\pi)=\mathbb E_\pi\!\left[\sum_{t=0}^{T-1}\gamma^t\big(r_{t+1}+\alpha_H\mathcal H(\pi(\cdot\mid s_t))\big)\right].$$
+::: paper
+- Why it is here | The other repair: a stochastic actor, exploration in the objective, the critic still off-policy.
+- What it is | Berkeley: the maximum-entropy objective inside an off-policy actor–critic with twin critics.
+- Why it matters | With PPO, a default continuous-control algorithm since 2018; Lecture 11's MBPO trains it.
+:::
 
-Here $\alpha_H>0$ is the **entropy temperature**, not the gradient step size. Consider a one-step, two-action illustration with rewards 2 and 1.8, and $\alpha_H=0.5$:
+**The objective** — the return, with the policy's entropy added at every step, $\alpha_H>0$ the entropy temperature:
 
-| Policy | Expected reward | Entropy, using natural logs | Reward + temperature × entropy |
-|---|---|---|---|
-| Always choose the first action | 2 | 0 | **2** |
-| Choose each with probability 0.5 | 1.9 | $\log2\approx0.693$ | **2.247** |
+$$J(\pi)=\E_\pi\Big[\sum_t\gamma^t\big(r_{t+1}\;\hl{+\;\alpha_H\,\mathcal H(\pi(\cdot\mid s_t))}\big)\Big]$$
 
+::: reveal
+**The learning loop** — a soft target for twin critics, and an actor that trades critic value against lost entropy:
+
+$$\begin{aligned}y&=r+\gamma\Big[\min_{i=1,2}Q_{w_i^-}(s',a')-\alpha_H\log\pi_\theta(a'\mid s')\Big],\qquad a'\sim\pi_\theta(\cdot\mid s')\\ L_\pi&=\E_{s\sim D,\,a\sim\pi_\theta}\Big[\alpha_H\log\pi_\theta(a\mid s)-\min_iQ_{w_i}(s,a)\Big]\end{aligned}$$
+:::
+
+::: reveal
 ::: keypoint
-The mixture wins **between these two candidates** because the objective values diversity as well as reward. This discrete illustration explains the entropy term; continuous SAC uses a probability density and differential entropy. [Soft Actor-Critic](https://proceedings.mlr.press/v80/haarnoja18b.html)
+A mixture can beat the best single action once diversity is paid for: ==the objective values entropy as well as reward.==
+:::
 :::
 
-### SAC in the learning loop — a soft target and a stochastic actor
-{sub: twin-Q formulation from Soft Actor-Critic Algorithms and Applications · 2018/2019}
-
-Draw a next action $a'\sim\pi_\theta(\cdot\mid s')$ for each replayed transition. Train both critics toward
-
-$$y=r+\gamma(1-d)\left[\min_{i=1,2}Q_{w_i^-}(s',a')-\alpha_H\log\pi_\theta(a'\mid s')\right].$$
-
-The actor minimizes, over replayed states and newly sampled current-policy actions,
-
-$$L_\pi=\mathbb E_{s\sim D,\,a\sim\pi_\theta}\left[\alpha_H\log\pi_\theta(a\mid s)-\min_iQ_{w_i}(s,a)\right].$$
-
-::: flow
-- **Replay** | reuse real transitions for critic fitting
-- **Sample actions** | use the current stochastic actor
-- **Improve** | trade critic value against loss of entropy
-:::
-
-::: keypoint
-The actor can use the reparameterization idea from Lecture 6. The original ICML version used a separate value network; these equations are the later twin-Q variant. Neither replay nor entropy fixes missing coverage in a fixed offline log. [Algorithms and Applications](https://arxiv.org/abs/1812.05905)
+::: note
+A two-action illustration for the board, not the slide: rewards 2 and 1.8, α_H = 0.5; always the first action scores 2, each with probability one half scores 1.9 + 0.5 log 2 = 2.247, so the mixture wins between these two candidates. Continuous SAC uses a density and differential entropy. The original ICML version had a separate value network; these equations are the later twin-Q variant (Haarnoja et al., 2019). Neither replay nor entropy fixes missing coverage in a fixed offline log, which is Lecture 12. α_H is the temperature, not a step size. The actor samples through the reparameterisation of Lecture 6; PPO's entropy bonus is the seed, SAC's objective the plant.
 :::
 
 ### Check — the deterministic gradient
 {q: 3}
 
-::: quiz DDPG trains a critic $Q(s,a)$ and a deterministic actor $\mu(s)$. How does the actor get its gradient?
+::: quiz DDPG trains a critic $Q(s,a)$ and a deterministic actor $\mu(s)$.<br>How does the actor get its gradient?
 - By finite differences on the environment
 - By sampling actions and weighting them by their returns, as in REINFORCE
-- =By backpropagating through the critic: $\nabla_\theta Q(s, \mu_\theta(s))$ — the critic is differentiable, so the actor climbs it
+- =By backpropagating through the critic: $\nabla_\theta Q(s,\mu_\theta(s))$, since the critic is differentiable in the action
 - By solving the $\argmax$ exactly at each step and regressing onto the result
-The critic is a differentiable surrogate for "how good is this action here", so the actor can be moved uphill on it by the chain rule — no action sampling inside this deterministic actor derivative; the state samples still come from data. Notice what has just been re-created: an optimiser climbing a **learned model of the objective**, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
+The critic is a differentiable surrogate for how good this action is here, so the actor can be moved uphill on it by the chain rule; no action sampling is needed inside the deterministic gradient, and the states still come from data. Notice what has been re-created: an optimiser climbing a learned model of the objective, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
 :::
 
 ## Act 4 — stepping without falling
 {short: ACT 4, num: Act 4}
 
-**Q4.** We have a gradient and we have tamed its variance. How far along it dare we step?
+**Q4.** We have a gradient and have tamed its variance.\
+How far along it dare we step?
 
-### The step-size trap unique to RL
+### Act 4 on the map
 {q: 4}
 
 ::: qstrip
 :::
 
-In supervised learning a bad step costs one bad update; the next minibatch arrives from the same fixed dataset and pulls you back. In RL it is worse, because
+::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
+The same cell once more.
+==Not what the gradient is, but how large a step to take along it.==
+:::
 
+### The policy makes its own next batch
+::: widget pg-pictures {"mode":"loop"}
+In supervised learning a bad step costs one bad update; the next minibatch comes from the same fixed dataset and pulls you back.
+Here ==the next batch is collected by the policy the step produced==, and a step that leaves the region the batch describes is self-reinforcing.
+:::
+
+::: reveal
 ::: keypoint
-==the policy generates its own next batch of data.==
+The parameter step is the wrong thing to bound: a tiny change in $\theta$ can change the behaviour a lot, a large one not at all.
+What must be bounded is ==the distance between the old and the new action distributions.==
 :::
+:::
+
+::: note
+Press one: one large step out of the region where the batch is evidence; the gradient estimated there pointed somewhere else again, and every subsequent sample now comes from the bad policy. Press two: the KL ball around π_old, Lecture 1's trust region measured in behaviour rather than in parameters. A sensitive network or a Gaussian policy with very small variance makes the parameter distance meaningless as a measure of change.
+:::
+
+### A trust region in policy space — TRPO
+{sub: Schulman, Levine, Moritz, Jordan and Abbeel, "Trust Region Policy Optimization" · ICML 2015}
+
+::: paper
+- Why it is here | The first method to bound a policy step in behaviour space; Act 2's ratio was kept for it.
+- What it is | Berkeley: a monotonic-improvement bound, and a surrogate maximised inside a KL ball.
+- Why it matters | The theory behind PPO, and where Lecture 1's trust region re-enters in a new metric.
+:::
+
+**The constrained step** — maximise the importance-weighted advantage, inside a KL ball around the policy that collected the data:
+
+$$\max_\theta\ \E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\Big[\frac{\pi_\theta(a\mid s)}{\pi_{\mathrm{old}}(a\mid s)}\,\hat A(s,a)\Big]\quad\text{s.t.}\quad\E_{s}\big[D_{\mathrm{KL}}\big(\pi_{\mathrm{old}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big]\le\delta$$
 
 ::: reveal
-A step that pushes $\pi_\theta$ too far lands in a region where the policy is bad — and now *every* subsequent sample comes from that bad policy. The gradient estimated there points somewhere else again. The damage is ==self-reinforcing==, and there is no fixed dataset to fall back on.
-
-::: small
-This is also why the parameter step size is the wrong thing to control. A tiny change in $\theta$ can produce a large change in *behaviour* (a sensitive neural network or a Gaussian policy with very small variance), and a large one can produce none at all. What must be bounded is the distance between the old and new **action distributions**.
-:::
-:::
-
-### A trust region, in policy space
-Maximise an importance-weighted advantage, subject to staying inside a ==KL ball== around the policy that collected the data: {p}(Schulman et al., 2015)
-
-$$\max_{\theta}\ \E\Big[\frac{\pi_\theta(a\mid s)}{\pi_{\theta_{\mathrm{old}}}(a\mid s)}\,\hat A\Big] \quad\text{s.t.}\quad \E\big[D_{\mathrm{KL}}\big(\pi_{\theta_{\mathrm{old}}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big] \le \delta $$
-
-::: reveal
-::: small
-The ratio reweights old-policy actions. A local linear objective and quadratic KL give the natural-gradient step (Backup 5). Practical average-KL TRPO does **not** by itself guarantee monotonic real return; the theoretical bound uses stronger assumptions.
-:::
-:::
-
-::: reveal
-::: block This is Lecture 1's trust region, moved | the `trust-region` widget of Chapter 1, in policy space
-| Lecture 1 · successive convexification | TRPO |
-|---|---|
-| a quadratic model of $f$ | a linear model of the advantage |
-| trust radius $\rho$ in **parameter** space | KL radius $\delta$ in **behaviour** space |
-| accept if the model was believable, else shrink | backtrack until estimated KL and surrogate improvement pass their checks |
-
-Shared idea: **restrict an update to where its local model is useful.** The metrics and acceptance tests differ.
-:::
-:::
-
-### PPO — discourage large changes with a clipped objective
-Practical TRPO approximates a KL-constrained step. PPO uses a simpler surrogate with a similar intent: with $r(\theta) = \pi_\theta(a\mid s)/\pi_{\theta_{\mathrm{old}}}(a\mid s)$, {p}(Schulman et al., 2017)
-
-$$J^{\mathrm{CLIP}}(\theta) = \E\Big[\min\big(\,r(\theta)\,\hat A,\ \ \mathrm{clip}\big(r(\theta),\,1-\epsilon,\,1+\epsilon\big)\,\hat A\,\big)\Big]$$
-
-::: reveal
-No second-order machinery, no conjugate gradient, no line search. When the ratio leaves $[1-\epsilon,1+\epsilon]$ *in the direction the update was pushing it*, the objective goes flat and ==the incentive to push further is simply removed==.
-
-::: small
-With shared actor–critic parameters the practical objective adds two terms — $-c_1(V_\theta(s)-V_{\text{target}})^2$ for the critic and $+c_2 H(\pi_\theta(\cdot\mid s))$, an entropy bonus for exploration. The entropy term is the seed of maximum-entropy RL and of SAC.
-:::
-:::
-
-### Calculate the clip — the sign of advantage matters
-Let $\epsilon=0.2$. For one sampled action, compare $r\hat A$ with $\operatorname{clip}(r,0.8,1.2)\hat A$, and keep the **smaller** number.
-
-| advantage | ratio | ordinary term | clipped term | PPO term |
-|---|---|---|---|---|
-| +2 | 1.4 | 2.8 | 2.4 | **2.4** |
-| −2 | 0.6 | −1.2 | −1.6 | **−1.6** |
-| −2 | 1.4 | −2.8 | −2.4 | **−2.8** |
-
 ::: keypoint
-PPO removes the incentive to increase a good action too much or decrease a bad one too much. It still penalizes making a bad action more likely. **Clipping is not a hard bound on every probability ratio or on KL.**
+Lecture 1's trust region, with the radius measured in ==behaviour space== instead of parameter space.
+The ratio is Act 2's importance weight, now read as the size of the step.
+:::
+:::
+
+::: note
+Source pp. 75–76: the off-policy objective with β, then β = π_old and the KL constraint; "in this way the old and new policies would not diverge too much", and the professor's own "(why?)" after the monotonic improvement claim, left as an exercise. The bound uses the maximum KL over states; the practical average-KL version does not by itself guarantee monotonic real return. Against Lecture 1's successive convexification: a quadratic model of f becomes a linear model of the advantage, the trust radius ρ in parameter space becomes the KL radius δ in behaviour space, and accept-or-shrink becomes a backtracking line search on the sampled KL and the surrogate improvement.
+:::
+
+### The natural-gradient step — the constrained problem in closed form
+{fill: top, math: compact}
+
+**From the KL ball to the step** — local models about $\theta_{\mathrm{old}}$, then a linear objective on an ellipsoid:
+
+$$\begin{aligned}
+L(\theta)&\approx g^\top(\theta-\theta_{\mathrm{old}}),\qquad g=\nabla_\theta L(\theta_{\mathrm{old}}) &&\red{\scriptstyle\text{the surrogate, linearised}}\\
+\step{1}{\bar D_{\mathrm{KL}}}&\step{1}{\approx\tfrac12(\theta-\theta_{\mathrm{old}})^\top H\,(\theta-\theta_{\mathrm{old}}),\qquad H \text{ the Fisher matrix}} &&\step{1}{\red{\scriptstyle\text{the KL has zero gradient at } \theta_{\mathrm{old}}\text{: quadratic}}}\\
+\step{2}{\theta_{\mathrm{new}}}&\step{2}{=\theta_{\mathrm{old}}+\sqrt{\frac{2\delta}{g^\top H^{-1}g}}\;H^{-1}g} &&\step{2}{\red{\scriptstyle\text{a linear function on an ellipsoid: the natural gradient}}}\\
+\step{3}{H^{-1}g}&\step{3}{\ \text{by conjugate gradient; then backtrack on the sampled KL}} &&\step{3}{\red{\scriptstyle\text{Lecture 1's accept-or-shrink}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+Second-order machinery for a first-order idea: stay where the surrogate is trusted.
+The next slide keeps the idea and throws the machinery away.
+:::
+:::
+
+::: note
+The derivation assumes an invertible positive-definite local Fisher matrix and a nonzero gradient; implementations add damping and use sampled estimates. Why the KL's leading term is quadratic: D_KL(π_old ‖ π_θ) is zero at θ_old and non-negative, so its gradient vanishes there and its Hessian is the Fisher information. PPO removes the second-order solve and inherits neither the hard trust region nor the monotonic-improvement guarantee.
+:::
+
+### PPO — remove the incentive to leave the region
+{sub: Schulman, Wolski, Dhariwal, Radford and Klimov, "Proximal Policy Optimization Algorithms" · arXiv 2017}
+
+::: paper
+- Why it is here | TRPO's idea with first-order machinery: the objective, not a constraint, bounds the step.
+- What it is | An OpenAI paper: the clipped surrogate, and the multi-epoch minibatch update that goes with it.
+- Why it matters | The default policy-gradient method since; the RL stage of InstructGPT was trained with it.
+:::
+
+**The clipped surrogate** — with the ratio $r(\theta)=\pi_\theta(a\mid s)/\pi_{\mathrm{old}}(a\mid s)$:
+
+$$J^{\mathrm{CLIP}}(\theta)=\E\Big[\min\big(r(\theta)\,\hat A,\ \operatorname{clip}\big(r(\theta),\,1-\epsilon,\,1+\epsilon\big)\,\hat A\big)\Big]$$
+
+::: reveal
+::: keypoint
+No conjugate gradient, no line search.
+Once the ratio leaves $[1-\epsilon,1+\epsilon]$ in the direction of the push, the objective goes flat: ==the incentive is removed.==
+:::
+:::
+
+::: reveal
+::: small
+With shared actor–critic parameters the practical objective adds $-c_1(V_\theta(s)-V_{\mathrm{target}})^2$ for the critic and $+c_2\,\mathcal H(\pi_\theta(\cdot\mid s))$ for exploration.
+Clipping is not a hard bound on every ratio or on the KL.
+:::
+:::
+
+::: note
+Source pp. 77–78: "given that TRPO is relatively complicated and we still want to implement a similar constraint, PPO simplifies it by using a clipped surrogate objective while retaining similar performance", and the reason, that without a limit on the distance between θ_old and θ the surrogate would be maximised with extremely large updates and big ratios. The shared-parameter objective of p. 78 with c_1, c_2 and the entropy bonus "to encourage sufficient exploration".
+:::
+
+### Algorithm — PPO
+::: algorithm PPO | input $\pi_\theta$, $V_w$, clip $\epsilon$, epochs $K$, minibatch size $M$; output $\theta$
+[initialise] $\theta$, $w$
+[repeat]
+  [collect] $N$ episodes under $\pi_{\mathrm{old}}=\pi_\theta$; store $(s_t,a_t,\log\pi_{\mathrm{old}}(a_t\mid s_t))$ // the batch, and the probabilities it was collected with
+  [advantage] $\hat A_t$ by GAE from $V_w$ // Act 2's rung 6
+  [for each] epoch $1,\dots,K$, minibatch of size $M$
+  ! [learn] $\theta\leftarrow\theta+\alpha\,\nabla_\theta\,\frac1M\sum\min\big(r(\theta)\hat A,\ \red{\operatorname{clip}(r(\theta),1-\epsilon,1+\epsilon)}\hat A\big)$ // several passes over one batch, the clip keeps them honest
+    [critic] $w\leftarrow w-\alpha_w\nabla_w\frac1M\sum(V_w(s_t)-\hat G_t)^2$
+  [move] $\pi_{\mathrm{old}}\leftarrow\pi_\theta$ // the new policy collects the next batch
+---
+the demo two slides on runs the lit line to its end on one batch, with and without the clip, on the heater's one-parameter policy
+:::
+
+::: note
+Compare REINFORCE's box: the same collect, a GAE advantage in place of the return, and the one new thing, several epochs on the same batch. Without the clip those epochs would maximise a surrogate far from where it is trusted; the next two slides show why that matters.
 :::
 
 ### The clip, and the asymmetry nobody mentions
 ::: widget ppo-clip {"eps":0.2}
-The clipped objective as a function of the ratio, for a good action ($\hat A>0$) and a bad one ($\hat A<0$). Read the slopes: for $\hat A>0$ the gradient is ==exactly zero above $1+\epsilon$== — no reward for making a good action still likelier. For $\hat A<0$ it is zero *below* $1-\epsilon$ but ==stays alive above $1+\epsilon$==: an action already too probable and known to be bad keeps being pushed down. The clip only removes the incentive that would take you out of the region.
+The clipped objective as a function of the ratio, for a good action and a bad one.
+For $\hat A>0$ the gradient is ==exactly zero above $1+\epsilon$==; for $\hat A<0$ it is zero below $1-\epsilon$ and ==stays alive above $1+\epsilon$.==
 :::
 
-### PPO and SAC — compare complete learning procedures
-{sub: Schulman et al. (2017) · Haarnoja et al. (2018)}
-
-| Question | PPO | SAC |
-|---|---|---|
-| Which data? | recent rollouts under the collection policy; reused for a limited number of epochs | a replay buffer containing transitions from earlier policies |
-| What guides the actor? | an estimated advantage with a clipped probability-ratio objective | soft Q estimates and an entropy term |
-| What controls the update? | clipping changes incentives for probability-ratio changes | actor/critic optimization and an entropy temperature |
-| How is exploration represented? | stochastic collection policy; an entropy bonus is often added | entropy is part of the stated maximum-entropy objective |
-
-Both can use stochastic neural policies in continuous control. PPO clipping is not a hard KL guarantee; SAC's replay is not a guarantee that arbitrary offline data will suffice.
-
+::: reveal
 ::: keypoint
-Compare **return, environment steps and computation** under the same evaluation protocol. TD3 is a deterministic off-policy comparison; Lecture 12 removes further interaction. [PPO](https://arxiv.org/abs/1707.06347) · [SAC](https://proceedings.mlr.press/v80/haarnoja18b.html)
+The clip removes only the incentive that would take the policy out of the region.
+An action already too probable and known to be bad keeps being pushed down.
+:::
+:::
+
+::: note
+Numbers for the board, ε = 0.2: advantage +2 and ratio 1.4 give 2.8 unclipped, 2.4 clipped, PPO keeps 2.4; advantage −2 and ratio 0.6 give −1.2 and −1.6, PPO keeps −1.6; advantage −2 and ratio 1.4 give −2.8 and −2.4, PPO keeps −2.8, the gradient alive. Verified in node by central differences: for A = +1 the slope is 1 below 1.2 and 0 above; for A = −1 it is 0 below 0.8 and −1 all the way up.
+:::
+
+### PPO, run on the gain — maximise the surrogate to the end
+::: widget ppo-gain {"seed":1}
+The heater's Gaussian gain policy: one batch under $k_{\mathrm{old}}$, then the surrogate maximised over $k$ on that batch, fully.
+==The plain surrogate keeps promising as $k$ leaves $k_{\mathrm{old}}$ and the gain jumps anywhere; the clipped one goes flat and the step stays small.==
+:::
+
+::: reveal
+::: keypoint
+The batch is evidence about gains near the one that collected it; the clip is what lets PPO take several epochs on it safely.
+:::
+:::
+
+::: note
+Verified in node, seeds 1 to 4, ε = 0.2: full maximisation of the plain surrogate per batch sends the gain 1.15 → 0.82 → 0.66 → 0.44 → 1.60 → … → 3.00, and on seed 2 to −1.00, unstable both ways; the clipped surrogate moves it by 0.05 to 0.1 per iteration and settles around 0.6 ± 0.07. On one batch at k_old = 1.15 the plain surrogate reads 0.6, 1.9, 3.7, 4.2 at k = 1.0, 0.8, 0.6, 0.4 and is still positive at k = 0, while the clipped one peaks near k = 1.0 at 0.20 and is negative by k = 0.6. Ratios outside [0.8, 1.2]: 5 of 192 at a step of 0.05 in k, 91 at 0.4. The ε button changes the width of the flat region.
+:::
+
+### PPO and SAC — two complete learning procedures
+::: table center
+| | PPO | SAC |
+|---|---|---|
+| which data | recent rollouts, reused for a few epochs | a replay buffer from earlier policies |
+| what guides the actor | an estimated advantage, through the clipped ratio | soft $Q$ estimates and an entropy term |
+| what controls the step | the clip removes the incentive to leave the ratio interval | an entropy temperature and the critic's slope |
+| how exploration enters | a stochastic policy, often an entropy bonus | entropy is part of the stated objective |
+:::
+
+::: reveal
+::: keypoint
+Compare return, environment steps and computation under one evaluation protocol.
+TD3 is the deterministic off-policy comparison; Lecture 12 removes further interaction altogether.
+:::
+:::
+
+::: note
+Both use stochastic neural policies in continuous control. PPO's clip is not a hard KL guarantee; SAC's replay is not a guarantee that arbitrary offline data will suffice. The two are the field's default choices since 2018, on-policy and off-policy respectively.
 :::
 
 ### Check — why large policy changes are discouraged
 {q: 4}
 
-::: quiz PPO discourages some large policy updates through its clipped surrogate. Why are large changes risky?
+::: quiz PPO discourages large policy updates through its clipped surrogate.<br>Why are large changes risky?
 - The gradient estimate becomes biased
 - The value function stops converging
 - The policy becomes deterministic too quickly
-- =The data was collected under the old policy, so a large step moves into a region the batch says nothing about — and the estimate of the improvement stops being valid
-On-policy data is only evidence about policies near the one that gathered it. A large update leaves that neighbourhood, and the objective being maximised is then a surrogate evaluated well outside its region of validity — Lecture 1's trust region, arrived at from a completely different direction, and the same adversarial-optimiser problem as Lecture 5.
+- =The data were collected under the old policy, so a large step moves into a region the batch says nothing about, and the estimate of the improvement stops being valid
+On-policy data are only evidence about policies near the one that gathered them. A large update leaves that neighbourhood, and the objective being maximised is then a surrogate evaluated well outside its region of validity: Lecture 1's trust region, arrived at from a different direction, and the same adversarial-optimiser problem as Lecture 5. The heater demo showed it: the plain surrogate sent the gain to 3.0 and to −1.0, both unstable.
 :::
 
 ## Closing
@@ -692,202 +1235,116 @@ On-policy data is only evidence about policies near the one that gathered it. A 
 
 Both lineages have now had the model taken away. The grid is full.
 
-### Where we are — both lineages, now data-driven
-::: lineage dd-B
-:::
-
-::: reveal
-Two traditions, each with a model-based origin and a data-driven extension, and the same move relates each pair:
-
-| | model-based origin | what is deleted | data-driven extension |
-|---|---|---|---|
-| **Lineage A · OR** | MDP & DP *(Lec 7)* | the model $(P,R)$ | value-based RL *(Lec 8)* |
-| **Lineage B · Control** | optimal control *(Lec 9)* | the dynamics $f$ | ==policy-based RL *(Lec 10)*== |
+### Where we are — the cell, filled
+::: widget control-grid {"cells":["vrl","prl"],"arrow":"both","dim":true}
+Both model-free cells are done, one deletion each.
+==Delete the model, sample instead==: made twice, one lecture apart.
 :::
 
 ::: reveal
 ::: keypoint
-One orphaning move, made twice: ==delete the model, sample instead.==
+Lineage A: Lecture 7's MDP lost $P$ and $R$ and became value-based RL.
+Lineage B: Lecture 9's optimal control lost $f$ and became policy-based RL.
 :::
 :::
 
+::: note
+The same figure as the opening with both model-free cells lit and both arrows emphasised, as Lecture 9's closing lit its two cells. The empty continuous-time row of the model-free layer stays empty; this course does not go there.
+:::
+
+### The ladder, complete — one gradient, then two tokens changed
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Advantage","line":"for each step t, with a learned baseline:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{(\\sum_{t′≥t} r_{t′} − b(s_t))} ]","note":"reward to go, minus what the state usually gives","loop":"refit b each update"},{"title":"Actor–critic, GAE","line":"for each step t, with a critic V_w:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD errors in place of returns: bias for variance","loop":"one transition per update"},{"title":"DPG, DDPG, TD3","line":"for each replayed state s, a deterministic actor:","formula":"∇_θ J = \\text{E}_{s∼ρ}[ \\red{∇_θ μ_θ(s) \\, ∇_a Q_w(s,a)|_{a=μ_θ(s)}} ]","note":"the score is gone: the actor climbs the critic's slope","loop":"off-policy, from a buffer"},{"title":"TRPO","line":"for a batch under π_old, inside a KL ball:","formula":"\\max_θ \\text{E}[ \\red{π_θ(a|s)/π_{old}(a|s)} \\, Â ] \\quad \\text{s.t.}\\quad \\text{KL}(π_{old} ‖ π_θ) ≤ δ","note":"the ratio measures the step; the ball bounds it","loop":"one constrained step per batch"},{"title":"PPO","line":"for K epochs on the same batch:","formula":"\\max_θ \\text{E}[ \\min( r Â, \\red{\\text{clip}(r, 1−ε, 1+ε)} Â ) ]","note":"the constraint becomes a flat objective","loop":"K epochs per batch"}]}
+Act 2 changed the weight on the score; ==Act 3 replaced the score, Act 4 wrapped the weight.==
+Six plates, and every method of the lecture is one of them with one token changed.
+:::
+
+::: note
+The Act 2 ladder is compressed to its first and last rungs here so that the other acts fit: rungs 2 to 4 are the advantage plate, rungs 5 and 6 the actor–critic plate. DPG changes a different token from the rest: the score ∇ log π_θ is replaced by the chain rule through the action, which is why its plate reads as a break in the pattern. TRPO and PPO keep the score and the advantage and act on the ratio.
+:::
+
+### Optimal control, learned — the translation table
+::: table center
+| Lecture 9 (optimal control) | Lecture 10 (policy-based RL) | what replaces the model |
+|---|---|---|
+| the value field $V(t,x)$, HJB | the critic $V_w$, $Q_w$ | a learned value |
+| the feedback law $u=-Kx$ | the actor $\pi_\theta(a\mid s)$, $\mu_\theta(s)$ | a learned controller |
+| known dynamics $\dot x=f(x,u)$ | sampled transitions $(s,a,r,s')$ | the environment itself |
+| the backup over states | Route 1: the gradient's own backup | $P$ as a weight, never differentiated |
+| conditions along one trajectory | Route 2: the score along one episode | the log-derivative trick |
+| solve Riccati or HJB | gradient ascent on $J(\theta)$ | stochastic optimisation |
+| controllability of $(A,B)$ | sufficient exploration | a reachability assumption, either way |
+:::
+
+::: reveal
+::: keypoint
+Nothing here is a new principle.
+==Policy gradient is optimal control with $f$ deleted and replaced by data==; the two routes of Act 1 are Lecture 9's two views, learned.
+:::
+:::
+
+::: note
+Read column three: Lecture 9's programme with the one piece we no longer own swapped out. DDPG's actor is the learned cousin of LQR's gain; REINFORCE uses trajectories as Pontryagin did, but the score-function gradient is a different mathematical argument from the costate equations, and the table says "view", not "derivation".
+:::
+
 ### What we hand on
-::: flow | 
-- **Lecture 10 leaves** | the trust-region machinery — a KL ball, and a clip
+::: flow |
+- **Lecture 10 leaves** | the trust-region machinery, a KL ball and a clip; SAC and TD3 as the off-policy actors
 - !**Lecture 11 puts the model back** | learned, and lets the two lineages rejoin
 :::
 
 ::: reveal
-Lecture 1 and TRPO both control where a local approximation is trusted, using different metrics and acceptance rules. PPO clipping instead changes incentives in its sampled objective; it does not impose a hard KL bound. Lecture 12 adds another issue: evaluating a changed policy using a fixed log.
-
 ::: small
-Lecture 11 adds a learned model: MBPO uses SAC to learn from short synthetic rollouts, while Dreamer trains an actor and critic in latent imagination. Lecture 12 later starts from TD3 and adds behavior cloning when fresh interaction is unavailable.
+Lecture 11 adds a learned model: MBPO trains SAC on short synthetic rollouts, Dreamer trains an actor and a critic in latent imagination.
+Lecture 12 starts from TD3 and adds behaviour cloning when fresh interaction is unavailable.
 :::
 :::
 
-### Policy gradients learn feedback from experience; their guarantees differ from model-based optimal control.
-{layout: standout}
+::: note
+Lecture 1 and TRPO both control where a local approximation is trusted, in different metrics with different acceptance rules; PPO changes incentives in its sampled objective and imposes no hard KL bound. Lecture 12 adds a further issue, evaluating a changed policy from a fixed log.
+:::
 
-The dynamics never solved, only experienced — and the controller learned, not derived.
+### Notation — the symbols of this lecture
+{sub: and where they differ from Lectures 8 and 9}
 
-### Questions?
-{layout: standout}
+::: table center
+| Symbol | Meaning | Symbol | Meaning |
+|---|---|---|---|
+| $\pi_\theta(a\mid s)$, $\mu_\theta(s)$ | a stochastic and a deterministic policy | $x$, $u$, $k$ | the heater's state, control and gain; Lecture 9's letters |
+| $\nabla_\theta\log\pi_\theta(a\mid s)$ | the score of the policy, Lecture 2's | $\Psi_t$ | the weight on the score, rung by rung |
+| $d^\pi$, $\rho^\pi$ | the on-policy state distribution | $\beta$, $\pi_{\mathrm{old}}$ | the behaviour policy; the batch's policy |
+| $V_w$, $Q_w$ | the critic; targets $w^-$, $\theta^-$ | $r(\theta)$ | the ratio $\pi_\theta/\pi_{\mathrm{old}}$ |
+| $G_t$, $\hat Q_t$ | the return after $t$; the reward to go | $\alpha$, $\alpha_H$, $\kappa$ | step size; entropy temperature; OU rate |
+| $A^\pi$, $\hat A$, $\delta_t$ | the advantage, its estimate, the TD error | $\epsilon$ | PPO's clip, or exploration noise |
+:::
 
-Lecture 8 learns action values; this lecture learns feedback policies. Explain the policy-gradient estimate first, then distinguish **DDPG/TD3's deterministic actor**, **PPO's clipped update**, and **SAC's entropy-regularized learning**. Their objectives, data and estimators differ. Which learned model could help each one use fewer real interactions?
-
-## Appendix — backup slides
-{short: APPENDIX}
-
-Complete arguments, kept out of the narrative.
+::: note
+Three clashes to say aloud: θ is the policy parameter everywhere, so the OU rate is κ; the source uses β for a general behaviour policy and μ′ for DDPG's, which is μ_θ plus noise; α is a step size and α_H the entropy temperature. Q is the action value here, not Lecture 9's cost weight.
+:::
 
 ### Reading guide — learn feedback, then test the critic and the data regime
 {sub: one main idea to explain, one comparison, one application}
 
 | Role | Read or revisit | Question to answer |
 |---|---|---|
-| **Core** | [Schulman et al., *Proximal Policy Optimization Algorithms* (2017)](https://arxiv.org/abs/1707.06347) | How is an advantage estimate used while discouraging large policy changes? |
-| **Compare** | [Haarnoja et al., *Soft Actor-Critic* (ICML 2018)](https://proceedings.mlr.press/v80/haarnoja18b.html); [Fujimoto et al., TD3 (ICML 2018)](https://proceedings.mlr.press/v80/fujimoto18a.html) | What changes when learning from replay, using twin critics or rewarding entropy? |
-| **Apply** | The scalar feedback benchmark and the TD3/entropy calculations in this lecture | Does a better critic score imply a better real controller? |
+| **Core** | Sutton, McAllester, Singh and Mansour, *Policy gradient methods for RL with function approximation* (2000); [Schulman et al., PPO (2017)](https://arxiv.org/abs/1707.06347) | Why does the model drop out of the gradient, and how is an advantage used while discouraging large steps? |
+| **Compare** | [Haarnoja et al., SAC (ICML 2018)](https://proceedings.mlr.press/v80/haarnoja18b.html); [Fujimoto et al., TD3 (ICML 2018)](https://proceedings.mlr.press/v80/fujimoto18a.html) | What changes when learning from replay, with twin critics, or with entropy in the objective? |
+| **Apply** | The heater through the four acts, REINFORCE to PPO | Does a better critic score imply a better real controller? |
 
 ::: keypoint
-First derive REINFORCE and DDPG. Then compare PPO and SAC as two complete learning procedures. TD3 supplies the prerequisite for Lecture 12's TD3+BC; A3C, GAE and exact trust-region derivations provide supporting context.
+Multi-agent DDPG (Lowe et al., 2017) belongs to the multi-agent face of the map and is taught in IE579.
+Derive REINFORCE and DPG first; then compare PPO and SAC as two complete procedures.
 :::
 
-### Backup 1 — the policy gradient theorem, the DP route (i): a recursion
-Use a fixed start distribution $\mu$, bounded rewards, and $\gamma<1$: $J(\theta)=\sum_s\mu(s)V^\pi(s)$. Define $\phi(s)=\sum_a\nabla_\theta\pi_\theta(a\mid s)Q^\pi(s,a)$.
+### The dynamics never solved, only experienced; the controller learned, not derived.
+{layout: standout}
 
-Differentiate $V^\pi(s)=\sum_a\pi_\theta(a\mid s)Q^\pi(s,a)$ and use the Bellman equation:
+One theorem, two routes, and three ways of using it:\
+a better weight on the score, a critic to climb, a step that stays where the batch is evidence.
 
-$$\nabla_\theta V^\pi(s)=\phi(s)+\gamma\sum_{s'}P^\pi(s'\mid s)\nabla_\theta V^\pi(s').$$
+### Questions?
+{layout: standout}
 
-The transition law has no direct parameter derivative, but the **future policy** still does. Repeated substitution produces discounted state visitations. This is different from differentiating an objective with an arbitrary stationary start distribution that itself depends on $\theta$.
-
-### Backup 2 — the policy gradient theorem, the DP route (ii): unrolled
-Let $d_\gamma^\pi(s)=(1-\gamma)\sum_{t\ge0}\gamma^tP_\pi(S_t=s\mid S_0\sim\mu)$. This is a normalized discounted visitation distribution.
-
-$$\nabla_\theta J(\theta)=\frac{1}{1-\gamma}\E_{s\sim d_\gamma^\pi,\,a\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a\mid s)Q^\pi(s,a)\big].$$
-
-The factor $1/(1-\gamma)$ can be absorbed into a learning rate; the **state weighting cannot simply be discarded**. Finite-horizon episodic versions use a sum over time instead.
-
-::: keypoint
-The trajectory route and the Bellman route agree when they describe the same objective and the same visitation weights.
-:::
-
-### Backup 3 — the baseline: unbiased, and the best one
-At a fixed state, put $z=\nabla_\theta\log\pi_\theta(a\mid s)$. Since $\E[z\mid s]=0$, subtracting a fixed $b(s)$ leaves the mean unchanged.
-
-For the variance of **one score-weighted contribution**, minimize $\E[\lVert z\rVert^2(G-b)^2\mid s]$. Differentiation gives
-
-$$b^*(s)=\frac{\E[\lVert z\rVert^2G\mid s]}{\E[\lVert z\rVert^2\mid s]}.$$
-
-This equals $V^\pi(s)=\E[G\mid s]$ when the score weight is constant or suitably uncorrelated with return. Correlations across time add further considerations for a whole-trajectory variance optimum.
-
-::: keypoint
-A value critic is a useful baseline, not a universal exact variance minimizer. Keep its output fixed during the actor derivative; same-sample fitting can introduce statistical dependence.
-:::
-
-### Backup 4 — GAE, and the $\lambda$ dial
-With $\delta^V_t = r_{t+1} + \gamma V(s_{t+1}) - V(s_t)$, the $k$-step advantage estimators telescope:
-
-$$\hat A_t^{(k)} = \sum_{l=0}^{k-1}\gamma^l\delta^V_{t+l} = -V(s_t) + r_{t+1} + \gamma r_{t+2} + \cdots + \gamma^{k-1}r_{t+k} + \gamma^k V(s_{t+k})$$
-
-$k=1$ is the one-step TD advantage: low variance, biased by whatever error $V$ carries. $k=\infty$ is the Monte-Carlo advantage: unbiased, and as noisy as REINFORCE. GAE takes the exponentially weighted average of all of them, {p}(Schulman et al., 2016)
-
-$$\hat A_t^{\mathrm{GAE}(\gamma,\lambda)} := (1-\lambda)\big(\hat A_t^{(1)} + \lambda\hat A_t^{(2)} + \lambda^2\hat A_t^{(3)} + \cdots\big) = \sum_{l=0}^{\infty}(\gamma\lambda)^l\,\delta^V_{t+l}$$
-
-which collapses to a single running sum of TD errors. $\lambda=0$ recovers one-step actor–critic, $\lambda=1$ recovers Monte-Carlo.
-
-::: small
-This is ==TD($\lambda$) applied to the advantage== rather than to the value, and the discount $\gamma$ is doing double duty: as the problem's discount, and as a variance-reduction parameter that downweights delayed effects at the cost of bias. Lecture 8's Backup 1 drew the same dial for MC-versus-TD; it is the same dial.
-:::
-
-### Backup 5 — TRPO's natural-gradient step, in closed form
-Maximise $L(\theta) = \E[r(\theta)\hat A]$ subject to $\bar D_{\mathrm{KL}}(\theta_{\mathrm{old}},\theta)\le\delta$.
-
-**Step 1 — local models.** To first and second order about $\theta_{\mathrm{old}}$,
-
-$$L(\theta)\approx g^\top(\theta-\theta_{\mathrm{old}}), \qquad \bar D_{\mathrm{KL}} \approx \tfrac12 (\theta-\theta_{\mathrm{old}})^\top H\,(\theta-\theta_{\mathrm{old}})$$
-
-with $g=\nabla_\theta L$ and $H$ the Fisher information matrix. The KL has zero gradient at $\theta_{\mathrm{old}}$, which is why its leading term is quadratic.
-
-**Step 2 — a linear objective on an ellipsoid.** The maximiser lies along the natural-gradient direction $H^{-1}g$, scaled to the KL radius:
-
-$$\theta_{\mathrm{new}} = \theta_{\mathrm{old}} + \sqrt{\frac{2\delta}{\,g^\top H^{-1}g\,}}\;H^{-1}g$$
-
-**Step 3 — practice.** $H^{-1}g$ is obtained by conjugate gradient without ever forming $H$, and the step is backtracked until the sample-estimated KL and surrogate improvement pass the line-search checks — which is Lecture 1's accept-or-shrink test, verbatim.
-
-::: small
-The derivation assumes an invertible positive-definite local Fisher matrix and a nonzero gradient. Implementations use damping and estimated quantities. PPO removes the second-order solve, but does not inherit a hard trust-region or monotonic-improvement guarantee.
-:::
-
-### Backup 6 — the policy-based zoo, placed
-These methods share policy optimization, but differ in objectives, estimators, data distributions and update rules. SAC explicitly includes entropy; PPO uses a clipped surrogate. A single vanilla policy-gradient formula does not specify every algorithm below.
-
-| Method | Key idea | Reference |
-|---|---|---|
-| REINFORCE | Monte-Carlo policy gradient, no critic | Williams, 1992 |
-| A3C / A2C | parallel actor–critic; recent diverse rollouts | Mnih et al., 2016 |
-| GAE | $\lambda$-weighted advantage | Schulman et al., 2016 |
-| DPG / DDPG | deterministic actor climbs $\nabla_a Q$; off-policy | Silver 2014; Lillicrap 2015 |
-| TD3 | twin critics, delayed actor — the overestimation fix | Fujimoto et al., 2018 |
-| TRPO | approximate KL trust-region update | Schulman et al., 2015 |
-| PPO | clipped surrogate; the workhorse | Schulman et al., 2017 |
-| SAC | maximum-entropy off-policy actor–critic | Haarnoja et al., 2018 |
-
-### Source extension — MADDPG changes the number of decision makers
-{sub: original policy-RL PDF pp. 71–74 · preview for IE579}
-
-With several agents, a critic can use the joint state and actions during training, while each actor uses its own observation when deployed.
-
-::: flow
-- **Centralised training** | critic for agent i sees joint information and actions
-- **Actor improvement** | differentiate the critic through agent i's action
-- **Decentralised execution** | each actor acts from its permitted observation
-:::
-
-This is **centralised training with decentralised execution**. Other agents' changing policies make the learning problem different from single-agent DDPG; actor gradients do not by themselves guarantee convergence to a Nash equilibrium.
-
-::: keypoint
-This extension belongs to the multi-agent face of the course map. It is a preview, not a prerequisite for Lecture 11.
-:::
-
-### The translation table — optimal control, learned
-::: lede
-Every object of Lecture 9 has a data-driven counterpart. Keep this in sight all lecture.
-:::
-
-| Lecture 9 (optimal control) | Lecture 10 (policy-based RL) | What replaces the model |
-|---|---|---|
-| value field $V(t,x)$, the HJB equation | critic $V_w$, $Q_w$ | a *learned* value |
-| feedback law $u=\gamma(t,x)$, $u=-Kx$ | actor $\pi_\theta(a\mid s)$ / $\mu_\theta(s)$ | a *learned* controller |
-| known dynamics $\dot x = f(x,u)$ | sampled transitions $(s,a,r,s')$ | the environment itself |
-| Pontryagin's costate, trajectory optimisation | REINFORCE, trajectory sampling | the score-function trick |
-| solve Riccati / HJB | gradient ascent on $J(\theta)$ | stochastic optimisation |
-| controllability of $(A,B)$ | sufficient exploration | a reachability assumption, either way |
-
-::: reveal
-::: small
-Read column 3. Nothing here is a new *principle* — it is Lecture 9's programme with the one piece we no longer own quietly swapped out. ==Policy gradient is optimal control with $f$ deleted and replaced by data.== DDPG's actor $\mu_\theta(s)$ is the learned cousin of LQR's gain $K$; REINFORCE also uses trajectories, but its score-function gradient is a different mathematical argument from Pontryagin’s costate equations.
-:::
-:::
-
-### One honest detour — why not identify the system?
-The most literal idea, and the exact rhyme of the detour Lecture 8 took: estimate the dynamics from data, then run Lecture 9 unchanged.
-
-$$(\hat A,\hat B) = \argmin_{A,B}\ \sum_t \big\lVert x_{t+1} - Ax_t - Bu_t \big\rVert^2 \quad\Longrightarrow\quad \text{solve the Riccati equation for } \hat K$$
-
-This is ==system identification==, it is the oldest idea in adaptive control, and it is perfectly valid.
-
-::: reveal
-But notice the same waste Lecture 8 noticed. To act we only ever need the controller — $m\times n$ numbers, or one network — yet here we first estimate a *whole dynamics model*, and then we act as though it were true. Why estimate $f$ at all,
-
-::: keypoint
-when we could estimate ==the controller directly?==
-:::
-:::
-
-::: reveal
-::: small
-That question — *skip the model, learn the thing that acts* — is the entire policy-based programme, and it is Lecture 8's question with $Q^*$ replaced by $\pi_\theta$. (The model comes back, deliberately and learned, in Lecture 11.)
-:::
-:::
+Lecture 8 learned action values; this lecture learned feedback policies.\
+Explain the policy gradient from the backup and from the trajectory.\
+Then distinguish DDPG's deterministic actor, PPO's clipped step and SAC's entropy.\
+Which learned model would let each of them use fewer real interactions?

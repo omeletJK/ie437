@@ -83,8 +83,8 @@ IE437.widget('continuous-argmax', function (host, opts) {
     '<div data-m style="padding:9px 11px;border:1px solid rgba(37,99,235,.35);' +
     'background:rgba(37,99,235,.06);font:400 11.5px/1.6 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 11px/1.5 var(--sans);color:var(--ink3)">' +
-    'Q-learning needs this maximum <i>at every transition</i>. The grid pays ' +
-    'n<sup>d</sup> for it; the actor pays one forward pass and settles for a local answer.' +
+    'Q-learning needs this maximum <i>at every transition</i>.<br>' +
+    'The grid pays n<sup>d</sup> for it; the actor pays one forward pass and settles for a local answer.' +
     '</div></div></div>';
 
   var CW = 500, CH = 254;

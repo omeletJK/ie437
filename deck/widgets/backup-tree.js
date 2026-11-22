@@ -199,8 +199,8 @@ IE437.widget('backup-tree', function (host, opts) {
     }
   }
   /* a value cone fanning right out of a state, with its V label */
-  function cone(g, x, y, r, label) {
-    var L = 70, h = 26, x0 = x + r;
+  function cone(g, x, y, r, label, Lc, hc) {
+    var L = Lc || 70, h = hc || 26, x0 = x + r;
     E('path', { d: 'M' + x0 + ' ' + y + 'L' + (x0 + L) + ' ' + (y - h) + 'L' + (x0 + L) + ' ' + (y + h) + 'Z', fill: BLUE, opacity: .12 }, g);
     E('path', { d: 'M' + x0 + ' ' + y + 'L' + (x0 + L) + ' ' + (y - h) + 'M' + x0 + ' ' + y + 'L' + (x0 + L) + ' ' + (y + h), fill: 'none', stroke: BLUE, 'stroke-width': 1, opacity: .45 }, g);
     if (label) tx(g, x0 + L + 6, y + 4, label, { fill: BLUE, 'font-size': 11.5 });
@@ -893,11 +893,129 @@ IE437.widget('backup-tree', function (host, opts) {
   function drawSarsa(k) { drawControl(k, false); }
   function drawQlearn(k) { drawControl(k, true); }
 
+  /* ============================================================
+     Chapter 10 — the same tree carries the policy gradient.
+     mode "score"    Route 1 (Ch 10 Act 1, source pp. 31–34): Ch 7's
+                     expectation backup for V^π(s) with all three actions
+                     weighted by π_θ(a|s). Step 1 tags the blue decision
+                     edges with θ and marks the green chance edges "no θ":
+                     the parameter lives on the blue edges only. Step 2
+                     writes ∇_θ V^π(s) under the tree, the P factor in
+                     slate: the model routes the gradient and carries no θ.
+                     Stepped (2).
+     mode "deterministic"  Ch 10 Act 3 (source p. 54): the Q backup from
+                     a chance node (s,a) to two successors, and at each s′
+                     a fan of actions a′ ∼ π with its inner expectation.
+                     Step 1 collapses each fan to the single edge μ(s′):
+                     the inner expectation is gone and only the
+                     environment is left inside the backup. Step 2 writes
+                     the two Bellman equations under the picture, the
+                     changed token red. Stepped (2).
+     ============================================================ */
+  function drawScore(k) {
+    var W = 760, H = 346, s = svg(W, H);
+    var S = [70, 150], RS = 18, RC = 13, RL = 10;
+    var ch = [[250, 60], [250, 150], [250, 240]];
+    var succ = [[[430, 38], [430, 84]], [[430, 128], [430, 174]], [[430, 218], [430, 264]]];
+    var gS = layer(s);
+    tx(gS, S[0] - 44, S[1] - 34, 'V^π(s)', { fill: BLUE, 'font-size': 12 });
+    ch.forEach(function (c, i) {
+      edge(gS, S[0], S[1], RS, c[0], c[1], RC, BLUE, { 'stroke-width': 2 });
+      elab(gS, S[0], S[1], c[0], c[1], ['π_θ(a_' + (i + 1) + '|s)'], i === 2 ? -1 : 1, { t: .58, d: 11, fs: 10.5, fill: BLUE });
+      chance(gS, c[0], c[1], RC, '', 'above');
+      tx(gS, c[0], c[1] - RC - 7, 'Q^π(s,a_' + (i + 1) + ')', { fill: GREEN, 'text-anchor': 'middle', 'font-size': 10.5 });
+      succ[i].forEach(function (p, j) {
+        edge(gS, c[0], c[1], RC, p[0], p[1], RL, GREEN, { 'stroke-width': 1.7 });
+        if (i === 1) elab(gS, c[0], c[1], p[0], p[1], ['P(s′|s,a_2)'], j === 0 ? 1 : -1, { t: .5, d: 11, fs: 9.5, fill: GREEN });
+        state(gS, p[0], p[1], RL, 's′', 10);
+        cone(gS, p[0], p[1], RL, j === 0 && i === 0 ? 'V^π(s′)' : '', 46, 14);
+      });
+    });
+    state(gS, S[0], S[1], RS, 's');
+    if (k >= 1) {
+      var g1 = layer(s);
+      /* θ sits on the decision edges only */
+      ch.forEach(function (c, i) {
+        var mx = S[0] + (c[0] - S[0]) * .32, my = S[1] + (c[1] - S[1]) * .32;
+        E('circle', { cx: mx, cy: my, r: 7.5, fill: '#fff', stroke: RED, 'stroke-width': 1.6 }, g1);
+        tx(g1, mx, my + 4, 'θ', { fill: RED, 'text-anchor': 'middle', 'font-size': 10 });
+      });
+      tx(g1, 150, 300, '\\text{θ lives on the blue edges: differentiate here}', { fill: RED, 'font-size': 11, 'text-anchor': 'middle' });
+      succ.forEach(function (pair, i) { pair.forEach(function (p, j) {
+        if (i !== 2) return;
+        var mx = ch[i][0] + (p[0] - ch[i][0]) * .55, my = ch[i][1] + (p[1] - ch[i][1]) * .55 + (j === 0 ? -9 : 15);
+        tx(g1, mx, my, 'no θ', { fill: SLATE, 'font-size': 9.5, 'text-anchor': 'middle' });
+      }); });
+      tx(g1, 560, 300, '\\text{the green edges carry no θ: the gradient passes through}', { fill: SLATE, 'font-size': 11, 'text-anchor': 'middle' });
+    }
+    if (k >= 2) {
+      var g2 = layer(s), y = H - 14;
+      var t = tight(tx(g2, 28, y, '∇_θ V^π(s) = \\sum_a ∇_θ π_θ(a|s)\\, Q^π(s,a) + \\sum_a π_θ(a|s) \\sum_{s′} \\text{P(s′|s,a)}\\, ∇_θ V^π(s′)', { 'font-size': 14 }));
+      /* the P factor set in slate: it routes the gradient and is not differentiated */
+      var sp = t.getElementsByTagName('tspan');
+      for (var i = 0; i < sp.length; i++) if (/P\(s′\|s,a\)/.test(sp[i].textContent)) { sp[i].setAttribute('fill', SLATE); sp[i].setAttribute('font-family', 'KaTeX_Math, serif'); sp[i].setAttribute('font-style', 'italic'); }
+      tx(g2, W - 10, y, '\\text{P routes the gradient, carries no θ}', { fill: RED, 'font-size': 11, 'text-anchor': 'end' });
+    }
+  }
+
+  function drawDeterministic(k) {
+    var W = 760, H = 336, s = svg(W, H);
+    var C = [70, 150], RC = 16, RS = 15, RC2 = 10;
+    var succ = [[240, 75], [240, 225]];
+    var fans = [[[400, 35], [400, 75], [400, 115]], [[400, 185], [400, 225], [400, 265]]];
+    var g0 = layer(s);
+    tx(g0, C[0], C[1] - RC - 10, k >= 1 ? 'Q^μ(s,a)' : 'Q^π(s,a)', { fill: GREEN, 'text-anchor': 'middle', 'font-size': 12 });
+    chance(g0, C[0], C[1], RC, 's,a', 'below');
+    succ.forEach(function (p, j) {
+      edge(g0, C[0], C[1], RC, p[0], p[1], RS, GREEN, { 'stroke-width': 2.2 });
+      elab(g0, C[0], C[1], p[0], p[1], ['P(s′|s,a),\\ r'], j === 0 ? 1 : -1, { d: 16, fs: 10.5, fill: GREEN });
+      state(g0, p[0], p[1], RS, 's′_' + (j + 1), 11);
+    });
+    tx(g0, 150, 160, '\\text{E}_{s′∼E}', { fill: GREEN, 'font-size': 11.5, 'text-anchor': 'middle' });
+    tx(g0, 150, 174, '\\text{the environment}', { fill: GREEN, 'font-size': 9.5, 'text-anchor': 'middle' });
+    if (k === 0) {
+      /* the stochastic policy: three actions sampled at each successor, an inner expectation over them */
+      succ.forEach(function (p, j) {
+        fans[j].forEach(function (q, i) {
+          edge(g0, p[0], p[1], RS, q[0], q[1], RC2, BLUE, { 'stroke-width': 1.5 });
+          elab(g0, p[0], p[1], q[0], q[1], ['a′_' + (i + 1)], i === 2 ? -1 : 1, { t: .62, d: 9, fs: 10, fill: BLUE });
+          chance(g0, q[0], q[1], RC2, '', 'above');
+          tx(g0, q[0] + RC2 + 5, q[1] + 4, 'Q^π(s′_' + (j + 1) + ',a′_' + (i + 1) + ')', { fill: SLATE, 'font-size': 10 });
+        });
+        var a0 = deg(p[0], p[1], fans[j][0][0], fans[j][0][1]), a1 = deg(p[0], p[1], fans[j][2][0], fans[j][2][1]);
+        var r0 = (a0 - 8) * Math.PI / 180, r1 = (a1 + 8) * Math.PI / 180, R = 56;
+        E('path', { d: 'M' + (p[0] + R * Math.cos(r0)).toFixed(1) + ' ' + (p[1] + R * Math.sin(r0)).toFixed(1) + 'A' + R + ' ' + R + ' 0 0 1 ' + (p[0] + R * Math.cos(r1)).toFixed(1) + ' ' + (p[1] + R * Math.sin(r1)).toFixed(1), fill: 'none', stroke: BLUE, 'stroke-width': 2 }, g0);
+        tx(g0, 318, j === 0 ? 18 : 296, '\\text{E}_{a′∼π_θ}\\ \\text{(the policy, inside the backup)}', { fill: BLUE, 'font-size': 10.5, 'text-anchor': 'middle' });
+      });
+    } else {
+      /* the deterministic policy: one edge μ(s′) at each successor, nothing to average */
+      succ.forEach(function (p, j) {
+        var q = fans[j][1];
+        edge(g0, p[0], p[1], RS, q[0], q[1], RC2, BLUE, { 'stroke-width': 2.6 });
+        elab(g0, p[0], p[1], q[0], q[1], ['μ(s′_' + (j + 1) + ')'], 1, { t: .55, d: 11, fs: 10.5, fill: BLUE });
+        chance(g0, q[0], q[1], RC2, '', 'above');
+        tx(g0, q[0] + RC2 + 5, q[1] + 4, 'Q^μ(s′_' + (j + 1) + ',μ(s′_' + (j + 1) + '))', { fill: INK, 'font-size': 10.5 });
+        tx(layer(s, .35), fans[j][0][0] + RC2 + 5, fans[j][0][1] + 4, '\\text{(no other action to average)}', { fill: SLATE, 'font-size': 9 });
+      });
+      tx(g0, 318, 18, '\\text{one edge: the inner expectation is gone}', { fill: RED, 'font-size': 10.5, 'text-anchor': 'middle' });
+    }
+    if (k >= 2) {
+      var g2 = layer(s);
+      var y1 = H - 36, y2 = H - 12;
+      var t1 = tight(tx(g2, 28, y1, 'Q^π(s,a) = \\text{E}_{r,s′∼E}[\\, r + γ\\, \\red{\\text{E}_{a′∼π}}[Q^π(s′,a′)] \\,]', { 'font-size': 14 }));
+      tx(g2, W - 10, y1, '\\text{environment and policy both inside}', { fill: SLATE, 'font-size': 11, 'text-anchor': 'end' });
+      var t2 = tight(tx(g2, 28, y2, 'Q^μ(s,a) = \\text{E}_{r,s′∼E}[\\, r + γ\\, Q^μ(s′, \\red{μ(s′)}) \\,]', { 'font-size': 14 }));
+      tx(g2, W - 10, y2, '\\text{the environment alone: off-policy, and one integral fewer}', { fill: RED, 'font-size': 11, 'text-anchor': 'end' });
+    }
+  }
+
   /* ---------- dispatch ---------- */
   var DRAW = { tree: drawTree, eval: drawEval, opt: drawOpt, qopt: drawQopt, improve: drawImprove,
-    'return': drawReturn, sample: drawSample, sarsa: drawSarsa, qlearn: drawQlearn, continuum: drawContinuum };
+    'return': drawReturn, sample: drawSample, sarsa: drawSarsa, qlearn: drawQlearn, continuum: drawContinuum,
+    score: drawScore, deterministic: drawDeterministic };
   var STEPS = { tree: 3, eval: opts.q ? 2 : 3, opt: 1, qopt: 1, improve: 2,
-    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 5 : 4, qlearn: NUMS ? 5 : 4, continuum: 2 };
+    'return': 3, sample: NUMS ? (NUMS.mc && NUMS.mc.r2 != null ? 4 : 3) : 2, sarsa: NUMS ? 5 : 4, qlearn: NUMS ? 5 : 4, continuum: 2,
+    score: 2, deterministic: 2 };
   var draw = DRAW[MODE] || drawEval, n = STEPS[MODE] == null ? 2 : STEPS[MODE];
 
   function render(i) {

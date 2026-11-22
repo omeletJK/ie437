@@ -109,11 +109,11 @@ IE437.widget('baseline-variance', function (host, opts) {
     '<div class="wlabel">the gain k over 100 updates</div><div data-c1></div></div>' +
     '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">' +
     '<div class="wlabel">variance of the per-episode gradient</div><div data-c2></div></div></div>' +
-    '<div data-num style="display:flex;gap:22px;justify-content:center;align-items:baseline;' +
+    '<div data-num style="display:flex;gap:22px;justify-content:center;align-items:baseline;min-height:36px;' +
     'font:400 12px/1.5 var(--sans);color:var(--ink2);border-top:1px solid rgba(22,24,29,.075);' +
     'padding-top:9px"></div></div>';
 
-  var W = 412, H = 226;
+  var W = 412, H = 200;
   var s1 = IE437.svg(W, H), s2 = IE437.svg(W, H);
   host.querySelector('[data-c1]').appendChild(s1);
   host.querySelector('[data-c2]').appendChild(s2);

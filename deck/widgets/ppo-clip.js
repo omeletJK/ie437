@@ -50,8 +50,8 @@ IE437.widget('ppo-clip', function (host, opts) {
     'font:400 11.5px/1.65 var(--sans);color:var(--ink2)"></div>' +
     '<div style="font:400 11px/1.5 var(--sans);color:var(--ink3);' +
     'border-top:1px solid rgba(22,24,29,.075);padding-top:9px">' +
-    'A flat objective is a zero gradient. The clip buys a trust region by ' +
-    'removing the reward for leaving one &mdash; no Fisher matrix, no line search.</div></div></div>';
+    'A flat objective is a zero gradient.<br>' +
+    'The clip buys a trust region by removing the reward for leaving one: no Fisher matrix, no line search.</div></div></div>';
 
   var CW = 468, CH = 250;
   var sv = IE437.svg(CW, CH);
