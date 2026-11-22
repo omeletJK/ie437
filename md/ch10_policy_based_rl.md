@@ -62,6 +62,10 @@ Source pp. 23–24, the professor's own overview figure: the cell is model-free,
 :::
 
 ::: reveal
+::: small
+The third answer was Pontryagin's: conditions along one trajectory, Lecture 9's Act 4.
+:::
+
 ::: keypoint
 Two debts, one lecture.
 A policy that outputs the action pays the first; a gradient that needs no model pays the second.
@@ -142,9 +146,14 @@ The same figure returns at the start of every act, as Lecture 9's did. All four 
 :::
 
 ### The objective, in Lecture 7's objects
-**The policy-gradient objective** — a parameterised policy $\pi_\theta(a\mid s)$, scored by the value of the states it visits:
+**The policy-gradient objective** — a parameterised policy $\pi_\theta(a\mid s)$, scored by the return of the episodes it produces from $s_0$:
 
-$$J(\theta)=\sum_{s}d^\pi(s)\,V^\pi(s)=\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,Q^\pi(s,a),\qquad d^\pi(s)=\lim_{t\to\infty}P(s_t=s\mid s_0,\pi_\theta)$$
+$$\begin{aligned}J(\theta)&=V^\pi(s_0)=\E_{\tau\sim\pi_\theta}\Big[\sum_{t=0}^{T-1}r_{t+1}\Big]&&\red{\scriptstyle\text{the return from the start state}}\\ &\propto\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,Q^\pi(s,a)&&\red{\scriptstyle\text{the same, averaged over the states visited}}\end{aligned}$$
+
+::: small
+$d^\pi(s)$ is how often $\pi_\theta$ visits $s$ when started from $s_0$, normalised to a distribution; Route 1 derives it.
+$r_{t+1}$ is the reward paid after $a_t$, Lecture 8's convention, kept throughout; the sums over $a$ become integrals for a continuous action.
+:::
 
 ::: reveal
 **What is sought** — the best parameter, by gradient ascent:
@@ -154,13 +163,13 @@ $$\theta^*=\argmax_\theta J(\theta),\qquad\theta\leftarrow\theta+\alpha\,\nabla_
 
 ::: reveal
 ::: keypoint
-Nothing here is new: $V^\pi$, $Q^\pi$ and the on-policy state distribution are Lecture 7's objects.
+$V^\pi$ and $Q^\pi$ are Lecture 7's; $d^\pi$, how often the policy visits each state, is the one new object.
 What is new is where the parameter lives: ==inside the distribution being averaged over.==
 :::
 :::
 
 ::: note
-Source p. 29, verbatim in re-typed form. d^π is the stationary distribution of the Markov chain the policy induces, the on-policy state distribution; the source's closing bullets say why a policy is learned directly: there are infinitely many actions to value, and argmax_a Q needs a full scan of the action space. Gradient ascent, because J is a return; Lecture 9 minimised a cost.
+Source p. 29 writes J = Σ_s d^π(s) V^π(s) with d^π the stationary distribution of the chain the policy induces; the start-state form J = V^π(s_0) is the one Route 1 differentiates and Route 2 samples, and d^π then comes out as the normalised visitation from s_0 (the source's p. 34). Say the two agree up to a constant; the source's closing bullets say why a policy is learned directly: there are infinitely many actions to value, and argmax_a Q needs a full scan of the action space. Gradient ascent, because J is a return; Lecture 9 minimised a cost.
 :::
 
 ### The naive gradient — perturb one parameter at a time
@@ -206,15 +215,15 @@ Source pp. 31–32 drawn on the Ch 7 tree. Press one tags the decision edges wit
 ### Route 1 — the derivation, one line per press
 {fill: top, math: compact}
 
-**From the Bellman equation to the policy gradient theorem** — the backup differentiated, then unrolled:
+**Bellman equation to policy gradient theorem** — the backup differentiated, then unrolled from $s_0$, with $J=V^\pi(s_0)$:
 
 $$\begin{aligned}
 V^\pi(s)&=\sum_a\pi_\theta(a\mid s)\,Q^\pi(s,a) &&\red{\scriptstyle\text{Lecture 7's expectation backup}}\\
 \step{1}{\nabla_\theta V^\pi(s)}&\step{1}{=\sum_a\Big[\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\,\nabla_\theta Q^\pi(s,a)\Big]} &&\step{1}{\red{\scriptstyle\text{the product rule}}}\\
-\step{2}{\nabla_\theta Q^\pi(s,a)}&\step{2}{=\nabla_\theta\sum_{s'}P(s'\mid s,a)\big[r+V^\pi(s')\big]=\sum_{s'}\hl{P(s'\mid s,a)}\,\nabla_\theta V^\pi(s')} &&\step{2}{\red{\scriptstyle P \text{ carries no } \theta\text{: pass through}}}\\
+\step{2}{\nabla_\theta Q^\pi(s,a)}&\step{2}{=\nabla_\theta\sum_{s'}P(s'\mid s,a)\big[R+V^\pi(s')\big]=\sum_{s'}\hl{P(s'\mid s,a)}\,\nabla_\theta V^\pi(s')} &&\step{2}{\red{\scriptstyle P, R \text{ carry no } \theta\text{: pass through}}}\\
 \step{3}{\nabla_\theta V^\pi(s)}&\step{3}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\nabla_\theta V^\pi(s'),\quad \phi(s):=\sum_a\nabla_\theta\pi_\theta\,Q^\pi,\ \ \rho^\pi(s\to s',1):=\sum_a\pi_\theta P} &&\step{3}{\red{\scriptstyle\text{a Bellman equation for the gradient}}}\\
-\step{4}{\nabla_\theta V^\pi(s)}&\step{4}{=\sum_{x}\sum_{k=0}^{\infty}\rho^\pi(s\to x,k)\,\phi(x)} &&\step{4}{\red{\scriptstyle\text{unroll}}}\\
-\step{5}{\nabla_\theta J(\theta)}&\step{5}{=\sum_s\eta(s)\,\phi(s)\;\propto\;\sum_s d^\pi(s)\sum_a\pi_\theta(a\mid s)\,\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)} &&\step{5}{\red{\scriptstyle\text{normalise; } \nabla\pi=\pi\nabla\log\pi}}
+\step{4}{\nabla_\theta V^\pi(s)}&\step{4}{=\sum_{x}\sum_{k=0}^{\infty}\rho^\pi(s\to x,k)\,\phi(x)} &&\step{4}{\red{\scriptstyle\text{unroll; } \rho^\pi(s\to x,k)\text{: the } k\text{-step reach}}}\\
+\step{5}{\nabla_\theta J}&\step{5}{=\sum_s\eta(s)\,\phi(s)\;\propto\;\sum_s d^\pi(s)\sum_a\pi_\theta\,\nabla_\theta\log\pi_\theta\,Q^\pi} &&\step{5}{\red{\scriptstyle\eta(s)=\sum_k\rho^\pi(s_0\to s,k)\propto d^\pi(s)}}
 \end{aligned}$$
 
 ::: reveal
@@ -224,7 +233,7 @@ The dynamics appear once, on line 2, and only as a weight: ==every $\theta$ in t
 :::
 
 ::: note
-Source pp. 31–34, line for line. Line 0 is the Bellman expectation equation. Line 1 is the product rule. Line 2 extends Q^π one step with the next state value; P is not a function of θ, so ∇ passes through it, which the source annotates "gradient does not depend on ∇θ of the dynamics". Line 3 names φ(s), the one-step contribution, and ρ^π(s→s',1) = Σ_a π_θ(a|s)P(s'|s,a), the one-step visitation; the equation has the form of a Bellman equation with φ in place of the reward. Line 4 unrolls it with ρ^π(s→x,k) the k-step visitation, so the gradient at s is the sum of φ over every state reachable from s, weighted by how often it is reached. Line 5 sets η(s) = Σ_k ρ^π(s_0→s,k), the unnormalised visitation, and divides by Σ_s η(s) to get d^π; the constant is absorbed into the learning rate, and the proportionality sign is the source's own. The last move is ∇π = π ∇log π, which turns the sum over a into an expectation under π_θ. Discounted version: γ enters ρ and the constant becomes 1/(1−γ).
+Source pp. 31–34, line for line. Line 0 is the Bellman expectation equation. Line 1 is the product rule. Line 2 extends Q^π one step with the next state value; P is not a function of θ, so ∇ passes through it, which the source annotates "gradient does not depend on ∇θ of the dynamics". Line 3 names φ(s), the one-step contribution, and ρ^π(s→s',1) = Σ_a π_θ(a|s)P(s'|s,a), the one-step visitation; the equation has the form of a Bellman equation with φ in place of the reward and ρ in place of the transition. Say the last move aloud: ∇π = π ∇log π turns the sum over a into an expectation under π_θ. Line 4 unrolls it with ρ^π(s→x,k) the k-step visitation, so the gradient at s is the sum of φ over every state reachable from s, weighted by how often it is reached. Line 5 sets η(s) = Σ_k ρ^π(s_0→s,k), the unnormalised visitation, and divides by Σ_s η(s) to get d^π; the constant is absorbed into the learning rate, and the proportionality sign is the source's own. The last move is ∇π = π ∇log π, which turns the sum over a into an expectation under π_θ. Discounted version: γ enters ρ and the constant becomes 1/(1−γ).
 :::
 
 ### The policy gradient theorem
@@ -234,7 +243,9 @@ $$\nabla_\theta J(\theta)\;\propto\;\E_{s\sim d^\pi,\ a\sim\pi_\theta}\Big[\nabl
 
 ::: reveal
 **What it says** — make an action likelier in proportion to how good it is, averaged over the states visited.\
+**The score** — $\nabla_\theta\log\pi_\theta(a\mid s)$, the gradient of a log-likelihood, which Lecture 2 took for the coin; statistics calls it the score.\
 **What it needs** — samples of $s$ and $a$ from running the policy, and an estimate of $Q^\pi(s,a)$.\
+**The $\propto$** — its constant goes into the step size.\
 **What it does not need** — the dynamics $P$, anywhere.
 :::
 
@@ -251,7 +262,7 @@ The theorem's expectation is on-policy: s from d^π and a from π_θ, as the sou
 
 ### Route 2 — one trajectory, and its law
 ::: widget pg-trajectory {"mode":"law"}
-One episode of the heater, five sampled $(s_t,a_t)$ marked.
+One episode of the heater, five sampled $(s_t,a_t)$ marked; press for the law $p_\theta(\tau)$ and its log-gradient.
 ==The policy's factors sit on the points, the world's factors on the edges==; the law is their product.
 :::
 
@@ -263,7 +274,7 @@ This is Lecture 9's Pontryagin move with the model deleted: conditions along one
 :::
 
 ::: note
-Source p. 81, "the single most important line in the chapter": p(τ) = μ(s_0) Π π_θ(a_t|s_t) P(s_{t+1}|s_t,a_t), and ∇ log p(τ) = Σ ∇ log π_θ(a_t|s_t) because log P carries no θ. The source says why the theorem is derived a second time (p. 80): the first derivation used the state value and the recursion of dynamic programming; this one uses only episodes the agent engages in. Lecture 9 taught the same pair, a value field over states and then conditions along one trajectory.
+Source p. 81, "the single most important line in the chapter": p(τ) = p_0(s_0) Π π_θ(a_t|s_t) P(s_{t+1}|s_t,a_t), and ∇ log p(τ) = Σ ∇ log π_θ(a_t|s_t) because log P carries no θ. The source says why the theorem is derived a second time (p. 80): the first derivation used the state value and the recursion of dynamic programming; this one uses only episodes the agent engages in. Lecture 9 taught the same pair, a value field over states and then conditions along one trajectory.
 :::
 
 ### Route 2 — the derivation, one line per press
@@ -272,12 +283,12 @@ Source p. 81, "the single most important line in the chapter": p(τ) = μ(s_0) �
 **The log-derivative trick** — the gradient of an expectation turned into an expectation of a gradient, source p. 82:
 
 $$\begin{aligned}
-\nabla_\theta\,\E_{\tau\sim p_\theta}\big[R(\tau)\big]&=\nabla_\theta\int p_\theta(\tau)\,R(\tau)\,d\tau &&\red{\scriptstyle R(\tau)=\sum_t r_t\text{; } \theta \text{ is in the density}}\\
+\nabla_\theta\,\E_{\tau\sim p_\theta}\big[R(\tau)\big]&=\nabla_\theta\int p_\theta(\tau)\,R(\tau)\,d\tau &&\red{\scriptstyle R(\tau)=\sum_t r_{t+1}\text{, the return; } \theta \text{ is in the density } p_\theta(\tau)}\\
 \step{1}{}&\step{1}{=\int\frac{p_\theta(\tau)}{p_\theta(\tau)}\,\nabla_\theta p_\theta(\tau)\,R(\tau)\,d\tau=\int p_\theta(\tau)\,\nabla_\theta\log p_\theta(\tau)\,R(\tau)\,d\tau} &&\step{1}{\red{\scriptstyle\nabla p=p\,\nabla\log p}}\\
 \step{2}{}&\step{2}{=\E_{\tau\sim p_\theta}\Big[\nabla_\theta\log p_\theta(\tau)\,R(\tau)\Big]} &&\step{2}{\red{\scriptstyle\text{an expectation of a gradient}}}\\
-\step{3}{\nabla_\theta\log p_\theta(\tau)}&\step{3}{=\underbrace{\nabla_\theta\log\mu(s_0)}_{0}+\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)+\underbrace{\sum_t\nabla_\theta\log\hl{P(s_{t+1}\mid s_t,a_t)}}_{0}} &&\step{3}{\red{\scriptstyle\text{the law: the } P \text{ terms vanish}}}\\
-\step{4}{\nabla_\theta J(\theta)}&\step{4}{=\E_{\tau\sim\pi_\theta}\Big[\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_t\Big)\Big]} &&\step{4}{\red{\scriptstyle\text{substitute}}}\\
-\step{5}{}&\step{5}{\approx\frac1N\sum_{i=1}^{N}\Big(\sum_t\nabla_\theta\log\pi_\theta(a^{(i)}_t\mid s^{(i)}_t)\Big)\Big(\sum_t r^{(i)}_t\Big)} &&\step{5}{\red{\scriptstyle\text{sample } N \text{ episodes: the estimator}}}
+\step{3}{\nabla_\theta\log p_\theta(\tau)}&\step{3}{=\underbrace{\nabla_\theta\log p_0(s_0)}_{0}+\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)+\underbrace{\sum_t\nabla_\theta\log\hl{P(s_{t+1}\mid s_t,a_t)}}_{0}} &&\step{3}{\red{\scriptstyle\text{the law: the } P \text{ terms vanish}}}\\
+\step{4}{\nabla_\theta J(\theta)}&\step{4}{=\E_{\tau\sim p_\theta}\Big[\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_{t+1}\Big)\Big]} &&\step{4}{\red{\scriptstyle\text{substitute}}}\\
+\step{5}{}&\step{5}{\approx\frac1N\sum_{i=1}^{N}\Big(\sum_t\nabla_\theta\log\pi_\theta(a^{(i)}_t\mid s^{(i)}_t)\Big)\Big(\sum_t r^{(i)}_{t+1}\Big)} &&\step{5}{\red{\scriptstyle\text{sample } N \text{ episodes: the estimator}}}
 \end{aligned}$$
 
 ::: reveal
@@ -326,7 +337,7 @@ Source p. 84: the first factor labelled "probability of trajectory" and identifi
 
 ::: reveal
 ::: keypoint
-REINFORCE is Route 2 sampling Route 1's $Q^\pi(s_t,a_t)$ with the return that followed, $G_t$.
+REINFORCE is Route 2 sampling Route 1's $Q^\pi(s_t,a_t)$ with the return; Act 2's first rung shows that only the part after $t$ matters, $G_t$.
 Everything in Act 2 is a better sample of that $Q^\pi$.
 :::
 :::
@@ -346,12 +357,12 @@ The two agree because Q^π(s,a) = E[G_t | s_t = s, a_t = a] (source p. 36); summ
 
 **The update** — the theorem with $Q^\pi(s_t,a_t)$ replaced by the return that actually followed, $G_t=\sum_{k\ge t}\gamma^{k-t}r_{k+1}$:
 
-$$\begin{aligned}\nabla_\theta J(\theta)&=\E_\pi\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t\big]&&\red{\scriptstyle\text{since } Q^\pi(s,a)=\E_\pi[G_t\mid s_t=s,a_t=a]}\\ \theta&\leftarrow\theta+\alpha\sum_t\gamma^t\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t&&\red{\scriptstyle\text{the update, per episode}}\end{aligned}$$
+$$\begin{aligned}\nabla_\theta J(\theta)&\propto\E_{s\sim d^\pi,a\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)\big]&&\red{\scriptstyle\text{the theorem}}\\ &=\E_{\tau\sim\pi_\theta}\Big[\sum_t\gamma^t\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t\Big]&&\red{\scriptstyle\text{an episode's steps sample } d^\pi\text{; } Q^\pi(s_t,a_t)=\E[G_t\mid s_t,a_t]}\\ \theta&\leftarrow\theta+\alpha\sum_t\gamma^t\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,G_t&&\red{\scriptstyle\text{the update, per episode}}\end{aligned}$$
 
 ::: reveal
 ::: keypoint
 It relies on a full episode, which is why it is a Monte Carlo method.
-The factor $\gamma^t$ belongs to the discounted objective; the undiscounted heater below has $\gamma=1$, and it is dropped from here on.
+The weight $\gamma^t$ in front of the score is dropped from here on, as implementations do; $\gamma$ inside returns and TD errors stays.
 :::
 :::
 
@@ -397,13 +408,13 @@ Source p. 37's figure, redrawn: a trajectory with five sampled (S_t, A_t), a das
 ### One parameter — both observations push the same way
 ::: widget pg-pictures {"mode":"scores"}
 One state, two actions, $\pi_\theta(A)=\sigma(\theta)$ at $\theta=0$: the two scores point opposite ways.
-Multiply by the advantages, $+1$ for A and $-1$ for B, and ==both contributions move $\theta$ to the right.==
+Weight each by its reward minus the average reward, $+1$ for A and $-1$ for B, and ==both contributions move $\theta$ to the right.==
 :::
 
 ::: reveal
 ::: keypoint
 The sign of an update comes from the score and the weight together.
-An action that did worse than expected pushes the probability away from itself, which is the same direction.
+An action that did worse than average pushes the probability away from itself, which is the same direction; Act 2 says why subtracting the average is allowed.
 :::
 :::
 
@@ -413,8 +424,8 @@ The numbers, for the board: p = σ(0) = 0.5, so ∇_θ log π(A) = 1 − p = 0.5
 
 ### REINFORCE, run — the gain, learned blind
 ::: widget policy-gradient {"seed":4}
-The heater, $x_{t+1}=x_t+u_t$, cost $\sum(x^2+u^2)$, policy $u=-kx+\sigma\varepsilon$: the only parameter is the gain $k$.
-REINFORCE never sees $A$ or $B$, and the gain walks to ==the Riccati gain $0.618$== of Lecture 9.
+The heater, $x_{t+1}=x_t+u_t$, reward $-(x^2+u^2)$ per step for twelve steps, policy $u=-kx+\sigma\varepsilon$: $x$ is $s$, $u$ is $a$, the gain $k$ is $\theta$.
+REINFORCE never sees the dynamics, and the gain walks to ==the Riccati gain $0.618$== of Lecture 9.
 :::
 
 ::: reveal
@@ -463,12 +474,12 @@ The spine sentence of the source, p. 35: "This vanilla policy gradient update ha
 ### Why the estimate is so noisy
 **One episode's contribution** — every score multiplied by the same scalar, the whole episode's return:
 
-$$\hat g^{(i)}=\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_t\Big)$$
+$$\hat g^{(i)}=\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_{t+1}\Big)$$
 
 ::: reveal
 ::: small
 One unlucky tail rescales all $T$ scores together, and the return is itself a sum of $T$ random rewards along a random path.
-An action at $t=40$ is credited with a reward paid at $t=1$, which it could not have caused.
+An action at $t=40$ is credited with a reward paid at $t=1$, before it was taken.
 :::
 :::
 
@@ -486,12 +497,12 @@ Source p. 89's closing sentence, promoted to the act's thesis: "the problem of p
 ### Rung 1 — causality: half the terms were pure noise
 ::: widget pg-trajectory {"mode":"causal"}
 The lines now start at $t$: an action at $t$ cannot affect a reward paid before it.
-==The grey cells of the triangle have mean zero== and contributed nothing but variance.
+==The grey cells of the triangle have mean zero==, because the expected score is zero (next slide proves it); they added only variance.
 :::
 
 ::: reveal
 ::: keypoint
-The weight becomes the ==reward to go==, $\hat Q_t=\sum_{t'\ge t}r_{t'}$, an unbiased sample of $Q^\pi(s_t,a_t)$.
+The weight becomes the ==reward to go==, $\hat Q_t=\sum_{t'\ge t}r_{t'+1}$, an unbiased sample of $Q^\pi(s_t,a_t)$.
 The cost of this rung is one index; in the Act 1 demo it removes about half the variance.
 :::
 :::
@@ -506,7 +517,7 @@ Source p. 85 with its margin picture: (f_0 + ⋯ + f_T)(r_0 + ⋯ + r_T) expande
 **The baseline, and the proof that it is free** — source pp. 86–87, one line per press:
 
 $$\begin{aligned}
-\nabla_\theta J&=\E_{\tau\sim\pi_\theta}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big(\sum_{t'\ge t}r_{t'}-\hl{b(s_t)}\Big)\Big] &&\red{\scriptstyle\text{the claim: any } b(s_t)}\\
+\nabla_\theta J&=\E_{\tau\sim\pi_\theta}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big(\hat Q_t-\hl{b(s_t)}\Big)\Big] &&\red{\scriptstyle\text{the claim: any } b(s_t)}\\
 \step{1}{\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]}&\step{1}{=\E_{s_{0:t},a_{0:t-1}}\Big[b(s_t)\;\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]\Big]} &&\step{1}{\red{\scriptstyle\text{split at } t\text{; } b(s_t) \text{ fixed given } s_t}}\\
 \step{2}{\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]}&\step{2}{=\int\frac{\nabla_\theta\pi_\theta(a_t\mid s_t)}{\pi_\theta(a_t\mid s_t)}\,\pi_\theta(a_t\mid s_t)\,da_t=\nabla_\theta\int\pi_\theta(a_t\mid s_t)\,da_t} &&\step{2}{\red{\scriptstyle\nabla\log\pi=\nabla\pi/\pi}}\\
 \step{3}{}&\step{3}{=\nabla_\theta 1=0\qquad\Longrightarrow\qquad\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]=\E\big[b(s_t)\cdot0\big]=0} &&\step{3}{\red{\scriptstyle\text{the density integrates to one: zero bias}}}
@@ -529,15 +540,15 @@ Source pp. 86–87, line for line: "we need to verify two things: inserting a ba
 **The variance-minimising baseline** — source p. 88, three lines per press:
 
 $$\begin{aligned}
-\mathrm{Var}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big(R_t-b(s_t)\big)\Big]&\approx\sum_t\E\big[\lVert\nabla_\theta\log\pi_\theta(a_t\mid s_t)\rVert^2\big]\;\E\big[(R_t-b(s_t))^2\big] &&\red{\scriptstyle\text{independent terms; score and return uncorrelated}}\\
-\step{1}{b^*(s_t)}&\step{1}{=\argmin_{b}\;\E\big[(R_t-b(s_t))^2\big]} &&\step{1}{\red{\scriptstyle\text{a least-squares problem in } b}}\\
-\step{2}{b^*(s_t)}&\step{2}{=\E_{\tau\sim\pi_\theta}\big[R_t\mid s_t\big]=V^\pi(s_t)} &&\step{2}{\red{\scriptstyle\text{the mean minimises a squared error}}}
+\mathrm{Var}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big(\hat Q_t-b(s_t)\big)\Big]&\approx\sum_t\E\big[\lVert\nabla_\theta\log\pi_\theta(a_t\mid s_t)\rVert^2\big]\;\E\big[(\hat Q_t-b(s_t))^2\big] &&\red{\scriptstyle\text{approximation: } \lVert\text{score}\rVert^2 \text{ and } (\hat Q_t-b)^2 \text{ uncorrelated}}\\
+\step{1}{b^*(s_t)}&\step{1}{=\argmin_{b}\;\E\big[(\hat Q_t-b(s_t))^2\big]} &&\step{1}{\red{\scriptstyle\text{a least-squares problem in } b}}\\
+\step{2}{b^*(s_t)}&\step{2}{=\E_{\tau\sim\pi_\theta}\big[\hat Q_t\mid s_t\big]=V^\pi(s_t)} &&\step{2}{\red{\scriptstyle\text{the mean minimises a squared error}}}
 \end{aligned}$$
 
 ::: reveal
 ::: keypoint
-The critic is not a design choice.
-==It is the least-squares solution to a variance problem==, and it must be re-fitted as the policy moves, because $V^\pi$ moves with $\pi$.
+Under that approximation the best baseline is $V^\pi(s_t)$: ==the critic is the least-squares answer to a variance problem.==
+Not a design choice, and re-fitted as the policy moves, because $V^\pi$ moves with $\pi$.
 :::
 :::
 
@@ -579,9 +590,13 @@ Left: the gain over 100 updates, amber without and blue with the baseline; right
 :::
 
 ### Rung 3 — the advantage
-**The advantage** — put the two rungs together, $b(s)=V^\pi(s)$ and the reward to go standing in for $Q^\pi$:
+**The advantage** — the two rungs together, $b(s)=V^\pi(s)$ with the reward to go standing in for $Q^\pi$:
 
-$$\Psi_t=Q^\pi(s_t,a_t)-V^\pi(s_t)=A^\pi(s_t,a_t)\qquad\text{how much better than this state's average was this action}$$
+$$\Psi_t=\hat Q_t-V^\pi(s_t),\qquad\E\big[\Psi_t\mid s_t,a_t\big]=Q^\pi(s_t,a_t)-V^\pi(s_t)=:A^\pi(s_t,a_t)$$
+
+::: small
+Read $A^\pi$ as: how much better than this state's average was this action.
+:::
 
 ::: reveal
 $$\nabla_\theta J=\E_\tau\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\big(Q^\pi(s_t,a_t)-V^\pi(s_t)\big)\Big]=\E_\tau\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,A^\pi(s_t,a_t)\Big]$$
@@ -590,7 +605,7 @@ $$\nabla_\theta J=\E_\tau\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\b
 ::: reveal
 ::: keypoint
 Three rungs, and the mean has not moved once.
-From here on $V^\pi$ has to be ==learned==, and that is the critic.
+From here on $V^\pi$ has to be ==learned as a function of the state==, and that function is the critic.
 :::
 :::
 
@@ -616,7 +631,7 @@ Source p. 27, two overlapping discs: Value function (value based), Policy (polic
 :::
 
 ### Rung 4 — the critic's TD error as the weight
-**One-step actor–critic** — the advantage estimated from one transition and a learned $V_w$, Lecture 8's TD error:
+**One-step actor–critic** — Lecture 8's TD error as a one-sample advantage: $\E[\delta_t\mid s_t,a_t]=A^\pi(s_t,a_t)$ when $V_w=V^\pi$:
 
 $$\hat A_t=\delta_t=r_{t+1}+\gamma V_w(s_{t+1})-V_w(s_t),\qquad\theta\leftarrow\theta+\alpha_\theta\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\delta_t,\qquad w\leftarrow w+\alpha_w\,\delta_t\,\nabla_wV_w(s_t)$$
 
@@ -626,11 +641,11 @@ $$\hat A_t=\delta_t=r_{t+1}+\gamma V_w(s_{t+1})-V_w(s_t),\qquad\theta\leftarrow\
   [start] $s\leftarrow s_0$
   [for each] step, until $s$ is terminal
     [act] $a\sim\pi_\theta(\cdot\mid s)$; take $a$, observe $r$, $s'$ // one transition, no waiting for $T$
-    [critic] $\delta\leftarrow r+\gamma V_w(s')-V_w(s)$; $\;w\leftarrow w+\alpha_w\,\delta\,\nabla_wV_w(s)$ // Lecture 8's TD(0) update
+    [critic] $\delta\leftarrow r+\gamma V_w(s')-V_w(s)$; $\;w\leftarrow w+\alpha_w\,\delta\,\nabla_wV_w(s)$ // Lecture 8's TD(0) update; $\delta$ is a one-sample advantage
   ! [learn] $\theta\leftarrow\theta+\alpha_\theta\,\nabla_\theta\log\pi_\theta(a\mid s)\,\red{\delta}$ // the TD error weights the score
     [move] $s\leftarrow s'$
 ---
-the critic is fitted on the same transitions the actor learns from, so its error is a bias in the actor's gradient; the price of not waiting for the episode's end
+while $V_w$ is wrong, bootstrapping on it puts its error into the actor's gradient as a bias; $\gamma$ as Lecture 8 wrote it, $1$ on the heater
 :::
 
 ::: note
@@ -664,14 +679,14 @@ Source p. 46's figure, the direct sequel to p. 37's: the same timeline, the dash
 :::
 
 $$\begin{aligned}
-\hat A^{(k)}_t&=\sum_{l=0}^{k-1}\gamma^l\,\delta_{t+l}=-V(s_t)+r_{t+1}+\gamma r_{t+2}+\cdots+\gamma^{k-1}r_{t+k}+\gamma^kV(s_{t+k}) &&\red{\scriptstyle\text{the } k\text{-step advantage telescopes into a sum of TD errors}}\\
+\hat A^{(k)}_t&=\sum_{l=0}^{k-1}\gamma^l\,\delta_{t+l}=-V(s_t)+r_{t+1}+\gamma r_{t+2}+\cdots+\gamma^{k-1}r_{t+k}+\gamma^kV(s_{t+k}) &&\red{\scriptstyle\text{rung 5's } k\text{-step return minus } V(s_t)\text{, which telescopes into TD errors}}\\
 \step{1}{\hat A^{\mathrm{GAE}(\gamma,\lambda)}_t}&\step{1}{=(1-\lambda)\big(\hat A^{(1)}_t+\lambda\hat A^{(2)}_t+\lambda^2\hat A^{(3)}_t+\cdots\big)} &&\step{1}{\red{\scriptstyle\text{average every } k \text{ with weight } \lambda^{k-1}}}\\
 \step{2}{}&\step{2}{=\sum_{l=0}^{\infty}(\gamma\lambda)^l\,\delta_{t+l}} &&\step{2}{\red{\scriptstyle\text{one running sum of TD errors; } \lambda=0 \text{ is rung 4, } \lambda=1 \text{ is rung 3}}}
 \end{aligned}$$
 
 ::: reveal
 ::: keypoint
-GAE is ==TD($\lambda$) for the advantage==: Lecture 8's dial, moved from the value to the thing that trains the policy.
+GAE is ==a $\lambda$-weighted average of every $n$-step advantage==: Lecture 8's Monte Carlo against TD dial, now on the weight.
 $\gamma$ does double duty here, as the problem's discount and as a second variance dial.
 :::
 :::
@@ -690,7 +705,7 @@ A3C lets each worker update when it is ready.\
 Parallel workers diversify recent experience, as a buffer does.
 :::
 ::: col.accent Off-policy gradient · the importance ratio (Degris et al., 2012)
-Data from a behaviour policy $\beta$ can estimate an expectation under $\pi_\theta$ at a fixed state:
+Lecture 6's importance ratio, with the policy as the proposal: data from a behaviour policy $\beta$ estimate an expectation under $\pi_\theta$ at a fixed state, for any $h$:
 
 $$\E_{a\sim\pi_\theta}[h(s,a)]=\E_{a\sim\beta}\Big[\frac{\pi_\theta(a\mid s)}{\beta(a\mid s)}\,h(s,a)\Big]$$
 
@@ -711,7 +726,7 @@ Source pp. 44–47 for A3C: "parallelism decorrelates the agents' data into a mo
 :::
 
 ### The ladder so far — one gradient, the weight changed
-::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Reward to go","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_{t′ ≥ t} r_{t′}} ]","note":"only what the action could still cause","loop":"one episode per update"},{"title":"Baseline","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, ( \\sum_{t′ ≥ t} r_{t′} \\red{− b(s_t)} ) ]","note":"anything action-independent is free","loop":"refit b each update"},{"title":"Advantage","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{A^π(s_t,a_t)} ]","note":"Q − V: better than this state's average","loop":"needs a learned V"},{"title":"Actor–critic","line":"for each transition (s, a, r, s′):","formula":"∇_θ J ≈ \\text{E}[ ∇_θ \\log π_θ(a|s) \\, \\red{δ} ],\\quad δ = r + γ V_w(s′) − V_w(s)","note":"the TD error: one step sampled, the rest bootstrapped","loop":"one transition per update"},{"title":"GAE","line":"for each step t, with λ ∈ [0,1]:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD(λ) for the advantage","loop":"λ dials MC against TD"}]}
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Reward to go","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_{t′ ≥ t} r_{t′+1}} ]","note":"only what the action could still cause","loop":"one episode per update"},{"title":"Baseline","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, ( \\sum_{t′ ≥ t} r_{t′+1} \\red{− b(s_t)} ) ]","note":"anything action-independent is free","loop":"refit b each update"},{"title":"Advantage","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{A^π(s_t,a_t)} ]","note":"Q − V: better than this state's average","loop":"needs a learned V"},{"title":"Actor–critic","line":"for each transition (s, a, r, s′):","formula":"∇_θ J ≈ \\text{E}[ ∇_θ \\log π_θ(a|s) \\, \\red{δ} ],\\quad δ = r + γ V_w(s′) − V_w(s)","note":"the TD error: one step sampled, the rest bootstrapped","loop":"one transition per update"},{"title":"GAE","line":"for each step t, with λ ∈ [0,1]:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD(λ) for the advantage","loop":"λ dials MC against TD"}]}
 Six rungs, one formula: ==the score never changes, the weight on it does==, in red.
 Lecture 8's ladder sampled the backup; this one samples the weight ever more locally.
 :::
@@ -769,7 +784,7 @@ A global optimisation at every transition, forever.
 ::: reveal
 ::: keypoint
 Option 1 keeps the update and breaks the action space; option 2 keeps the action space and breaks the update.
-==There is no third way that keeps Q-learning.==
+==There is no cheap third way that keeps Q-learning.==
 :::
 :::
 
@@ -780,7 +795,7 @@ Source pp. 51–52, both headed "Q-Learning on continuous action space?" with th
 ### The wall, measured
 ::: widget continuous-argmax {"seed":3}
 One state, one continuous action, and the critic's $Q(s,\cdot)$ across it.
-Nine bins already cost $9^6$ evaluations per transition on a six-joint arm and still miss the peak; ==the actor emits its action in one forward pass== and refines it by following $\nabla_aQ$.
+A grid of bins pays $n^d$ evaluations per transition on $d$ joints and still misses the peak; ==the actor emits its action in one forward pass== and is trained by following $\nabla_aQ$.
 :::
 
 ::: reveal
@@ -802,8 +817,8 @@ Make the policy deterministic, $a=\mu(s)$, and ==the fan collapses to one edge: 
 
 ::: reveal
 ::: keypoint
-Two consequences, both decisive, source p. 54.
-The critic can be trained ==off-policy==, from any transitions with adequate coverage, and there is no inner integral to sample.
+The target $r+\gamma Q(s',\mu(s'))$ needs no next action from the data, as Q-learning's max did not in Lecture 8; $\mu(s')$ replaces the max.
+So the critic can be trained ==off-policy==, from any transitions with coverage, and there is no inner integral to sample.
 :::
 :::
 
@@ -821,11 +836,10 @@ Source p. 54, the cleanest argument in the DDPG half: with a stochastic π, "env
 :::
 
 $$\begin{aligned}
-J(\mu_\theta)&=\int_{\mathcal S}\rho^\mu(s)\,Q^\mu\big(s,\mu_\theta(s)\big)\,ds &&\red{\scriptstyle\text{one integral, over states only}}\\
-\step{1}{\nabla_\theta J(\mu_\theta)}&\step{1}{=\int_{\mathcal S}\rho^\mu(s)\,\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\,ds} &&\step{1}{\red{\scriptstyle\text{the chain rule through the action}}}\\
-\step{2}{}&\step{2}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\Big]} &&\step{2}{\red{\scriptstyle\text{the actor follows the critic uphill}}}\\
-\step{3}{J(\pi_\theta)}&\step{3}{=\int_{\mathcal S}\rho^{\pi}(s)\int_{\mathcal A}\pi_\theta(a\mid s)\,r(s,a)\,da\,ds} &&\step{3}{\red{\scriptstyle\text{the stochastic objective: two integrals}}}\\
-\step{4}{J(\mu_\theta)}&\step{4}{=\int_{\mathcal S}\rho^\mu(s)\,r\big(s,\mu_\theta(s)\big)\,ds} &&\step{4}{\red{\scriptstyle\text{one integral instead of two: the variance argument, as an absence}}}
+J(\pi_\theta)&=\int_{\mathcal S}\rho^{\pi}(s)\int_{\mathcal A}\pi_\theta(a\mid s)\,r(s,a)\,da\,ds &&\red{\scriptstyle\text{the stochastic objective: } \rho^\pi \text{ is Act 1's } d^\pi\text{, discounted; two integrals}}\\
+\step{1}{J(\mu_\theta)}&\step{1}{=\int_{\mathcal S}\rho^\mu(s)\,r\big(s,\mu_\theta(s)\big)\,ds} &&\step{1}{\red{\scriptstyle\text{deterministic: one integral instead of two, the variance argument as an absence}}}\\
+\step{2}{\nabla_\theta J(\mu_\theta)}&\step{2}{=\int_{\mathcal S}\rho^\mu(s)\,\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\,ds} &&\step{2}{\red{\scriptstyle\text{the chain rule through the action; the } \theta \text{ inside } \rho^\mu \text{ unrolls as in Route 1 (Theorem 1)}}}\\
+\step{3}{}&\step{3}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\Big]} &&\step{3}{\red{\scriptstyle\text{the actor follows the critic uphill}}}
 \end{aligned}$$
 
 ::: reveal
@@ -836,7 +850,7 @@ The deterministic gradient is the limit of the stochastic one as the policy's sp
 :::
 
 ::: note
-Source pp. 56–59: ρ^μ is the discounted state distribution of p. 56; the theorem on p. 57 with its two remarks, the deterministic policy as the limiting case of the stochastic one when the action distribution collapses to a point mass, and "we expect the stochastic policy to require more samples as it integrates the data over the whole state and action space". Line 3 is p. 58's pair of objectives side by side. What it takes to implement, p. 59: a policy whose gradient in θ is easy, and a critic whose gradient in a is easy; in DDPG both are networks. Theorem 2 of the paper, quoted on p. 59 as a known fact: the deterministic gradient is the limit of the stochastic one.
+Source pp. 56–59: ρ^μ is the discounted state distribution of p. 56, Act 1's d^π with γ^k weights; line 0 is p. 58's stochastic objective, line 1 its deterministic twin, line 2 the theorem on p. 57 with its two remarks, the deterministic policy as the limiting case of the stochastic one when the action distribution collapses to a point mass, and "we expect the stochastic policy to require more samples as it integrates the data over the whole state and action space". Line 3 is p. 58's pair of objectives side by side. What it takes to implement, p. 59: a policy whose gradient in θ is easy, and a critic whose gradient in a is easy; in DDPG both are networks. Theorem 2 of the paper, quoted on p. 59 as a known fact: the deterministic gradient is the limit of the stochastic one.
 :::
 
 ### Nobody implements the theorem — autograd does
@@ -907,8 +921,8 @@ The box the next demo runs, on the heater: a quadratic critic, a one-parameter a
 
 ### DDPG, run on the heater — the actor climbs the critic
 ::: widget ddpg-gain {"seed":2}
-A quadratic critic $Q_w(x,u)$ fitted by TD from a replay buffer, the actor $u=-kx$ climbing $\partial Q/\partial u$.
-Early on the critic is wrong and ==the actor follows it anyway==; then both settle, and the gain lands on the Riccati gain of the discounted problem.
+A quadratic critic $Q_w(x,u)$ fitted by TD from a replay buffer, the actor $u=-kx$ climbing $\partial Q/\partial u$; $\gamma=0.9$ here, so that a stationary critic exists.
+Early on the critic is wrong and ==the actor follows it anyway==; then both settle on the discounted Riccati gain, $0.588$ rather than $0.618$.
 :::
 
 ::: reveal
@@ -946,12 +960,12 @@ This is Lecture 9's closing promise kept: "a learned actor μ_θ(s) is a more ge
 ### A deterministic actor explores nothing — and uniform noise is the wrong repair
 ::: widget pg-pictures {"mode":"noise"}
 White noise against an Ornstein–Uhlenbeck path over one episode, and their running sums beneath.
-==A swing-up needs the sum to grow in one direction==; independent noise averages to nothing.
+==A pendulum swing-up needs the sum to grow in one direction==; independent noise averages to nothing.
 :::
 
 ::: reveal
 ::: small
-Random actions push the update to where the critic is not accurate: Lecture 5's hazard in an RL costume.
+Random actions send the update where the critic has no evidence: Lecture 5's surrogate-exploitation hazard, in an RL costume.
 Exploring unseen states needs action that is consistent along the episode, not resampled each step.
 On real hardware, rapid random input changes strain actuators.
 :::
@@ -959,7 +973,7 @@ On real hardware, rapid random input changes strain actuators.
 
 ::: reveal
 ::: keypoint
-Hence temporally correlated noise, $dx_t=-\kappa x_t\,dt+\sigma\,dW_t$, added to $\mu_\theta(s)$: exploration that pushes rather than jitters.
+Hence temporally correlated noise $\epsilon_t$, $d\epsilon_t=-\kappa\,\epsilon_t\,dt+\sigma\,dW_t$, added to $\mu_\theta(s)$: exploration that pushes rather than jitters.
 :::
 :::
 
@@ -1004,7 +1018,7 @@ As Lecture 8 set SARSA against Q-learning by the one line that differs, this box
 - Why it matters | With PPO, a default continuous-control algorithm since 2018; Lecture 11's MBPO trains it.
 :::
 
-**The objective** — the return, with the policy's entropy added at every step, $\alpha_H>0$ the entropy temperature:
+**The objective** — the return, with the entropy $\mathcal H$ of the action distribution added at every step, $\alpha_H>0$ the temperature:
 
 $$J(\pi)=\E_\pi\Big[\sum_t\gamma^t\big(r_{t+1}\;\hl{+\;\alpha_H\,\mathcal H(\pi(\cdot\mid s_t))}\big)\Big]$$
 
@@ -1016,12 +1030,13 @@ $$\begin{aligned}y&=r+\gamma\Big[\min_{i=1,2}Q_{w_i^-}(s',a')-\alpha_H\log\pi_\t
 
 ::: reveal
 ::: keypoint
-A mixture can beat the best single action once diversity is paid for: ==the objective values entropy as well as reward.==
+Once entropy earns a bonus a mixture can beat the best single action: rewards $2$ and $1.8$ at $\alpha_H=0.5$ score $2$ alone, $2.25$ as a fair mixture.
+==The objective values entropy as well as reward.==
 :::
 :::
 
 ::: note
-A two-action illustration for the board, not the slide: rewards 2 and 1.8, α_H = 0.5; always the first action scores 2, each with probability one half scores 1.9 + 0.5 log 2 = 2.247, so the mixture wins between these two candidates. Continuous SAC uses a density and differential entropy. The original ICML version had a separate value network; these equations are the later twin-Q variant (Haarnoja et al., 2019). Neither replay nor entropy fixes missing coverage in a fixed offline log, which is Lecture 12. α_H is the temperature, not a step size. The actor samples through the reparameterisation of Lecture 6; PPO's entropy bonus is the seed, SAC's objective the plant.
+The keypoint's numbers: always the first action scores 2; each with probability one half scores 1.9 + 0.5 log 2 = 2.247, so the mixture wins between these two candidates. Continuous SAC uses a density and differential entropy. The original ICML version had a separate value network; these equations are the later twin-Q variant (Haarnoja et al., 2019). Neither replay nor entropy fixes missing coverage in a fixed offline log, which is Lecture 12. α_H is the temperature, not a step size. The actor samples through the reparameterisation of Lecture 6; PPO's entropy bonus is the seed, SAC's objective the plant.
 :::
 
 ### Check — the deterministic gradient
@@ -1029,7 +1044,7 @@ A two-action illustration for the board, not the slide: rewards 2 and 1.8, α_H 
 
 ::: quiz DDPG trains a critic $Q(s,a)$ and a deterministic actor $\mu(s)$.<br>How does the actor get its gradient?
 - By finite differences on the environment
-- By sampling actions and weighting them by their returns, as in REINFORCE
+- By sampling actions and weighting their scores by returns, $\nabla_\theta\log\pi_\theta(a\mid s)\,G_t$, as in REINFORCE
 - =By backpropagating through the critic: $\nabla_\theta Q(s,\mu_\theta(s))$, since the critic is differentiable in the action
 - By solving the $\argmax$ exactly at each step and regressing onto the result
 The critic is a differentiable surrogate for how good this action is here, so the actor can be moved uphill on it by the chain rule; no action sampling is needed inside the deterministic gradient, and the states still come from data. Notice what has been re-created: an optimiser climbing a learned model of the objective, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
@@ -1078,9 +1093,15 @@ Press one: one large step out of the region where the batch is evidence; the gra
 - Why it matters | The theory behind PPO, and where Lecture 1's trust region re-enters in a new metric.
 :::
 
-**The constrained step** — maximise the importance-weighted advantage, inside a KL ball around the policy that collected the data:
+**The constrained step** — maximise the importance-weighted advantage $\hat A$ of Act 2, inside a ball of $D_{\mathrm{KL}}$, Lecture 6's divergence, around the policy that collected the data:
 
 $$\max_\theta\ \E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\Big[\frac{\pi_\theta(a\mid s)}{\pi_{\mathrm{old}}(a\mid s)}\,\hat A(s,a)\Big]\quad\text{s.t.}\quad\E_{s}\big[D_{\mathrm{KL}}\big(\pi_{\mathrm{old}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big]\le\delta$$
+
+::: reveal
+::: small
+At $\theta=\theta_{\mathrm{old}}$ the ratio's gradient is the score, so this surrogate's slope is Act 2's policy gradient: the same step, now kept inside the ball.
+:::
+:::
 
 ::: reveal
 ::: keypoint
@@ -1099,8 +1120,8 @@ Source pp. 75–76: the off-policy objective with β, then β = π_old and the K
 **From the KL ball to the step** — local models about $\theta_{\mathrm{old}}$, then a linear objective on an ellipsoid:
 
 $$\begin{aligned}
-L(\theta)&\approx g^\top(\theta-\theta_{\mathrm{old}}),\qquad g=\nabla_\theta L(\theta_{\mathrm{old}}) &&\red{\scriptstyle\text{the surrogate, linearised}}\\
-\step{1}{\bar D_{\mathrm{KL}}}&\step{1}{\approx\tfrac12(\theta-\theta_{\mathrm{old}})^\top H\,(\theta-\theta_{\mathrm{old}}),\qquad H \text{ the Fisher matrix}} &&\step{1}{\red{\scriptstyle\text{the KL has zero gradient at } \theta_{\mathrm{old}}\text{: quadratic}}}\\
+L(\theta)&\approx g^\top(\theta-\theta_{\mathrm{old}}),\qquad g=\nabla_\theta L(\theta_{\mathrm{old}}) &&\red{\scriptstyle L\text{: the previous slide's surrogate, linearised}}\\
+\step{1}{\bar D_{\mathrm{KL}}}&\step{1}{\approx\tfrac12(\theta-\theta_{\mathrm{old}})^\top H\,(\theta-\theta_{\mathrm{old}}),\qquad H \text{ the Fisher matrix}} &&\step{1}{\red{\scriptstyle\text{the KL is zero and flat at } \theta_{\mathrm{old}}\text{; } H \text{ is its Hessian there}}}\\
 \step{2}{\theta_{\mathrm{new}}}&\step{2}{=\theta_{\mathrm{old}}+\sqrt{\frac{2\delta}{g^\top H^{-1}g}}\;H^{-1}g} &&\step{2}{\red{\scriptstyle\text{a linear function on an ellipsoid: the natural gradient}}}\\
 \step{3}{H^{-1}g}&\step{3}{\ \text{by conjugate gradient; then backtrack on the sampled KL}} &&\step{3}{\red{\scriptstyle\text{Lecture 1's accept-or-shrink}}}
 \end{aligned}$$
@@ -1125,7 +1146,7 @@ The derivation assumes an invertible positive-definite local Fisher matrix and a
 - Why it matters | The default policy-gradient method since; the RL stage of InstructGPT was trained with it.
 :::
 
-**The clipped surrogate** — with the ratio $r(\theta)=\pi_\theta(a\mid s)/\pi_{\mathrm{old}}(a\mid s)$:
+**The clipped surrogate** — with the ratio $r(\theta)=\pi_\theta(a\mid s)/\pi_{\mathrm{old}}(a\mid s)$, the paper's letter, not a reward:
 
 $$J^{\mathrm{CLIP}}(\theta)=\E\Big[\min\big(r(\theta)\,\hat A,\ \operatorname{clip}\big(r(\theta),\,1-\epsilon,\,1+\epsilon\big)\,\hat A\big)\Big]$$
 
@@ -1155,7 +1176,7 @@ Source pp. 77–78: "given that TRPO is relatively complicated and we still want
   [advantage] $\hat A_t$ by GAE from $V_w$ // Act 2's rung 6
   [for each] epoch $1,\dots,K$, minibatch of size $M$
   ! [learn] $\theta\leftarrow\theta+\alpha\,\nabla_\theta\,\frac1M\sum\min\big(r(\theta)\hat A,\ \red{\operatorname{clip}(r(\theta),1-\epsilon,1+\epsilon)}\hat A\big)$ // several passes over one batch, the clip keeps them honest
-    [critic] $w\leftarrow w-\alpha_w\nabla_w\frac1M\sum(V_w(s_t)-\hat G_t)^2$
+    [critic] $w\leftarrow w-\alpha_w\nabla_w\frac1M\sum(V_w(s_t)-G_t)^2$ // regress on the batch's returns
   [move] $\pi_{\mathrm{old}}\leftarrow\pi_\theta$ // the new policy collects the next batch
 ---
 the demo two slides on runs the lit line to its end on one batch, with and without the clip, on the heater's one-parameter policy
@@ -1226,7 +1247,7 @@ Both use stochastic neural policies in continuous control. PPO's clip is not a h
 - The gradient estimate becomes biased
 - The value function stops converging
 - The policy becomes deterministic too quickly
-- =The data were collected under the old policy, so a large step moves into a region the batch says nothing about, and the estimate of the improvement stops being valid
+- =The batch was collected under the old policy and says nothing about policies far from it
 On-policy data are only evidence about policies near the one that gathered them. A large update leaves that neighbourhood, and the objective being maximised is then a surrogate evaluated well outside its region of validity: Lecture 1's trust region, arrived at from a different direction, and the same adversarial-optimiser problem as Lecture 5. The heater demo showed it: the plain surrogate sent the gain to 3.0 and to −1.0, both unstable.
 :::
 
@@ -1253,7 +1274,7 @@ The same figure as the opening with both model-free cells lit and both arrows em
 :::
 
 ### The ladder, complete — one gradient, then two tokens changed
-::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Advantage","line":"for each step t, with a learned baseline:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{(\\sum_{t′≥t} r_{t′} − b(s_t))} ]","note":"reward to go, minus what the state usually gives","loop":"refit b each update"},{"title":"Actor–critic, GAE","line":"for each step t, with a critic V_w:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD errors in place of returns: bias for variance","loop":"one transition per update"},{"title":"DPG, DDPG, TD3","line":"for each replayed state s, a deterministic actor:","formula":"∇_θ J = \\text{E}_{s∼ρ}[ \\red{∇_θ μ_θ(s) \\, ∇_a Q_w(s,a)|_{a=μ_θ(s)}} ]","note":"the score is gone: the actor climbs the critic's slope","loop":"off-policy, from a buffer"},{"title":"TRPO","line":"for a batch under π_old, inside a KL ball:","formula":"\\max_θ \\text{E}[ \\red{π_θ(a|s)/π_{old}(a|s)} \\, Â ] \\quad \\text{s.t.}\\quad \\text{KL}(π_{old} ‖ π_θ) ≤ δ","note":"the ratio measures the step; the ball bounds it","loop":"one constrained step per batch"},{"title":"PPO","line":"for K epochs on the same batch:","formula":"\\max_θ \\text{E}[ \\min( r Â, \\red{\\text{clip}(r, 1−ε, 1+ε)} Â ) ]","note":"the constraint becomes a flat objective","loop":"K epochs per batch"}]}
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Advantage","line":"for each step t, with a learned baseline:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{(\\sum_{t′≥t} r_{t′+1} − b(s_t))} ]","note":"reward to go, minus what the state usually gives","loop":"refit b each update"},{"title":"Actor–critic, GAE","line":"for each step t, with a critic V_w:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD errors in place of returns: bias for variance","loop":"one transition per update"},{"title":"DPG, DDPG, TD3","line":"for each replayed state s, a deterministic actor:","formula":"∇_θ J = \\text{E}_{s∼ρ}[ \\red{∇_θ μ_θ(s) \\, ∇_a Q_w(s,a)|_{a=μ_θ(s)}} ]","note":"the score is gone: the actor climbs the critic's slope","loop":"off-policy, from a buffer"},{"title":"TRPO","line":"for a batch under π_old, inside a KL ball:","formula":"\\max_θ \\text{E}[ \\red{π_θ(a|s)/π_{old}(a|s)} \\, Â ] \\quad \\text{s.t.}\\quad \\text{KL}(π_{old} ‖ π_θ) ≤ δ","note":"the ratio measures the step; the ball bounds it","loop":"one constrained step per batch"},{"title":"PPO","line":"for K epochs on the same batch:","formula":"\\max_θ \\text{E}[ \\min( r Â, \\red{\\text{clip}(r, 1−ε, 1+ε)} Â ) ]","note":"the constraint becomes a flat objective","loop":"K epochs per batch"}]}
 Act 2 changed the weight on the score; ==Act 3 replaced the score, Act 4 wrapped the weight.==
 Six plates, and every method of the lecture is one of them with one token changed.
 :::
@@ -1309,16 +1330,16 @@ Lecture 1 and TRPO both control where a local approximation is trusted, in diffe
 ::: table center
 | Symbol | Meaning | Symbol | Meaning |
 |---|---|---|---|
-| $\pi_\theta(a\mid s)$, $\mu_\theta(s)$ | a stochastic and a deterministic policy | $x$, $u$, $k$ | the heater's state, control and gain; Lecture 9's letters |
+| $\pi_\theta(a\mid s)$, $\mu_\theta(s)$ | a stochastic and a deterministic policy | $x$, $u$, $k$ | the heater's state, control and gain |
 | $\nabla_\theta\log\pi_\theta(a\mid s)$ | the score of the policy, Lecture 2's | $\Psi_t$ | the weight on the score, rung by rung |
-| $d^\pi$, $\rho^\pi$ | the on-policy state distribution | $\beta$, $\pi_{\mathrm{old}}$ | the behaviour policy; the batch's policy |
+| $d^\pi$, $\rho^\mu$ | how often a policy visits each state | $\beta$, $\pi_{\mathrm{old}}$ | the behaviour policy; the batch's policy |
 | $V_w$, $Q_w$ | the critic; targets $w^-$, $\theta^-$ | $r(\theta)$ | the ratio $\pi_\theta/\pi_{\mathrm{old}}$ |
 | $G_t$, $\hat Q_t$ | the return after $t$; the reward to go | $\alpha$, $\alpha_H$, $\kappa$ | step size; entropy temperature; OU rate |
 | $A^\pi$, $\hat A$, $\delta_t$ | the advantage, its estimate, the TD error | $\epsilon$ | PPO's clip, or exploration noise |
 :::
 
 ::: note
-Three clashes to say aloud: θ is the policy parameter everywhere, so the OU rate is κ; the source uses β for a general behaviour policy and μ′ for DDPG's, which is μ_θ plus noise; α is a step size and α_H the entropy temperature. Q is the action value here, not Lecture 9's cost weight.
+ρ^π(s→s',k) on the Route 1 slide is the k-step reach probability, not a distribution over states; d^π and ρ^μ are. Three clashes to say aloud: θ is the policy parameter everywhere, so the OU rate is κ; the source uses β for a general behaviour policy and μ′ for DDPG's, which is μ_θ plus noise; α is a step size and α_H the entropy temperature. Q is the action value here, not Lecture 9's cost weight.
 :::
 
 ### Reading guide — learn feedback, then test the critic and the data regime

@@ -147,10 +147,10 @@ IE437.widget('pg-trajectory', function (host, opts) {
       var xm = (X(i) + X(i + 1)) / 2, ym = (Y(xs[i]) + Y(xs[i + 1])) / 2;
       tx(gP, xm, ym + 20, 'P(s_{' + (i + 1) + '}|s_{' + i + '},a_{' + i + '})', { fill: GREEN, 'font-size': 9.5, 'text-anchor': 'middle' });
     });
-    tx(gPi, X(0), Y(xs[0]) + 22, 'μ(s_0)', { fill: SLATE, 'font-size': 10, 'text-anchor': 'middle' });
+    tx(gPi, X(0), Y(xs[0]) + 22, 'p_0(s_0)', { fill: SLATE, 'font-size': 10, 'text-anchor': 'middle' });
     if (k >= 1) {
       var g1 = layer(s), y1 = H - 40;
-      var t1 = line(g1, 28, y1, 'p_θ(τ) = μ(s_0) ∏_{t} π_θ(a_t|s_t)\\, P(s_{t+1}|s_t,a_t)');
+      var t1 = line(g1, 28, y1, 'p_θ(τ) = p_0(s_0) ∏_{t} π_θ(a_t|s_t)\\, P(s_{t+1}|s_t,a_t)');
       recolour(t1, /^π$/, BLUE); recolour(t1, /^P$/, GREEN);
       note(g1, y1, '\\text{the policy chooses } a_t\\text{; the world answers with } s_{t+1}', SLATE);
     }
@@ -194,7 +194,8 @@ IE437.widget('pg-trajectory', function (host, opts) {
         var before = i < i0;
         tx(g1, (X(i) + X(i + 1)) / 2, YLO + 31, 'r_{' + (i + 1) + '}', { fill: before ? SLATE : GREEN, 'font-size': 9.5, 'text-anchor': 'middle', opacity: before ? .4 : 1 });
       }
-      MARK.forEach(function (i) { dash(g1, i, T, i === i0 ? GREEN : INK, i === i0 ? '\\sum_{t′≥5} r_{t′}' : ''); });
+      MARK.forEach(function (i) { dash(g1, i, T, i === i0 ? GREEN : INK, ''); });
+      tx(g1, X(i0) + 44, Y(xs[i0]) - 13, '\\sum_{t′≥5} r_{t′+1}', { fill: GREEN, 'font-size': 10 });
       tx(g1, X(i0), Y(xs[i0]) - 12, '(s_{5},a_{5})', { fill: BLUE, 'font-size': 10, 'text-anchor': 'middle' });
       bracket(g1, i0, T, YLO + 40, GREEN, '\\text{reward to go: what } a_5 \\text{ could still cause}', false);
       E('line', { x1: X(0), x2: X(i0) - 4, y1: YLO + 44, y2: YLO + 44, stroke: SLATE, 'stroke-width': 1.2, 'stroke-dasharray': '3 3', opacity: .6 }, g1);
@@ -213,10 +214,10 @@ IE437.widget('pg-trajectory', function (host, opts) {
         tx(g2, gx + 2, gy + a2 * cs + cs / 2 + 3, 'f_{' + MARK[a2] + '}', { fill: RED, 'font-size': 8.5, 'text-anchor': 'end' });
         tx(g2, gx + a2 * cs + 12 + cs / 2 - 1, gy + n * cs + 10, 'r_{' + MARK[a2] + '}', { fill: GREEN, 'font-size': 8.5, 'text-anchor': 'middle' });
       }
-      tx(g2, gx + n * cs / 2 + 12, gy + n * cs + 28, '\\text{grey: } t′ < t\\text{, mean zero}', { fill: SLATE, 'font-size': 9.5, 'text-anchor': 'middle' });
-      tx(g2, gx + n * cs / 2 + 12, gy + n * cs + 40, 'variance only', { fill: SLATE, 'font-size': 9.5, 'text-anchor': 'middle' });
+      tx(g2, gx + n * cs / 2 + 12, gy + n * cs + 26, '\\text{grey: } t′ < t', { fill: SLATE, 'font-size': 9.5, 'text-anchor': 'middle' });
+      tx(g2, gx + n * cs / 2 + 12, gy + n * cs + 38, 'mean zero: noise', { fill: SLATE, 'font-size': 9.5, 'text-anchor': 'middle' });
       var y2 = H - 14;
-      var t = line(g2, 28, y2, '∇_θ J = \\text{E}[ \\sum_t ∇_θ\\log π_θ(a_t|s_t) \\; \\red{\\sum_{t′ ≥ t} r_{t′}} ]');
+      var t = line(g2, 28, y2, '∇_θ J = \\text{E}[ \\sum_t ∇_θ\\log π_θ(a_t|s_t) \\; \\red{\\sum_{t′ ≥ t} r_{t′+1}} ]');
       note(g2, y2, '\\text{the cheapest variance reduction in RL: one index}', SLATE);
     }
   }
@@ -250,7 +251,7 @@ IE437.widget('pg-trajectory', function (host, opts) {
       E('rect', { x: lx + 290, y: ly - 4, width: 10, height: 8, fill: RED, 'fill-opacity': .55 }, g3);
       tx(g3, lx + 306, ly + 4, 'worse than expected', { fill: RED, 'font-size': 9.5 });
       var y2 = H - 14;
-      line(g3, 28, y2, '∇_θ J = \\text{E}[ \\sum_t ∇_θ\\log π_θ(a_t|s_t)\\, ( \\sum_{t′≥t} r_{t′} \\red{- b(s_t)} ) ]');
+      line(g3, 28, y2, '∇_θ J = \\text{E}[ \\sum_t ∇_θ\\log π_θ(a_t|s_t)\\, ( \\sum_{t′≥t} r_{t′+1} \\red{- b(s_t)} ) ]');
     } else {
       tx(layer(s), 28, H - 14, '\\text{every return here is a cost paid: the sign of the weight says nothing about the action}', { fill: SLATE, 'font-size': 11 });
     }

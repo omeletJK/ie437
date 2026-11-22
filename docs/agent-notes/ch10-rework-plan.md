@@ -264,3 +264,49 @@ detector at zero, both CI test suites passing.
 - The one-sentence-per-line pass: 86 flagged blocks before, zero after. British spelling
   throughout; no exclamation marks.
 - Not committed; the professor commits.
+
+## Student-comprehension pass (2026-11-22)
+
+The professor asked for the rebuilt chapter to be checked thoroughly for whether undergraduate
+and master's students can follow it, and for fixes. Two reads: one by the author, one by a fresh
+agent briefed only with the deck, the Ch 8 and Ch 9 decks and the schema, reporting as a careful
+non-expert student. The two lists overlapped on the big items and the fresh read added the missing
+bridges. All applied; 73 slides, walk clean, wrap detector at zero.
+
+- *One objective.* The objective slide defined J with a stationary d^π while Route 1 unrolled from
+  s_0 and Route 2 sampled E_τ[R(τ)]. Now J(θ) = V^π(s_0) = E_τ[Σ r_{t+1}] is the definition, the
+  d^π form is "the same, averaged over the states visited", d^π is defined in words on that slide
+  (how often the policy visits s from s_0; Route 1 derives it), and line 5 of Route 1 writes
+  η(s) = Σ_k ρ^π(s_0→s,k) ∝ d^π on the slide. The keypoint no longer claims d^π is Lecture 7's.
+- *One reward index.* r_{t+1} is the reward paid after a_t everywhere (Route 2, the noisy-estimate
+  slide, every rung, the ladder plates, the pg-trajectory labels), stated once on the objective
+  slide. Under the old mixed convention Rung 1's reward to go included the reward paid before a_t.
+- *Symbols defined where used.* p_0(s_0) for the start distribution (μ was about to mean the
+  deterministic policy); R(s,a,s') on Route 1's line 2; ρ^π(s→x,k) glossed as the k-step reach;
+  Q̂_t throughout the baseline slides instead of a new R_t; the score named and tied to Lecture 2's
+  log-likelihood gradient on the theorem slide, with the ∝ constant explained; h as "any h" and the
+  ratio named as Lecture 6's importance ratio; ρ^μ as Act 1's d^π discounted; 𝓗 as the entropy of
+  the action distribution; Â and D_KL glossed on the TRPO slide; L and H glossed on the
+  natural-gradient slide; the PPO critic regresses on G_t, not an undefined Ĝ_t; r(θ) marked as
+  the paper's letter, not a reward; the OU noise is ε_t, not x_t.
+- *Bridges added.* REINFORCE's slide now shows the theorem turning into the per-episode sum (an
+  episode's steps sample d^π, Q^π = E[G_t | s_t,a_t]) before the update; the γ sentence says the
+  γ^t weight in front of the score is dropped, γ inside returns and TD errors stays. Rung 1's
+  caption says the grey cells have mean zero because the expected score is zero, proved on the
+  next slide. Rung 3 writes Ψ_t = Q̂_t − V^π(s_t) and its conditional expectation A^π. Rung 4 states
+  E[δ_t | s_t,a_t] = A^π when V_w = V^π, so δ_t is a one-sample advantage, and the footer attributes
+  the bias to bootstrapping on an inexact critic. The deterministic slide's keypoint uses Lecture
+  8's bridge: the target r + γQ(s', μ(s')) needs no next action from the data, as Q-learning's max
+  did not. The DPG derivation now runs stochastic objective → deterministic objective → chain rule
+  (with the θ inside ρ^μ unrolling as in Route 1) → expectation. TRPO's slide says why maximising
+  ratio × advantage is the policy-gradient step: at θ_old the ratio's gradient is the score.
+- *Claims softened or made plain.* The optimal-baseline annotation calls the independence an
+  approximation and the keypoint says "under that approximation"; "no third way" became "no cheap
+  third way"; "the actor refines its action" became "is trained by following ∇_aQ"; GAE's keypoint
+  no longer leans on TD(λ), which Lecture 8 never put on a slide; "diversity is paid for" became
+  "once entropy earns a bonus" with the two-action numbers on the slide; the DDPG demo caption says
+  γ = 0.9 and 0.588 against 0.618; the pendulum is named; Lecture 5's hazard is spelled out.
+- *Quizzes.* Check 4's correct option was three lines against five-word distractors; it is now one
+  line. Check 3's distractor B carries a formula so the correct option is not the only one with one.
+- *The one-parameter slide* speaks of "reward minus the average reward" rather than "advantage",
+  which Act 2 has not yet defined, and promises Act 2's justification.
