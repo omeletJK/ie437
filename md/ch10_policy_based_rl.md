@@ -260,7 +260,76 @@ It does not yet say how to estimate $Q^\pi$ from experience; Route 2 does.
 The theorem's expectation is on-policy: s from d^π and a from π_θ, as the source notes under p. 31. The name "score" is Lecture 2's: ∇_θ log π_θ(a|s) is the score function of the policy as a likelihood. Williams's REINFORCE (1992) is the sampled form of this expression; the theorem in this form is Sutton, McAllester, Singh and Mansour (2000), cited in the reading guide and not given a card because the step it carries is Route 1 itself.
 :::
 
-### Route 2 — one trajectory, and its law
+### Route 2 — the same theorem from a different angle
+::: figure reward-landscape | 600
+Three trajectories on a reward landscape, the source's p. 80: the ones that climbed earn a tick, the one that fell a cross.
+:::
+
+::: small
+**Route 1** derived the theorem with the state value function, using the recursion of dynamic programming, the Bellman equation.
+**Route 2** derives a similar result without dynamic programming: the *episodic* view, where the agent engages in many trajectories.
+:::
+
+::: reveal
+::: keypoint
+Route 2 asks one question: ==if a whole trajectory went well, how do I make it likelier?==
+:::
+:::
+
+::: note
+Source p. 80, the two bullets and the figure, verbatim in spirit: "we derived the policy gradient theorem using the concept of state value function to employ a recursive formula on the basis of dynamic programming (Bellman equation); now let us derive a similar result without using the DP approach but using an episodic approach where the agent engages in multiple trajectories in its environment." The figure returns on the interpretation slide, where the ticks and the cross become the sign of the weight.
+:::
+
+### A trajectory, and its probability
+**A trajectory $\tau$ of length $T$** — source p. 81; $r_{t+1}$ is the reward paid after $a_t$, as the objective slide declared:
+
+$$\tau=(s_0,\,a_0,\,r_1,\,s_1,\,a_1,\,r_2,\,\dots,\,s_{T-1},\,a_{T-1},\,r_T,\,s_T)$$
+
+::: small
+$s_0$ comes from the starting distribution of states, $p_0$.
+$a_t\sim\pi_\theta(\cdot\mid s_t)$, with $\pi_\theta$ the parameterised **policy**: the only place $\theta$ appears.
+$s_{t+1}\sim P(\cdot\mid s_t,a_t)$, with $P$ the dynamic model describing how the **environment** changes.
+:::
+
+::: reveal
+**The probability of the trajectory** — the three kinds of factor multiplied, in the order they happen:
+
+$$p_\theta(\tau)=p_0(s_0)\prod_{t=0}^{T-1}\pi_\theta(a_t\mid s_t)\,P(s_{t+1}\mid s_t,a_t)$$
+:::
+
+::: reveal
+::: keypoint
+One factor per thing that happened: ==the policy's factors carry $\theta$, the world's factors do not.==
+:::
+:::
+
+::: note
+Source p. 81, top half: the trajectory, the three check marks (s_0 from the starting distribution; a_i ~ π_θ(a_i|s_i) with π_θ the parameterised policy; s_i ~ P(s_i|s_{i−1},a_{i−1}) with P the dynamic model describing how the environment changes), and p(τ) = μ(s_0) Π π_θ(a_t|s_t) P(s_{t+1}|s_t,a_t). The source writes μ(s_0) for the starting distribution and r_t for the reward after a_t; this deck writes p_0(s_0), since μ is about to become the deterministic policy of Act 3, and r_{t+1}, as Lecture 8 did. Say it as a story: the world draws a start, the policy draws an action, the world draws the next state, and so on; the probability of the whole story is the product of the probabilities of its steps.
+:::
+
+### The log-gradient of the law — the dynamics drop out
+{fill: top, math: compact}
+
+**We can compute** — source p. 81, bottom half, with the law $p_\theta(\tau)=p_0(s_0)\prod_t\pi_\theta(a_t\mid s_t)\,P(s_{t+1}\mid s_t,a_t)$ of the previous slide:
+
+$$\begin{aligned}
+\nabla_\theta\log p_\theta(\tau)&=\nabla_\theta\log\Big(p_0(s_0)\prod_{t=0}^{T-1}\pi_\theta(a_t\mid s_t)\,P(s_{t+1}\mid s_t,a_t)\Big) &&\red{\scriptstyle\text{the log-gradient of the product}}\\
+\step{1}{}&\step{1}{=\nabla_\theta\Big[\cancel{\log p_0(s_0)}+\sum_{t=0}^{T-1}\Big(\log\pi_\theta(a_t\mid s_t)+\cancel{\log P(s_{t+1}\mid s_t,a_t)}\Big)\Big]} &&\step{1}{\red{\scriptstyle\text{the log of a product is a sum; two kinds of term hold no } \theta}}\\
+\step{2}{}&\step{2}{=\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)} &&\step{2}{\red{\scriptstyle\text{only the policy's factors survive: a sum of scores}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+The dynamics enter the law of a trajectory and ==leave its log-gradient==, because $\nabla_\theta$ of a term without $\theta$ is zero.
+This is Lecture 9's Pontryagin move with the model deleted: conditions along one trajectory, with no $f$ to differentiate.
+:::
+:::
+
+::: note
+Source p. 81, bottom half, with the source's red strokes through log μ(s_0) and log P(s_{t+1}|s_t,a_t). This is "the single most important line in the chapter": the dynamics still decide which trajectories occur, and therefore what any expectation averages over, but they contribute nothing to the gradient with respect to θ. Lecture 9 taught the same pair, a value field over states and then conditions along one trajectory; here the trajectory conditions need no model.
+:::
+
+### The law, drawn on the heater
 ::: widget pg-trajectory {"mode":"law"}
 One episode of the heater, five sampled $(s_t,a_t)$ marked; press for the law $p_\theta(\tau)$ and its log-gradient.
 ==The policy's factors sit on the points, the world's factors on the edges==; the law is their product.
@@ -268,42 +337,64 @@ One episode of the heater, five sampled $(s_t,a_t)$ marked; press for the law $p
 
 ::: reveal
 ::: keypoint
-The dynamics enter the law of a trajectory and leave its log-gradient.
-This is Lecture 9's Pontryagin move with the model deleted: conditions along one trajectory, with no $f$ to differentiate.
+Only the points carry $\theta$: the log-gradient of the whole episode is the sum of the scores at the points.
 :::
 :::
 
 ::: note
-Source p. 81, "the single most important line in the chapter": p(τ) = p_0(s_0) Π π_θ(a_t|s_t) P(s_{t+1}|s_t,a_t), and ∇ log p(τ) = Σ ∇ log π_θ(a_t|s_t) because log P carries no θ. The source says why the theorem is derived a second time (p. 80): the first derivation used the state value and the recursion of dynamic programming; this one uses only episodes the agent engages in. Lecture 9 taught the same pair, a value field over states and then conditions along one trajectory.
+The previous two slides, drawn: the policy's factors π_θ(a_t|s_t) at the sampled points, the world's factors P(s_{t+1}|s_t,a_t) on the edges between them, p_0(s_0) at the start. On the heater the edge factors are Gaussian steps of the thermostat's dynamics, which the agent never writes down.
 :::
 
-### Route 2 — the derivation, one line per press
+### Route 2 — the gradient of the objective, one line per press
 {fill: top, math: compact}
 
-**The log-derivative trick** — the gradient of an expectation turned into an expectation of a gradient, source p. 82:
+**We want to maximise** $J(\theta)=\E_{\pi_\theta}\big[\sum_{t=0}^{T-1}r_{t+1}\big]=\E_{\tau\sim p_\theta}\big[R(\tau)\big]$, because $\tau$ is influenced by $\pi_\theta$ — source p. 82, one move per line:
 
 $$\begin{aligned}
-\nabla_\theta\,\E_{\tau\sim p_\theta}\big[R(\tau)\big]&=\nabla_\theta\int p_\theta(\tau)\,R(\tau)\,d\tau &&\red{\scriptstyle R(\tau)=\sum_t r_{t+1}\text{, the return; } \theta \text{ is in the density } p_\theta(\tau)}\\
-\step{1}{}&\step{1}{=\int\frac{p_\theta(\tau)}{p_\theta(\tau)}\,\nabla_\theta p_\theta(\tau)\,R(\tau)\,d\tau=\int p_\theta(\tau)\,\nabla_\theta\log p_\theta(\tau)\,R(\tau)\,d\tau} &&\step{1}{\red{\scriptstyle\nabla p=p\,\nabla\log p}}\\
-\step{2}{}&\step{2}{=\E_{\tau\sim p_\theta}\Big[\nabla_\theta\log p_\theta(\tau)\,R(\tau)\Big]} &&\step{2}{\red{\scriptstyle\text{an expectation of a gradient}}}\\
-\step{3}{\nabla_\theta\log p_\theta(\tau)}&\step{3}{=\underbrace{\nabla_\theta\log p_0(s_0)}_{0}+\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)+\underbrace{\sum_t\nabla_\theta\log\hl{P(s_{t+1}\mid s_t,a_t)}}_{0}} &&\step{3}{\red{\scriptstyle\text{the law: the } P \text{ terms vanish}}}\\
-\step{4}{\nabla_\theta J(\theta)}&\step{4}{=\E_{\tau\sim p_\theta}\Big[\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_{t+1}\Big)\Big]} &&\step{4}{\red{\scriptstyle\text{substitute}}}\\
-\step{5}{}&\step{5}{\approx\frac1N\sum_{i=1}^{N}\Big(\sum_t\nabla_\theta\log\pi_\theta(a^{(i)}_t\mid s^{(i)}_t)\Big)\Big(\sum_t r^{(i)}_{t+1}\Big)} &&\step{5}{\red{\scriptstyle\text{sample } N \text{ episodes: the estimator}}}
+\nabla_\theta\,\E_{\tau\sim p_\theta}\big[R(\tau)\big]&=\nabla_\theta\int p_\theta(\tau)\,R(\tau)\,d\tau &&\red{\scriptstyle\text{an expectation is an integral against the density}}\\
+\step{1}{}&\step{1}{=\int\frac{p_\theta(\tau)}{p_\theta(\tau)}\,\nabla_\theta p_\theta(\tau)\,R(\tau)\,d\tau} &&\step{1}{\red{\scriptstyle\text{move } \nabla_\theta \text{ inside; multiply and divide by } p_\theta(\tau)}}\\
+\step{2}{}&\step{2}{=\int p_\theta(\tau)\,\nabla_\theta\log p_\theta(\tau)\,R(\tau)\,d\tau} &&\step{2}{\red{\scriptstyle\nabla p/p=\nabla\log p\text{: the log-derivative trick}}}\\
+\step{3}{}&\step{3}{=\E_{\tau\sim p_\theta}\Big[\nabla_\theta\log p_\theta(\tau)\,R(\tau)\Big]} &&\step{3}{\red{\scriptstyle\text{a density times something: an expectation again}}}\\
+\step{4}{}&\step{4}{=\E_{\tau\sim p_\theta}\Big[\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,R(\tau)\Big]} &&\step{4}{\red{\scriptstyle\text{two slides back: } \nabla_\theta\log p_\theta(\tau)=\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)}}\\
+\step{5}{}&\step{5}{=\E_{\tau\sim p_\theta}\Big[\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_{t+1}\Big)\Big]} &&\step{5}{\red{\scriptstyle\text{write the return out}}}
 \end{aligned}$$
 
 ::: reveal
 ::: keypoint
-Route 2 says ==how to estimate==: run the policy, score every action it took, weight the scores by the return.
-No value function, no model, nothing but episodes.
+Two moves only: ==multiply and divide by $p_\theta(\tau)$==, then substitute the law of the trajectory.
+The result has no model in it: the scores of the actions taken, times the return of the episode.
 :::
 :::
 
 ::: note
-Source pp. 82–83, line for line. Line 1 is the only trick: multiply and divide by p_θ(τ), so that ∇p = p ∇log p turns the integrand back into a density times something. Line 3 substitutes the law of the trajectory; the initial distribution and the dynamics carry no θ and their log-derivatives are zero, though they still decide which trajectories occur and therefore what the expectation averages over. Line 4 is the empirical estimator with the source's caveat: "too slow and unreliable due to high variance", which is Act 2.
+Source p. 82, line for line, in the source's order. Line 0: the expectation written as an integral; this is where θ sits, inside the density p_θ(τ), not inside R(τ). Line 1: the gradient moves inside the integral and the integrand is multiplied and divided by p_θ(τ), the one trick of the derivation. Line 2: ∇p/p = ∇log p, the derivative of a logarithm. Line 3: a density times something is an expectation again, so the gradient of an expectation has become an expectation of a gradient, which a sample average can estimate. Line 4: the log-gradient of the law, from two slides back. Line 5: R(τ) written as the sum of rewards. The source writes ln on lines 2 and 3 and log on lines 4 and 5; they are the same.
+:::
+
+### From the expectation to an estimator — a batch of episodes
+**We have** — source p. 83; the expectation is with respect to the policy, so we may write $\tau\sim\pi_\theta$:
+
+$$\nabla_\theta\E_{\tau\sim\pi_\theta}\big[R(\tau)\big]=\E_{\tau\sim\pi_\theta}\Big[\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_{t+1}\Big)\Big]$$
+
+::: reveal
+**We need trajectories** — the naive way: run the agent on a batch $\mathcal T$ of $N$ episodes, average, and step:
+
+$$\begin{aligned}\theta&\leftarrow\theta+\alpha\,\nabla_\theta\E_{\tau\in\mathcal T}\big[R(\tau)\big]\\
+\nabla_\theta\E_{\tau\in\mathcal T}\big[R(\tau)\big]&\approx\frac1N\sum_{i=1}^{N}\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a^{(i)}_t\mid s^{(i)}_t)\Big)\Big(\sum_{t=0}^{T-1}r^{(i)}_{t+1}\Big),\qquad\tau^{(i)}\text{ the } i\text{-th episode}\end{aligned}$$
+:::
+
+::: reveal
+::: keypoint
+Route 2 says ==how to estimate==: run the policy, score every action it took, weight the scores by the return.
+The source's verdict: too slow and unreliable, from the high variance of the estimate, so Act 2 is variance reduction.
+:::
+:::
+
+::: note
+Source p. 83, verbatim in order: "the expectation is with respect to the policy function, so we can think τ ~ π_θ"; "we need trajectories to get an empirical expectation, which estimates the actual expectation; the naive way is to run the agent on a batch of episodes"; the update θ ← θ + α ∇_θ E_{τ∈T}[R(τ)] where T is the set of trajectories sampled; the estimator; τ^(i) is the i-th trajectory; "this approach will be too slow and unreliable due to high variance on the gradient estimate; we need various variance reduction techniques". No value function, no model, nothing but episodes.
 :::
 
 ### Reading the estimator — weighted maximum likelihood
-**The estimator, read factor by factor** — source p. 84:
+**The estimator, read factor by factor** — source p. 84, the landscape's ticks and cross as the sign of the weight:
 
 $$\nabla_\theta J(\theta)=\E_{\tau\sim\pi_\theta}\Big[\underbrace{\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)}_{\hl{\nabla_\theta J_{\mathrm{ML}}(\theta)}\text{: make this trajectory likelier}}\ \ \underbrace{R(\tau)}_{\text{how good it was}}\Big]$$
 

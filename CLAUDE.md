@@ -130,7 +130,7 @@ against an installed Google Chrome. See `docs/agent-notes/qa-visual-pass.md`.
   and along one trajectory (Route 2, on the new `pg-trajectory` figure family), the Ψ_t ladder of
   Act 2 with every rung derived in the body, DPG on the collapsed backup, four algorithm boxes,
   eight paper cards, the heater through all four acts (`ddpg-gain`, `ppo-gain`), the appendix
-  dissolved; 75 slides after the comprehension pass and the one-format pass of 2026-11-22, walk clean.
+  dissolved; 79 slides after the comprehension pass, the one-format pass and the Route 2 rewrite from the source pages (2026-11-22), walk clean.
   Ch 11–12 are still figure-free; re-authoring them from their source decks needs the original
   PDFs, which are not in the repository.
 - Assignment 1 (Movie Programming, due 2026-10-09) is closed and graded. Nothing of the grading

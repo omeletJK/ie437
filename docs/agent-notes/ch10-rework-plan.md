@@ -329,3 +329,97 @@ now says "PPO keeps the idea" rather than "the next slide". DDPG's card slide ga
 keypoint; SAC's two-action numbers moved to the note; ladder plate 4 is "DPG, DDPG, TD3, SAC" with
 the note "the score is gone; SAC samples the action and adds an entropy bonus", the plate cap of six
 kept. DPG keeps its derivation in place of a box, being a theorem. 73 → 75 slides.
+
+## Route 2 rewritten from the source pages (2026-11-22)
+
+The professor looked at the Route 2 derivation slide, six lines in one `aligned` block with the
+law substituted as a line among the others, and said it was too compressed to follow: "refer to the
+original slides, bring them over as they are, and explain very simply". The source deck
+(`lecture_slides/9. Optimal Control and Policy Based Reinforcement Learning (simple).pdf`, pp. 80–84,
+on the authoring machine only) is now followed page for page:
+
+- p. 80 → "Route 2 — the same theorem from a different angle": the source's reward-landscape figure,
+  extracted with `pdfimages` to `assets/ch10/reward-landscape.png`, and its two bullets as a lede.
+- p. 81, top → "A trajectory, and its probability": τ written out, the three check marks (start
+  distribution, policy, environment), the product law.
+- p. 81, bottom → "The log-gradient of the law — the dynamics drop out": three lines one per press,
+  with KaTeX `\cancel` in place of the source's red strokes through log p_0 and log P.
+- the `pg-trajectory` law widget follows as the picture of those two slides.
+- p. 82 → "Route 2 — the gradient of the objective, one line per press": the source's six lines in
+  the source's order, each annotated in plain words (integral; move ∇ inside and multiply and divide;
+  ∇p/p = ∇log p; an expectation again; substitute the law; write the return out).
+- p. 83 → "From the expectation to an estimator — a batch of episodes": τ ~ π_θ, the update
+  θ ← θ + α∇, the sample average over N episodes, the source's "too slow and unreliable" verdict.
+- p. 84 stays as "Reading the estimator — weighted maximum likelihood".
+
+Conventions kept against the source: p_0 for the start distribution (the source's μ is Act 3's
+deterministic policy) and r_{t+1} for the reward after a_t, both said in the notes. 75 → 79 slides.
+The lesson: a derivation the source spreads over several pages should not be folded into one
+`aligned` block to save slides; one source page per slide, one move per press.
+
+## The flow, as a chain of problems (2026-11-23, the professor's review of the rebuilt deck)
+
+Two objections to the deck after the three passes above, both about the flow rather than any
+slide. Act 3 is titled and motivated as "continuous actions: the actor climbs the critic" and opens
+on the two wall pages (pp. 51–52), but a policy that outputs a continuous action is the premise of
+Act 1, not a discovery of Act 3; introducing DDPG as "a new method for continuous actions"
+contradicts the chapter's own frame. And the four acts do not read as one argument: the source's
+spine was that the value-function approach (pp. 29–34) and the trajectory approach (pp. 79–84) are
+unified in one REINFORCE formula, and the deck says so once ("one theorem, two views") and then
+moves on to three unrelated topics.
+
+A first repair proposed here, labelling every act with "the value axis" or "the trajectory axis",
+was withdrawn the same day: the professor asked why the acts had to be *arranged* at all, since an
+imposed scheme sets an agenda from above, and asked for the logic to proceed and widen on its own.
+That is the right criticism, and it points at the device that is actually wrong: the chapter
+should be one chain in which every step is forced by the problem the previous step left behind.
+The act boundaries then fall where the problem changes; they are not announced.
+
+**The chain, as the material gives it.**
+
+| what we have | what breaks | what changes, and where it comes from |
+|---|---|---|
+| Lecture 8's $Q$ and its argmax | a max over a continuum, at every step (pp. 28, 51–52) | store the answer: a policy $\pi_	heta$ that outputs the action; improve it by gradient ascent on $J(	heta)$ |
+| $J(	heta)=V^\pi(s_0)$ | the dynamics sit inside the expectation | the theorem, derived through the Bellman equation (what to estimate) and along a trajectory (how); REINFORCE, where the two meet |
+| REINFORCE | unbiased, and so noisy that the gain never settles (the Act 1 demo at batch 8) | keep the mean, cut the variance: reward to go, a baseline, the best baseline is $V^\pi$ and must be learnt, so a critic appears; the advantage; bootstrapping on the critic |
+| actor–critic, GAE | bootstrapping pays bias for variance; and every one of these still needs episodes from the current policy, thrown away after one update | reuse data: the importance ratio fixes the action distribution but not the states; a deterministic actor makes the critic's target contain only the environment, so the critic learns from replay and the actor follows its slope (DPG, DDPG) |
+| DDPG | a deterministic actor explores nothing; the actor climbs the critic's errors; determinism itself | correlated noise; TD3's three lines; SAC, a stochastic actor still trained from replay |
+| every on-policy method so far | the policy collects its own next batch, so one large step is self-reinforcing | bound the behaviour change: the ratio from the off-policy slide, in a KL ball (TRPO), then a clip (PPO) |
+
+Read down the middle column: every entry is something the student has just watched go wrong, on
+the heater where a demo exists. That is the whole agenda, and nothing else needs to announce it.
+
+**What this changes in the deck.**
+
+1. *The wall opens the chapter, not Act 3.* "The wall, argued twice" and "The wall, measured" move
+   to the opening after "The debt Lecture 8 left": they are the first row of the chain, the reason
+   a policy is parameterised at all. Act 3 loses its false motivation without gaining a new label.
+2. *Act 3 enters where the chain does.* Its question is the problem Act 2 leaves: "Every weight so
+   far needs episodes from the current policy, thrown away after one update. Can the critic learn
+   from any data, and can the actor move without a score?" The first slide is the on-policy
+   constraint (p. 39) with the Act 2 ratio as the half-answer; then "Why deterministic" (p. 54),
+   whose keypoint already contains the whole argument. The title names the problem: "Act 3 — reuse
+   the data". Q2 and Q4 are already written in this form; Q1 is rewritten to follow the wall
+   ("so the object to improve is $\pi_	heta$, and its gradient has the dynamics inside").
+3. *Each act's last slide names the problem it leaves.* The REINFORCE demo already does ("that
+   wander is Act 2's subject"). The GAE/A3C slide ends: "every rung here still needs the current
+   policy's episodes". SAC ends: "all of Act 3 reuses data; the on-policy methods never asked how
+   far a step may go". These three sentences, as keypoints, are the only connective tissue the
+   chapter needs.
+4. *Remove the scaffolding that carries no logic.* The three "Act N on the map" openers show the
+   same cell four times; in Lecture 9 the tracker moved between cells, here it tracks nothing and
+   reads as an agenda. Keep the grid at the opening and the closing only. The learning-route
+   slide's four-line act table goes; in its place one sentence, "each method here fixes what the
+   one before it broke; watch the heater's gain", and the "Bring from" lines. The act dividers keep
+   their question and lose any slogan ("one theorem, two routes" stays as a slide title inside
+   Act 1, not as the act's banner).
+5. *The two-axes labels are not used anywhere.* The "one theorem, two views" slide stays as it is,
+   a fact about Act 1, and the closing's translation table keeps "the two routes of Act 1 are
+   Lecture 9's two views"; neither is made to organise the chapter.
+6. *The closing standout* becomes the chain in one breath: "A policy that outputs the action; a
+   gradient that needs no model; a critic for the weight; replay for the critic; a bound on the
+   step." The ladder's caption reads the same way, rung by rung as fixes.
+
+About 75 → 72 slides (three map openers removed, the wall moved, no slide added). The markdown
+is being edited in a parallel session; apply these after that session's changes are committed, by
+asserted replacement after a fresh read.
