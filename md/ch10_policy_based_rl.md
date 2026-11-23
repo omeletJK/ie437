@@ -25,9 +25,9 @@ inherits: optimal control, with the dynamics f still given (Lecture 9)
 handoff: the trust-region machinery and the model put back (Lecture 11)
 questions:
   - Gradient?
-  - Variance?
-  - Continuous?
-  - Safe step?
+  - Weight?
+  - Reuse?
+  - Step?
 ---
 
 ### Policy-Based Reinforcement Learning
@@ -76,12 +76,56 @@ A policy that outputs the action pays the first; a gradient that needs no model 
 The first quotation is p. 28 of the source deck, verbatim. The second is the closing line of Lecture 9: the third answer to the continuous minimisation was Pontryagin's view along one trajectory, and Act 1 derives today's gradient along one trajectory too. DDPG's actor in Act 3 is the network that outputs the minimiser.
 :::
 
-### Learning route — one theorem, then three ways of using it
-::: flow
-- **Act 1 · the gradient** | one theorem, two routes: the backup, then the trajectory
-- **Act 2 · the variance** | better estimates of the weight on the score
-- **Act 3 · continuous actions** | a deterministic actor climbs a learned critic
-- **Act 4 · the safe step** | stay where the batch is evidence
+### The wall, argued twice — the source's facing pages
+::: cols
+::: col Option 1 — discretise the action
+One output head per action, as in DQN.\
+Cut $-1\le a\le1$ into bins and run Q-learning on the grid.\
+*How many bins?*\
+Few mean poor resolution; many mean $n^d$ heads for $d$ joints.\
+And the optimum may lie ==between grid points==.
+:::
+::: col.accent Option 2 — feed the action in
+One network $Q_w(s,a)$ with the action as an input.\
+The action stays continuous.\
+But the update needs $\max_{a'}Q_w(s',a')$.\
+$Q_w$ is ==non-convex in $a'$==.\
+A global optimisation at every transition, forever.
+:::
+:::
+
+::: reveal
+::: keypoint
+Option 1 keeps the update and breaks the action space; option 2 keeps the action space and breaks the update.
+==There is no cheap third way that keeps Q-learning.==
+:::
+:::
+
+::: note
+Source pp. 51–52, both headed "Q-Learning on continuous action space?" with the note "Mujoco action = motor control input of each joint". The source's "too small Δa / too high Δa" refers to the number of bins; it is written here in terms of bins to avoid the ambiguity. Page 52 prints the Q-learning update at the top right for reference and concludes "we cannot perform the Q-learning update".
+:::
+
+### The wall, measured
+::: widget continuous-argmax {"seed":3}
+One state, one continuous action, and the critic's $Q(s,\cdot)$ across it.
+A grid of bins pays $n^d$ evaluations per transition on $d$ joints and still misses the peak; ==a policy that outputs the action is one forward pass==.
+:::
+
+::: reveal
+::: keypoint
+So store the answer: a parameterised policy $\pi_\theta(a\mid s)$ that outputs the action.
+==How to improve it from experience, with no model of the world, is the lecture.==
+:::
+:::
+
+::: note
+Verified in node: true max Q = 0.9615 at a* = 0.416; 9 bins give Q = 0.797, a gap of 0.164, at 531,441 evaluations per transition on six joints; 21 bins close the gap to 0.007 at 85,766,121. Gradient ascent from four starts reaches the global peak from one of them. The honest shape of the resolution-against-cost trade-off is not monotone: 9 bins buy nothing over 5 here. The ascent from a chosen start that the widget also draws is Act 3's actor following ∇_aQ: cheap, and only ever local, so from the wrong start it settles on the wrong hill; neither TD3 nor SAC finds the best peak for you.
+:::
+
+### Learning route — each method fixes what the one before it broke
+::: lede
+A policy that outputs the action; a gradient that needs no model; a critic for the weight; replay for the critic; a bound on the step.
+Each is forced by the failure of the one before it, and every failure is watched on the heater's gain.
 :::
 
 ::: small
@@ -98,7 +142,7 @@ Every demo learns the gain $k$ and is read against the Riccati gain.
 :::
 
 ::: note
-First pass: Act 1 derives the policy gradient theorem twice, through the Bellman equation first and along a sampled trajectory second, and ends on REINFORCE. Act 2 is the ladder of better weights on the score: reward to go, baseline, advantage, critic, n-step, GAE. Act 3 makes the actor deterministic and learns the critic off-policy: DPG, DDPG, TD3, SAC. Act 4 bounds the step in behaviour space: TRPO and PPO. Derivations are in the body, one line per press, right after the idea they support.
+The acts fall where the problem changes, and none is announced in advance: the dynamics inside the expectation (Act 1, the theorem twice and REINFORCE), an estimate too noisy to settle (Act 2, the ladder of weights up to GAE), data thrown away after one update (Act 3, a critic from replay: DPG, DDPG, TD3, SAC), a policy that collects its own next batch (Act 4, TRPO and PPO). Each act's last slide names the problem it leaves. Derivations are in the body, one line per press, right after the idea they support.
 :::
 
 ### One honest detour — why not identify the system?
@@ -124,26 +168,11 @@ Today asks why estimate $f$ when ==the controller can be estimated directly.==
 Neither source has this slide; it is the course rhyme with Ch 8's "why not learn the model" detour, kept as the opening foil. The model comes back, deliberately and learned, in Lecture 11.
 :::
 
-## Act 1 — one theorem, two routes
+## Act 1 — the gradient has the model inside it
 {short: ACT 1, num: Act 1}
 
-**Q1.** The objective is an expectation over trajectories, and the dynamics sit inside it.\
-How can its gradient be taken without them?
-
-### Act 1 on the map
-{q: 1}
-
-::: qstrip
-:::
-
-::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
-The model-free cell of the infinite-action column.
-==The object to learn is the controller itself, a parameterised policy $\pi_\theta$.==
-:::
-
-::: note
-The same figure returns at the start of every act, as Lecture 9's did. All four acts stay in this one cell; what changes is how the gradient is estimated and how far along it the policy is moved.
-:::
+**Q1.** The wall leaves one object to improve: a policy $\pi_\theta$ that outputs the action.\
+Its objective has the dynamics inside; how is the gradient taken without them?
 
 ### The objective, in Lecture 7's objects
 **The policy-gradient objective** — a parameterised policy $\pi_\theta(a\mid s)$, scored by the return of the episodes it produces from $s_0$:
@@ -173,6 +202,11 @@ Source p. 29 writes J = Σ_s d^π(s) V^π(s) with d^π the stationary distributi
 :::
 
 ### The naive gradient — perturb one parameter at a time
+{q: 1}
+
+::: qstrip
+:::
+
 **Finite differences** — the source deck's own first attempt, p. 30:
 
 $$\frac{\partial J(\theta)}{\partial\theta_k}\approx\frac{J(\theta+\epsilon u_k)-J(\theta)}{\epsilon}$$
@@ -541,28 +575,18 @@ The grey bowl J(k) and the dashed line are drawn from A and B for us; the agent 
 The log of a product is a sum, and the P terms differentiate to zero because the parameter is not in them. They have not disappeared from the problem: they decide which trajectories are sampled, so they shape the expectation. That is the precise sense in which f is deleted: Lecture 9 solved the dynamics, Lecture 10 lives in them and never differentiates through them. Route 1 says the same thing in one picture: the gradient passes through the green edges.
 :::
 
-## Act 2 — the weight on the score
+## Act 2 — the estimate is too noisy to settle
 {short: ACT 2, num: Act 2}
 
 **Q2.** The estimate is unbiased and very noisy.\
 What can replace the return without moving the mean?
 
-### Act 2 on the map
+### Why the estimate is so noisy
 {q: 2}
 
 ::: qstrip
 :::
 
-::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
-The same cell, the same theorem.
-==Only the weight on the score changes, rung by rung.==
-:::
-
-::: note
-The spine sentence of the source, p. 35: "This vanilla policy gradient update has no bias but high variance. Many following algorithms were proposed to reduce the variance while keeping the bias unchanged." Everything after REINFORCE is variance control or step control.
-:::
-
-### Why the estimate is so noisy
 **One episode's contribution** — every score multiplied by the same scalar, the whole episode's return:
 
 $$\hat g^{(i)}=\Big(\sum_{t=0}^{T-1}\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big)\Big(\sum_{t=0}^{T-1}r_{t+1}\Big)$$
@@ -819,7 +843,7 @@ Source pp. 44–47 for A3C: "parallelism decorrelates the agents' data into a mo
 ### The ladder so far — one gradient, the weight changed
 ::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Reward to go","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_{t′ ≥ t} r_{t′+1}} ]","note":"only what the action could still cause","loop":"one episode per update"},{"title":"Baseline","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, ( \\sum_{t′ ≥ t} r_{t′+1} \\red{− b(s_t)} ) ]","note":"anything action-independent is free","loop":"refit b each update"},{"title":"Advantage","line":"for each step t:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{A^π(s_t,a_t)} ]","note":"Q − V: better than this state's average","loop":"needs a learned V"},{"title":"Actor–critic","line":"for each transition (s, a, r, s′):","formula":"∇_θ J ≈ \\text{E}[ ∇_θ \\log π_θ(a|s) \\, \\red{δ} ],\\quad δ = r + γ V_w(s′) − V_w(s)","note":"the TD error: one step sampled, the rest bootstrapped","loop":"one transition per update"},{"title":"GAE","line":"for each step t, with λ ∈ [0,1]:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD(λ) for the advantage","loop":"λ dials MC against TD"}]}
 Six rungs, one formula: ==the score never changes, the weight on it does==, in red.
-Lecture 8's ladder sampled the backup; this one samples the weight ever more locally.
+==Every rung still needs episodes from the current policy, used once and thrown away: that is the next problem.==
 :::
 
 ::: note
@@ -837,67 +861,38 @@ Read it with Lecture 8's ladder in mind: there MC → TD → SARSA → Q-learnin
 The expected score is zero, so E[∇ log π · b(s)] = 0 for any b that does not depend on the action: subtracting it is free. Choosing b(s) = V(s) turns the return into the advantage, was this action better than average here, which is the signal wanted all along, and the least-squares argument says it is also the variance-minimising choice under mild approximations. A bootstrapped critic is a different operation: it replaces the return and does introduce bias.
 :::
 
-## Act 3 — continuous actions: the actor climbs the critic
+## Act 3 — every update throws its data away
 {short: ACT 3, num: Act 3}
 
-**Q3.** Lecture 8 handed over a wall, a max over a continuum of actions.\
-This is where it falls.
+**Q3.** Every weight so far needs episodes from the current policy, used once and thrown away.\
+Can the critic learn from any data, and can the actor move without a score?
 
-### Act 3 on the map
+### One batch, one update — the on-policy constraint
 {q: 3}
 
 ::: qstrip
 :::
 
-::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
-The infinite-action cell, taken at its word: the action is a real vector, a motor torque.
-==The policy outputs it directly; nothing is maximised over at run time.==
-:::
+**Where every expectation so far stood** — over the trajectories of the very policy being improved:
 
-### The wall, argued twice — the source's facing pages
-::: cols
-::: col Option 1 — discretise the action
-One output head per action, as in DQN.\
-Cut $-1\le a\le1$ into bins and run Q-learning on the grid.\
-*How many bins?*\
-Few mean poor resolution; many mean $n^d$ heads for $d$ joints.\
-And the optimum may lie ==between grid points==.
-:::
-::: col.accent Option 2 — feed the action in
-One network $Q_w(s,a)$ with the action as an input.\
-The action stays continuous.\
-But the update needs $\max_{a'}Q_w(s',a')$.\
-$Q_w$ is ==non-convex in $a'$==.\
-A global optimisation at every transition, forever.
+$$\nabla_\theta J=\E_{\tau\sim\pi_\theta}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,\Psi_t\Big]\qquad\red{\scriptstyle\text{every rung of Act 2: } \tau \text{ from the current } \pi_\theta}$$
+
+::: reveal
+::: small
+The data must come from $\pi_\theta$ itself; after one step $\theta$ has moved, and the batch was evidence about the old policy, so it is thrown away.
+Lecture 8's replay buffer, and a behaviour policy that explores on purpose, are both off limits.
 :::
 :::
 
 ::: reveal
 ::: keypoint
-Option 1 keeps the update and breaks the action space; option 2 keeps the action space and breaks the update.
-==There is no cheap third way that keeps Q-learning.==
+Act 2's importance ratio is half an answer: it corrects the action distribution at a state, not which states were visited.
+==The other half removes the expectation over the policy's own actions altogether.==
 :::
 :::
 
 ::: note
-Source pp. 51–52, both headed "Q-Learning on continuous action space?" with the note "Mujoco action = motor control input of each joint". The source's "too small Δa / too high Δa" refers to the number of bins; it is written here in terms of bins to avoid the ambiguity. Page 52 prints the Q-learning update at the top right for reference and concludes "we cannot perform the Q-learning update".
-:::
-
-### The wall, measured
-::: widget continuous-argmax {"seed":3}
-One state, one continuous action, and the critic's $Q(s,\cdot)$ across it.
-A grid of bins pays $n^d$ evaluations per transition on $d$ joints and still misses the peak; ==the actor emits its action in one forward pass== and is trained by following $\nabla_aQ$.
-:::
-
-::: reveal
-::: keypoint
-Following $\nabla_aQ$ is cheap and only ever local: move the start and it settles on the wrong hill.
-TD3 repairs the critic's errors and SAC changes the objective; neither finds the best peak for you.
-:::
-:::
-
-::: note
-Verified in node: true max Q = 0.9615 at a* = 0.416; 9 bins give Q = 0.797, a gap of 0.164, at 531,441 evaluations per transition on six joints; 21 bins close the gap to 0.007 at 85,766,121. Gradient ascent from four starts reaches the global peak from one of them. The honest shape of the resolution-against-cost trade-off is not monotone: 9 bins buy nothing over 5 here.
+Source p. 39: REINFORCE and the vanilla actor–critic are on-policy, "training samples are collected according to the target policy, the very same policy that we try to optimize for"; off-policy learning would buy two things, no need for full trajectories and the reuse of any past episode through experience replay, and a behaviour policy different from the target for better exploration. The ratio of pp. 39–40 is the Act 2 slide's. The next slide is the source's p. 54, the deterministic actor, which is where the second half comes from.
 :::
 
 ### Why deterministic — the inner expectation disappears
@@ -927,7 +922,7 @@ Source p. 54, the cleanest argument in the DDPG half: with a stochastic π, "env
 :::
 
 ::: small
-**What breaks** — Act 2's actor needs a score and the critic's $\max_aQ$ needs a search; a continuous action defeats both.
+**What breaks** — Act 2's actor needs a score from its own episodes; a critic trained from replay knows the slope of the return but has no score to hand over.
 **The change** — a deterministic actor $a=\mu_\theta(s)$, improved by differentiating the critic through the action.
 :::
 
@@ -940,7 +935,7 @@ J(\pi_\theta)&=\int_{\mathcal S}\rho^{\pi}(s)\int_{\mathcal A}\pi_\theta(a\mid s
 
 ::: reveal
 ::: keypoint
-The intractable $\max_aQ$ is finally beaten: ==the actor follows $\nabla_aQ$ uphill instead of searching for its summit.==
+No score and no return: ==the actor follows $\nabla_aQ$ uphill==, and it is the stored argmax the opening wall asked for.
 The deterministic gradient is the limit of the stochastic one as the policy's spread goes to zero.
 :::
 :::
@@ -1161,6 +1156,13 @@ Numbers for the board, if asked: two actions with rewards 2 and 1.8 at α_H = 0.
 everything else is TD3's box: replay, twin critics, soft target copies; the actor step is not delayed
 :::
 
+::: reveal
+::: keypoint
+All of Act 3 learns from replay, and the actor never needed a score.
+==The on-policy methods of Acts 1 and 2 never asked how far one step may go.==
+:::
+:::
+
 ::: note
 Against TD3's box line by line: the behaviour policy is the actor itself; the target action is a sample rather than a smoothed deterministic action, and the entropy term joins the target; the actor's loss trades the smaller critic against the log-density, differentiated through the sample by reparameterisation, Lecture 6's trick; the clipped double Q and the soft target copies stay. The temperature line is the automatic-entropy version of Haarnoja et al. 2019; the ICML 2018 paper used a fixed α_H and a separate state-value network. On the heater a Gaussian actor with a learned σ would shrink σ towards the entropy target rather than to zero. TD3, SAC and PPO now each have a box; DPG is a theorem and keeps its derivation.
 :::
@@ -1176,24 +1178,18 @@ Against TD3's box line by line: the behaviour policy is the actor itself; the ta
 The critic is a differentiable surrogate for how good this action is here, so the actor can be moved uphill on it by the chain rule; no action sampling is needed inside the deterministic gradient, and the states still come from data. Notice what has been re-created: an optimiser climbing a learned model of the objective, which is Lecture 5's setup exactly. Lecture 12 shows it failing in the same way.
 :::
 
-## Act 4 — stepping without falling
+## Act 4 — the policy collects its own next batch
 {short: ACT 4, num: Act 4}
 
 **Q4.** We have a gradient and have tamed its variance.\
 How far along it dare we step?
 
-### Act 4 on the map
+### The policy makes its own next batch
 {q: 4}
 
 ::: qstrip
 :::
 
-::: widget control-grid {"cell":"prl","dim":true,"arrow":"f","outer":"dim"}
-The same cell once more.
-==Not what the gradient is, but how large a step to take along it.==
-:::
-
-### The policy makes its own next batch
 ::: widget pg-pictures {"mode":"loop"}
 In supervised learning a bad step costs one bad update; the next minibatch comes from the same fixed dataset and pulls you back.
 Here ==the next batch is collected by the policy the step produced==, and a step that leaves the region the batch describes is self-reinforcing.
@@ -1429,7 +1425,7 @@ The same figure as the opening with both model-free cells lit and both arrows em
 
 ### The ladder, complete — one gradient, then two tokens changed
 ::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Advantage","line":"for each step t, with a learned baseline:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{(\\sum_{t′≥t} r_{t′+1} − b(s_t))} ]","note":"reward to go, minus what the state usually gives","loop":"refit b each update"},{"title":"Actor–critic, GAE","line":"for each step t, with a critic V_w:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD errors in place of returns: bias for variance","loop":"one transition per update"},{"title":"DPG, DDPG, TD3, SAC","line":"for each replayed state s, an actor that climbs the critic:","formula":"∇_θ J = \\text{E}_{s∼ρ}[ \\red{∇_θ μ_θ(s) \\, ∇_a Q_w(s,a)|_{a=μ_θ(s)}} ]","note":"the score is gone; SAC samples the action and adds an entropy bonus","loop":"off-policy, from a buffer"},{"title":"TRPO","line":"for a batch under π_old, inside a KL ball:","formula":"\\max_θ \\text{E}[ \\red{π_θ(a|s)/π_{old}(a|s)} \\, Â ] \\quad \\text{s.t.}\\quad \\text{KL}(π_{old} ‖ π_θ) ≤ δ","note":"the ratio measures the step; the ball bounds it","loop":"one constrained step per batch"},{"title":"PPO","line":"for K epochs on the same batch:","formula":"\\max_θ \\text{E}[ \\min( r Â, \\red{\\text{clip}(r, 1−ε, 1+ε)} Â ) ]","note":"the constraint becomes a flat objective","loop":"K epochs per batch"}]}
-Act 2 changed the weight on the score; ==Act 3 replaced the score, Act 4 wrapped the weight.==
+Each plate fixes what the one above it broke: ==the noisy weight, the data thrown away, the unbounded step.==
 Six plates, and every method of the lecture is one of them with one token changed.
 :::
 
@@ -1513,8 +1509,9 @@ Derive REINFORCE and DPG first; then compare PPO and SAC as two complete procedu
 ### The dynamics never solved, only experienced; the controller learned, not derived.
 {layout: standout}
 
-One theorem, two routes, and three ways of using it:\
-a better weight on the score, a critic to climb, a step that stays where the batch is evidence.
+A policy that outputs the action; a gradient that needs no model; a critic for the weight;\
+replay for the critic; a bound on the step.\
+Each fixed what the one before it broke.
 
 ### Questions?
 {layout: standout}

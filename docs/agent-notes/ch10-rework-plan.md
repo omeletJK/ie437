@@ -423,3 +423,26 @@ the heater where a demo exists. That is the whole agenda, and nothing else needs
 About 75 → 72 slides (three map openers removed, the wall moved, no slide added). The markdown
 is being edited in a parallel session; apply these after that session's changes are committed, by
 asserted replacement after a fresh read.
+
+**Applied (2026-11-23), after the parallel session's Route 2 commit (4f96c19), as approved
+("너가 제안한 방식대로 수정하자").** 79 → 76 slides: the four "Act N on the map" slides are gone (the
+grid stays at the opening and the closing), the two wall slides sit after "The debt Lecture 8
+left" with a new keypoint ("so store the answer: a policy that outputs the action; how to improve
+it from experience is the lecture") and their Act 3 reading moved to the note, and Act 3 opens on a
+new slide, "One batch, one update — the on-policy constraint" (p. 39), whose keypoint calls the Act 2
+ratio half an answer. The act banners name the problem each act inherits (the gradient has the
+model inside it; the estimate is too noisy to settle; every update throws its data away; the policy
+collects its own next batch); Q1 and Q3 are rewritten to follow from the previous act; the `q`
+strip moved to each act's first content slide. The learning route is one `lede` of the chain plus
+the "Bring from" lines, with no act table. Hand-off keypoints: the Act 2 ladder ("every rung still
+needs episodes from the current policy, used once and thrown away; that is the next problem") and
+the SAC box ("all of Act 3 learns from replay, and the actor never needed a score; the on-policy
+methods never asked how far one step may go"). The DPG lede and keypoint no longer argue from
+continuous actions: the actor follows ∇_aQ because a critic from replay has no score to hand over,
+and it is "the stored argmax the opening wall asked for". The frontmatter questions read Gradient,
+Weight, Reuse, Step; the closing ladder's caption and the standout read the chain as fixes. The
+"one theorem, two views" slide and the translation table are unchanged. The `q` strip sits on the
+second content slide of Act 1 (the naive gradient), because the objective slide overflowed with it;
+the Act 2 hand-off is the ladder's second caption line, since a keypoint under the six-rung ladder
+ran past the footer. Walk clean (76 slides, no overflow, no overlap, no over-wide maths, no console
+errors), the wrap detector at zero, both test suites passing. Not committed; the professor commits.
