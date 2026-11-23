@@ -229,6 +229,32 @@ The theorem that follows turns one batch of rollouts into the whole gradient.
 Source p. 30: "it works even when J(θ) is not differentiable, but very slow. Is there a more efficient method?" Random-direction methods trade the coordinate loop for noise; they are the honest alternative that makes the score-function trick an achievement rather than a definition.
 :::
 
+### The theorem, stated — the gradient lands on the policy alone
+{fill: top, math: compact}
+
+**Source p. 31** — $\nabla J$ looks tricky: $\theta$ enters twice, through the actions chosen and through the states visited:
+
+$$J(\theta)=\sum_{s\in\mathcal S}d^\pi(s)\,V^\pi(s)=\sum_{s\in\mathcal S}d^\pi(s)\sum_{a\in\mathcal A}\pi_\theta(a\mid s)\,Q^\pi(s,a)$$
+
+$$\begin{aligned}
+\nabla_\theta J(\theta)&=\nabla_\theta\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,Q^\pi(s,a) &&\red{\scriptstyle\theta \text{ sits in } \pi_\theta\text{, in } Q^\pi \text{ and in } d^\pi}\\
+\step{1}{}&\step{1}{\propto\sum_{s}d^\pi(s)\sum_{a}\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)} &&\step{1}{\red{\scriptstyle\text{the claim: } \nabla \text{ lands on } \pi_\theta \text{ alone; proved on the next slides}}}\\
+\step{2}{}&\step{2}{=\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,\frac{\nabla_\theta\pi_\theta(a\mid s)}{\pi_\theta(a\mid s)}\,Q^\pi(s,a)} &&\step{2}{\red{\scriptstyle\text{multiply and divide by } \pi_\theta(a\mid s)}}\\
+\step{3}{}&\step{3}{=\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)} &&\step{3}{\red{\scriptstyle(\log x)'=1/x}}\\
+\step{4}{}&\step{4}{=\E_\pi\big[\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)\big]} &&\step{4}{\red{\scriptstyle\E_\pi \text{ is } \E_{s\sim d^\pi,\,a\sim\pi_\theta}\text{: on-policy}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+Everything hangs on line 1: ==why may the gradient ignore $d^\pi$ and $Q^\pi$?==
+The next four slides prove it, by differentiating the backup and unrolling.
+:::
+:::
+
+::: note
+Source p. 31, verbatim in order: the objective J(θ) = Σ_s d^π(s) V^π(s) = Σ_s d^π(s) Σ_a π_θ(a|s) Q^π(s,a); "computing the gradient ∇J(θ) is tricky because it depends on both the action selection and the stationary distribution of states following the target selection behaviour"; "the policy gradient theorem makes the computation simple"; the five lines, with the source's remark on the ∝ line, "gradient does not depend on [the derivative of] Q^π (will be proved)", and (ln x)′ = 1/x on the log line; "E_π refers to E_{s~d^π, a~π_θ} when both state and action distributions follow the policy π_θ (on-policy)". Here d^π is the visitation from s_0 of the objective slide, which the proof produces as the normalised η(s); the source calls it the stationary distribution. The source writes ln; this deck writes log throughout.
+:::
+
 ### Route 1 — the backup, drawn: where the parameter lives
 ::: widget backup-tree {"mode":"score"}
 Lecture 7's expectation backup for $V^\pi(s)$, every action weighted by $\pi_\theta(a\mid s)$.
@@ -243,31 +269,106 @@ $P$ routes the gradient from $s'$ back to $s$ and is never differentiated.
 :::
 
 ::: note
-Source pp. 31–32 drawn on the Ch 7 tree. Press one tags the decision edges with θ and marks the chance edges "no θ"; press two writes the differentiated backup with the P factor in slate. The whole of Route 1 is this picture: ∇Q^π(s,a) = Σ_{s'} P(s'|s,a) ∇V^π(s'), the gradient passing through the chance node untouched. Lecture 9 read the same tree with a continuum of controls; today's tree has a continuum of parameters behind each blue edge.
+Source p. 32 drawn on the Ch 7 tree, shown before the proof as its picture. Press one tags the decision edges with θ and marks the chance edges "no θ"; press two writes the differentiated backup with the P factor in slate. The whole of Route 1 is this picture: ∇Q^π(s,a) = Σ_{s'} P(s'|s,a) ∇V^π(s'), the gradient passing through the chance node untouched. Lecture 9 read the same tree with a continuum of controls; today's tree has a continuum of parameters behind each blue edge.
 :::
 
-### Route 1 — the derivation, one line per press
+
+### Proof, step 1 — differentiate the backup
 {fill: top, math: compact}
 
-**Bellman equation to policy gradient theorem** — the backup differentiated, then unrolled from $s_0$, with $J=V^\pi(s_0)$:
+**Start from Lecture 7's expectation backup** — source p. 32; the aim is a recursive form for $\nabla_\theta V^\pi(s)$:
 
 $$\begin{aligned}
-V^\pi(s)&=\sum_a\pi_\theta(a\mid s)\,Q^\pi(s,a) &&\red{\scriptstyle\text{Lecture 7's expectation backup}}\\
-\step{1}{\nabla_\theta V^\pi(s)}&\step{1}{=\sum_a\Big[\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\,\nabla_\theta Q^\pi(s,a)\Big]} &&\step{1}{\red{\scriptstyle\text{the product rule}}}\\
-\step{2}{\nabla_\theta Q^\pi(s,a)}&\step{2}{=\nabla_\theta\sum_{s'}P(s'\mid s,a)\big[R+V^\pi(s')\big]=\sum_{s'}\hl{P(s'\mid s,a)}\,\nabla_\theta V^\pi(s')} &&\step{2}{\red{\scriptstyle P, R \text{ carry no } \theta\text{: pass through}}}\\
-\step{3}{\nabla_\theta V^\pi(s)}&\step{3}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\nabla_\theta V^\pi(s'),\quad \phi(s):=\sum_a\nabla_\theta\pi_\theta\,Q^\pi,\ \ \rho^\pi(s\to s',1):=\sum_a\pi_\theta P} &&\step{3}{\red{\scriptstyle\text{a Bellman equation for the gradient}}}\\
-\step{4}{\nabla_\theta V^\pi(s)}&\step{4}{=\sum_{x}\sum_{k=0}^{\infty}\rho^\pi(s\to x,k)\,\phi(x)} &&\step{4}{\red{\scriptstyle\text{unroll; } \rho^\pi(s\to x,k)\text{: the } k\text{-step reach}}}\\
-\step{5}{\nabla_\theta J}&\step{5}{=\sum_s\eta(s)\,\phi(s)\;\propto\;\sum_s d^\pi(s)\sum_a\pi_\theta\,\nabla_\theta\log\pi_\theta\,Q^\pi} &&\step{5}{\red{\scriptstyle\eta(s)=\sum_k\rho^\pi(s_0\to s,k)\propto d^\pi(s)}}
+\nabla_\theta V^\pi(s)&=\nabla_\theta\Big(\sum_{a\in\mathcal A}\pi_\theta(a\mid s)\,Q^\pi(s,a)\Big) &&\red{\scriptstyle V^\pi\text{: the policy-weighted average of } Q^\pi}\\
+\step{1}{}&\step{1}{=\sum_{a\in\mathcal A}\Big(\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\,\red{\nabla_\theta Q^\pi(s,a)}\Big)} &&\step{1}{\red{\scriptstyle\text{the derivative product rule; the second term still holds a } \nabla}}\\
+\step{2}{}&\step{2}{=\sum_{a\in\mathcal A}\Big(\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\,\red{\nabla_\theta\sum_{s',r}P(s',r\mid s,a)\big(r+V^\pi(s')\big)}\Big)} &&\step{2}{\red{\scriptstyle\text{extend } Q^\pi \text{ with the next state's value}}}\\
+\step{3}{}&\step{3}{=\sum_{a\in\mathcal A}\Big(\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\sum_{s',r}\red{P(s',r\mid s,a)\,\nabla_\theta V^\pi(s')}\Big)} &&\step{3}{\red{\scriptstyle P(s',r\mid s,a) \text{ is not a function of } \theta\text{, nor is } r}}\\
+\step{4}{}&\step{4}{=\sum_{a\in\mathcal A}\Big(\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\sum_{s'}\red{P(s'\mid s,a)\,\nabla_\theta V^\pi(s')}\Big)} &&\step{4}{\red{\scriptstyle P(s'\mid s,a)=\sum_r P(s',r\mid s,a)}}
 \end{aligned}$$
 
 ::: reveal
 ::: keypoint
-The dynamics appear once, on line 2, and only as a weight: ==every $\theta$ in the gradient sits inside $\log\pi_\theta$.==
+A nice recursive form: ==$\nabla_\theta V^\pi(s)$ is a one-step term plus a weighted sum of $\nabla_\theta V^\pi(s')$ at the next states.==
+The future value's gradient can be unrolled repeatedly, which the next slides do.
 :::
 :::
 
 ::: note
-Source pp. 31–34, line for line. Line 0 is the Bellman expectation equation. Line 1 is the product rule. Line 2 extends Q^π one step with the next state value; P is not a function of θ, so ∇ passes through it, which the source annotates "gradient does not depend on ∇θ of the dynamics". Line 3 names φ(s), the one-step contribution, and ρ^π(s→s',1) = Σ_a π_θ(a|s)P(s'|s,a), the one-step visitation; the equation has the form of a Bellman equation with φ in place of the reward and ρ in place of the transition. Say the last move aloud: ∇π = π ∇log π turns the sum over a into an expectation under π_θ. Line 4 unrolls it with ρ^π(s→x,k) the k-step visitation, so the gradient at s is the sum of φ over every state reachable from s, weighted by how often it is reached. Line 5 sets η(s) = Σ_k ρ^π(s_0→s,k), the unnormalised visitation, and divides by Σ_s η(s) to get d^π; the constant is absorbed into the learning rate, and the proportionality sign is the source's own. The last move is ∇π = π ∇log π, which turns the sum over a into an expectation under π_θ. Discounted version: γ enters ρ and the constant becomes 1/(1−γ).
+Source p. 32, line for line, with its four "∵" remarks: derivative product rule; extend Q^π with further state value; P(s′,r|s,a) is not a function of θ; P(s′|s,a) = Σ_r P(s′,r|s,a). The source then repeats the last line in red and says "a nice recursive form and the future state value function V^π(s′) can be repeatedly unrolled as will be shown next slide". The backup picture two slides back is this slide drawn: the ∇ passes through the chance node P untouched and lands on the decision edges π_θ.
+:::
+
+### Proof, step 2 — a Bellman equation for the gradient
+{fill: top, math: compact}
+
+**Name the two pieces** — source p. 33: the one-step term, and the one-step reach, the chance of landing on $s'$ one step after $s$:
+
+$$\phi(s):=\sum_a\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a),\qquad\rho^\pi(s\to s',1):=\sum_a\pi_\theta(a\mid s)\,P(s'\mid s,a)$$
+
+$$\begin{aligned}
+\nabla_\theta V^\pi(s)&=\sum_{a}\Big(\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)+\pi_\theta(a\mid s)\sum_{s'}P(s'\mid s,a)\,\nabla_\theta V^\pi(s')\Big) &&\red{\scriptstyle\text{the previous slide's last line}}\\
+\step{1}{}&\step{1}{=\phi(s)+\sum_{a}\pi_\theta(a\mid s)\sum_{s'}P(s'\mid s,a)\,\nabla_\theta V^\pi(s')} &&\step{1}{\red{\scriptstyle\text{the first term is } \phi(s)}}\\
+\step{2}{}&\step{2}{=\phi(s)+\sum_{s'}\sum_{a}\pi_\theta(a\mid s)\,P(s'\mid s,a)\,\nabla_\theta V^\pi(s')} &&\step{2}{\red{\scriptstyle\text{swap the two sums}}}\\
+\step{3}{}&\step{3}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\nabla_\theta V^\pi(s')} &&\step{3}{\red{\scriptstyle\text{the inner sum is } \rho^\pi(s\to s',1)}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+Compare Lecture 7's Bellman equation: ==$\phi$ sits where the reward sat and $\rho^\pi$ where the transition sat==, so the same unrolling applies.
+:::
+:::
+
+::: note
+Source p. 33, first four lines, with φ(s) = Σ_a ∇_θ π_θ(a|s) Q^π(s,a) given in grey at the right and ρ^π(s → s′, 1) = Σ_a π_θ(a|s) P(s′|s,a) in green. Say what ρ is in words: the probability of landing on s′ one step after s when the policy chooses the action and the world answers. Lecture 7's policy evaluation iterated V(s) = r(s) + Σ_{s′} P^π(s′|s) V(s′); this is the same shape with φ for r and ρ for P^π, and the solution of such an equation is a sum over all paths, which is the next slide.
+:::
+
+### Proof, step 2, continued — unroll it to every reachable state
+{fill: top, math: compact}
+
+**The same formula at $s'$, then at $s''$, and on** — source p. 33; $\rho^\pi(s\to x,k)$ is the chance of reaching $x$ from $s$ in $k$ steps:
+
+$$\begin{aligned}
+\nabla_\theta V^\pi(s)&=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\nabla_\theta V^\pi(s') &&\red{\scriptstyle\text{the previous slide}}\\
+\step{1}{}&\step{1}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\Big[\phi(s')+\sum_{s''}\rho^\pi(s'\to s'',1)\,\nabla_\theta V^\pi(s'')\Big]} &&\step{1}{\red{\scriptstyle\text{the same formula, at } s'}}\\
+\step{2}{}&\step{2}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\phi(s')+\sum_{s''}\rho^\pi(s\to s'',2)\,\nabla_\theta V^\pi(s'')} &&\step{2}{\red{\scriptstyle\text{chain the two steps into } \rho^\pi(s\to s'',2)}}\\
+\step{3}{}&\step{3}{=\phi(s)+\sum_{s'}\rho^\pi(s\to s',1)\,\phi(s')+\sum_{s''}\rho^\pi(s\to s'',2)\,\phi(s'')+\sum_{s'''}\rho^\pi(s\to s''',3)\,\nabla_\theta V^\pi(s''')} &&\step{3}{\red{\scriptstyle\text{and again}}}\\
+\step{4}{}&\step{4}{=\cdots} &&\step{4}{\red{\scriptstyle\text{repeatedly unrolling the } \nabla_\theta V^\pi(\cdot) \text{ part}}}\\
+\step{5}{}&\step{5}{=\sum_{x\in\mathcal S}\sum_{k=0}^{\infty}\rho^\pi(s\to x,k)\,\phi(x)} &&\step{5}{\red{\scriptstyle\rho^\pi(s\to x,0)=1 \text{ if } x=s\text{, else } 0}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+==The gradient at $s$ is $\phi$ summed over every state reachable from $s$, weighted by how often it is reached.==
+No $\nabla V^\pi$ is left on the right-hand side.
+:::
+:::
+
+::: note
+Source p. 33, the remaining lines: the bracket in red is the previous line's formula applied at s′; the two-step term collects Σ_{s′} ρ(s→s′,1) ρ(s′→s″,1) into ρ(s→s″,2); a third unrolling gives ρ(s→s‴,3); "= ⋯; repeatedly unrolling the part of ∇_θ V^π(·)"; and the closed form Σ_{x∈S} Σ_k ρ^π(s→x,k) φ(x), where the k = 0 term is φ(s) itself. Undiscounted, as the source; with γ each ρ(s→x,k) carries γ^k. For an episodic task the sum over k stops at the horizon, so the infinite sum is finite.
+:::
+
+### Proof, step 3 — from $s_0$ to the on-policy expectation
+{fill: top, math: compact}
+
+**The objective is the value of the start state** — source p. 34; apply the unrolled form at $s=s_0$:
+
+$$\begin{aligned}
+\nabla_\theta J(\theta)&=\nabla_\theta V^\pi(s_0)=\sum_{s}\sum_{k=0}^{\infty}\rho^\pi(s_0\to s,k)\,\phi(s) &&\red{\scriptstyle J(\theta)=V^\pi(s_0)\text{; then the previous slide, at } s_0}\\
+\step{1}{}&\step{1}{=\sum_{s}\eta(s)\,\phi(s)} &&\step{1}{\red{\scriptstyle\eta(s):=\sum_{k=0}^{\infty}\rho^\pi(s_0\to s,k)\text{: how often } s \text{ is visited from } s_0}}\\
+\step{2}{}&\step{2}{\propto\sum_{s}d^\pi(s)\,\phi(s)} &&\step{2}{\red{\scriptstyle d^\pi=\eta/\sum_s\eta\text{; the constant goes into the step size}}}\\
+\step{3}{}&\step{3}{=\sum_{s}d^\pi(s)\sum_{a}\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)} &&\step{3}{\red{\scriptstyle\phi(s)=\sum_a\nabla_\theta\pi_\theta(a\mid s)\,Q^\pi(s,a)\text{: the claim, proved}}}\\
+\step{4}{}&\step{4}{=\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,\frac{\nabla_\theta\pi_\theta(a\mid s)}{\pi_\theta(a\mid s)}\,Q^\pi(s,a)} &&\step{4}{\red{\scriptstyle\text{multiply and divide by } \pi_\theta(a\mid s)}}\\
+\step{5}{}&\step{5}{=\sum_{s}d^\pi(s)\sum_{a}\pi_\theta(a\mid s)\,\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)} &&\step{5}{\red{\scriptstyle(\log x)'=1/x}}\\
+\step{6}{}&\step{6}{=\E_\pi\big[\nabla_\theta\log\pi_\theta(a\mid s)\,Q^\pi(s,a)\big]} &&\step{6}{\red{\scriptstyle\E_\pi \text{ is } \E_{s\sim d^\pi,\,a\sim\pi_\theta}\text{: on-policy}}}
+\end{aligned}$$
+
+::: reveal
+::: keypoint
+The dynamics appeared once, inside $\rho^\pi$, and only as a weight: ==every $\theta$ in the gradient sits inside $\log\pi_\theta$.==
+:::
+:::
+
+::: note
+Source p. 34, line for line: ∇J = ∇V^π(s_0); the double sum from the previous slide; η(s) = Σ_k ρ^π(s_0→s,k); "normalise η(s), s ∈ S, to be a probability distribution"; "Σ_s η(s) is a constant", hence ∝, and the constant goes into the step size; φ(s) written out; multiply and divide by π_θ; (ln x)′ = 1/x; E_π refers to E_{s~d^π, a~π_θ} (on-policy). The source's d^π here is the normalised visitation from s_0, which is what the theorem statement slide used. Discounted version: γ enters each ρ and Σ_s η(s) = 1/(1−γ).
 :::
 
 ### The policy gradient theorem

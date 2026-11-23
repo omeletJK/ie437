@@ -446,3 +446,31 @@ second content slide of Act 1 (the naive gradient), because the objective slide 
 the Act 2 hand-off is the ladder's second caption line, since a keypoint under the six-rung ladder
 ran past the footer. Walk clean (76 slides, no overflow, no overlap, no over-wide maths, no console
 errors), the wrap detector at zero, both test suites passing. Not committed; the professor commits.
+
+## Route 1 rewritten from the source pages (2026-11-23)
+
+After Route 2, the professor pointed at Route 1's one-block derivation (the backup differentiated,
+φ and ρ named on one line, unrolled on the next) and asked for the full derivation, "exactly what
+the original slides contain". Source pp. 31–34 now map to one slide each, after the re-cut of
+e97e9ef:
+
+- p. 31 → "The theorem, stated — the gradient lands on the policy alone": J through d^π, the
+  "tricky because θ enters twice" sentence, and the source's five-line sketch (∝ as the claim to
+  be proved, multiply and divide by π_θ, (log x)′ = 1/x, E_π on-policy). The keypoint names the
+  question the proof answers.
+- the `backup-tree` score widget follows as the proof's picture.
+- p. 32 → "Proof, step 1 — differentiate the backup": the five lines with the source's four ∵
+  remarks (product rule; extend Q^π with the next state's value; P(s′,r|s,a) is not a function of
+  θ; P(s′|s,a) = Σ_r P(s′,r|s,a)), the differentiated piece in red on each line.
+- p. 33 → two slides, "Proof, step 2 — a Bellman equation for the gradient" (φ and ρ defined on a
+  display line, the first term is φ, swap the sums, the inner sum is ρ; keypoint compares Lecture
+  7's Bellman equation) and "Proof, step 2, continued — unroll it to every reachable state" (the
+  bracket at s′, the two-step ρ, a third unrolling, "= ⋯", the closed double sum).
+- p. 34 → "Proof, step 3 — from s_0 to the on-policy expectation": ∇V^π(s_0), the double sum, η,
+  normalise to d^π with the constant into the step size, φ written out, the ratio, the log, E_π.
+- "The policy gradient theorem" block slide stays as the summary.
+
+Kept against the source: log for ln, d^π as the normalised visitation from s_0 (said in the notes).
+Fitting lessons: a lede with two inline definitions wraps mid-formula, so definitions go on their
+own display line; an annotation longer than about 45 characters runs off the slide beside a wide
+line. 76 → 80 slides.
