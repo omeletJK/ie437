@@ -310,3 +310,22 @@ bridges. All applied; 73 slides, walk clean, wrap detector at zero.
   line. Check 3's distractor B carries a formula so the correct option is not the only one with one.
 - *The one-parameter slide* speaks of "reward minus the average reward" rather than "advantage",
   which Act 2 has not yet defined, and promises Act 2's justification.
+
+## One format for the six algorithms (2026-11-22)
+
+Asked whether DPG, DDPG, TD3, SAC, TRPO and PPO were each explained "easily, intuitively, at the
+core, in the same format", the honest answer was half. All six had a paper card, a key equation and
+a title naming the fix, but the format diverged: only TD3 marked its changed token red, SAC and TRPO
+had no algorithm box while DDPG, TD3 and PPO did, DDPG's card slide had no keypoint, SAC's keypoint
+carried arithmetic in prose (added in the comprehension pass, against the standing rule), and SAC
+was missing from the six-plate closing ladder. The professor asked for one format. Now each of the
+six card slides reads: card → a two-line `::: small` lede, **What breaks** and **The change** →
+the key equation with the changed token in `\red{}` → a box where the method is a procedure →
+keypoint. Added: an "Algorithm — SAC, the lines that differ from TD3" slide (act, soft target,
+reparameterised actor step, temperature; footer says what stays from TD3) and an "Algorithm — TRPO"
+slide (collect, gradient, conjugate-gradient direction, step to the ball's edge, backtracking check,
+critic; footer names the three lines PPO removes) after the natural-gradient slide, whose keypoint
+now says "PPO keeps the idea" rather than "the next slide". DDPG's card slide gained a one-line
+keypoint; SAC's two-action numbers moved to the note; ladder plate 4 is "DPG, DDPG, TD3, SAC" with
+the note "the score is gone; SAC samples the action and adds an entropy bonus", the plate cap of six
+kept. DPG keeps its derivation in place of a box, being a theorem. 73 → 75 slides.

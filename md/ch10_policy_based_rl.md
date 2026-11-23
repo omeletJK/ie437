@@ -831,15 +831,20 @@ Source p. 54, the cleanest argument in the DDPG half: with a stochastic π, "env
 
 ::: paper
 - Why it is here | The theorem that lets an actor be improved by the critic's slope rather than by returns.
-- What it is | A DeepMind theory paper: the deterministic policy gradient, and its proof as a limit of the stochastic one.
+- What it is | DeepMind theory: the deterministic gradient, the limit of the stochastic one.
 - Why it matters | It made continuous control by actor–critic tractable; DDPG, TD3 and Lecture 12 build on it.
+:::
+
+::: small
+**What breaks** — Act 2's actor needs a score and the critic's $\max_aQ$ needs a search; a continuous action defeats both.
+**The change** — a deterministic actor $a=\mu_\theta(s)$, improved by differentiating the critic through the action.
 :::
 
 $$\begin{aligned}
 J(\pi_\theta)&=\int_{\mathcal S}\rho^{\pi}(s)\int_{\mathcal A}\pi_\theta(a\mid s)\,r(s,a)\,da\,ds &&\red{\scriptstyle\text{the stochastic objective: } \rho^\pi \text{ is Act 1's } d^\pi\text{, discounted; two integrals}}\\
 \step{1}{J(\mu_\theta)}&\step{1}{=\int_{\mathcal S}\rho^\mu(s)\,r\big(s,\mu_\theta(s)\big)\,ds} &&\step{1}{\red{\scriptstyle\text{deterministic: one integral instead of two, the variance argument as an absence}}}\\
 \step{2}{\nabla_\theta J(\mu_\theta)}&\step{2}{=\int_{\mathcal S}\rho^\mu(s)\,\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\,ds} &&\step{2}{\red{\scriptstyle\text{the chain rule through the action; the } \theta \text{ inside } \rho^\mu \text{ unrolls as in Route 1 (Theorem 1)}}}\\
-\step{3}{}&\step{3}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\Big]} &&\step{3}{\red{\scriptstyle\text{the actor follows the critic uphill}}}
+\step{3}{}&\step{3}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\red{\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}}\Big]} &&\step{3}{\red{\scriptstyle\text{the actor follows the critic uphill}}}
 \end{aligned}$$
 
 ::: reveal
@@ -878,11 +883,16 @@ Source p. 68, a PyTorch snippet beside the maths: pi_loss = −Q(s, mu(s)); pi_l
 - Why it matters | The reference continuous-control method of its time; its ablation: "target networks matter a lot".
 :::
 
+::: small
+**What breaks** — the theorem needs a critic $Q_w$, and a critic trained on its own targets was Lecture 8's instability.
+**The change** — Lecture 8's replay buffer and target copies, permitted now because the target reads $\mu(s')$, not the data's next action.
+:::
+
 ::: cols
 ::: col The two losses
 **Critic**, by Bellman error on a replayed minibatch, with target copies $w^-$, $\theta^-$:
 
-$$\begin{aligned}y_i&=r_i+\gamma\,Q_{w^-}\big(s_i',\mu_{\theta^-}(s_i')\big)\\ L(w)&=\tfrac1N\textstyle\sum_i\big(Q_w(s_i,a_i)-y_i\big)^2\end{aligned}$$
+$$\begin{aligned}y_i&=r_i+\gamma\,Q_{\red{w^-}}\big(s_i',\mu_{\red{\theta^-}}(s_i')\big)\\ L(w)&=\tfrac1N\textstyle\sum_i\big(Q_w(s_i,a_i)-y_i\big)^2\end{aligned}$$
 
 **Actor**, by the deterministic policy gradient on the same states:
 
@@ -893,6 +903,12 @@ $$\nabla_\theta J\approx\frac1N\sum_i\nabla_\theta\mu_\theta(s_i)\,\nabla_aQ_w(s
 **Target networks** $w^-$, $\theta^-$, updated softly every step.\
 $w^-\leftarrow\tau w+(1-\tau)w^-$, not copied every $C$ steps.\
 **Exploration noise** added to $\mu_\theta(s)$ when acting.
+:::
+:::
+
+::: reveal
+::: keypoint
+Lecture 8's recipe with the max replaced: ==the critic learns from replay, the actor climbs it.==
 :::
 :::
 
@@ -990,6 +1006,11 @@ Source pp. 62–65. The three reasons of p. 63 are verbatim in substance; the th
 - Why it matters | The deterministic baseline since 2018; with behaviour cloning it is Lecture 12's method.
 :::
 
+::: small
+**What breaks** — the actor climbs wherever $Q_w$ is too high, and the critic's own errors are exactly where it is too high.
+**The change** — a smaller, smoother target from two critics, and an actor that waits for the critic to settle.
+:::
+
 ::: algorithm TD3, the lines that differ from DDPG | two critics $Q_{w_1},Q_{w_2}$, a delay $d$, target noise $\epsilon\sim\mathcal N(0,\sigma)$ clipped to $[-c,c]$
 [target action] $\tilde a'\leftarrow\operatorname{clip}\big(\mu_{\theta^-}(s')+\operatorname{clip}(\epsilon,-c,c),\,a_{\min},a_{\max}\big)$ // target policy smoothing: average over nearby actions, not a narrow peak
 [critics] $y\leftarrow r+\gamma\,\red{\min_{i=1,2}}Q_{w_i^-}(s',\tilde a')$ // clipped double Q: both critics regress to the smaller target
@@ -1018,25 +1039,39 @@ As Lecture 8 set SARSA against Q-learning by the one line that differs, this box
 - Why it matters | With PPO, a default continuous-control algorithm since 2018; Lecture 11's MBPO trains it.
 :::
 
+::: small
+**What breaks** — a deterministic actor explores nothing, and the noise bolted on to it is not part of what is optimised.
+**The change** — a stochastic actor, still trained from replay, with the entropy of its actions added to the objective.
+:::
+
 **The objective** — the return, with the entropy $\mathcal H$ of the action distribution added at every step, $\alpha_H>0$ the temperature:
 
-$$J(\pi)=\E_\pi\Big[\sum_t\gamma^t\big(r_{t+1}\;\hl{+\;\alpha_H\,\mathcal H(\pi(\cdot\mid s_t))}\big)\Big]$$
-
-::: reveal
-**The learning loop** — a soft target for twin critics, and an actor that trades critic value against lost entropy:
-
-$$\begin{aligned}y&=r+\gamma\Big[\min_{i=1,2}Q_{w_i^-}(s',a')-\alpha_H\log\pi_\theta(a'\mid s')\Big],\qquad a'\sim\pi_\theta(\cdot\mid s')\\ L_\pi&=\E_{s\sim D,\,a\sim\pi_\theta}\Big[\alpha_H\log\pi_\theta(a\mid s)-\min_iQ_{w_i}(s,a)\Big]\end{aligned}$$
-:::
+$$J(\pi)=\E_\pi\Big[\sum_t\gamma^t\big(r_{t+1}\;\red{+\;\alpha_H\,\mathcal H(\pi(\cdot\mid s_t))}\big)\Big]$$
 
 ::: reveal
 ::: keypoint
-Once entropy earns a bonus a mixture can beat the best single action: rewards $2$ and $1.8$ at $\alpha_H=0.5$ score $2$ alone, $2.25$ as a fair mixture.
+Once entropy earns a bonus, spreading over near-equal actions can beat the single best one.
 ==The objective values entropy as well as reward.==
 :::
 :::
 
 ::: note
-The keypoint's numbers: always the first action scores 2; each with probability one half scores 1.9 + 0.5 log 2 = 2.247, so the mixture wins between these two candidates. Continuous SAC uses a density and differential entropy. The original ICML version had a separate value network; these equations are the later twin-Q variant (Haarnoja et al., 2019). Neither replay nor entropy fixes missing coverage in a fixed offline log, which is Lecture 12. α_H is the temperature, not a step size. The actor samples through the reparameterisation of Lecture 6; PPO's entropy bonus is the seed, SAC's objective the plant.
+Numbers for the board, if asked: two actions with rewards 2 and 1.8 at α_H = 0.5; always the first scores 2, each with probability one half scores 1.9 + 0.5 log 2 = 2.247, so the mixture wins between these two candidates. Continuous SAC uses a density and differential entropy. The learning loop, a soft target for twin critics and an actor that trades critic value against lost entropy, is the next slide's box. Neither replay nor entropy fixes missing coverage in a fixed offline log, which is Lecture 12. α_H is the temperature, not a step size. The actor samples through the reparameterisation of Lecture 6; PPO's entropy bonus is the seed, SAC's objective the plant.
+:::
+
+### Algorithm — SAC, the lines that differ from TD3
+::: algorithm SAC, the lines that differ from TD3 | a stochastic actor $\pi_\theta$, twin critics $Q_{w_1},Q_{w_2}$, temperature $\alpha_H$
+[act] $a\sim\pi_\theta(\cdot\mid s)$ // the actor's own spread explores: no noise process
+[target action] $a'\sim\pi_\theta(\cdot\mid s')$ // a sample, not a smoothed point
+[critics] $y\leftarrow r+\gamma\big[\min_jQ_{w_j^-}(s',a')\;\red{-\;\alpha_H\log\pi_\theta(a'\mid s')}\big]$ // the soft target: the next step's entropy is paid in
+! [learn] $\theta\leftarrow\theta-\alpha_\theta\nabla_\theta\tfrac1N\sum_i[\alpha_H\log\pi_\theta(a_i\mid s_i)-\min_jQ_{w_j}(s_i,a_i)]$ // climb the smaller critic, keep the entropy; a_i reparameterised, Lecture 6
+[temperature] $\alpha_H$ moved so that the actor's entropy stays near a target // the 2019 version; the 2018 paper fixes it
+---
+everything else is TD3's box: replay, twin critics, soft target copies; the actor step is not delayed
+:::
+
+::: note
+Against TD3's box line by line: the behaviour policy is the actor itself; the target action is a sample rather than a smoothed deterministic action, and the entropy term joins the target; the actor's loss trades the smaller critic against the log-density, differentiated through the sample by reparameterisation, Lecture 6's trick; the clipped double Q and the soft target copies stay. The temperature line is the automatic-entropy version of Haarnoja et al. 2019; the ICML 2018 paper used a fixed α_H and a separate state-value network. On the heater a Gaussian actor with a learned σ would shrink σ towards the entropy target rather than to zero. TD3, SAC and PPO now each have a box; DPG is a theorem and keeps its derivation.
 :::
 
 ### Check — the deterministic gradient
@@ -1093,9 +1128,14 @@ Press one: one large step out of the region where the batch is evidence; the gra
 - Why it matters | The theory behind PPO, and where Lecture 1's trust region re-enters in a new metric.
 :::
 
+::: small
+**What breaks** — the batch comes from the policy being changed, so a step that is large in behaviour spoils its own next batch.
+**The change** — measure the step by how far the behaviour moves, and keep it inside a ball of that measure.
+:::
+
 **The constrained step** — maximise the importance-weighted advantage $\hat A$ of Act 2, inside a ball of $D_{\mathrm{KL}}$, Lecture 6's divergence, around the policy that collected the data:
 
-$$\max_\theta\ \E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\Big[\frac{\pi_\theta(a\mid s)}{\pi_{\mathrm{old}}(a\mid s)}\,\hat A(s,a)\Big]\quad\text{s.t.}\quad\E_{s}\big[D_{\mathrm{KL}}\big(\pi_{\mathrm{old}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big]\le\delta$$
+$$\max_\theta\ \E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\Big[\red{\frac{\pi_\theta(a\mid s)}{\pi_{\mathrm{old}}(a\mid s)}}\,\hat A(s,a)\Big]\quad\text{s.t.}\quad\red{\E_{s}\big[D_{\mathrm{KL}}\big(\pi_{\mathrm{old}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big]\le\delta}$$
 
 ::: reveal
 ::: small
@@ -1129,12 +1169,30 @@ L(\theta)&\approx g^\top(\theta-\theta_{\mathrm{old}}),\qquad g=\nabla_\theta L(
 ::: reveal
 ::: keypoint
 Second-order machinery for a first-order idea: stay where the surrogate is trusted.
-The next slide keeps the idea and throws the machinery away.
+PPO keeps the idea and throws the machinery away.
 :::
 :::
 
 ::: note
 The derivation assumes an invertible positive-definite local Fisher matrix and a nonzero gradient; implementations add damping and use sampled estimates. Why the KL's leading term is quadratic: D_KL(π_old ‖ π_θ) is zero at θ_old and non-negative, so its gradient vanishes there and its Hessian is the Fisher information. PPO removes the second-order solve and inherits neither the hard trust region nor the monotonic-improvement guarantee.
+:::
+
+### Algorithm — TRPO
+::: algorithm TRPO | input $\pi_\theta$, $V_w$, radius $\delta$; output $\theta$
+[initialise] $\theta$, $w$
+[repeat]
+  [collect] $N$ episodes under $\pi_{\mathrm{old}}=\pi_\theta$; $\hat A_t$ by GAE from $V_w$ // the batch, collected as REINFORCE's box collects it
+  [gradient] $g\leftarrow\nabla_\theta L(\theta)\big|_{\theta_{\mathrm{old}}}$ // the slope of the surrogate: Act 2's policy gradient
+  [direction] $x\leftarrow H^{-1}g$ by conjugate gradient // $H$ is never formed, only multiplied with a vector
+  ! [step] $\theta\leftarrow\theta_{\mathrm{old}}+\red{\sqrt{2\delta/(g^\top x)}}\;x$ // to the edge of the KL ball
+  [check] halve the step until the sampled $\bar D_{\mathrm{KL}}\le\delta$ and $L$ has improved // Lecture 1's accept-or-shrink
+  [critic] $w\leftarrow w-\alpha_w\nabla_w\frac1N\sum(V_w(s_t)-G_t)^2$ // regress on the batch's returns
+---
+one constrained step per batch; the direction, the step and the check are the three lines PPO removes
+:::
+
+::: note
+Algorithm 1 of Schulman et al. 2015 in the previous slide's symbols: g and H are the linearised surrogate and the Fisher matrix, x the natural-gradient direction, and the square root scales the step to the ball's edge. The conjugate-gradient solve uses ten or so Fisher-vector products, each one backward pass. The line search is the guard that the quadratic model of the KL is only local. PPO's box keeps collect, advantage and critic and replaces the three middle lines with K epochs of a clipped first-order step.
 :::
 
 ### PPO — remove the incentive to leave the region
@@ -1146,9 +1204,14 @@ The derivation assumes an invertible positive-definite local Fisher matrix and a
 - Why it matters | The default policy-gradient method since; the RL stage of InstructGPT was trained with it.
 :::
 
+::: small
+**What breaks** — TRPO buys its guarantee with a conjugate-gradient solve and a line search on every step.
+**The change** — clip the ratio inside the objective, so that it goes flat outside the region and no constraint is needed.
+:::
+
 **The clipped surrogate** — with the ratio $r(\theta)=\pi_\theta(a\mid s)/\pi_{\mathrm{old}}(a\mid s)$, the paper's letter, not a reward:
 
-$$J^{\mathrm{CLIP}}(\theta)=\E\Big[\min\big(r(\theta)\,\hat A,\ \operatorname{clip}\big(r(\theta),\,1-\epsilon,\,1+\epsilon\big)\,\hat A\big)\Big]$$
+$$J^{\mathrm{CLIP}}(\theta)=\E\Big[\min\big(r(\theta)\,\hat A,\ \red{\operatorname{clip}\big(r(\theta),\,1-\epsilon,\,1+\epsilon\big)}\,\hat A\big)\Big]$$
 
 ::: reveal
 ::: keypoint
@@ -1274,7 +1337,7 @@ The same figure as the opening with both model-free cells lit and both arrows em
 :::
 
 ### The ladder, complete — one gradient, then two tokens changed
-::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Advantage","line":"for each step t, with a learned baseline:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{(\\sum_{t′≥t} r_{t′+1} − b(s_t))} ]","note":"reward to go, minus what the state usually gives","loop":"refit b each update"},{"title":"Actor–critic, GAE","line":"for each step t, with a critic V_w:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD errors in place of returns: bias for variance","loop":"one transition per update"},{"title":"DPG, DDPG, TD3","line":"for each replayed state s, a deterministic actor:","formula":"∇_θ J = \\text{E}_{s∼ρ}[ \\red{∇_θ μ_θ(s) \\, ∇_a Q_w(s,a)|_{a=μ_θ(s)}} ]","note":"the score is gone: the actor climbs the critic's slope","loop":"off-policy, from a buffer"},{"title":"TRPO","line":"for a batch under π_old, inside a KL ball:","formula":"\\max_θ \\text{E}[ \\red{π_θ(a|s)/π_{old}(a|s)} \\, Â ] \\quad \\text{s.t.}\\quad \\text{KL}(π_{old} ‖ π_θ) ≤ δ","note":"the ratio measures the step; the ball bounds it","loop":"one constrained step per batch"},{"title":"PPO","line":"for K epochs on the same batch:","formula":"\\max_θ \\text{E}[ \\min( r Â, \\red{\\text{clip}(r, 1−ε, 1+ε)} Â ) ]","note":"the constraint becomes a flat objective","loop":"K epochs per batch"}]}
+::: widget mdp-pictures {"mode":"ladder","start":0,"upto":5,"plates":[{"title":"REINFORCE","line":"for each step t of a finished episode:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{R(τ)} ]","note":"the whole return weights every score","loop":"one episode per update"},{"title":"Advantage","line":"for each step t, with a learned baseline:","formula":"∇_θ J = \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{(\\sum_{t′≥t} r_{t′+1} − b(s_t))} ]","note":"reward to go, minus what the state usually gives","loop":"refit b each update"},{"title":"Actor–critic, GAE","line":"for each step t, with a critic V_w:","formula":"∇_θ J ≈ \\text{E}[ \\sum_t ∇_θ \\log π_θ(a_t|s_t) \\, \\red{\\sum_l (γλ)^l δ_{t+l}} ]","note":"TD errors in place of returns: bias for variance","loop":"one transition per update"},{"title":"DPG, DDPG, TD3, SAC","line":"for each replayed state s, an actor that climbs the critic:","formula":"∇_θ J = \\text{E}_{s∼ρ}[ \\red{∇_θ μ_θ(s) \\, ∇_a Q_w(s,a)|_{a=μ_θ(s)}} ]","note":"the score is gone; SAC samples the action and adds an entropy bonus","loop":"off-policy, from a buffer"},{"title":"TRPO","line":"for a batch under π_old, inside a KL ball:","formula":"\\max_θ \\text{E}[ \\red{π_θ(a|s)/π_{old}(a|s)} \\, Â ] \\quad \\text{s.t.}\\quad \\text{KL}(π_{old} ‖ π_θ) ≤ δ","note":"the ratio measures the step; the ball bounds it","loop":"one constrained step per batch"},{"title":"PPO","line":"for K epochs on the same batch:","formula":"\\max_θ \\text{E}[ \\min( r Â, \\red{\\text{clip}(r, 1−ε, 1+ε)} Â ) ]","note":"the constraint becomes a flat objective","loop":"K epochs per batch"}]}
 Act 2 changed the weight on the score; ==Act 3 replaced the score, Act 4 wrapped the weight.==
 Six plates, and every method of the lecture is one of them with one token changed.
 :::
