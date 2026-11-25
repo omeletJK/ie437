@@ -474,3 +474,33 @@ Kept against the source: log for ln, d^π as the normalised visitation from s_0 
 Fitting lessons: a lede with two inline definitions wraps mid-formula, so definitions go on their
 own display line; an annotation longer than about 45 characters runs off the slide beside a wide
 line. 76 → 80 slides.
+
+## The baseline picture redrawn (2026-11-23)
+
+The professor could not read "The baseline, drawn": the bars stacked the expected cost and the
+difference from zero, so the eye took the long grey total for the picture and the difference for
+decoration; the five points of the shared episode (seed 5) all came out better than expected, so
+the promised red never appeared; the bars sat in a side panel tied to the points only by labels;
+the amber expected-cost tick was indistinguishable from the bar's end; and the sign was inverted
+twice ("cost that followed, −G_t", better = less). The `pg-trajectory` mode `baseline` now draws a
+strip under the trajectory, one bar per sampled point at its own t with a faint guide from the
+point. Press 0: grey cost bars from a zero line with the expected cost as an amber tick on each,
+"every return here is a cost paid". Press 1: the ticks become one amber "as expected" line and
+each bar is re-anchored on it, up and blue when the action did better than its state usually
+does, down and red when worse, at the same scale, so the press is the subtraction itself. The
+slide gives the mode seed 39 (three better, two worse: +0.54, +0.40, +0.04, −0.36, −0.40), because
+no seed found gives mixed signs and well-separated states at once, and the other four modes keep
+the default episode so their G_t labels stay apart; the note says so. Walk clean, wrap at zero.
+
+## The two-action picture moved to Act 2 (2026-11-25)
+
+Asked what "One parameter — both observations push the same way" was for, the honest answer was
+that in Act 1 it had no job: it spoke of the advantage and the baseline before Act 2 defines them
+(its keypoint deferred to "Act 2 says why"), it repeated the weighted-maximum-likelihood slide, and
+it broke the run REINFORCE box → scored trajectory → heater demo with a non-heater example. The same
+numbers do carry one thing nothing else shows as small: with raw rewards 3 and 1 the two
+one-sample contributions are +1.5 and −0.5, they disagree and their mean is +0.5; with the baseline
+2 both are +0.5, the same mean and no disagreement. The slide now sits right after Rung 2's proof
+as "The baseline on two actions — the mean stays, the disagreement goes"; the `pg-pictures` mode
+`scores` draws the raw contributions first, then the baselined ones, with the mean as a dashed
+amber line that does not move. 80 slides, walk clean, wrap at zero.

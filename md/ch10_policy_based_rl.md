@@ -631,23 +631,6 @@ The lines to the end are the variance; where they start and where they stop is w
 Source p. 37's figure, redrawn: a trajectory with five sampled (S_t, A_t), a dashed line from each to the episode's end where G_1 … G_5 stack, each point labelled ∇ ln π(A_t|S_t) G_t, and the green annotation on the span, "can be updated only after an episode is finished". The same figure returns in Act 2 with the lines cut at t (reward to go), a bar subtracted at the end (baseline) and the lines stopped at t+n (bootstrap).
 :::
 
-### One parameter — both observations push the same way
-::: widget pg-pictures {"mode":"scores"}
-One state, two actions, $\pi_\theta(A)=\sigma(\theta)$ at $\theta=0$: the two scores point opposite ways.
-Weight each by its reward minus the average reward, $+1$ for A and $-1$ for B, and ==both contributions move $\theta$ to the right.==
-:::
-
-::: reveal
-::: keypoint
-The sign of an update comes from the score and the weight together.
-An action that did worse than average pushes the probability away from itself, which is the same direction; Act 2 says why subtracting the average is allowed.
-:::
-:::
-
-::: note
-The numbers, for the board: p = σ(0) = 0.5, so ∇_θ log π(A) = 1 − p = 0.5 and ∇_θ log π(B) = −p = −0.5. Rewards 3 for A and 1 for B against a baseline of 2 give advantages +1 and −1. Contributions: 0.5 × 1 = 0.5 and (−0.5) × (−1) = 0.5; with step 0.1 each moves θ by +0.05. Both increase the probability of A: A performed above the baseline, B below it.
-:::
-
 ### REINFORCE, run — the gain, learned blind
 ::: widget policy-gradient {"seed":4}
 The heater, $x_{t+1}=x_t+u_t$, reward $-(x^2+u^2)$ per step for twelve steps, policy $u=-kx+\sigma\varepsilon$: $x$ is $s$, $u$ is $a$, the gain $k$ is $\theta$.
@@ -734,10 +717,19 @@ Source p. 85 with its margin picture: (f_0 + ⋯ + f_T)(r_0 + ⋯ + r_T) expande
 
 $$\begin{aligned}
 \nabla_\theta J&=\E_{\tau\sim\pi_\theta}\Big[\sum_t\nabla_\theta\log\pi_\theta(a_t\mid s_t)\Big(\hat Q_t-\hl{b(s_t)}\Big)\Big] &&\red{\scriptstyle\text{the claim: any } b(s_t)}\\
-\step{1}{\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]}&\step{1}{=\E_{s_{0:t},a_{0:t-1}}\Big[b(s_t)\;\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]\Big]} &&\step{1}{\red{\scriptstyle\text{split at } t\text{; } b(s_t) \text{ fixed given } s_t}}\\
+\step{1}{\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]}&\step{1}{=\E_{s_{0:t},a_{0:t-1}}\Big[b(s_t)\;\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]\Big]} &&\step{1}{\red{\scriptstyle\text{split at } t\text{; the future is absent}}}\\
 \step{2}{\E_{a_t\sim\pi_\theta}\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big]}&\step{2}{=\int\frac{\nabla_\theta\pi_\theta(a_t\mid s_t)}{\pi_\theta(a_t\mid s_t)}\,\pi_\theta(a_t\mid s_t)\,da_t=\nabla_\theta\int\pi_\theta(a_t\mid s_t)\,da_t} &&\step{2}{\red{\scriptstyle\nabla\log\pi=\nabla\pi/\pi}}\\
 \step{3}{}&\step{3}{=\nabla_\theta 1=0\qquad\Longrightarrow\qquad\E_\tau\big[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,b(s_t)\big]=\E\big[b(s_t)\cdot0\big]=0} &&\step{3}{\red{\scriptstyle\text{the density integrates to one: zero bias}}}
 \end{aligned}$$
+
+::: reveal
+::: small
+Why the outer expectation runs from $s_0$ to $s_t$ and stops before $a_t$, in three pieces.
+The future after $a_t$ does not appear in the term, so its probabilities sum to one and it drops out.
+The past from $s_0$ stays, because it decides where $s_t$ is.
+$a_t$ goes inside, where $b(s_t)$ is a constant.
+:::
+:::
 
 ::: reveal
 ::: keypoint
@@ -747,7 +739,24 @@ Two things to check, and the source checks both: ==the mean does not move; the v
 :::
 
 ::: note
-Source pp. 86–87, line for line: "we need to verify two things: inserting a baseline does not make the gradient estimate biased, and the baseline actually reduces variance". The proof splits the expectation over the trajectory at time t; conditional on s_t the baseline is a constant, and the inner expectation of the score is the derivative of a total probability, which is zero. The same identity is Lecture 2's: the expected score of a likelihood is zero. The next slide answers the second question.
+Source pp. 86–87, line for line: "we need to verify two things: inserting a baseline does not make the gradient estimate biased, and the baseline actually reduces variance". The proof splits the expectation over the trajectory at time t; conditional on s_t the baseline is a constant, and the inner expectation of the score is the derivative of a total probability, which is zero. Why the subscripts are s_{0:t}, a_{0:t−1} and not the whole trajectory, asked in the 2026 lecture preparation: write p(τ) = p(prefix up to a_t) · p(future | s_t, a_t); the term ∇log π_θ(a_t|s_t) b(s_t) looks only at (s_t, a_t), so the sum over the future is Σ p(future | s_t, a_t) = 1 and disappears, exactly as E[X] over two dice (X, Y) is Σ_x x p(x) Σ_y p(y|x) = Σ_x x p(x). The prefix from s_0 stays because s_t is like the sum of t dice: its distribution comes from the whole chain s_0, a_0, …, a_{t−1}, and that is also how the samples arise, by running the policy from s_0. Writing E_{s_t} with the marginal of s_t would say the same thing with the chain hidden. Finally a_t goes inside so that b(s_t) is a constant there. Had the weight been Q̂_t, the future rewards would appear in the term, the inner sum would no longer be one, and nothing could be pulled out; that is why a baseline must depend on neither a_t nor the future. The same identity is Lecture 2's: the expected score of a likelihood is zero. The next slide answers the second question.
+:::
+
+### The baseline on two actions — the mean stays, the disagreement goes
+::: widget pg-pictures {"mode":"scores"}
+One state, two actions, $\pi_\theta(A)=\sigma(\theta)$ at $\theta=0$: weight each score by the reward that followed, and one observation says move right, the other left.
+Subtract the average reward from both and ==the two observations agree, while their mean has not moved.==
+:::
+
+::: reveal
+::: keypoint
+This is the proof above in its smallest example: the baseline changes no expectation.
+What it removes is the disagreement between samples, and that disagreement is the variance.
+:::
+:::
+
+::: note
+The numbers on the figure: p = σ(0) = 0.5, so the scores are 1 − p = +0.5 for A and −p = −0.5 for B. Rewards 3 for A and 1 for B: contributions +1.5 and −0.5, each seen half the time, mean +0.5. With the baseline 2: (+0.5)(+1) and (−0.5)(−1), both +0.5, mean +0.5, and here the variance is exactly zero because the baseline equals the state's value. An action that did worse than average pushes the probability away from itself, which is the same direction as the better action pulling towards itself. The next two slides ask which baseline is best and show the same subtraction on the heater.
 :::
 
 ### Which baseline — the critic as a least-squares solution
@@ -773,9 +782,9 @@ Source p. 88, with its two approximations stated on the slide: the variance of a
 :::
 
 ### The baseline, drawn — better or worse than expected
-::: widget pg-trajectory {"mode":"baseline"}
-At the episode's end, the cost that followed each sampled point is a bar; every return here is a cost paid.
-Mark what was expected from that state and ==the sign of the difference says whether the action helped.==
+::: widget pg-trajectory {"mode":"baseline","seed":39}
+Under each sampled point, the cost that followed it as a bar and the cost expected from that state as a tick; every return here is a cost paid.
+Subtract the expectation and ==what is left points up when the action did better than its state usually does, down when worse.==
 :::
 
 ::: reveal
@@ -786,7 +795,7 @@ With it the weight reads: did this action do better than this state usually does
 :::
 
 ::: note
-The bars are −G_t for the five sampled points of the episode drawn; the amber tick is the expected cost to go of the mean policy from the state actually reached, the closed form of the heater. Blue: less cost than expected, the action is made likelier; red: more, less likely. This is the picture the temperature thread of the old deck computed in a table: a common offset to every return changes the baseline and leaves every advantage where it was.
+Press 0: grey bars of −G_t for the five sampled points, one scale, with the amber tick at b(s_t), the expected cost to go of the mean policy from the state actually reached (the closed form of the heater); every bar is a cost, so without the baseline every weight has the same sign. Press 1 is the subtraction: the ticks become one line and each bar is now the advantage b − (−G_t) from it, same scale. This slide runs the heater once more with another seed (39), because on the episode the other four pictures share all five actions came out better than expected and the picture showed one sign only; here the advantages at t = 1, 3, 5, 7, 9 are +0.54, +0.40, +0.04, −0.36, −0.40: three actions did better than their state usually does and are made likelier, two did worse. A common offset to every return would move the ticks and the bars together and leave every advantage where it is, which is what the old deck's temperature table computed.
 :::
 
 ### The baseline, measured

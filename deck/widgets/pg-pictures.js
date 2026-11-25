@@ -10,9 +10,12 @@
                     2 says what each learns. Stepped (2).  560 × 290.
    mode "scores"    the one-parameter example drawn: π_θ(A) = σ(θ) at
                     θ = 0, the two scores 1 − p and −p as arrows of
-                    opposite sign; step 1 multiplies them by the
-                    advantages +1 and −1 and both arrows point the same
-                    way. Stepped (1).  720 × 290.  Numbers in the note.
+                    opposite sign. On the right, step 0 weights them by
+                    the raw rewards 3 and 1: +1.5 and −0.5, two observations
+                    that disagree, mean +0.5. Step 1 subtracts the baseline
+                    2: +0.5 and +0.5, the same mean and no disagreement,
+                    the baseline's whole effect in the smallest example.
+                    Stepped (1).  720 × 290.
    mode "noise"     source pp. 63–65 — white noise against an
                     Ornstein–Uhlenbeck path over one episode, their
                     running sums beneath; step 1 names what a swing-up
@@ -118,29 +121,24 @@ IE437.widget('pg-pictures', function (host, opts) {
     arrow(g, X(0), y0 + 30, X(0) - 0.5 * sc * 2, y0 + 30, RED, { 'stroke-width': 2.2 });
     tx(g, X(0) - 0.5 * sc * 2 - 8, y0 + 34, '∇_θ\\log π_θ(B) = −p', { fill: RED, 'font-size': 10.5, 'text-anchor': 'end' });
     tx(g, px + pw / 2, H - 10, 'the two scores point opposite ways: a step for A is a step against B', { fill: SLATE, 'font-size': 10.5, 'text-anchor': 'middle' });
-    /* right: the contributions score × advantage on a θ axis */
+    /* right: the two one-sample contributions on a θ axis, before and after the baseline */
     var rx = 420, rw = 270, ry = 150;
     var g2 = layer(s);
     E('line', { x1: rx, x2: rx + rw, y1: ry, y2: ry, stroke: INK, 'stroke-opacity': .35 }, g2);
     E('line', { x1: rx + rw / 2, x2: rx + rw / 2, y1: ry - 8, y2: ry + 8, stroke: INK, 'stroke-opacity': .5 }, g2);
     tx(g2, rx + rw + 4, ry + 4, 'θ', { 'font-size': 12 });
-    tx(g2, rx + rw / 2, ry + 20, 'θ = 0', { 'text-anchor': 'middle', 'font-size': 10, fill: SLATE });
-    tx(g2, rx + rw / 2, 40, k === 0 ? 'the scores alone' : 'score × advantage', { 'text-anchor': 'middle', 'font-size': 12, fill: INK, 'font-weight': 600 });
-    var m = rx + rw / 2, u = 80;
-    if (k === 0) {
-      arrow(g2, m, ry - 34, m + 0.5 * u * 2, ry - 34, BLUE, { 'stroke-width': 2.2 });
-      tx(g2, m + 0.5 * u, ry - 44, 'A\\text{: score } +0.5', { fill: BLUE, 'font-size': 10.5, 'text-anchor': 'middle' });
-      arrow(g2, m, ry + 44, m - 0.5 * u * 2, ry + 44, RED, { 'stroke-width': 2.2 });
-      tx(g2, m - 0.5 * u, ry + 62, 'B\\text{: score } −0.5', { fill: RED, 'font-size': 10.5, 'text-anchor': 'middle' });
-      tx(g2, rx + rw / 2, H - 10, 'which way should θ move?', { fill: SLATE, 'font-size': 10.5, 'text-anchor': 'middle' });
-    } else {
-      arrow(g2, m, ry - 34, m + 0.5 * u * 2, ry - 34, BLUE, { 'stroke-width': 2.2 });
-      tx(g2, m + 0.5 * u, ry - 44, 'A\\text{: } (+0.5)(\\red{+1}) = +0.5', { fill: BLUE, 'font-size': 10.5, 'text-anchor': 'middle' });
-      arrow(g2, m, ry + 44, m + 0.5 * u * 2, ry + 44, RED, { 'stroke-width': 2.2 });
-      tx(g2, m + 0.5 * u, ry + 62, 'B\\text{: } (−0.5)(\\red{−1}) = +0.5', { fill: RED, 'font-size': 10.5, 'text-anchor': 'middle' });
-      tx(g2, rx + rw / 2, 60, 'A did better than the baseline, B worse', { 'text-anchor': 'middle', 'font-size': 10.5, fill: SLATE });
-      tx(g2, rx + rw / 2, H - 10, 'both observations push θ the same way: A becomes likelier', { fill: INK, 'font-size': 10.5, 'text-anchor': 'middle' });
-    }
+    tx(g2, rx + rw / 2 - 4, ry + 20, '0', { 'text-anchor': 'end', 'font-size': 10, fill: SLATE });
+    var m = rx + rw / 2, u = 80, cA = k === 0 ? 1.5 : 0.5, cB = k === 0 ? -0.5 : 0.5;
+    tx(g2, rx + rw / 2, 28, k === 0 ? '\\text{score × reward}' : '\\text{score × (reward − baseline)}', { 'text-anchor': 'middle', 'font-size': 10.5, fill: INK });
+    tx(g2, rx + rw / 2, 48, k === 0 ? 'rewards 3 for A, 1 for B' : 'baseline 2: the average reward', { 'text-anchor': 'middle', 'font-size': 10.5, fill: SLATE });
+    /* the mean of the two contributions: the same place in both steps */
+    E('line', { x1: m + 0.5 * u, x2: m + 0.5 * u, y1: ry - 36, y2: ry + 38, stroke: AMBER, 'stroke-width': 1.6, 'stroke-dasharray': '4 3' }, g2);
+    tx(g2, m + 0.5 * u + 6, ry + 78, k === 0 ? 'dashed: the mean of the two' : 'dashed: the mean, unmoved', { fill: AMBER, 'font-size': 10.5, 'text-anchor': 'middle' });
+    arrow(g2, m, ry - 30, m + cA * u, ry - 30, BLUE, { 'stroke-width': 2.4 });
+    tx(g2, m + 4, ry - 42, k === 0 ? 'A\\text{: } (+0.5)(\\red{3}) = +1.5' : 'A\\text{: } (+0.5)(\\red{3−2}) = +0.5', { fill: BLUE, 'font-size': 10.5 });
+    arrow(g2, m, ry + 30, m + cB * u, ry + 30, RED, { 'stroke-width': 2.4 });
+    tx(g2, k === 0 ? m - 4 : m + 4, ry + 56, k === 0 ? 'B\\text{: } (−0.5)(\\red{1}) = −0.5' : 'B\\text{: } (−0.5)(\\red{1−2}) = +0.5', { fill: RED, 'font-size': 10.5, 'text-anchor': k === 0 ? 'end' : 'start' });
+    tx(g2, rx + rw / 2, H - 10, k === 0 ? 'the two observations disagree about which way to move' : 'the two observations agree: the disagreement was the noise', { fill: k === 0 ? SLATE : INK, 'font-size': 10.5, 'text-anchor': 'middle' });
   }
 
   /* ============================================================ noise ============================================================ */

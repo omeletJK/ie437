@@ -25,11 +25,19 @@
                    rewards before t; step 2 draws the cross-term triangle:
                    the products score_t × r_{t′} with t′ < t have mean zero.
                    Stepped (2).
-   mode "baseline" pp. 86–88 — at the episode's end the cost-to-go of each
-                   sampled point is a bar; step 1 marks the baseline b(s_t)
-                   on each bar and shades the difference, blue when the
-                   action did better than expected, red when worse.
-                   Stepped (1).
+   mode "baseline" pp. 86–88 — under each sampled point, at its own t, a
+                   strip: step 0 is the cost that followed as a grey bar
+                   from a zero line with the cost expected from that state,
+                   b(s_t), as an amber tick on it (every weight a cost, one
+                   sign); step 1 subtracts: the bars are re-anchored on one
+                   "as expected" line and only the difference is left, up
+                   and blue when the action did better than its state
+                   usually does, down and red when worse. One scale in both
+                   steps, so the press is literally the subtraction.
+                   Stepped (2). The deck gives this mode seed 39, a run in
+                   which three of the five points come out better and two
+                   worse (the default episode has all five better); the
+                   other modes keep the default so their labels stay apart.
    mode "nstep"    p. 46 — the n-step return. Step 1 runs each dashed line
                    only to t + n and bootstraps there on a value cone
                    V(s_{t+n}); the tail is greyed. {"n": 1} is the one-step
@@ -89,7 +97,7 @@ IE437.widget('pg-trajectory', function (host, opts) {
 
   /* ---------- the shared drawing: axis, trajectory, five points ---------- */
   var W = 760, H = 336;
-  var X0P = 60, XT = 600, YLO = 236, YHI = 56;       /* the plot frame */
+  var X0P = 60, XT = 600, YLO = MODE === 'baseline' ? 160 : 236, YHI = 56;       /* the plot frame; the baseline mode keeps a strip below */
   function X(tt) { return X0P + (XT - X0P) * tt / T; }
   function Y(v) { return YLO - (v + 0.7) / 2.1 * (YLO - YHI); }
   function base(s, o) {
@@ -226,34 +234,43 @@ IE437.widget('pg-trajectory', function (host, opts) {
   function drawBaseline(k) {
     var s = svg(W, H), g = base(s, { noLabels: true });
     var g1 = layer(s);
-    /* the five returns as rows at the right: a bar of the cost that followed, from a zero line */
-    var zx = 650, scale = 24, y0 = 72, pitch = 36;
-    E('line', { x1: zx, x2: zx, y1: y0 - 18, y2: y0 + 4 * pitch + 14, stroke: INK, 'stroke-opacity': .35 }, g1);
-    tx(g1, zx + 40, y0 - 26, '\\text{cost that followed, } -G_t', { fill: SLATE, 'font-size': 9.5, 'text-anchor': 'middle' });
-    MARK.forEach(function (i, idx) {
-      var y = y0 + idx * pitch, c = -rtg[i], b = -expectedRtg(xs[i], i);
-      dash(g1, i, T, INK, '');
-      tx(g1, zx - 8, y + 4, 'G_{' + i + '}', { fill: INK, 'font-size': 10, 'text-anchor': 'end' });
-      E('rect', { x: zx, y: y - 6, width: c * scale, height: 12, fill: PANEL2, stroke: SLATE, 'stroke-width': .8 }, g1);
-      if (k >= 1) {
-        var g2 = layer(s);
-        E('line', { x1: zx + b * scale, x2: zx + b * scale, y1: y - 10, y2: y + 10, stroke: AMBER, 'stroke-width': 2 }, g2);
-        var better = c < b;      /* less cost than expected: a positive advantage */
-        E('rect', { x: zx + Math.min(b, c) * scale, y: y - 6, width: Math.abs(b - c) * scale, height: 12, fill: better ? BLUE : RED, 'fill-opacity': .55 }, g2);
+    /* the strip under the time axis: one bar per sampled point, at its own t, one scale in both steps */
+    var floor = 284, mid = 250, sc = 40, bw = 16;
+    var stripL = X0P - 10, stripR = XT + 30;
+    MARK.forEach(function (i) {
+      var c = -rtg[i], b = -expectedRtg(xs[i], i), A = b - c;   /* A > 0: less cost than expected, the action did better */
+      var cx = X(i);
+      /* a faint guide from the sampled point down into the strip */
+      E('line', { x1: cx, x2: cx, y1: Y(xs[i]) + 8, y2: (k === 0 ? floor - c * sc : mid - (A > 0 ? A * sc : 0)) - 3, stroke: SLATE, 'stroke-width': 1, 'stroke-dasharray': '2 4', opacity: .45 }, g1);
+      if (k === 0) {
+        E('rect', { x: cx - bw / 2, y: floor - c * sc, width: bw, height: c * sc, fill: PANEL2, stroke: SLATE, 'stroke-width': .9 }, g1);
+        E('line', { x1: cx - bw / 2 - 5, x2: cx + bw / 2 + 5, y1: floor - b * sc, y2: floor - b * sc, stroke: AMBER, 'stroke-width': 2.2 }, g1);
+        tx(g1, cx, floor + 13, 'G_{' + i + '}', { fill: INK, 'font-size': 10, 'text-anchor': 'middle' });
+      } else {
+        var better = A > 0, h = Math.abs(A) * sc;
+        E('rect', { x: cx - bw / 2, y: better ? mid - h : mid, width: bw, height: Math.max(h, 1.5), fill: better ? BLUE : RED, 'fill-opacity': .8 }, g1);
+        tx(g1, cx, better ? mid - h - 6 : mid + h + 13, better ? '\\text{better}' : '\\text{worse}', { fill: better ? BLUE : RED, 'font-size': 9.5, 'text-anchor': 'middle' });
       }
     });
-    if (k >= 1) {
-      var g3 = layer(s), lx = 330, ly = 276;
-      E('line', { x1: lx, x2: lx, y1: ly - 5, y2: ly + 5, stroke: AMBER, 'stroke-width': 2 }, g3);
-      tx(g3, lx + 8, ly + 4, 'b(s_t)\\text{: expected cost}', { fill: AMBER, 'font-size': 9.5 });
-      E('rect', { x: lx + 150, y: ly - 4, width: 10, height: 8, fill: BLUE, 'fill-opacity': .55 }, g3);
-      tx(g3, lx + 166, ly + 4, 'better than expected', { fill: BLUE, 'font-size': 9.5 });
-      E('rect', { x: lx + 290, y: ly - 4, width: 10, height: 8, fill: RED, 'fill-opacity': .55 }, g3);
-      tx(g3, lx + 306, ly + 4, 'worse than expected', { fill: RED, 'font-size': 9.5 });
-      var y2 = H - 14;
-      line(g3, 28, y2, '∇_θ J = \\text{E}[ \\sum_t ∇_θ\\log π_θ(a_t|s_t)\\, ( \\sum_{t′≥t} r_{t′+1} \\red{- b(s_t)} ) ]');
+    if (k === 0) {
+      E('line', { x1: stripL, x2: stripR, y1: floor, y2: floor, stroke: INK, 'stroke-opacity': .35 }, g1);
+      tx(g1, stripR + 6, floor + 4, '0', { fill: SLATE, 'font-size': 10 });
+      tx(g1, stripR + 6, floor - 24, '\\text{the cost that}', { fill: SLATE, 'font-size': 10 });
+      tx(g1, stripR + 6, floor - 11, '\\text{followed, } -G_t', { fill: SLATE, 'font-size': 10 });
+      var lx = 300, ly = 311;
+      E('line', { x1: lx, x2: lx + 14, y1: ly, y2: ly, stroke: AMBER, 'stroke-width': 2.2 }, g1);
+      tx(g1, lx + 20, ly + 4, 'b(s_t)\\text{: the cost expected from } s_t\\text{, before the action}', { fill: AMBER, 'font-size': 9.5 });
+      tx(g1, 28, H - 8, '\\text{every return here is a cost paid: the sign of the weight says nothing about the action}', { fill: SLATE, 'font-size': 11 });
     } else {
-      tx(layer(s), 28, H - 14, '\\text{every return here is a cost paid: the sign of the weight says nothing about the action}', { fill: SLATE, 'font-size': 11 });
+      E('line', { x1: stripL, x2: stripR, y1: mid, y2: mid, stroke: AMBER, 'stroke-width': 2.2 }, g1);
+      tx(g1, stripR + 6, mid - 3, '\\text{as expected,}', { fill: AMBER, 'font-size': 10 });
+      tx(g1, stripR + 6, mid + 10, 'b(s_t)', { fill: AMBER, 'font-size': 10 });
+      var lx2 = 300, ly2 = 311;
+      E('rect', { x: lx2, y: ly2 - 5, width: 10, height: 8, fill: BLUE, 'fill-opacity': .8 }, g1);
+      tx(g1, lx2 + 16, ly2 + 3, '\\text{up: better than expected, made likelier}', { fill: BLUE, 'font-size': 9.5 });
+      E('rect', { x: lx2 + 236, y: ly2 - 5, width: 10, height: 8, fill: RED, 'fill-opacity': .8 }, g1);
+      tx(g1, lx2 + 252, ly2 + 3, '\\text{down: worse, made less likely}', { fill: RED, 'font-size': 9.5 });
+      line(g1, 28, H - 8, '∇_θ J = \\text{E}[ \\sum_t ∇_θ\\log π_θ(a_t|s_t)\\, ( \\sum_{t′≥t} r_{t′+1} \\red{- b(s_t)} ) ]', 12.5);
     }
   }
 
@@ -289,7 +306,7 @@ IE437.widget('pg-trajectory', function (host, opts) {
 
   /* ---------- dispatch ---------- */
   var DRAW = { law: drawLaw, 'return': drawReturn, causal: drawCausal, baseline: drawBaseline, nstep: drawNstep };
-  var STEPS = { law: 2, 'return': 2, causal: 2, baseline: 1, nstep: 1 };
+  var STEPS = { law: 2, 'return': 2, causal: 2, baseline: 2, nstep: 1 };
   var draw = DRAW[MODE] || drawReturn, n = STEPS[MODE] == null ? 1 : STEPS[MODE];
   function render(i) { mount.innerHTML = ''; draw(Math.max(0, Math.min(n, i | 0))); }
   render(0);
