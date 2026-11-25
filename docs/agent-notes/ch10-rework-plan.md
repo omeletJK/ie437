@@ -527,3 +527,21 @@ wrong in places, and the places where it is wrong upwards look like the best act
 then uses that action, so the overestimate is learned again. Fitting: the widget is 740 × 288 and
 the caption one line, because card + picture + two caption lines + keypoint ran 14 px over.
 80 → 81 slides.
+
+## Two Act 3–4 slides reworked for comprehension (2026-11-25)
+
+- *The deterministic policy gradient.* The professor read lines 1–2 (r) against line 3 (Q) and
+  asked why r became Q. The slide now shows the product rule as its own press, ∇_θJ as a term
+  through the action (∇_a r) plus a term through ∇_θρ^μ, and the next press folds the second term
+  into Q^μ "as in Route 1", written at once in the expectation form. Four presses as before; the
+  note explains that ∫ρ^μ r is already the total discounted reward and why unrolling ρ^μ turns r
+  into Q.
+- *TRPO.* The professor found the slide too hard and asked which method's which weakness it
+  repairs. The paper card and "What breaks" now name it: Act 2's actor–critic steps
+  θ ← θ + α∇J with nothing to say how large a safe α is, and on-policy a bad step collects its own
+  next batch; the variance weakness was Act 2's and is not TRPO's concern. The formula is built in
+  three presses, the surrogate (good actions likelier, bad ones rarer; the ratio is by how much),
+  the KL ball (only as far as the old batch is evidence), and the gradient at θ_old (the score:
+  Act 2's direction, only the ruler for the step is new). The note carries the lineage, Kakade's
+  natural gradient and Kakade–Langford's conservative policy iteration, and what TRPO does not
+  repair, the once-and-thrown-away batch of every on-policy method.

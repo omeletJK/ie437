@@ -1332,38 +1332,38 @@ Press one: one large step out of the region where the batch is evidence; the gra
 :::
 
 ### A trust region in policy space — TRPO
-{sub: Schulman, Levine, Moritz, Jordan and Abbeel, "Trust Region Policy Optimization" · ICML 2015}
+{math: compact, sub: Schulman, Levine, Moritz, Jordan and Abbeel, "Trust Region Policy Optimization" · ICML 2015}
 
 ::: paper
-- Why it is here | The first method to bound a policy step in behaviour space; Act 2's ratio was kept for it.
+- Why it is here | The repair of the weakness Act 2 left open: a step set by a learning rate.
 - What it is | Berkeley: a monotonic-improvement bound, and a surrogate maximised inside a KL ball.
 - Why it matters | The theory behind PPO, and where Lecture 1's trust region re-enters in a new metric.
 :::
 
 ::: small
-**What breaks** — the batch comes from the policy being changed, so a step that is large in behaviour spoils its own next batch.
-**The change** — measure the step by how far the behaviour moves, and keep it inside a ball of that measure.
+**What breaks** — Act 2's actor–critic steps $\theta\leftarrow\theta+\alpha\nabla J$, and nothing says how large a safe $\alpha$ is; a bad step collects its own next batch.
+**The change** — measure the step by how far the behaviour moves, bound that by $\delta$, and judge the step on the old batch through the ratio.
 :::
 
-**The constrained step** — maximise the importance-weighted advantage $\hat A$ of Act 2, inside a ball of $D_{\mathrm{KL}}$, Lecture 6's divergence, around the policy that collected the data:
+**The constrained step** — what to push, how far, and a check that the direction is still Act 2's:
 
-$$\max_\theta\ \E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\Big[\red{\frac{\pi_\theta(a\mid s)}{\pi_{\mathrm{old}}(a\mid s)}}\,\hat A(s,a)\Big]\quad\text{s.t.}\quad\red{\E_{s}\big[D_{\mathrm{KL}}\big(\pi_{\mathrm{old}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big]\le\delta}$$
-
-::: reveal
-::: small
-At $\theta=\theta_{\mathrm{old}}$ the ratio's gradient is the score, so this surrogate's slope is Act 2's policy gradient: the same step, now kept inside the ball.
-:::
-:::
+$$\begin{aligned}
+\max_\theta\ L(\theta)&=\E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\Big[\red{\frac{\pi_\theta(a\mid s)}{\pi_{\mathrm{old}}(a\mid s)}}\,\hat A(s,a)\Big] &&\red{\scriptstyle\text{good actions likelier, bad ones rarer; the ratio is by how much}}\\
+\step{1}{}&\step{1}{\quad\text{s.t.}\quad\E_{s\sim\rho^{\pi_{\mathrm{old}}}}\big[D_{\mathrm{KL}}\big(\pi_{\mathrm{old}}(\cdot\mid s)\,\|\,\pi_\theta(\cdot\mid s)\big)\big]\le\delta} &&\step{1}{\red{\scriptstyle\text{only as far as the old batch is evidence: the behaviour moves by at most } \delta}}\\
+\step{2}{\nabla_\theta L(\theta_{\mathrm{old}})}&\step{2}{=\E_{s\sim\rho^{\pi_{\mathrm{old}}},\,a\sim\pi_{\mathrm{old}}}\big[\nabla_\theta\log\pi_\theta(a\mid s)\,\hat A(s,a)\big]} &&\step{2}{\red{\scriptstyle\text{at } \theta_{\mathrm{old}} \text{ the ratio's gradient is the score: Act 2's direction}}}
+\end{aligned}$$
 
 ::: reveal
 ::: keypoint
 Lecture 1's trust region, with the radius measured in ==behaviour space== instead of parameter space.
-The ratio is Act 2's importance weight, now read as the size of the step.
+The direction is Act 2's policy gradient; what is new is the ruler for the step.
 :::
 :::
 
 ::: note
-Source pp. 75–76: the off-policy objective with β, then β = π_old and the KL constraint; "in this way the old and new policies would not diverge too much", and the professor's own "(why?)" after the monotonic improvement claim, left as an exercise. The bound uses the maximum KL over states; the practical average-KL version does not by itself guarantee monotonic real return. Against Lecture 1's successive convexification: a quadratic model of f becomes a linear model of the advantage, the trust radius ρ in parameter space becomes the KL radius δ in behaviour space, and accept-or-shrink becomes a backtracking line search on the sampled KL and the surrogate improvement.
+Where it comes from: REINFORCE (Williams 1992) has two weaknesses, the variance of the return as a weight and a step whose size is a learning rate in parameter space. Act 2 repaired the first with the baseline, the advantage and the critic; the second was untouched, and on-policy it is worse than it looks, because a step that leaves the region the batch describes collects its own next batch from the spoiled policy and nothing pulls it back. The idea of measuring the step in behaviour is Kakade's natural policy gradient (2002); the surrogate and the monotonic-improvement bound are Kakade and Langford's conservative policy iteration (2002); TRPO makes the pair work for a deep policy. What it does not repair: the batch is still used once and thrown away, the sample inefficiency of every on-policy method, which Act 3 paid for differently.
+
+Source pp. 75–76: the off-policy objective with β, then β = π_old and the KL constraint; "in this way the old and new policies would not diverge too much", and the professor's own "(why?)" after the monotonic improvement claim, left as an exercise. Line 0 reads as Act 2's instruction, good actions likelier and bad ones rarer: the ratio is larger than one where the new policy picks the action more often, so raising it where Â > 0 and lowering it where Â < 0 raises L, and the expectation is over the old batch, which is the only data there is. Line 1 is the ruler: the average KL over the states the old policy visits, not a parameter distance. Line 2 is the check that nothing has been lost: the ratio equals one at θ_old and its gradient there is the score, so the surrogate's slope is the Act 2 policy gradient and TRPO moves in the same direction with a bounded step. The bound uses the maximum KL over states; the practical average-KL version does not by itself guarantee monotonic real return. Against Lecture 1's successive convexification: a quadratic model of f becomes a linear model of the advantage, the trust radius ρ in parameter space becomes the KL radius δ in behaviour space, and accept-or-shrink becomes a backtracking line search on the sampled KL and the surrogate improvement.
 :::
 
 ### The natural-gradient step — the constrained problem in closed form
