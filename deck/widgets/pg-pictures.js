@@ -28,6 +28,13 @@
                     Step 1 takes one large step out of it; step 2 draws
                     the KL ball around π_old, Lecture 1's trust region in
                     behaviour space. Stepped (2).  760 × 300.
+   mode "spike"     TD3 — the critic Q_w(s′, a) over the actions against
+                    the true value, with one narrow upward mistake; the
+                    actor sits on it. Step 1 draws a second critic, the
+                    minimum of the two, and the ±c band the smoothed
+                    target averages over; step 2 the delayed actor update.
+                    The right column names the three failures and repairs
+                    as they are revealed. Stepped (2).  740 × 288.
    ============================================================ */
 IE437.widget('pg-pictures', function (host, opts) {
   var E = IE437.el;
@@ -230,8 +237,80 @@ IE437.widget('pg-pictures', function (host, opts) {
     }
   }
 
-  var DRAW = { families: drawFamilies, scores: drawScores, noise: drawNoise, loop: drawLoop };
-  var STEPS = { families: 2, scores: 1, noise: 1, loop: 2 };
+  /* ============================================================ spike ============================================================ */
+  function drawSpike(k) {
+    var W = 740, H = 288, s = svg(W, H);
+    var px = 44, pw = 430, py = 34, ph = 194;
+    function X(a) { return px + a * pw; }
+    function Y(q) { return py + ph - q * ph; }
+    function qtrue(a) { return 0.22 + 0.52 * Math.exp(-Math.pow((a - 0.32) / 0.22, 2)); }
+    function spike(a) { return 0.40 * Math.exp(-Math.pow((a - 0.74) / 0.022, 2)); }
+    function q1(a) { return qtrue(a) + 0.035 * Math.sin(9 * a) + spike(a); }
+    function q2(a) { return qtrue(a) - 0.035 * Math.sin(7 * a + 1); }
+    function curve(g, f, c, w, dash, op) {
+      var d = '', a; for (a = 0; a <= 1.0001; a += 0.003) d += (a ? 'L' : 'M') + X(a).toFixed(1) + ' ' + Y(f(a)).toFixed(1);
+      var at = { d: d, fill: 'none', stroke: c, 'stroke-width': w }; if (dash) at['stroke-dasharray'] = dash; if (op != null) at.opacity = op;
+      return E('path', at, g);
+    }
+    var g = layer(s);
+    E('rect', { x: px - 8, y: py - 6, width: pw + 16, height: ph + 12, fill: PANEL, stroke: PANEL2 }, g);
+    E('line', { x1: px, x2: px + pw, y1: Y(0), y2: Y(0), stroke: INK, 'stroke-opacity': .35 }, g);
+    tx(g, px + pw + 2, Y(0) + 14, 'a', { 'font-size': 12, 'text-anchor': 'end' });
+    tx(g, px - 4, py + 4, 'Q', { 'font-size': 12, 'text-anchor': 'end' });
+    curve(g, qtrue, SLATE, 1.4, '5 4');
+    curve(g, q1, BLUE, 2.2);
+    tx(g, X(0.03), Y(qtrue(0.03)) + 16, 'the true value, dashed', { fill: SLATE, 'font-size': 10.5 });
+    tx(g, X(0.36), Y(q1(0.36)) - 10, 'Q_w(s′, a)\\text{, the critic}', { fill: BLUE, 'font-size': 10.5, 'text-anchor': 'middle' });
+    /* the true best action, and the actor on the spike */
+    E('line', { x1: X(0.32), x2: X(0.32), y1: Y(0), y2: Y(0) - 8, stroke: INK, 'stroke-opacity': .6 }, g);
+    tx(g, X(0.32), Y(0) + 14, 'the best action', { fill: INK, 'font-size': 10, 'text-anchor': 'middle' });
+    var as = 0.74, top = q1(as);
+    E('circle', { cx: X(as), cy: Y(top), r: 5.5, fill: AMBER }, g);
+    arrow(g, X(0.56), Y(q1(0.56)) - 4, X(as) - 7, Y(top) + 6, AMBER, { 'stroke-width': 2.2 });
+    tx(g, X(as), Y(0) + 14, 'where the actor goes', { fill: AMBER, 'font-size': 10, 'text-anchor': 'middle', 'font-weight': 600 });
+    tx(g, X(as) + 10, Y(top) + 2, 'a narrow mistake', { fill: RED, 'font-size': 10.5 });
+    tx(g, px + pw / 2, H - 8, k === 0 ? 'the actor climbs to the highest point it can see, and the highest point is the critic’s error' : 'two repairs on the target, one on the timing', { fill: k === 0 ? RED : INK, 'font-size': 10.5, 'text-anchor': 'middle' });
+    /* right column: the three failures and their repairs, revealed in two presses */
+    var rx = 500, rw = 232;
+    tx(g, rx, 44, 'three failures of the critic', { fill: INK, 'font-size': 11.5, 'font-weight': 600 });
+    tx(g, rx, 62, 'and what TD3 does about each', { fill: SLATE, 'font-size': 10.5 });
+    function item(y, title, line1, line2, on) {
+      var gi = layer(s, on ? 1 : .32);
+      tx(gi, rx, y, title, { fill: on ? RED : SLATE, 'font-size': 11, 'font-weight': 700 });
+      tx(gi, rx, y + 15, line1, { fill: INK, 'font-size': 10.5 });
+      tx(gi, rx, y + 29, line2, { fill: INK, 'font-size': 10.5 });
+    }
+    item(92, 'too high', 'ask two critics, believe the smaller:', 'a mistake must fool both to survive', k >= 1);
+    item(152, 'too narrow', 'add a little noise to the target action:', 'a spike one action sees averages away', k >= 1);
+    item(206, 'too fast', 'move the actor once per d critic updates:', 'climb a critic that has settled', k >= 2);
+    if (k >= 1) {
+      var g1 = layer(s);
+      curve(g1, q2, SLATE, 1.6, null, .9);
+      tx(g1, X(0.98), Y(q2(0.98)) + 14, 'a second critic', { fill: SLATE, 'font-size': 10.5, 'text-anchor': 'end' });
+      curve(g1, function (a) { return Math.min(q1(a), q2(a)); }, RED, 2.6, null, .85);
+      tx(g1, X(0.02), py + 12, 'red: the smaller of the two critics, the spike gone', { fill: RED, 'font-size': 10.5 });
+      /* the smoothing band around the actor's action */
+      var c = 0.06, n = 0, sum = 0, a; for (a = as - c; a <= as + c; a += 0.002) { sum += q1(a); n++; }
+      var avg = sum / n;
+      E('rect', { x: X(as - c), y: py - 6, width: X(as + c) - X(as - c), height: ph + 12, fill: AMBER, 'fill-opacity': .14 }, g1);
+      E('circle', { cx: X(as), cy: Y(avg), r: 5, fill: 'none', stroke: AMBER, 'stroke-width': 2 }, g1);
+      arrow(g1, X(as) + 34, Y(avg) - 26, X(as) + 8, Y(avg) - 4, AMBER, { 'stroke-width': 1.6 });
+      tx(g1, X(as) + 36, Y(avg) - 30, 'averaged over ±c', { fill: AMBER, 'font-size': 10 });
+    }
+    if (k >= 2) {
+      var g2 = layer(s), ty = 249, tx0 = rx + 4;
+      [0, 1, 2, 3, 4, 5, 6, 7].forEach(function (i) {
+        var x = tx0 + i * 26;
+        if (i % 3 === 2) E('circle', { cx: x + 7, cy: ty, r: 6, fill: AMBER }, g2);
+        else E('rect', { x: x, y: ty - 7, width: 14, height: 14, fill: BLUE, 'fill-opacity': .85 }, g2);
+      });
+      tx(g2, tx0, ty + 18, 'blue the critic, amber the actor:', { fill: SLATE, 'font-size': 10 });
+      tx(g2, tx0, ty + 31, 'one actor step per two critic updates', { fill: SLATE, 'font-size': 10 });
+    }
+  }
+
+  var DRAW = { families: drawFamilies, scores: drawScores, noise: drawNoise, loop: drawLoop, spike: drawSpike };
+  var STEPS = { families: 2, scores: 1, noise: 1, loop: 2, spike: 2 };
   var draw = DRAW[MODE] || drawFamilies, n = STEPS[MODE] == null ? 1 : STEPS[MODE];
   function render(i) { mount.innerHTML = ''; draw(Math.max(0, Math.min(n, i | 0))); }
   render(0);

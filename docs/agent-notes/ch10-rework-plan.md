@@ -504,3 +504,26 @@ one-sample contributions are +1.5 and −0.5, they disagree and their mean is +0
 as "The baseline on two actions — the mean stays, the disagreement goes"; the `pg-pictures` mode
 `scores` draws the raw contributions first, then the baselined ones, with the mean as a dashed
 amber line that does not move. 80 slides, walk clean, wrap at zero.
+
+## TD3 split into a picture and the box (2026-11-25)
+
+The professor looked at the TD3 slide (card, lede, the three-line box, keypoint) and said it was
+too hard: the essence was not visible and the formulas' meaning was unclear. The one-format pass
+had put the three repairs only into the box's maths and margin notes. Now two slides:
+
+- "TD3 — the actor loves the critic's mistakes": the card, then `pg-pictures` mode `spike`: the
+  critic Q_w(s′, a) over the actions against the dashed true value, with one narrow upward mistake
+  and the actor sitting on it. Press 1 draws a second critic, the minimum of the two in red (the
+  spike gone) and the ±c band the smoothed target averages over, with the hollow circle at the
+  averaged value; press 2 draws the delayed update as a row of critic, critic, actor. The right
+  column names the three failures as they are repaired: too high, too narrow, too fast. The
+  keypoint reads TD3 as one rule, never let the actor trust a value the critic cannot vouch for.
+- "Algorithm — TD3, the lines that differ from DDPG": the What breaks / The change lede, the box
+  with its margin notes rewritten in plain words (the neighbourhood, not one point; ask both
+  critics, believe the smaller; once per d critic updates, on a settled critic), the old keypoint.
+
+The picture's words, for the lecture: the actor picks the action where Q_w is highest, Q_w is
+wrong in places, and the places where it is wrong upwards look like the best actions; the target
+then uses that action, so the overestimate is learned again. Fitting: the widget is 740 × 288 and
+the caption one line, because card + picture + two caption lines + keypoint ran 14 px over.
+80 → 81 slides.

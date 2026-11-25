@@ -1039,8 +1039,8 @@ Source p. 54, the cleanest argument in the DDPG half: with a stochastic π, "env
 $$\begin{aligned}
 J(\pi_\theta)&=\int_{\mathcal S}\rho^{\pi}(s)\int_{\mathcal A}\pi_\theta(a\mid s)\,r(s,a)\,da\,ds &&\red{\scriptstyle\text{the stochastic objective: } \rho^\pi \text{ is Act 1's } d^\pi\text{, discounted; two integrals}}\\
 \step{1}{J(\mu_\theta)}&\step{1}{=\int_{\mathcal S}\rho^\mu(s)\,r\big(s,\mu_\theta(s)\big)\,ds} &&\step{1}{\red{\scriptstyle\text{deterministic: one integral instead of two, the variance argument as an absence}}}\\
-\step{2}{\nabla_\theta J(\mu_\theta)}&\step{2}{=\int_{\mathcal S}\rho^\mu(s)\,\nabla_\theta\mu_\theta(s)\;\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}\,ds} &&\step{2}{\red{\scriptstyle\text{the chain rule through the action; the } \theta \text{ inside } \rho^\mu \text{ unrolls as in Route 1 (Theorem 1)}}}\\
-\step{3}{}&\step{3}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\red{\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}}\Big]} &&\step{3}{\red{\scriptstyle\text{the actor follows the critic uphill}}}
+\step{2}{\nabla_\theta J(\mu_\theta)}&\step{2}{=\int_{\mathcal S}\rho^\mu\,\nabla_\theta\mu_\theta\;\nabla_ar\big|_{a=\mu_\theta}\,ds+\int_{\mathcal S}\nabla_\theta\rho^\mu\;r\,ds} &&\step{2}{\red{\scriptstyle\text{product rule: through the action now, and through the states visited later}}}\\
+\step{3}{}&\step{3}{=\E_{s\sim\rho^\mu}\Big[\nabla_\theta\mu_\theta(s)\;\red{\nabla_aQ^\mu(s,a)\big|_{a=\mu_\theta(s)}}\Big]} &&\step{3}{\red{\scriptstyle\text{unroll the second term with the backup, as in Route 1: now plus later is } Q^\mu\text{, so } r \text{ becomes } Q}}
 \end{aligned}$$
 
 ::: reveal
@@ -1051,7 +1051,7 @@ The deterministic gradient is the limit of the stochastic one as the policy's sp
 :::
 
 ::: note
-Source pp. 56–59: ρ^μ is the discounted state distribution of p. 56, Act 1's d^π with γ^k weights; line 0 is p. 58's stochastic objective, line 1 its deterministic twin, line 2 the theorem on p. 57 with its two remarks, the deterministic policy as the limiting case of the stochastic one when the action distribution collapses to a point mass, and "we expect the stochastic policy to require more samples as it integrates the data over the whole state and action space". Line 3 is p. 58's pair of objectives side by side. What it takes to implement, p. 59: a policy whose gradient in θ is easy, and a critic whose gradient in a is easy; in DDPG both are networks. Theorem 2 of the paper, quoted on p. 59 as a known fact: the deterministic gradient is the limit of the stochastic one.
+Source pp. 56–59: ρ^μ is the discounted state distribution of p. 56, Act 1's d^π with γ^k weights; line 0 is p. 58's stochastic objective, line 1 its deterministic twin. Line 1 already contains the future: ρ^μ weights every state by how often, discounted, the policy visits it, so the integral of the immediate reward r against ρ^μ is the total discounted reward. Line 2 is the honest product rule, the step the paper skips: θ sits in two places, in μ_θ inside r, which gives the slope of the reward now, and in ρ^μ itself, because a changed policy visits different states later; the second term is the awkward one, exactly as the state distribution was the awkward part of Route 1. Line 3 is the paper's Theorem 1 on p. 57, written at once in the expectation form of p. 58: unrolling ∇_θρ^μ through the backup, as Route 1 unrolled d^π, adds to ∇_a r the effect of the action on everything after it, and reward now plus everything later is Q^μ, which is why r becomes Q and the second term disappears; the actor follows the critic uphill. Line 2 drops the arguments to fit; they are those of line 1, with ∇_a r taken at a = μ_θ(s). Then the theorem's two remarks, the deterministic policy as the limiting case of the stochastic one when the action distribution collapses to a point mass, and "we expect the stochastic policy to require more samples as it integrates the data over the whole state and action space". What it takes to implement, p. 59: a policy whose gradient in θ is easy, and a critic whose gradient in a is easy; in DDPG both are networks. Theorem 2 of the paper, quoted on p. 59 as a known fact: the deterministic gradient is the limit of the stochastic one.
 :::
 
 ### Nobody implements the theorem — autograd does
@@ -1193,7 +1193,7 @@ Hence temporally correlated noise $\epsilon_t$, $d\epsilon_t=-\kappa\,\epsilon_t
 Source pp. 62–65. The three reasons of p. 63 are verbatim in substance; the third is the only place in the course where a physical constraint decides an algorithm. The pendulum of p. 64: push in a consistent direction until near upright, then alternate; a random behaviour policy "might find it, but only after consuming a lot of samples". The OU process of p. 65 is written with κ for the mean-reversion rate, because θ is the policy parameter everywhere else in this lecture. The demo on the heater used Gaussian noise, which is enough for a one-dimensional linear system.
 :::
 
-### TD3 — keep the actor, repair three failures of the critic
+### TD3 — the actor loves the critic's mistakes
 {sub: Fujimoto, van Hoof and Meger, "Addressing Function Approximation Error in Actor-Critic Methods" · ICML 2018}
 
 ::: paper
@@ -1202,17 +1202,32 @@ Source pp. 62–65. The three reasons of p. 63 are verbatim in substance; the th
 - Why it matters | The deterministic baseline since 2018; with behaviour cloning it is Lecture 12's method.
 :::
 
+::: widget pg-pictures {"mode":"spike"}
+The critic over the actions, blue, against the true value, dashed; ==the actor climbs to the highest point it can see, and finds the mistake.==
+:::
+
+::: reveal
+::: keypoint
+TD3 is DDPG with one rule: ==never let the actor trust a value the critic cannot vouch for.==
+:::
+:::
+
+::: note
+The picture, in words. DDPG's actor picks the action where Q_w is highest, but Q_w is an estimate and is wrong in places; the places where it is wrong upwards look, to the actor, like the best actions. Worse, the critic's own target y = r + γQ(s′, μ(s′)) uses the actor's action, so an overestimate becomes the next target and is learned again: it compounds. The three failures and repairs, as the right column of the picture lists them: too high, so ask two critics and believe the smaller, a mistake must fool both; too narrow, so add a little clipped noise to the target action and evaluate the neighbourhood, a spike that only one action sees averages away; too fast, so move the actor once per d critic updates and climb a critic that has settled. The actor itself is DDPG's. The drawn critic is the true hump plus a small wobble and one narrow Gaussian spike; the second critic has a different wobble and no spike, so their minimum follows the true value closely. The amber hollow circle is the mean of the first critic over ±c around the spike, what the smoothed target sees.
+:::
+
+### Algorithm — TD3, the lines that differ from DDPG
 ::: small
 **What breaks** — the actor climbs wherever $Q_w$ is too high, and the critic's own errors are exactly where it is too high.
 **The change** — a smaller, smoother target from two critics, and an actor that waits for the critic to settle.
 :::
 
 ::: algorithm TD3, the lines that differ from DDPG | two critics $Q_{w_1},Q_{w_2}$, a delay $d$, target noise $\epsilon\sim\mathcal N(0,\sigma)$ clipped to $[-c,c]$
-[target action] $\tilde a'\leftarrow\operatorname{clip}\big(\mu_{\theta^-}(s')+\operatorname{clip}(\epsilon,-c,c),\,a_{\min},a_{\max}\big)$ // target policy smoothing: average over nearby actions, not a narrow peak
-[critics] $y\leftarrow r+\gamma\,\red{\min_{i=1,2}}Q_{w_i^-}(s',\tilde a')$ // clipped double Q: both critics regress to the smaller target
-! [learn] every $\red{d}$ critic updates only: DDPG's actor step, climbing $Q_{w_1}$ // delayed policy update: the critic settles first
+[target action] $\tilde a'\leftarrow\operatorname{clip}\big(\mu_{\theta^-}(s')+\operatorname{clip}(\epsilon,-c,c),\,a_{\min},a_{\max}\big)$ // a little noise on the actor's action, kept in range: the neighbourhood, not one point
+[critics] $y\leftarrow r+\gamma\,\red{\min_{i=1,2}}Q_{w_i^-}(s',\tilde a')$ // ask both critics, believe the smaller: a mistake must fool both
+! [learn] every $\red{d}$ critic updates: DDPG's actor step on $Q_{w_1}$ // once per d critic updates, on a critic that has settled
 ---
-everything else is the DDPG box; smoothing noise on the target is separate from the exploration noise used to collect data
+everything else is the DDPG box; the smoothing noise lives inside the target, the exploration noise outside it, when acting
 :::
 
 ::: reveal
@@ -1223,7 +1238,7 @@ Critics can share errors, which is where Lecture 12 begins.
 :::
 
 ::: note
-As Lecture 8 set SARSA against Q-learning by the one line that differs, this box lists only TD3's three changed lines; the rest is DDPG's. Numbers for the board, if asked: r = 1, γ = 0.9, target action 0.6 after smoothing, critics 8 and 6 at that action: y = 1 + 0.9 × 6 = 6.4 against 8.2 from the first critic alone; a terminal transition gives y = 1. The two critics each regress to this target, and on delayed steps the actor climbs the first critic.
+As Lecture 8 set SARSA against Q-learning by the one line that differs, this box lists only TD3's three changed lines; the rest is DDPG's. Read each line with the previous slide's words: the first is "too narrow", the second "too high", the lit line "too fast". The two clips: the inner one keeps the noise within ±c, the outer one keeps the action inside the allowed range. Numbers for the board, if asked: r = 1, γ = 0.9, target action 0.6 after smoothing, critics 8 and 6 at that action: y = 1 + 0.9 × 6 = 6.4 against 8.2 from the first critic alone; a terminal transition gives y = 1. The two critics each regress to this target, and on delayed steps the actor climbs the first critic.
 :::
 
 ### SAC — a stochastic actor, trained from replay, rewarded for entropy
